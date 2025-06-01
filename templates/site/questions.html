@@ -1,0 +1,66 @@
+{% extends 'Base/Base.html' %}
+
+{% block title %}
+    سوالات احتمالی شما
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="flex items-center gap-x-2">
+        <a href="{% url 'site:Q&A' %}">سوالات متداول</a>
+    </li>
+
+{% endblock %}
+
+{% block content %}
+    <main class="container child:mt-8">
+
+
+        <section class="w-full px-5 pt-5 pb-10 rounded-lg shadow bg-white dark:bg-zinc-700">
+            <h2 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1">سوالات متداول</h2>
+            <p class="text-gray-500 dark:text-gray-400 font-DanaMedium mt-4 mb-8 text-sm lg:text-base">
+                اگر سوال مورد نظر خود را پیدا نکردید به <a href="{% url 'site:contact-us' %}"
+                                                           class="font-DanaMedium text-green-500">پشتیبانی</a>
+                تیکت بدهید
+            </p>
+
+
+
+            {% for question in questions %}
+
+
+                <!-- accordion -->
+                <div
+                        class="mt-4 w-full lg:w-[60%] mx-auto dark:bg-zinc-600 cursor-pointer  rounded-lg border border-gray-200 dark:border-white/20">
+                    <div class="accordion-header p-3 flex items-center justify-between" onclick="accordion('body-num-{{ question.id }}')">
+                        <p class="font-DanaMedium line-clamp-1 text-sm md:text-base">
+                            {{ question.question }}
+                        </p>
+                        <svg class="w-4 h-4">
+                            <use href="#chevron-left"></use>
+                        </svg>
+                    </div>
+                    <div id="body-num-{{ question.id }}" class="accordion-content hidden py-2 mx-4 child:dark:text-gray-200 child:text-gray-400">
+                        <p>
+                            {{ question.answer }}
+                        </p>
+                    </div>
+
+                </div>
+            {% endfor %}
+        
+                    <script>
+                function accordion( bid) {
+
+                    body_element = document.getElementById(bid);
+                    if (body_element.classList.contains("hidden")) {
+                        body_element.classList.remove("hidden");
+                        
+                    }else {
+                        body_element.classList.add("hidden");
+                    }
+                }
+            </script>
+            
+        </section>
+    </main>
+{% endblock %}

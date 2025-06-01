@@ -1,0 +1,206 @@
+{% load products_tags %}
+{% load jalali_tags %}
+{% load static %}
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>فاکتور فروش</title>
+
+</head>
+<body>
+
+<div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <div class="invoice-box">
+        <button style="width: 25%; padding: 1rem;" onclick="generatePDF()">دانلود PDF</button>
+        <script>
+            function generatePDF() {
+                const element = document.getElementById('pdf_');
+                html2pdf().from(element).save();
+            }
+        </script>
+    </div>
+        <style>
+            @font-face {
+                font-family: "Vazir";
+                src: url("/static/fonts/NotoNaskhArabic-Regular.ttf");
+            }
+
+
+            body {
+                font-family: "Vazir", sans-serif;
+                direction: rtl;
+                text-align: right;
+                margin: 0;
+                padding: 20px;
+                color: #333;
+            }
+
+            .invoice-box {
+                max-width: 800px;
+                margin: auto;
+                padding: 30px;
+                border: 1px solid #eee;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+                font-size: 16px;
+                line-height: 24px;
+            }
+
+            .header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 30px;
+            }
+
+            .logo {
+                width: 150px;
+            }
+
+            .invoice-title {
+                font-size: 24px;
+
+
+            }
+
+            .info-table {
+                width: 100%;
+                margin-bottom: 30px;
+                border-collapse: collapse;
+            }
+
+            .info-table td {
+                padding: 8px;
+                border: 1px solid #ddd;
+            }
+
+            .info-table tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            .items-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .items-table th {
+                background-color: #f2f2f2;
+                padding: 10px;
+                border: 1px solid #ddd;
+                text-align: center;
+            }
+
+            .items-table td {
+                padding: 8px;
+                border: 1px solid #ddd;
+                text-align: center;
+            }
+
+            .total {
+                margin-top: 20px;
+                text-align: left;
+                font-weight: bold;
+                font-size: 18px;
+            }
+
+            .footer {
+                margin-top: 50px;
+                text-align: center;
+                font-size: 14px;
+                color: #777;
+            }
+        </style>
+
+    <div id="pdf_" class="invoice-box">
+        <div class="header">
+            <div>
+                <h1 class="invoice-title">فاکتور فروش</h1>
+                <p>شماره : {{ order.id }}</p>
+                <p>تاریخ صدور  : {{ time|to_jalali:' %Y/%m/%d - %H:%M:%S' }}</p>
+                تاریخ باز شدن درخواست خرید:
+                <p>  {{ order.date|to_jalali:' %Y/%m/%d - %H:%M:%S' }}</p>
+                <p>تاریخ بسته شدن : 
+                    {{ order.second_date|to_jalali:' %Y/%m/%d - %H:%M:%S' }}</p>
+
+            </div>
+            <div>
+            </div>
+        </div>
+
+        <table class="info-table">
+            <tr>
+                <td>فروشنده :</td>
+                <td>{{ order.store.name }}</td>
+                <td>خریدار :</td>
+                <td dir="ltr">{{ order.user.PhoneNumber }}</td>
+            </tr>
+            <tr>
+                <td>شماره تماس فروشنده :</td>
+                <td dir="ltr">{{ store.phone }}</td>
+                <td>شماره تماس خریدار :</td>
+                <td dir="ltr">{{ request.user.PhoneNumber }}</td>
+            </tr>
+            <tr>
+                <td>آدرس فروشنده :</td>
+                <td colspan="3">{{ store.address }}</td>
+            </tr>
+        </table>
+
+        <table class="items-table">
+            <thead>
+            <tr>
+                <th>ردیف</th>
+                <th>نام کالا</th>
+                <th>تعداد</th>
+                <th>قیمت واحد</th>
+                <th>تخفیف</th>
+                <th>مبلغ کل</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in order.details.all %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.count }}</td>
+                    <td>{{ item.product.price|tdc }} تومان</td>
+                    <td>{{ item.product.price|clac_tax:item.product.discount }} %</td>
+                    <td>{{ item.get_item_price|tdc }} تومان</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+        <div class="total">
+            {% if order.is_paid %}
+                <p>مبلغ پرداخت شده: {{ order.calculate_total_price|tdc }} تومان</p>
+            {% elif order.canceled %}
+                <p> سبد خرید شما لفو شده است </p>
+            {% else %}
+                <p>مبلغ قابل پرداخت: {{ order.calculate_total_price|tdc }} تومان</p>
+
+            {% endif %}
+        </div>
+
+        {% if order.is_paid %}
+
+            <div class="footer">
+                <p>با تشکر از خرید شما </p>
+                <p>{{ site.title }}</p>
+                <p>تلفن پشتیبانی: <span dir="ltr">{{ site.phone }}</span> </p>
+                <p> {{ site.address }}</p>
+
+                {% if order.sending %}
+                    <p>کد پیگری پستی : <span dir="ltr">{{ order.post_id }}</span> </p>
+                        <p> ارسال شده به ادرس : </p>
+                        <p>{{ order.address.province }} {{ order.address.city }} {{ order.address.address }} </p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+</body>
+</html>

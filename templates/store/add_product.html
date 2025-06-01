@@ -1,0 +1,389 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    اضافه کردن محصول
+{% endblock %}
+
+{% block header_reference %}
+    <link rel="stylesheet" href=/static/dist/css/bootstrap-theme.css">
+
+    <link rel="stylesheet" href=/static/dist/css/rtl.css">
+
+    <link rel="stylesheet" href=/static/node_modules/font-awesome/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href=/static/node_modules/ionicons/dist/css/ionicons-core.min.css">
+
+    <link rel="stylesheet" href=/static/dist/css/AdminLTE.min.css">
+
+    <link rel="stylesheet" href=/static/dist/css/skins/_all-skins.min.css">
+
+    <link rel="stylesheet" href=/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <style>.cke {
+        visibility: hidden;
+    }</style>
+    <link rel="stylesheet" type="text/css" id="u0"
+          href="/static/dist/js/lightgray.js">
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/config.js?t=E8PB"></script>
+    {#    <script type="text/javascript"#}
+    {#            src="/static/dist/js/bootstrapck-skin.js"></script>#}
+    <link rel="stylesheet" type="text/css"
+          href="/static/dist/css/bootstrapck-editor_gecko.css">
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/lang/fa.js?t=E8PB"></script>
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/styles.js?t=E8PB"></script>
+    <script type="text/javascript"
+            src="/static/dist/js/wpmore-plugin.js"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active"> اضافه کردن محصول</li>
+{% endblock %}
+
+{% block body %}
+    {% if form.errors %}
+        <div class="col-md-12 bg-red" style="margin-bottom: 20px; margin-top: 50px; border-radius: 10px">
+            {{ form.errors }}
+
+        </div>
+
+    {% endif %}
+
+    <!-- Main content -->
+    <section class="content" style="min-height: 600px; margin-top: 20px;">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-info">
+                    <div class="box-header">
+                        <h3 class="box-title">
+                            اضافه کردن محصول
+                        </h3>
+                        <!-- tools box -->
+                        <div class="pull-right box-tools">
+                            <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
+                                    data-toggle="tooltip" title="" data-original-title="Collapse">
+                                <i class="fa fa-minus"></i></button>
+
+                        </div>
+                        <!-- /. tools -->
+                    </div>
+
+                    <!-- /.box-header -->
+                    <div class="box-body pad">
+                        <form enctype="multipart/form-data" method="post" action="">
+                            {% csrf_token %}
+                            <div class="col-md-12 form-group  " style="border: None !important;">
+
+
+                                <div class="col-md-4 border-0">
+
+                                    <div class="input-group input-group">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-warning btn-flat">
+                                    عنوان محصول:
+
+                                          </span>
+                                        </span>
+                                        {{ form.name }}
+
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+
+                                    <div class="input-group input-group">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-flat" style="background-color: #932ab6; color: white;">
+                                              قیمت :
+
+                                          </span>
+                                        </span>
+                                        {{ form.price }}
+
+                                    </div>
+                                </div>
+                                <div class="col-md-3 ">
+
+                                    <div class="input-group input-group">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-info btn-flat">
+                                              عکس اصلی
+
+                                          </span>
+                                        </span>
+                                        {{ form.picture }}
+                                    </div>
+
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="input-group input-group">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-success btn-flat">
+                                              گالری محصول
+                                          </span>
+                                        </span>
+                                        {{ form.gallery }}
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="">
+                                    <div class="col-md-3">
+                                        <div class="input-group input-group">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-flat" style="background-color: #ed59f4; color: white;">
+                                            دسته بندی:
+
+                                          </span>
+                                        </span>
+                                            {{ form.category }}
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="input-group input-group">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-flat" style="background-color: #0000ff; color: white;">
+                                              برند :
+
+                                          </span>
+                                        </span>
+                                            {{ form.brand }}
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                 تخفیف :
+                                              {{ form.have_discount }}
+                                            </span>
+                                            {{ form.discount }}
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="">
+                                    <div class="col-md-6">
+                                        <div class="input-group input-group">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-flat" style="background-color: #f56954; color: white;">
+                                              تعداد :
+
+                                          </span>
+                                        </span>
+                                            {{ form.count }}
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-group input-group">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-flat" style="background-color: #726204; color: white;">
+                                              وزن (گرم) :
+
+                                          </span>
+                                        </span>
+                                            {{ form.weight }}
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <script>
+                                function tag_feature_remove(element) {
+                                    element.remove();
+                                }
+                            </script>
+
+
+                            <div class="form-group col-md-12">
+                                <div class="col-md-3">
+                                    <div class="input-group input-group-sm">
+                                        {{ form.features }}
+
+                                        <span class="input-group-btn">
+                                          <button type="button" onclick="serFeatures()" class="btn btn-info btn-flat">
+                                              ثبت
+                                          </button>
+                                        </span>
+                                    </div>
+                                    <p>
+                                            برای حذف ایتم ها روی ان کلیک کنید
+                                        </p>
+                                </div>
+                                <div class="col-span-9" id="tags-features">
+                                    {% if product %}
+
+                                        {% for feature in product.features.all %}
+                                            <input data-toggle='modal' onclick="tag_feature_remove(this)"
+                                                   class='btn btn-default form-group features-input-x'
+                                                   data-target='#modal-default' value='{{ feature.title }}'>
+                                        {% endfor %}
+
+                                    {% endif %}
+
+                                </div>
+                                <script>
+                                    var counter = 0
+
+                                    function serFeatures() {
+                                        elem = document.getElementById("tags-features");
+                                        elem2 = document.getElementById("id_features");
+
+                                        elem.innerHTML += " <input data-toggle='modal' onclick='tag_feature_remove(this)' class='btn btn-default form-group features-input-x' data-target='#modal-default' value='" + elem2.value + " '>";
+                                        elem2.value = ''
+                                        counter++;
+                                    }
+                                </script>
+                            </div>
+
+                            <div class="form-group col-md-12" style="">
+
+                                <div class="col-md-3">
+                                    <div class="input-group input-group-sm">
+                                        {{ form.tags }}
+                                        <span class="input-group-btn">
+                                            <button type="button" onclick="setTags()" class="btn btn-info btn-flat"
+                                                    id="add-tag-btn">
+                                                ثبت
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div id="tags-container" class="col-md-9">
+                                    {% if product %}
+                                        {% for tag in product.tags.all %}
+                                            <input data-toggle='modal' onclick='tag_feature_remove(this)'
+                                                   class='btn btn-default form-group features-input-x'
+                                                   data-target='#modal-default' value='{{ tag.name }}'>
+                                        {% endfor %}
+
+                                    {% endif %}
+                                </div>
+
+                                <script>
+                                    var counter = 0
+
+                                    function setTags() {
+                                        elem = document.getElementById("tags-container");
+                                        elem2 = document.getElementById("id_tags");
+
+                                        elem.innerHTML += " <input onclick='tag_feature_remove(this)' data-toggle='modal' class='btn btn-default form-group tags-input-x' data-target='#modal-default' value='" + elem2.value + " '>";
+                                        elem2.value = ''
+                                        counter++;
+                                    }
+                                </script>
+                            </div>
+                            <div class="col-md-12 items-center">
+                                <div class="col-md-2">
+
+                                </div>
+                                <div class="col-md-9">
+                                    {{ form.media }}
+                                    {{ form.description }}
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <br>
+                                <br>
+                                <br>
+                                <button type="submit" onclick="submitForm()" class="btn btn-success btn-block">ثبت
+                                </button>
+                            </div>
+                            <script>
+                                function submitForm() {
+                                    let tags = document.getElementsByClassName('tags-input-x')
+                                    let features = document.getElementsByClassName('features-input-x')
+                                    let tagsContainer = document.getElementById('id_tags')
+                                    let featuresContainer = document.getElementById('id_features')
+                                    for (items of features) {
+                                        featuresContainer.value += items.value + "**"
+                                    }
+                                    for (items of tags) {
+                                        tagsContainer.value += items.value + "**";
+                                    }
+                                    console.log(tagsContainer.value)
+                                    console.log(featuresContainer.value)
+                                }
+                            </script>
+                        </form>
+                        {% if product %}
+                            <div class="col-md-12">
+                            <h6>برای عوض کردن عکس اصلی کافیه عکس جدید را اپلود کنید و عکس اصلی حذف خواهد شد و عکس جدید جایگزین ان می شود</h6>
+                            <h6>و برای عوض کردن عکس های گالری انهارو حذف کنید و دوباره اپلود میشود و <span class="btn btn-default " style="background-color: red; color: white"> با کلیک روی عکس های گالری محصول حذف می شوند </span> </h6>
+                                <div class="col-md-3">
+                                    <h6>
+                                        عکس اصلی محصول :
+                                    </h6>
+                                    <img src="{{ product.picture.url }}" alt="" class="img-thumbnail img-responsive "
+                                         height="250px" width="250px">
+                                </div>
+                                <div class="col-md-9">
+                                    <h6>
+                                        گالری محصول :
+                                    </h6>
+
+                                    {% for img in product.gallery.all %}
+
+                                        <a href="{% url 'store:remove-img-edit-product' pk=product.id img_id=img.id %}">
+                                        <img src="{{ img.image.url }}" alt=""
+                                             class=""
+                                             height="150px" width="150px"></a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}
+
+{% block footer_reference %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
+    <script src="/dist/js/adminlte.min.js"></script>
+    <script src="/static/dist/js/demo.js"></script>
+    <script src="/static/node_modules/ckeditor/ckeditor.js"></script>
+    <script src="/static/node_modules/tinymce/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea#mytextarea',
+            plugins: 'advlist autolink link lists preview table code pagebreak',
+            menubar: false,
+            language: 'fa',
+            height: 300,
+            relative_urls: false,
+            toolbar: 'undo redo | removeformat preview code | fontsizeselect bullist numlist | alignleft aligncenter alignright alignjustify | bold italic | pagebreak table link',
+        });
+        $(function () {
+            // Replace the <textarea id="editor1"> with a CKEditor
+            // instance, using default configuration.
+            CKEDITOR.replace('editor1')
+            //bootstrap WYSIHTML5 - text editor
+            $('.textarea').wysihtml5()
+        })
+    </script>
+{% endblock %}

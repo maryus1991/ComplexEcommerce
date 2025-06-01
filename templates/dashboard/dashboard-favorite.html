@@ -1,0 +1,153 @@
+{% extends 'dashboard/Base/dashboard-base.html' %}
+{% load products_tags %}
+
+{% block title %}
+    محصولات مورد علاقه
+{% endblock %}
+
+{% block dashboard %}
+
+    <!-- MAIN  -->
+    <div class="lg:w-3/4 xl:w-4/5 lg:m-5 w-full">
+        <!-- NAVBAR -->
+        <div class="m-5 lg:m-0">
+            <div class="grid grid-cols-12 gap-6 lg:gap-12 mt-6">
+
+                <div class="col-span-12">
+                    <p class="text-lg">محصولات مورد علاقه من:</p>
+                    <div
+                            class="mt-4 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 xs:gap-6 sm:gap-7 child:cursor-pointer child:overflow-hidden child:rounded-lg child:bg-white child:dark:bg-zinc-700 child:shadow lg:child:w-56 child:relative">
+                        <!-- PRODUCT ITEM -->
+                        {% if not favorite_items %}
+                            <p class="text-lg">هنوز محصولی را اضافه نکردید</p>
+                        {% endif %}
+                        {% for item in favorite_items %}
+                            <div class="group">
+                                <!-- PRODUCT IMGAE -->
+                                <a href="{% url 'product:detail' pk=item.product.id %}">
+
+                                    <img src="{{ item.product.picture.url }}" height="192px" width="192px"
+                                         alt="product-1"
+                                         class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"/>
+                                    <!-- PRODUCT MAIN -->
+                                    <div class="px-2 lg:px-4 mb-3">
+                                        <a href="{% url 'product:detail' pk=item.product.id %}"
+                                           class="line-clamp-2 font-DanaMedium mb-2 text-sm lg:text-base">
+                                            {{ item.product.name }}
+                                        </a>
+                                        <div class="flex items-center gap-x-1 lg:gap-x-3">
+                                            {% if item.product.have_discount %}
+                                                <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
+                                                    {{ item.product.price|clac_discount:item.product.discount }}
+                                                    <span class="font-Dana text-sm">تومان</span>
+                                                </p>
+                                                <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                                                    {{ item.product.price|tdc }}
+                                                    <span class="font-Dana text-sm">تومان</span>
+                                                </del>
+
+                                            {% else %}
+                                                <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
+                                                    {{ item.product.price|tdc }}
+                                                    <span class="font-Dana text-sm">تومان</span>
+                                                </p>
+                                            {% endif %}
+
+                                        </div>
+                                    </div>
+                                </a>
+                                <!-- PRODUCT FOOTER -->
+                                <div class="flex items-center justify-between px-2 lg:px-4 mb-3">
+                                    <div class="flex items-center gap-x-2 child:transition-all child:duration-300">
+                                        {% if item.product.count > 0 %}
+                                            {% if item.product.id in user_details_orders %}
+
+                                                <a href="{% url 'orders:remove-product' item.product.id %}"
+                                                   class="rounded-full p-2 dark:bg-zinc-800 dark:hover:bg-green-500 bg-gray-100 hover:bg-green-600 hover:text-white">
+                                                    <svg class="w-4 h-4">
+                                                        <use href="#close"></use>
+                                                    </svg>
+                                                </a>
+
+                                            {% else %}
+
+                                                <a href="{% url 'orders:add' item.product.id %}"
+                                                   class="rounded-full p-2 dark:bg-zinc-800 dark:hover:bg-green-500 bg-gray-100 hover:bg-green-600 hover:text-white">
+                                                    <svg class="w-4 h-4">
+                                                        <use href="#shopping-cart"></use>
+                                                    </svg>
+                                                </a>
+
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="font-Dana text-sm text-green-500"> اتمام موجودی</span>
+
+                                        {% endif %}
+                                        {% if item.product.id in user_favorite %}
+                                            <a href="{% url 'dashboard:remove_from_favorite' pk=item.product.id %}">
+                                            <span class="hover:text-red-600">
+                                                <svg class="w-4 h-4">
+                                                    <use href="#close"></use>
+                                                </svg>
+                                            </span>
+                                            </a>
+                                        {% else %}
+                                            <a href="{% url 'dashboard:add_to_favorite' pk=item.product.id %}">
+                                            <span class="hover:text-green-600">
+                                                <svg class="w-4 h-4">
+                                                    <use href="#heart"></use>
+                                                </svg>
+                                            </span>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        {% endfor %}
+
+
+                    </div>
+                    <!-- PAGINATION -->
+                    <div class="mt-10 w-full flex items-center justify-center">
+                        <ul
+                                class="flex items-center gap-x-3 child:flex child:items-center child:justify-center child:w-8 child:h-8 child:cursor-pointer child:shadow child:rounded-lg child:transition-all child:duration-300">
+                            {% if page_obj.has_previous %}
+                                <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
+                                    <a href="?page={{ page_obj.previous_page_number }}">
+
+                                        <svg class="w-5 h-5">
+                                            <use href="#chevron-right"></use>
+                                        </svg>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for page_number in page_obj.paginator.page_range %}
+                                <li class="text-white {% if page_number == page_obj.number %} bg-green-500 {% else %} bg-white dark:bg-zinc-700 {% endif %} ">
+                                    <a href="?page={{ page_number }}">
+                                        {{ page_number }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+
+
+                            {% if page_obj.has_next %}
+
+                                <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
+                                    <a href="?page={{ page_obj.next_page_number }}">
+                                        <svg class="w-5 h-5">
+                                            <use href="#chevron-left"></use>
+                                        </svg>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

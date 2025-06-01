@@ -1,0 +1,256 @@
+from django import forms
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
+from phonenumber_field.formfields import PhoneNumberField
+from phonenumber_field.validators import validate_phonenumber
+
+
+class RegistrationForm(forms.Form):
+    phone_number = PhoneNumberField(
+        required=True,
+        widget=forms.NumberInput(attrs={
+            'class': 'appearance-none bg-transparent w-full py-3',
+            'placeholder': "شماره همراه",
+            'autocomplete': "tel",
+            'dir': 'rtl'
+
+        })
+    )
+
+    password = forms.CharField(required=True,
+                               widget=forms.PasswordInput(
+                                   attrs={
+                                       'class': 'appearance-none bg-transparent w-full py-3 ',
+                                       'placeholder': "رمز عبور",
+                                       'autocomplete': "password"
+                                   }
+                               ))
+
+    conform_password = forms.CharField(required=True,
+                                       widget=forms.PasswordInput(
+                                           attrs={
+                                               'class': 'appearance-none bg-transparent w-full py-3',
+                                               'placeholder': "تایید رمز عبور",
+                                           }
+                                       ))
+
+    def clean_conform_password(self):
+        conform_password = self.cleaned_data['conform_password']
+        password = self.cleaned_data.get('password')
+
+        if password != conform_password:
+            raise ValidationError(
+                'رمز عبور شما به صورت یکسان وارد نشده است'
+            )
+        else:
+            return conform_password
+
+    def clean_password(self):
+        password = self.cleaned_data['password']
+        validate_password(password)
+        return password
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data['phone_number']
+        validate_phonenumber(phone_number)
+
+        return phone_number
+
+class OTPForm(forms.Form):
+    first_digit = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'appearance-none digit-input',
+            'maxlength': 1,
+            'minlength': 1,
+            'inputmode': "numeric",
+            'pattern': "[0-9]",
+            'placeholder': '1'
+        }, ),
+        max_length=1,
+        min_length=1,
+
+    )
+    second_digit = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'appearance-none digit-input',
+            'maxlength': 1,
+            'minlength': 1,
+            'inputmode': "numeric",
+            'pattern': "[0-9]",
+            'placeholder': '2'
+
+        },
+        ),
+        max_length=1,
+        min_length=1,
+    )
+    third_digit = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'appearance-none digit-input',
+            'maxlength': 1,
+            'minlength': 1,
+            'inputmode': "numeric",
+            'pattern': "[0-9]",
+            'placeholder': '3'
+        }, ),
+        max_length=1,
+        min_length=1,
+    )
+    forth_digit = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'appearance-none digit-input',
+            'maxlength': 1,
+            'minlength': 1,
+            'inputmode': "numeric",
+            'pattern': "[0-9]",
+            'placeholder': '4'
+        }, ),
+        max_length=1,
+        min_length=1,
+    )
+
+    def clean(self):
+        first_digit = self.cleaned_data['first_digit']
+        second_digit = self.cleaned_data['second_digit']
+        third_digit = self.cleaned_data['third_digit']
+        forth_digit = self.cleaned_data['forth_digit']
+
+        if first_digit.isdigit() and second_digit.isdigit() and third_digit.isdigit() and forth_digit.isdigit():
+            first_digit, second_digit, third_digit, forth_digit = int(first_digit), int(second_digit), int(
+                third_digit), int(forth_digit)
+            if 9 < first_digit or second_digit or third_digit or forth_digit > 0:
+                return self.cleaned_data
+
+            else:
+                raise ValidationError(
+                    'کد را به درستی وارد کنید'
+                )
+
+        else:
+            raise ValidationError(
+                'کد را به درستی وارد کنید'
+            )
+
+class ActiveAccountForm(forms.Form):
+    """
+    for activating account
+    """
+
+    phone_number = PhoneNumberField(required=True,
+                                    widget=forms.NumberInput(
+                                        attrs={
+                                            'class': 'appearance-none bg-transparent w-full py-3',
+                                            'placeholder': "شماره همراه",
+                                            'autocomplete': "tel",
+                                            'dir': 'rtl'
+                                        }))
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data['phone_number']
+        validate_phonenumber(phone_number)
+        return phone_number
+
+class LoginForm(forms.Form):
+    """
+    Login form
+    """
+    phone_number = PhoneNumberField(required=True,
+                                    widget=forms.NumberInput(
+                                        attrs={
+                                            'class': 'appearance-none bg-transparent w-full py-3',
+                                            'placeholder': "شماره همراه",
+                                            'autocomplete': "tel",
+                                            'dir': 'rtl'
+                                        }))
+    password = forms.CharField(required=True,
+                               widget=forms.PasswordInput(
+                                   attrs={
+                                       'class': 'appearance-none bg-transparent w-full py-3',
+                                       'placeholder': "رمز عبور",
+                                       'autocomplete': "password"
+
+                                   }
+                               ))
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data['phone_number']
+        validate_phonenumber(phone_number)
+        return phone_number
+
+class EditUserInformationForm(forms.Form):
+    email = forms.EmailField(required=True,
+        widget=forms.EmailInput(attrs={
+            'class': 'tailwind-input',
+            'placeholder': "  ایمیل ...",
+
+        })
+    )
+
+    first_name = forms.CharField(required=True,
+                               widget=forms.TextInput(
+                                   attrs={
+                                       'class': 'tailwind-input',
+                                       'placeholder': "نام ...",
+                                   }
+                               ))
+
+    last_name = forms.CharField(required=True,
+                                       widget=forms.TextInput(
+                                           attrs={
+                                               'class': 'tailwind-input',
+                                               'placeholder': " نام خانوادگی ...",
+                                           }
+                                       ))
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        validate_email(email)
+        return email
+
+class ChangePasswordForm(forms.Form):
+    current_password = forms.CharField(required=True,
+                                       widget=forms.PasswordInput(
+                                           attrs={
+                                               'class': 'tailwind-input',
+                                               'placeholder': "رمز عبور فعلی",
+                                               'autocomplete': "password"
+                                           }
+                                       ))
+
+    password = forms.CharField(required=True,
+                               widget=forms.PasswordInput(
+                                   attrs={
+                                       'class': 'tailwind-input',
+                                       'placeholder': "رمز عبور جدید",
+                                       'autocomplete': "password"
+                                   }
+                               ))
+
+    conform_password = forms.CharField(required=True,
+                                       widget=forms.PasswordInput(
+                                           attrs={
+                                               'class': 'tailwind-input',
+                                               'placeholder': "تایید رمز عبور جدید",
+                                           }
+                                       ))
+
+    def clean_conform_password(self):
+        conform_password = self.cleaned_data['conform_password']
+        password = self.cleaned_data.get('password')
+
+        if password != conform_password:
+            raise ValidationError(
+                'رمز عبور شما به صورت یکسان وارد نشده است'
+            )
+        else:
+            return conform_password
+
+    def clean_password(self):
+        password = self.cleaned_data['password']
+        validate_password(password)
+        return password

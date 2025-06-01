@@ -1,0 +1,87 @@
+{% extends 'Base/AdminBase.html' %}
+{% load jalali_tags %}
+
+{% block title %}
+    لیست برندها
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">تیکت ها</li>
+{% endblock %}
+
+{% block body %}
+    <div class="box" style="margin-top: 100px;">
+        <div class="box-header">
+            <h3 class="box-title"> لیست تیکت ها</h3>
+
+            <div class="box-tools">
+                <ul class="pagination pagination-sm no-margin pull-right">
+
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page={{ page_obj.previous_page_number }}">«</a></li>
+                    {% endif %}
+                    {% for page_number in page_obj.paginator.page_range %}
+
+                        <li class="{% if page_number == page_obj.number %} active {% endif %}"><a
+                                href="?page={{ page_number }}">{{ page_number }}</a></li>
+
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}">»</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body no-padding">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th>#</th>
+                    <th>عنوان</th>
+                    <th>ارسال شده به</th>
+                    <th>زمان ارسال</th>
+                    <th>وضعیت</th>
+                    <th>مشاهده</th>
+                </tr>
+                {% for ticket in tickets %}
+                    <tr>
+
+
+                        <td>{{ ticket.id }}</td>
+                        <td>{{ ticket.subject }}</td>
+                        <td>
+                            {% if ticket.store %}
+                                {{ ticket.store.name }}
+                            {% else %}
+                                ارسال شده به ادمین
+                            {% endif %}
+                        </td>
+                        <td><p>{{ ticket.date|to_jalali:'  %H:%M - %Y/%m/%d ' }}</p></td>
+                                            <td>
+                            {% if ticket.close_ticket %}
+                            	<p class="btn btn-info ">
+                                بسته
+                                </p>
+                                {% else %}
+                                <p class="btn btn-warning ">
+                                باز
+                                </p>
+                            {% endif %}
+                        </td>
+                        <td><a href="{% url 'store:conversation-ticket' ticket.id %}" class="btn btn-success">
+                            مشاهده
+                        </a></td>
+
+
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <!-- /.box-body -->
+    </div>
+{% endblock %}
+
+

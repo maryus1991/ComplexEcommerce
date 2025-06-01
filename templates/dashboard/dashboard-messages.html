@@ -1,0 +1,148 @@
+{% extends 'dashboard/Base/dashboard-base.html' %}
+
+
+
+{% block title %}
+تیکیت ها
+{% endblock %}
+
+
+{% block dashboard %}
+
+            <!-- MAIN  -->
+            <div class="lg:w-3/4 xl:w-4/5 lg:m-5 w-full">
+                <!-- NAVBAR -->
+                <div class=" bg-white dark:bg-zinc-700 p-5 lg:rounded-lg shadow flex items-center justify-between">
+                    <button class="open-sidebar-btn flex lg:hidden items-center gap-x-1">
+                        <svg class="w-6 h-6">
+                            <use href="#bars"></use>
+                        </svg>
+                        داشبورد
+                    </button>
+                    <div class="flex items-center gap-x-3">
+                        <button class="relative flex items-center justify-end notif-toggle-btn">
+                            <svg class="w-6 h-6">
+                                <use href="#bell" />
+                            </svg>
+                            <!-- BADGE -->
+                            <span
+                                class="absolute -top-1.5 -right-2 w-4 h-4 text-[10px] flex items-center justify-center bg-red-500 text-white rounded-full">2</span>
+                            <!-- NOTIFICATION BOX -->
+                            <div
+                                class="notif-box absolute -left-7 z-40 dark:border-none border border-gray-100 w-72 p-4 bg-white text-zinc-900 dark:text-white  hidden top-8 transition-all delay-100 dark:bg-zinc-800 rounded shadow child:transition-all">
+                                <span class="justify-between flex items-center border-b border-gray-200 pb-2">
+                                    <p> اعلان ها</p>
+                                    <p class="text-green-500 flex text-sm items-center gap-x-0.5">
+                                        همه
+                                        <svg class="w-3 h-3">
+                                            <use href="#chevron-left"></use>
+                                        </svg>
+                                    </p>
+                                </span>
+                                <ul
+                                    class="mt-4 child:flex child:items-center child:gap-x-1 child:w-full child:rounded-lg child:bg-zinc-100 child:p-2 space-y-3 dark:child:bg-zinc-700">
+                                    <li>
+                                        <svg class="w-5 h-5 text-green-500 ">
+                                            <use href="#check"></use>
+                                        </svg>
+                                        <p class="font-Dan aMedium text-green-500">پرداخت شده</p>
+                                    </li>
+                                    <li>
+                                        <svg class="w-5 h-5 text-red-500 ">
+                                            <use href="#x-close"></use>
+                                        </svg>
+                                        <p class="font-Dan aMedium text-red-500">پرداخت لغو شد</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </button>
+                        <!-- TOGGLE BTN -->
+                    <script>
+                        function themToggle() {
+                            let html = document.getElementsByTagName('html')[0]
+                            if (html.classList.contains('dark')) {
+                                html.classList.remove('dark')
+                            }
+                            else {
+                                html.classList.add('dark')
+                            }
+                        }
+                    </script>
+                <button class="toggle-theme" onclick="toggleTheme()">
+                    <svg class="inline-block dark:hidden w-6 h-6">
+                        <use href="#moon" />
+                    </svg>
+                    <svg class="hidden dark:inline w-6 h-6">
+                        <use href="#sun" />
+                    </svg>
+                </button>
+                        <a href="/" class="hidden lg:flex items-center gap-x-0.5 text-green-500">
+                            صفحه اصلی
+                            <svg class="w-4 h-4">
+                                <use href="#chevron-left"></use>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="m-5 lg:m-0">
+                    <p class="font-DanaMedium block lg:hidden"> پارسا وصالی عزیز؛ خوش اومدی 🙌 </p>
+                    <div class="grid grid-cols-12 gap-6 lg:gap-12 mt-6">
+                        <div class="col-span-12">
+                           <div class="flex items-center justify-between">
+                            <p class="text-lg">  پیام های من :</p>
+                            <button class="main-btn bg-red-500 hover:bg-red-600 p-2 gap-x-1 shadow">
+                                حذف همه
+                                <svg class="w-5 h-5 mb-1">
+                                    <use href="#x-close"></use>
+                                </svg>
+                            </button>
+                           </div>
+                           <div
+                           class="bg-white shadow child:flex child:items-center child:gap-x-2 mt-4 p-4 dark:bg-zinc-700 rounded-lg flex flex-col space-y-4">
+                           <span class="font-DanaMedium text-blue-400 lg:text-lg">
+                               پارسا وصالی عزیز سفارش شما با شماره پیگیری #1222 ارسال شد
+                           </span>
+                           <div class="flex items-center justify-between flex-wrap gap-y-5">
+                               <span class="text-gray-400 flex items-center gap-x-2 mt-2">1403/6/29 | 12:50
+                                   <svg class="w-5 h-5 mb-1">
+                                       <use href="#calendar"></use>
+                                   </svg>
+                               </span>
+                               <div class="flex items-center gap-x-4">
+                                   <button class="bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-2">
+                                       <p>پیگیری سفارش</p>
+                                        <svg class="w-5 h-5">
+                                           <use href="#chevron-left"></use>
+                                       </svg>
+                                   </button>
+                               </div>
+                           </div>
+                       </div>
+                            <div
+                                class="bg-white shadow child:flex child:items-center child:gap-x-2 mt-4 p-4 dark:bg-zinc-700 rounded-lg flex flex-col space-y-4">
+                                <span class="font-DanaMedium text-green-500 lg:text-lg">
+                                    پارسا وصالی عزیز سفارش شما در حال پیگیری میباشد
+                                </span>
+                                <div class="flex items-center justify-between flex-wrap gap-y-5">
+                                    <span class="text-gray-400 flex items-center gap-x-2 mt-2">1403/6/29 | 12:50
+                                        <svg class="w-5 h-5 mb-1">
+                                            <use href="#calendar"></use>
+                                        </svg>
+                                    </span>
+                                    <div class="flex items-center gap-x-4">
+                                        <button class="bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-2">
+                                            <p>پیگیری سفارش</p>
+                                             <svg class="w-5 h-5">
+                                                <use href="#chevron-left"></use>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+{% endblock %}

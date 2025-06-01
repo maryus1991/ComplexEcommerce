@@ -1,0 +1,48 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    پست ها
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">بلاگ</li>
+    <li class="active">افزودن پست</li>
+{% endblock %}
+
+{% block body %}
+    <div class="box box-primary" style="margin-top:40px">
+        <div class="box-header with-border">
+            <h3 class="box-title">اضافه کردن پست</h3>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
+        <form role="form" method='POST' action='' enctype='multipart/form-data'>
+            {% csrf_token %}
+            <div class="box-body">
+                <div class="form-group">
+                    <label for="exampleInputFile">عنوان : </label>
+
+                    {{ form.title }}
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleInputFile">انتخاب دسته بندی </label>
+                    {{ form.category }}
+                </div>
+                <div class="form-group">
+                    {{ form.media }}
+                    {{ form.content }}
+                    
+                </div>
+            </div>
+            <!-- /.box-body -->
+
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary">ارسال</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+

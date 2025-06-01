@@ -1,0 +1,106 @@
+{% extends 'dashboard/Base/dashboard-base.html' %}
+
+
+{% block title %}
+    تنظیمات حساب کاربری
+{% endblock %}
+
+
+{% block dashboard %}
+
+    <!-- MAIN  -->
+    <div class="lg:w-3/4 xl:w-4/5 lg:m-5 w-full">
+        <!-- NAVBAR -->
+        <div class="m-5 lg:m-0">
+            <div class="grid grid-cols-12 gap-6 mt-6">
+                <div class="col-span-12">
+                    <p class="text-lg">تغییر رمز عبور :</p>
+                    <form method="POST" action="{% url 'user:change-password' %}"
+                            class="grid grid-cols-12 child:col-span-12 md:child:col-span-6 gap-5 bg-white shadow child:flex child:flex-col child:gap-x-2 mt-4 p-4 dark:bg-zinc-700 rounded-lg ">
+                        {% csrf_token %}
+                        
+                        <div>
+                            <label for="" class="mb-2"> رمز عبور فعلی </label>
+                            {{ change_password_form.current_password }}
+                        </div>
+                        <div>
+                            <label for="" class="mb-2">رمز عبور جدید</label>
+                            {{ change_password_form.password }}
+                        </div>
+                        <div>
+                            <label for="" class="mb-2">تایید رمز عبور جدید</label>
+                            {{ change_password_form.conform_password }}
+
+                        </div>
+
+                        <div>
+                            <label for="" class="mb-2"><br></label>
+
+                            <button class="main-btn w-[40%] py-2">ثبت</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+            <div class="grid grid-cols-12 gap-6 mt-6">
+                <div class="col-span-12">
+                    <p class="text-lg"> جزییات حساب کاربری :</p>
+                    <form action="{% url 'user:edit-information' %}" method="POST"
+                            class="grid grid-cols-12 child:col-span-12 md:child:col-span-6 gap-5 bg-white shadow child:flex child:flex-col child:gap-x-2 mt-4 p-4 dark:bg-zinc-700 rounded-lg ">
+                                                {% csrf_token %}
+
+                        <div>
+                            <label for="" class="mb-2"> نام :</label>
+                            {{ edit_user_information_form.first_name }}
+                        </div>
+                        <div>
+                            <label for="" class="mb-2"> نام خانوادگی :</label>
+                            {{ edit_user_information_form.last_name }}
+                        </div>
+
+                        <div>
+                            <label for="" class="mb-2"> ایمیل :</label>
+                            {{ edit_user_information_form.email }}
+                        </div>
+                        <div>
+                            <label for="" class="mb-2"><br></label>
+
+                        <button class="main-btn w-[40%] py-2">ثبت </button>
+
+                        </div>
+
+
+
+                    </form>
+
+                </div>
+            </div>
+            <div class="grid grid-cols-12 gap-6 mt-6">
+                <div class="col-span-12">
+                    <p class="text-lg"> تغییر شماره :</p>
+                    <form action="{% url 'user:change-number' %}" method="POST"
+                            class="grid grid-cols-12 child:col-span-12 md:child:col-span-6 gap-5 bg-white shadow child:flex child:flex-col child:gap-x-2 mt-4 p-4 dark:bg-zinc-700 rounded-lg ">
+                                                  {% csrf_token %}
+
+                        <div class="">
+                            <div class="border-b-2 border-green-500 ">
+                            {{ active_number_form.phone_number }}
+                                </div>
+                        </div>
+                        <div>
+
+                            <button class="main-btn w-[40%] py-2">ثبت </button>
+
+                        </div>
+
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

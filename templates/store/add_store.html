@@ -1,0 +1,188 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    بروز رسانی یا اضافه کردن فروشگاه
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">فروشگاها</li>
+    <li class="active">بروز رسانی اطلاعات فروشگاه یا اضافه کردن فروشگاه</li>
+{% endblock %}
+
+{% block body %}
+    <div class=" box-primary" style="margin-top:40px">
+        <div class="box-header with-border">
+            <h3 class="box-title">بروز رسانی اطلاعات فروشگاه یا اضافه کردن فروشگاه</h3>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
+        <form role="form" method='POST' action='' class="box" enctype='multipart/form-data'>
+            {% csrf_token %}
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-info btn-flat">نام فروشکاه</button>
+                    </span>
+                        {{ form.name }}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="input-group input-group-sm">
+
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-info btn-flat">شماه همراه</button>
+                    </span>
+                        {{ form.phone }}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-info btn-flat">تلفن ثابت</button>
+                    </span>
+                        {{ form.phone2 }}
+                    </div>
+                </div>
+
+            </div>
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+                      <button type="button" class="btn  btn-flat">مرچنت کد زرین پال</button>
+                    </span>
+                        {{ form.merchant_id }}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="input-group input-group-sm">
+
+                        <span class="input-group-btn">
+                      <button type="button" class="btn  btn-flat">شهر مبدا مغازه</button>
+                    </span>
+                        {{ form.orgin_city_id }}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+
+                      <button type="button" class="btn btn-block  btn-flat">وضعیت فعال بودن: {{ form.is_active }} </button>
+                    </span>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-3">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-warning btn-flat">لوگو</button>
+                    </span>
+                        {{ form.logo }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+
+                    <div class="input-group input-group-sm">
+
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-warning btn-flat">عکس معرفی</button>
+                    </span>
+                        {{ form.about_image }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-warning btn-flat">ادرس فروشگاه </button>
+                    </span>
+                        {{ form.address }}
+                    </div>
+                </div>
+
+            </div>
+            <div class="box-body  flex col-md-12">
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-success btn-flat">ای دی واتساپ</button>
+                    </span>
+                        {{ form.whats_app_ID }}
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+
+                    <div class="input-group input-group-sm">
+
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-success btn-flat">لینک واتساپ</button>
+                    </span>
+                        {{ form.whats_app_link }}
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-success btn-flat">ای دی تلگرام</button>
+                    </span>
+                        {{ form.telegram_app_ID }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-success btn-flat">لینک تلگرام</button>
+                    </span>
+                        {{ form.telegram_app_Link }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-success btn-flat">ای دی اینستاگرام</button>
+                    </span>
+                        {{ form.instagram_app_ID }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-success btn-flat">لینک اینستاگرام</button>
+                    </span>
+                        {{ form.instagram_app_Link }}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- /.box-body -->
+
+            <div class="box-footer">
+                <button type="submit" class="btn btn-info btn-sm btn-block">ثبت</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+

@@ -1,0 +1,121 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    لیست برندها
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">برنامه ها</li>
+{% endblock %}
+
+{% block body %}
+    <div class=" box-primary" style="margin-top:40px">
+        <div class="box-header with-border">
+            <h3 class="box-title"> اضافه کردن برنامه </h3>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
+        <form role="form" method="POST" action="" class="box" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-info btn-flat">نام </button>
+                    </span>
+                        {{form.name}}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="input-group input-group-sm">
+
+                        <span class="input-group-btn">
+                      <button type="button" class="btn btn-info btn-flat">فایل</button>
+                    </span>
+                        {{ form.file }}
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- /.box-body -->
+
+            <div class="box-footer">
+                <div class="input-group ">
+                        <span class="btn-danger input-group-addon " style="background-color: #f56954; color: #FFFFFF">
+                             فعال کردن برای دانلود :
+                            {{ form.is_active }}
+                        </span>
+                    <button type="submit" class="btn btn-info btn-sm btn-block">ثبت</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="box" style="">
+        <div class="box-header">
+            <h3 class="box-title"> لیست برنامه های اضافه شده</h3>
+
+            <div class="box-tools">
+                <ul class="pagination pagination-sm no-margin pull-right">
+
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page={{ page_obj.previous_page_number }}">«</a></li>
+                    {% endif %}
+                    {% for page_number in page_obj.paginator.page_range %}
+
+                        <li class="{% if page_number == page_obj.number %} active {% endif %}"><a
+                                href="?page={{ page_number }}">{{ page_number }}</a></li>
+
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}">»</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- /.box-header -->
+        <div class="box-body no-padding">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th>نام برنامه</th>
+                    <th>حجم</th>
+                    <th>مشاهده</th>
+                    <th>فعال / غیر فعال کردن دانلود</th>
+                    <th>حذف</th>
+                </tr>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.file.size|filesizeformat  }}</td>
+                        <td><a href="" class="btn btn-success ">
+                            مشاهده
+                        </a></td>
+                        <td><a href="{% url 'store:remove-active-deactive' item.pk %}" class="btn btn-info">
+                            {% if item.is_active %}
+                                    غیر فعال کردن
+                            	{% else %}
+                                 فعال کردن
+
+                            {% endif %}
+                        </a></td>
+                        <td>
+                            <form action="{% url 'store:remove-active-deactive' item.pk %}" method="post">{% csrf_token %}<button type="submit" class="btn btn-danger"  >
+                            حذف
+                        </button></form></td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <!-- /.box-body -->
+    </div>
+{% endblock %}
+
+

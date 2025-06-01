@@ -1,0 +1,51 @@
+
+{% extends 'Base/Base.html' %}
+
+{% block title %}
+درباره ما
+{% endblock %}
+
+{% block breadcrumb %}
+
+    <li class="flex items-center gap-x-2">
+        <a href="{% url 'site:about-us' %}"> درباره ما</a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <main class="container child:mt-8">
+
+
+        <!-- aboute us -->
+        <section class="w-full  flex flex-col lg:flex-row gap-4 p-5 rounded-lg shadow bg-white dark:bg-zinc-700">
+            <div class=" w-full lg:w-2/4">
+                <!-- LOGO -->
+                <a href="/" class="text-green-500 transition-colors w-fit block">
+                    <img src="{{ site.logo.url }}" alt="logo" class="w-24 h-15 " height="6px" width="96px"/>
+
+                </a>
+
+                {{ site.long_description|safe }}
+
+
+                <br>
+                <hr>
+                <br>
+                <div class="flex items-start justify-start gap-x-10">
+                    <a href="{{ site.instagram_link }}" class="flex items-center gap-x-2">
+                        <p dir="ltr">{{ site.instagram_ID }}</p>
+                        <img src="/static/Images/svg/instagram.png" class="w-6 h-6" alt="instagram"/>
+                    </a>
+                    <a href="{{ site.telegram_link }}" class="flex items-center gap-x-2">
+                        <p dir="ltr">{{ site.telegram_ID  }}</p>
+                        <img src="/static/Images/svg/telegram.png" class="w-6 h-6" alt="instagram"/>
+                    </a>
+                </div>
+            </div>
+            <div class="flex justify-end  w-full lg:w-2/4">
+                <img src="{{ site.about_image.url }}" class="rounded-lg lg:h-[35rem]" alt="">
+            </div>
+        </section>
+    </main>
+{% endblock %}
+

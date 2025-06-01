@@ -1,0 +1,59 @@
+
+{% extends 'Base/Base.html' %}
+
+{% block title %}
+    خوش امدید
+{% endblock %}
+
+
+{% block content %}
+
+    <main class="container flex items-center flex-col justify-center mt-8">
+        <div class="max-w-lg w-full shadow">
+            <div class="bg-white dark:bg-zinc-700 rounded-lg overflow-hidden">
+                <div class="p-3 lg:p-8">
+                    <h2 class="text-center text-xl lg:text-3xl font-DanaMedium">
+                        خوش آمدید
+                    </h2>
+                    <p class="mt2 lg:mt-4 text-center text-gray-400">ایجاد حساب کاربری</p>
+                    <form method="POST" action="" class="mt-8 space-y-6">
+                        {% csrf_token %}
+                        <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
+                            {{ form.phone_number }}
+                            <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
+                                <use href="#user"></use>
+                            </svg>
+                        </div>
+                        <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
+                            {{ form.password }}
+                            <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
+                                <use href="#lock"></use>
+                            </svg>
+                        </div>
+                        <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
+                            {{ form.conform_password }}
+                            <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
+                                <use href="#lock"></use>
+                            </svg>
+                        </div>
+
+                        <div>
+                            <button
+                                class="group transition-colors relative w-full flex justify-center py-3 px-4 border border-transparent font-DanaMedium rounded-lg text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                type="submit">
+                                عضویت
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="px-8 py-4 text-center">
+                    <span class="text-gray-400">
+                        قبلا ثبت نام کرده اید؟
+                    </span>
+                    <a class="font-medium text-green-500 hover:text-green-400" href="{% url 'user:login' %}"> وارد شوید</a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+{% endblock %}

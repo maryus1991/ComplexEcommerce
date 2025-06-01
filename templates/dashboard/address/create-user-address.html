@@ -1,0 +1,47 @@
+{% extends 'dashboard/Base/dashboard-base.html' %}
+
+{% block title %}
+    اضافه کردن ادرس
+{% endblock %}
+
+{% block dashboard %}
+
+        <div class="m-5  lg:m-0 ">
+            <div class="grid grid-cols-12 gap-6 lg:gap-12 mt-6">
+                <div class="col-span-12">
+
+                    <section class="w-full p-5 rounded-lg shadow bg-white dark:bg-zinc-700">
+                        <h2 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1">اضافه یا
+                            تغییر ادرس</h2>
+                        <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-4 mb-8 text-sm lg:text-base">
+                            لطفا در وارد کردن ادرس و کد پستی دقت نمایید تا در دریافت کالا به مشکل نخورید
+                        </p>
+
+                        <div class="flex flex-col lg:flex-row items-start gap-x-8">
+                            <div class="w-full lg:w-3/4">
+                                <form class="w-full grid grid-cols-12 gap-4" action="" method="POST">
+                                    {% csrf_token %}
+                                    {{ form.name }}
+                                    {{ form.last_name }}
+                                    {{ form.province }}
+                                    {{ form.city }}
+                                    {{ form.address }}
+                                    {{ form.phone }}
+                                    {{ form.zipcode }}
+                                    {{ form.additional_decryption }}
+
+                                    <button class="mx-auto rounded-lg col-span-12 w-32 p-2 bg-green-500 hover:bg-green-600 text-white transition-all">
+                                        ثبت
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+
+
+{% endblock %}

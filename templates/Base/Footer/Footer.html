@@ -1,0 +1,118 @@
+<footer class="relative mt-14 lg:mt-32 text-gray-300 bg-zinc-800 pt-8">
+
+    <div class="container">
+        <!-- EMAIL BOX -->
+        <div
+                class="mb-12 flex border-b pb-8 border-white/10 flex-col-reverse sm:flex-row gap-y-5 items-center sm:items-end justify-between">
+            <div class="flex gap-y-2 flex-col">
+                <h2 class="font-DanaDemiBold">از جدیدترین تخفیف ها با خبر شوید</h2>
+                <form action="{% url 'site:add-to-news-letters' %}" method="post"
+                      class="bg-zinc-600 p-1 rounded-lg w-72 lg:w-[350px] flex items-center justify-between">
+                    {% csrf_token %}
+                    {{ form.phone_number }}
+                    <button class="px-4 py-1 bg-green-500 rounded-lg font-DanaMedium">
+                        ثبت
+                    </button>
+                </form>
+            </div>
+            <!-- GO TO TOP BTN -->
+            <a href="" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;"
+               class="flex items-center gap-x-2 text-sm p-2 cursor-pointer rounded-lg border-2 border-gray-200">
+                بازگشت به بالا
+                <svg class="w-5 h-5 rotate-180">
+                    <use href="#arrow-down-circle"></use>
+                </svg>
+            </a>
+        </div>
+
+        <div class="flex mt-8 items-center justify-between flex-col lg:flex-row gap-y-10 lg:gap-x-20 flex-wrap">
+            <div class="flex flex-col gap-y-2 w-full lg:w-[30%]">
+                <!-- LOGO -->
+                <a href="/" class="text-green-500 transition-colors w-fit block">
+                    <img src="{{ site.logo.url }}" alt="logo" class="w-25 h-15 "/>
+
+                </a>
+                <!-- ABOUTE -->
+                <p class="leading-8">
+                    {{ site.short_description }}
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-y-2 w-full lg:w-auto">
+                <h2 class="font-DanaDemiBold text-lg mb-3">- دسترسی سریع</h2>
+                <div class="flex gap-x-10 child:space-y-2">
+                    <ul class="child-hover:text-green-500 child:transition-all">
+                        {% for link in links1 %}
+                            <li>
+                                <a href="{{ link.link }}">{{ link.title }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <ul class="child-hover:text-green-500 child:transition-colors">
+                        {% for link in links2 %}
+                            <li>
+                                <a href="{{ link.link }}">{{ link.title }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-y-5 w-full lg:w-auto">
+                <h2 class="font-DanaDemiBold text-lg">- تماس با ما</h2>
+                <div
+                        class="flex items-center gap-x-1 lg:gap-x-2 hover:text-green-500 transition-colors cursor-pointer">
+                    <svg class="w-5 h-5">
+                        <use href="#map"></use>
+                    </svg>
+                    <p class="line-clamp-1">
+                        {{ site.address }}
+                    </p>
+                </div>
+
+                <div
+                        class="flex lg:items-center flex-col gap-y-2 lg:flex-row gap-x-5 child:cursor-pointer child-hover:text-green-500 child:transition-colors">
+                        <span class="flex items-start gap-x-2">
+                            <svg class="w-5 h-5">
+                                <use href="#envelope"></use>
+                            </svg>
+                            <p>{{ site.email }}</p>
+                        </span>
+
+                    <span class="flex items-start gap-x-2">
+                            <svg class="w-5 h-5">
+                                <use href="#phone"></use>
+                            </svg>
+                            <p>{{ site.phone }}</p>
+                            <p class="mr-2">{{ site.phone2 }}</p>
+                        </span>
+                </div>
+
+                <div class="flex items-start justify-start gap-x-10">
+                    <a href="{{ site.instagram_link }}" class="flex items-center gap-x-2">
+                        <p dir="ltr">{{ site.instagram_ID }}</p>
+                        <img src="/static/Images/svg/instagram.png" class="w-6 h-6" alt="instagram"/>
+                    </a>
+                    <a href="{{ site.telegram_link }}" class="flex items-center gap-x-2">
+                        <p dir="ltr">{{ site.telegram_ID }}</p>
+                        <img src="/static/Images/svg/telegram.png" class="w-6 h-6" alt="instagram"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- COPY RIGTH -->
+    <div class="bg-zinc-900">
+        <div class="container  mt-12 py-2 flex flex-col lg:flex-row gap-y-2 lg:items-center lg:justify-between">
+            <p class="text-sm lg:text-base">
+                {{ site.copy_right_text }}
+            </p>
+
+        </div>
+    </div>
+</footer>
+
+<!-- OVERLAY -->
+<div class="overlay hidden fixed w-full h-full top-0 left-0 right-0 bg-black/40 z-40 transition-all duration-300">
+</div>
+

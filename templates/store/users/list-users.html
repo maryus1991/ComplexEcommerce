@@ -1,0 +1,124 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    لیست برندها
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">کاربران</li>
+{% endblock %}
+
+{% block body %}
+    <div class="box" style="margin-top: 100px;">
+        <div class="box-header">
+            <h3 class="box-title"> لیست کاربران</h3>
+
+            <div class="box-tools">
+                <ul class="pagination pagination-sm no-margin pull-right">
+
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page={{ page_obj.previous_page_number }}">«</a></li>
+                    {% endif %}
+                    {% for page_number in page_obj.paginator.page_range %}
+
+                        <li class="{% if page_number == page_obj.number %} active {% endif %}"><a
+                                href="?page={{ page_number }}">{{ page_number }}</a></li>
+
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}">»</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body no-padding">
+            <table class="table">
+                <tbody>
+                <tr>
+
+                    <th>نام</th>
+                    <th>نام خانوادگی</th>
+                    <th>شماره</th>
+                    <th>ایمیل</th>
+                    <th>تایید بودن حساب</th>
+                    <th>وضعیت ادمین فروشگاه بودن</th>
+                    <th>مشاهده فعالیت</th>
+                    <th>فعال / غیر فعال کردن</th>
+                    <th>بروز رسانی کاربر</th>
+                    <th>حذف</th>
+
+                </tr>
+                {% for item in users %}
+                    <tr>
+                        <td>{{ item.first_name }}</td>
+                        <td>{{ item.last_name }}</td>
+                        <td class="pull-right" dir="ltr">{{ item.PhoneNumber }}</td>
+                        <td>{{ item.email }}</td>
+                        <td>
+                            {% if  item.is_verified %}
+                                <span class="btn btn-success">
+                                تایید شده
+                                </span>
+                            {% else %}
+                                <span class="btn btn-danger">
+                                تایید نشده
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.is_store_admin %}
+                                <a class="btn btn-flat btn-warning">
+                                    ادمین میباشد
+                                </a>
+                            {% else %}
+                                <a class="btn btn-flat btn-info">
+                                    ادمین نمیباشد
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td><a class="btn btn-flat btn-success" href="">
+                            مشاهده
+                        </a></td>
+                        <td>
+                            {% if item != user %}
+                                {% if item.is_active %}
+                                    <a class="btn btn-flat btn-info" href="{% url 'store:user-active-or-deactivate' item.id %}">
+                                        غیر فعال کردن
+                                    </a>
+                                {% else %}
+                                    <a class="btn btn-flat btn-warning" href="{% url 'store:user-active-or-deactivate' item.id %}">
+                                        فعال کردن
+                                    </a>
+
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td>
+
+
+                            <a class="btn btn-flat btn-success" href="{% url 'store:user-update' item.id %}">
+                                بروزرسانی
+                            </a>
+
+                        </td>
+                        <td>
+                            {% if not item.is_store_admin %}
+
+                                <a class="btn btn-flat btn-danger" href="{% url 'store:user-remove' item.pk %}">
+                                    حذف
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <!-- /.box-body -->
+    </div>
+{% endblock %}
+
+

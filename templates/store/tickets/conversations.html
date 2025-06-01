@@ -1,0 +1,285 @@
+{% extends 'Base/AdminBase.html' %}
+{% load jalali_tags %}
+
+{% block title %}
+    {{ obj.subject }}
+{% endblock %}
+
+{% block header_reference %}
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/static/dist/css/rtl.css">
+    <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
+    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+    <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">تیکت</li>
+    <li class="active">{{ obj.subject }}</li>
+{% endblock %}
+
+{% block body %}
+
+
+    <div style="margin-top:100px; " class="box box-success direct-chat direct-chat-success">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{ obj.subject }}</h3>
+            <br>
+            <br>
+            <br>
+            <br>
+
+
+            <div class="box-tools pull-right">
+                <span data-toggle="tooltip" title="" class="btn btn-default"
+                      data-original-title="3 New Messages">      فرستده : {{ obj.store.name }}
+                    </span>
+                <span data-toggle="tooltip" title="" class="btn btn-success"
+                      data-original-title="3 New Messages"> تعداد : {{ obj.message.count }}</span>
+
+                <button type="button" class="btn btn-default" data-toggle="tooltip" title=""
+                        data-widget="chat-pane-toggle" data-original-title="Contacts">
+                    <span class="">تاریخ باز شدن این تیکت : {{ obj.date|to_jalali:' %H:%M - %Y/%m/%d ' }}</span>
+
+                </button>
+
+                {% if obj.close_ticket %}
+                    <p class="btn btn-warning"> این تیکت در تاریخ {{ obj.closed_at|to_jalali:'%H:%M - %Y/%m/%d' }} بسته
+                        شده است</p>
+                {% else %}
+                    {% if obj.user == user %}
+                        <a class="btn btn-warning" href="{% url 'store:close-ticket-sender-side' obj.id %}">بستن
+                            تیکت </a>
+                    {% elif obj.store == user.store or user.is_superuser %}
+                        <a class="btn btn-warning" href="{% url 'store:close-ticket-receiver-side' obj.id %}">بستن
+                            تیکت </a>
+
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="direct-chat-messages" style="height: 400px;">
+            <div class="box-body">
+                {% for message in obj.message.all %}
+                    {% if not message.admin_message %}
+                        <!-- Conversations are loaded here -->
+                        <!-- Message. Default to the left -->
+                        <div class="direct-chat-msg ">
+                            <div class="direct-chat-info ">
+                                <span class="direct-chat-name pull-right "
+                                      style="margin-left: 10px; margin-right: 10px"> {{ obj.user.store.name }} </span>
+                                <span class="direct-chat-timestamp pull-right">{{ message.date|to_jalali:'%H:%M - %Y/%m/%d' }}</span>
+                            </div>
+                            <br>
+                            <!-- /.direct-chat-info -->
+
+                            <!-- /.direct-chat-img -->
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <button type="submit"
+                                            class="btn btn-block btn-flat btn-info">پیام فرستنده :</button>
+                                  </span>
+                                <span style="padding: 6px" class=" btn-block btn-flat btn-default">
+                                     {{ message.message|safe }}
+                                </span>
+                            </div>
+
+                            <!-- /.direct-chat-text -->
+                        </div>
+                        <br>
+                        <!-- /.direct-chat-msg -->
+
+                    {% else %}
+                        <!-- Message to the right -->
+                        <div class="direct-chat-msg right">
+                            <div class="direct-chat-info clearfix">
+                                <span class="direct-chat-name pull-right">
+
+                                </span>
+                                <span class="direct-chat-timestamp pull-left">
+                                    {{ message.date|to_jalali:'%H:%M - %Y/%m/%d' }}
+                                </span>
+                            </div>
+                            <!-- /.direct-chat-info -->
+                            <div class="input-group">
+
+
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-block btn-flat btn-warning">
+                                                                            {% if obj.store %}
+                                                                                پیام {{ obj.store.name }} :
+                                                                            {% else %}
+                                                                                پیام ادمین سایت
+                                                                            {% endif %}
+                                    </button>
+                                  </span>
+                                <span style="padding: 6px" class=" btn-block btn-flat btn-default">
+                                     {{ message.message|safe }}
+                                </span>
+                            </div>
+                            <!-- /.direct-chat-text -->
+                        </div>
+                        <!-- /.direct-chat-msg -->
+                        <!--/.direct-chat-messages-->
+                        <!-- Contacts are loaded here -->
+
+                        <!-- /.direct-chat-pane -->
+                    {% endif %}
+
+                {% endfor %}
+            </div>
+            <div class="direct-chat-contacts">
+                <ul class="contacts-list">
+                    <li>
+                        <a>
+                            <img class="contacts-list-img" src="/static/dist/img/user1-128x128.jpg"
+                                 alt="User Image">
+
+                            <div class="contacts-list-info">
+                            <span class="contacts-list-name">
+                                    {% if obj.store %}
+                                        {{ obj.store.name }}
+                                    {% else %}
+                                        ادمین سایت
+                                    {% endif %}
+                                <small class="contacts-list-date pull-right"></small>
+                            </span>
+                                <span class="contacts-list-msg">پشتیبانی</span>
+                            </div>
+
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+        <!-- /.box-body -->
+        <!-- /.box-footer-->
+    </div>
+    {% if not obj.close_ticket %}
+
+        <div class="box-footer">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" name="message" class="form-control" placeholder="پیام ...">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-success btn-flat">ارسال</button>
+                      </span>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+    <!-- /.box-header -->
+    <!-- form start -->
+
+
+{% endblock %}
+
+{% block footer_reference %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script src="/static/node_modules/moment/min/moment.min.js"></script>
+    <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#tarikh').persianDatepicker({
+                altField: '#tarikhAlt',
+                altFormat: 'X',
+                format: 'D MMMM YYYY HH:mm a',
+                observer: true,
+                timePicker: {
+                    enabled: true
+                },
+            });
+        });
+        $(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
+            //Money Euro
+            $('[data-mask]').inputmask()
+
+            //Date range picker
+            $('#reservation').daterangepicker()
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                format: 'MM/DD/YYYY h:mm A'
+            })
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                }
+            )
+
+            //Date picker
+            $('#datepicker').datepicker({
+                autoclose: true
+            })
+
+            //iCheck for checkbox and radio inputs
+            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue'
+            })
+            //Red color scheme for iCheck
+            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                checkboxClass: 'icheckbox_minimal-red',
+                radioClass: 'iradio_minimal-red'
+            })
+            //Flat red color scheme for iCheck
+            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            })
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false
+            })
+        })
+    </script>
+{% endblock %}
+

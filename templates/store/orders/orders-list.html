@@ -1,0 +1,83 @@
+{% extends 'Base/AdminBase.html' %}
+{% load jalali_tags %}
+{% load products_tags %}
+
+
+{% block title %}
+    لیست برندها
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">سفارشات</li>
+{% endblock %}
+
+{% block body %}
+    <div class="box" style="margin-top: 100px;">
+        <div class="box-header">
+            <h3 class="box-title">سفارشات</h3>
+
+            <div class="box-tools">
+                <ul class="pagination pagination-sm no-margin pull-right">
+
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page={{ page_obj.previous_page_number }}">«</a></li>
+                    {% endif %}
+                    {% for page_number in page_obj.paginator.page_range %}
+
+                        <li class="{% if page_number == page_obj.number %} active {% endif %}"><a
+                                href="?page={{ page_number }}">{{ page_number }}</a></li>
+
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}">»</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body no-padding">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th>شماره کاربر</th>
+                    <th>قیمت کل</th>
+                    <th> تاریخ پرداخت</th>
+                    <th>وضعیت ارسال</th>
+                    <th>مشاهده جزئییات</th>
+                </tr>
+                {% for item in orders %}
+
+                    <tr>
+                        <td>{{ item.user.PhoneNumber }}</td>
+                        <td>{{ item.total_price|tdc }}</td>
+                        <td>{{ item.second_date|to_jalali:"%Y/%m/%d - %H:%M" }}</td>
+                        <td >
+                        <p class="btn btn-warning">
+                            {% if item.vip_post %}
+                                ارسال با پست
+                            {% elif item.tipax_post_delivery %}
+                                ارسال با تیپاکس
+                            {% elif item.physical_delivery %}
+                                تحویل حضوری
+                            {% elif item.in_city_delivery %}
+                                تحویل درون شهری ({{ item.store.orgin_city }})
+                            {% endif %}</p>
+                        </td>
+                        <td>
+                            <a href="{% url 'store:orders-detail' item.pk %}" class="btn btn-success">
+                                مشاهده
+                            </a>
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <!-- /.box-body -->
+    </div>
+{% endblock %}
+
+

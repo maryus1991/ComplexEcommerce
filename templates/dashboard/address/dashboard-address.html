@@ -1,0 +1,73 @@
+{% extends 'dashboard/Base/dashboard-base.html' %}
+
+
+{% block title %}
+    ادرس ها
+{% endblock %}
+
+
+
+{% block dashboard %}
+
+<div class="m-3 lg:m-5">  <!-- کاهش margin در موبایل -->
+    <div class="grid grid-cols-12 gap-3 lg:gap-6 xl:gap-12 mt-4 lg:mt-6">  <!-- کاهش gap در موبایل -->
+        <div class="col-span-12">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">  <!-- در موبایل عمودی -->
+                <p class="text-base lg:text-lg"> آدرس های من :</p>  <!-- کاهش سایز فونت در موبایل -->
+                <a href="{% url 'dashboard:create_address' %}" class="w-full sm:w-auto">
+                    <button class="main-btn bg-green-400 p-1 sm:p-2 gap-x-1 shadow w-full sm:w-auto">  <!-- دکمه فول‌عرض در موبایل -->
+                        آدرس جدید
+                        <svg class="w-4 h-4 lg:w-5 lg:h-5">  <!-- کاهش سایز آیکون در موبایل -->
+                            <use href="#add"></use>
+                        </svg>
+                    </button>
+                </a>
+            </div>
+
+            {% if not addresses %}
+                <p class="text-base lg:text-lg mt-3">ادرسی برای نمایش موجود نیست</p>
+            {% endif %}
+
+            {% for address in addresses %}
+                <div class="bg-white shadow child:flex child:items-center child:gap-x-2 mt-3 lg:mt-4 p-3 lg:p-4 dark:bg-zinc-700 rounded-lg flex flex-col space-y-3 lg:space-y-5">
+                    <span class="text-base lg:text-lg">  <!-- کاهش سایز فونت -->
+                        {{ address.province }} {{ address.city }} {{ address.address }}
+                    </span>
+                    <span class="text-xs lg:text-sm">  <!-- کاهش سایز فونت -->
+                        {{ address.additional_decryption }}
+                    </span>
+
+                    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3">  <!-- در موبایل عمودی -->
+                        <p class="text-gray-400 text-xs lg:text-sm">نام دریافت کننده: {{ address.name }} {{ address.last_name }}</p>
+                        <p class="text-gray-400 text-xs lg:text-sm">کد پستی: {{ address.zipcode }}</p>
+                        <p class="text-gray-400 text-xs lg:text-sm">
+                            شماره تماس: <span dir="ltr">{{ address.phone }}</span>
+                        </p>
+
+                        <div class="flex items-center gap-x-2 lg:gap-x-4 mt-2 lg:mt-0">  <!-- کاهش gap در موبایل -->
+                            <a href="{% url 'dashboard:remove_address' address.id %}" class="w-full sm:w-auto">
+                                <button class="bg-red-500/20 text-red-400 flex items-center gap-x-1 rounded-lg p-1 lg:p-2 w-full sm:w-auto">
+                                    <p class="text-xs lg:text-sm">حذف</p>  <!-- کاهش سایز فونت -->
+                                    <svg class="w-4 h-4 lg:w-5 lg:h-5">
+                                        <use href="#x-close"></use>
+                                    </svg>
+                                </button>
+                            </a>
+                            <a href="{% url 'dashboard:update_address' address.id %}" class="w-full sm:w-auto">
+                                <button class="bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-1 lg:p-2 w-full sm:w-auto">
+                                    <p class="text-xs lg:text-sm">ویرایش</p>  <!-- کاهش سایز فونت -->
+                                    <svg class="w-4 h-4 lg:w-5 lg:h-5">
+                                        <use href="#edit"></use>
+                                    </svg>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

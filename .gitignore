@@ -1,0 +1,7 @@
+.venv/
+
+.idea/
+*.pyc
+.envs
+/static/node_modules/
+/media/

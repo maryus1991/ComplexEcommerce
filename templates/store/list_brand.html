@@ -1,0 +1,99 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    لیست برندها
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">برندها</li>
+{% endblock %}
+
+{% block body %}
+    <div class="box" style="margin-top: 100px;">
+        <div class="box-header">
+            <h3 class="box-title"> لیست برندها</h3>
+
+            <div class="box-tools">
+                <ul class="pagination pagination-sm no-margin pull-right">
+            
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page={{ page_obj.previous_page_number }}">«</a></li>
+                    {% endif %}
+                    {% for page_number in page_obj.paginator.page_range %}
+
+                        <li class="{% if page_number == page_obj.number %} active {% endif %}"><a
+                                href="?page={{ page_number }}">{{ page_number }}</a></li>
+
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}">»</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body no-padding">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th>#</th>
+                    <th>نام برند</th>
+                    <th>تعداد محصولات</th>
+                    <th>مشاهده محصولات</th>
+                    <th>ویرایش</th>
+                    <th>فعال / غیر فعال کردن</th>
+                    <th>حذف</th>
+                </tr>
+                {% for brand in brands %}
+
+
+                    <tr>
+                        <td>{{ brand.id }}</td>
+                        <td>{{ brand.name }}</td>
+                        <td>{{ brand.products.count }}</td>
+                        <td>
+                            <a class="btn btn-block btn-success" href="{% url 'product:list' %}?brand={{ brand.id }}">
+                                مشاهده
+                            </a>
+                        </td>
+                        <td>
+                            {% if  user.is_superuser %}
+
+                                <a class="btn btn-block btn-success" href="/product/3/">
+                                    مشاهده
+                                </a>
+                            {% else %}
+                                برای انجام این کار با ادمین تماس بگیرید
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if   user.is_superuser %}
+
+                                <a class="btn btn-block btn-success" href="/product/3/">
+                                    مشاهده
+                                </a>
+                            {% else %}
+                                برای انجام این کار با ادمین تماس بگیرید
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.is_superuser %}
+
+                                <a class="btn btn-block btn-success" href="/product/3/">
+                                    مشاهده
+                                </a>
+                            {% else %}
+                                برای انجام این کار با ادمین تماس بگیرید
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <!-- /.box-body -->
+    </div>
+{% endblock %}
+
+

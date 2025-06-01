@@ -1,0 +1,120 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    اضافه کردن محصول
+{% endblock %}
+
+{% block header_reference %}
+    <link rel="stylesheet" href=/static/dist/css/bootstrap-theme.css">
+
+    <link rel="stylesheet" href=/static/dist/css/rtl.css">
+
+    <link rel="stylesheet" href=/static/node_modules/font-awesome/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href=/static/node_modules/ionicons/dist/css/ionicons-core.min.css">
+
+    <link rel="stylesheet" href=/static/dist/css/AdminLTE.min.css">
+
+    <link rel="stylesheet" href=/static/dist/css/skins/_all-skins.min.css">
+
+    <link rel="stylesheet" href=/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <style>.cke {
+        visibility: hidden;
+    }</style>
+    <link rel="stylesheet" type="text/css" id="u0"
+          href="/static/dist/js/lightgray.js">
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/config.js?t=E8PB"></script>
+    {#    <script type="text/javascript"#}
+    {#            src="/static/dist/js/bootstrapck-skin.js"></script>#}
+    <link rel="stylesheet" type="text/css"
+          href="/static/dist/css/bootstrapck-editor_gecko.css">
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/lang/fa.js?t=E8PB"></script>
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/styles.js?t=E8PB"></script>
+    <script type="text/javascript"
+            src="/static/dist/js/wpmore-plugin.js"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">کاربران</li>
+    <li class="active"> حذف کردن کردن کابر</li>
+{% endblock %}
+
+{% block body %}
+    {% if form.errors %}
+        <div class="col-md-12 bg-red" style="margin-bottom: 20px; margin-top: 50px; border-radius: 10px">
+            {{ form.errors }}
+
+        </div>
+
+    {% endif %}
+
+    <!-- Main content -->
+    <section class="content" style="min-height: 600px; margin-top: 20px;">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-info">
+
+
+                    <!-- /.box-header -->
+                    <div class="box-body pad">
+                        <form enctype="application/x-www-form-urlencoded" method="post" action="">
+                            <h1>
+
+                                محصول : {{ item.PhoneNumber }}
+                            </h1>
+                            <h1>
+                                ایا مایل هستید که این کابر حذف شود ؟
+                                <br>
+                                در صورت تمایل لطفا شماره ان را وارد کنید
+                                <br>
+                                <br>
+                            </h1>
+                            <div class="col-md-12 form-group">
+                                <div class="">
+                                    <div class="col-md-12">
+                                        <div class="input-group input-group">
+                                            {% csrf_token %}
+
+                                            <input type="text" name="conform" class="form-control"
+                                                   placeholder="شماره کابر جهت حذف" required="">
+                                            <span class="input-group-btn">
+                                          <button type="submit" class="btn btn-flat btn-block text-lg"
+                                                  style="background-color: darkred; color: white;">
+                                            تایید و حذف
+                                          </button>
+                                        </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}
+
+{% block footer_reference %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
+    <script src="/dist/js/adminlte.min.js"></script>
+    <script src="/static/dist/js/demo.js"></script>
+    <script src="/static/node_modules/ckeditor/ckeditor.js"></script>
+    <script src="/static/node_modules/tinymce/tinymce.min.js"></script>
+
+{% endblock %}
