@@ -465,21 +465,43 @@
                 </a>
 
             {% endif %}
-            <a href="{% url 'dashboard:order_detail' user_order.id %}"
-               class="w-full  gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
-                مشاهده سبد خرید
+            {% if user.is_authenticated %}
 
-            </a>
+                <a href="{% url 'dashboard:order_detail' user_order.id %}"
+                   class="w-full  gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
+                    مشاهده سبد خرید
 
-            <button type="submit"
-                    class="w-full flex items-center  gap-y-1 gap-x-1 justify-between dark:bg-zinc-800 dark:text-gray-400  bg-gray-100 transition-all rounded-lg py-2 px-2 xl:px-3 font-DanaMedium text-sm xl:text-base">
-                <p> سبد خرید :</p>
-                <p>{{ user_order.total_price|tdc }} تومان</p>
-            </button>
-            <a href="{% url 'orders:payment-conform' user_order.id %}"
-               class="w-full  gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
-                ارسال کالا و نهایی کردن سبد خرید
-            </a>
+                </a>
+
+                <button type="submit"
+                        class="w-full flex items-center  gap-y-1 gap-x-1 justify-between dark:bg-zinc-800 dark:text-gray-400  bg-gray-100 transition-all rounded-lg py-2 px-2 xl:px-3 font-DanaMedium text-sm xl:text-base">
+                    <p> سبد خرید :</p>
+                    <p>{{ user_order.total_price|tdc }} تومان</p>
+                </button>
+                <a href="{% url 'orders:payment-conform' user_order.id %}"
+                   class="w-full  gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
+                    ارسال کالا و نهایی کردن سبد خرید
+                </a>
+            {% else %}
+                <a href="{% url 'user:login' %}"
+                   class="w-full  gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
+                    مشاهده سبد خرید
+
+                </a>
+
+                <button type="submit"
+                        class="w-full flex items-center  gap-y-1 gap-x-1 justify-between dark:bg-zinc-800 dark:text-gray-400  bg-gray-100 transition-all rounded-lg py-2 px-2 xl:px-3 font-DanaMedium text-sm xl:text-base">
+                    <p> سبد خرید :</p>
+                    <p>{{ user_order.total_price|tdc }} تومان</p>
+                </button>
+                <a href="{% url 'user:login' %}"
+                   class="w-full  gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
+                    ارسال کالا و نهایی کردن سبد خرید
+                </a>
+                <p>
+                برای مشاهده سبد خرید لطفا وارد سایت شوید
+                </p>
+            {% endif %}
         </div>
     </section>
 
