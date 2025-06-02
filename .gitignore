@@ -5,3 +5,4 @@
 .envs
 /static/node_modules/
 /media/
+*.sqlite3
