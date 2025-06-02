@@ -11,6 +11,7 @@ class BlogCategory(models.Model):
     name = models.CharField(max_length=100)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     image = models.ImageField(upload_to='blog_categories/')
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
@@ -24,6 +25,7 @@ class Blog(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='blogs')
     category = models.ForeignKey(BlogCategory, on_delete=models.CASCADE, related_name='blogs')
     content = RichTextUploadingField()
+    image = models.ImageField(upload_to='blogs/', null=True)
 
     is_active = models.BooleanField(default=False)
 
@@ -31,7 +33,7 @@ class Blog(models.Model):
         return self.title
 
 class BlogTag(models.Model):
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='tags')
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -40,6 +42,7 @@ class BlogTag(models.Model):
 class BlogView(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='views')
     ip = models.GenericIPAddressField()
+    count = models.IntegerField(default=1)
 
     def __str__(self):
         return self.ip

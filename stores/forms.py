@@ -520,6 +520,24 @@ class AddStoreBlogForm(forms.ModelForm):
     """
     for add blogs for stores
     """
+    image = forms.ImageField(
+        required=True,
+        widget=forms.FileInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'تصویر '
+
+            }
+        ),
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=[
+                    'jpg', 'jpeg', 'png', 'webp', 'heic'
+                ]
+            )
+        ]
+
+    )
     category = forms.ModelChoiceField(
         queryset=BlogCategory.objects.all(),
         widget=forms.Select(
@@ -536,7 +554,7 @@ class AddStoreBlogForm(forms.ModelForm):
 
     class Meta:
         model = Blog
-        fields = ('title', 'category', 'content',)
+        fields = ('title', 'category', 'content', 'image')
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
