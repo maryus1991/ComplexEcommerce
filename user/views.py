@@ -449,3 +449,6 @@ class ChangeNumber(CustomLoginRequiredMixin, View):
                 'لطفا در وارد کردن اطلاعات دقت فرمایید'
             )
         return redirect('dashboard:account')
+
+def e_namad(request):
+    return render(request, 'enamad-14545014.html')

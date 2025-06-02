@@ -5,6 +5,8 @@ from django.conf import settings
 from django.conf.urls import static
 from django.utils.crypto import get_random_string
 
+from user.views import e_namad
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("user/", include("user.urls")),
@@ -17,6 +19,7 @@ urlpatterns = [
     # path(f"{get_random_string(500)}-admin/", include("stores.urls")),
     path("ckeditor/", include("ckeditor_uploader.urls")),
     path("", include("sitesetting.urls")),
+    path("/14545014.txt", e_namad, name='e-namad'),
 ]
 
 handler404 = 'sitesetting.views.custom_404_page'
