@@ -19,7 +19,7 @@ urlpatterns = [
     # path(f"{get_random_string(500)}-admin/", include("stores.urls")),
     path("ckeditor/", include("ckeditor_uploader.urls")),
     path("", include("sitesetting.urls")),
-    path("/14545014.txt", e_namad, name='e-namad'),
+    path("14545014.txt", e_namad, name='e-namad'),
 ]
 
 handler404 = 'sitesetting.views.custom_404_page'
