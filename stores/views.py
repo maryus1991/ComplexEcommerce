@@ -920,6 +920,15 @@ class StoreAddBlog(UserStoreStaffMixin, FormView):
     form_class = AddStoreBlogForm
     success_url = reverse_lazy('store:blog-list')
 
+    def form_valid(self, form):
+        form.instance.store = self.request.user.store
+        form.instance.user = self.request.user
+        form.instance.is_active = False
+        form.save()
+        messages.success(self.request,
+                         'پست شما با موفقیت ایجاد شد لطفا برای انتشار ان پست را فعال کنید')
+        return super().form_valid(form)
+
 
 class StoreBlogListView(UserStoreStaffMixin, ListView):
     """
@@ -943,20 +952,69 @@ class StoreBlogUpdateView(UserStoreStaffMixin, UpdateView):
     success_url = reverse_lazy('store:blog-list')
     model = Blog
 
+    def form_valid(self, form):
+        form.instance.store = self.request.user.store
+        form.instance.user = self.request.user
+        form.instance.is_active = False
+        form.save()
+        messages.success(self.request,
+                         'پست شما با موفقیت بروزرسانی شد لطفا برای انتشار ان پست را فعال کنید')
+        return super().form_valid(form)
 
-class StoreBlogDeleteView(UserStoreStaffMixin, View):
+
+class StoreBlogDeleteView(StoreAdminUserStaff, View):
     """
     for delete blog posts
     """
-    pass
+    def get(self, request, *args, **kwargs):
+        pk = self.kwargs['pk']
+        post = get_object_or_404(Blog, pk=pk, store=self.request.user.store)
+        messages.warning(request, 'با حذف این پست تمامی اطلاعات به صورت کامل حذف می شوند بهتر است انرا غیر فعال کنید')
+        return render(request, 'store/blog/delete.html', {'post': post})
 
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs['pk']
+        post = get_object_or_404(Blog, pk=pk, store=self.request.user.store)
+
+        post_title:str = request.POST.get('conform')
+
+        if not post_title.isspace():
+            if post_title == post.title:
+                post.delete()
+                messages.info(request, 'پست شما با موفقیت حذف شد')
+
+            else:
+                messages.error(request,'در وارد کردن اطلاعات خواسته شده دقت کنید')
+        else:
+            messages.error(request, 'در وارد کردن اطلاعات خواسته شده دقت کنید')
+
+        return redirect('store:blog-list')
 
 class StoreActiveOrDeactivate(UserStoreStaffMixin, RedirectView):
     """
     for active or deactivate posts
     """
-    pass
+    def get_redirect_url(self, *args, **kwargs):
+        pk = self.kwargs['pk']
 
+        post = get_object_or_404(Blog, pk=pk, store=self.request.user.store)
+
+        if post.is_active:
+            post.is_active = False
+            post.updated_at = now()
+            post.save()
+
+            messages.warning(self.request,
+                             'پست شما غیر فعال شد  و برای کابران غیر قابل مشاهده میباشد')
+        else:
+            post.is_active = True
+            post.updated_at = now()
+            post.save()
+
+            messages.success(self.request,
+                             'پست شما فعال شد  و انتشار یافت و برای کابران قابل مشاهده میباشد')
+
+        return reverse('store:blog-list')
 
 class StoreBlogAddCategories(UserStoreStaffMixin, FormView):
     """
@@ -966,12 +1024,22 @@ class StoreBlogAddCategories(UserStoreStaffMixin, FormView):
     form_class = AddStoreBlogCategoryForm
     success_url = reverse_lazy('store:blog-list-category')
 
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request,
+                         'دسته با موفقیت ساخته شد')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request,
+                       form.errors)
+        return super().form_invalid(form)
 
 class StoreBlogListCategories(UserStoreStaffMixin, ListView):
     """
     for list all blog categories
     """
-    model = Blog
+    model = BlogCategory
     template_name = 'store/blog/category/list.html'
     context_object_name = 'categories'
     paginate_by = 25

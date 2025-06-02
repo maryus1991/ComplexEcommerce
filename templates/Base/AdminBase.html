@@ -38,6 +38,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+
     {% block header_reference %}
 
     {% endblock %}
@@ -459,12 +460,12 @@ desired effect
                     </a>
                     <ul class="treeview-menu">
                         <li class="link-activator">
-                            <a href="{% url 'store:blog-list' %}"><i class="fa fa-link"></i>
+                            <a href="{% url 'store:blog-add' %}"><i class="fa fa-link"></i>
                                 <span>افزودن پست</span>
                             </a>
                         </li>
                         <li class="link-activator">
-                            <a href="{% url 'store:blog-add' %}"><i class="fa fa-link"></i>
+                            <a href="{% url 'store:blog-list' %}"><i class="fa fa-link"></i>
                                 <span>لیست پست های وبلاگ</span>
                             </a>
                         </li>

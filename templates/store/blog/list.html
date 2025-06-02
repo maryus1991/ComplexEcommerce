@@ -1,10 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'Base/AdminBase.html' %}
+{% load jalali_tags %}
 
-</body>
-</html>
+{% block title %}
+    لیست برندها
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">بلاگ</li>
+    <li class="active">لیست پست ها</li>
+{% endblock %}
+
+{% block body %}
+    <div class="box" style="margin-top: 50px;">
+        <div class="box-header">
+            <h3 class="box-title">لیست پست ها</h3>
+
+            <div class="box-tools">
+                <ul class="pagination pagination-sm no-margin pull-right">
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page={{ page_obj.previous_page_number }}">«</a></li>
+                    {% endif %}
+                    {% for page_number in page_obj.paginator.page_range %}
+
+                        <li class="{% if page_number == page_obj.number %} active {% endif %}"><a
+                                href="?page={{ page_number }}">{{ page_number }}</a></li>
+
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}">»</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body no-padding">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th>#</th>
+                    <th>نام</th>
+                    <th>دسته</th>
+                    <th>تعداد بازدید ها</th>
+                    <th>زمان انتشار</th>
+                    <th>مشاهده</th>
+                    <th>ویرایش</th>
+                    <th>فعال / غیر فعال کردن</th>
+                    <th>حذف</th>
+                </tr>
+                {% for blog in blogs %}
+                    <tr>
+                        <td>
+                            {{ blog.id }}
+                        </td>
+                        <td>
+                            {{ blog.title }}
+
+                        </td>
+                        <td>
+                            {{ blog.category.name }}
+                        </td>
+                        <td>
+                            {{ blog.views.count }}
+                        </td>
+                        <td>
+                            {% if blog.is_active %}
+                                {{ blog.updated_at|to_jalali:' %H:%M - %Y/%m/%d  ' }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td><a class="btn btn-block btn-success" href="{% url 'blog:detail' blog.id %}">
+                            مشاهده
+                        </a></td>
+                        <td><a class="btn btn-block btn-info" href="{% url 'store:blog-update' blog.id %}">
+                            ویرایش
+                        </a></td>
+                        <td><a class="btn btn-block  btn-warning"
+                               href="{% url 'store:blog-active-deactivate' blog.id %}">
+                            {% if blog.is_active %}
+                                غیر فعال کردن
+                            {% else %}
+                                فعال کردن
+                            {% endif %}
+
+                        </a></td>
+                        <td><a class="btn btn-block btn-danger " href="{% url 'store:blog-delete' blog.id %}">
+                            حذف
+                        </a></td>
+
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+        <!-- /.box-body -->
+    </div>
+{% endblock %}
+
+

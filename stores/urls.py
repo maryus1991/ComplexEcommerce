@@ -56,8 +56,8 @@ urlpatterns = [
     path('blog/list/', views.StoreBlogListView.as_view(), name='blog-list'),
     path('blog/add/', views.StoreAddBlog.as_view(), name='blog-add'),
     path('blog/update/<int:pk>', views.StoreBlogUpdateView.as_view(), name='blog-update'),
-    path('blog/delete/<int:pk>', views.StoreBlogDeleteView.as_view(), name='blog-delete'),
     path('blog/active-deactivate/<int:pk>', views.StoreActiveOrDeactivate.as_view(), name='blog-active-deactivate'),
+    path('blog/delete/<int:pk>', views.StoreBlogDeleteView.as_view(), name='blog-delete'),
 
     # store blog categories
     path('blog/add/category', views.StoreBlogAddCategories.as_view(), name='blog-add-category'),

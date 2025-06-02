@@ -25,6 +25,8 @@ class Blog(models.Model):
     category = models.ForeignKey(BlogCategory, on_delete=models.CASCADE, related_name='blogs')
     content = RichTextUploadingField()
 
+    is_active = models.BooleanField(default=False)
+
     def __str__(self):
         return self.title
 
@@ -36,7 +38,7 @@ class BlogTag(models.Model):
         return self.name
 
 class BlogView(models.Model):
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='views')
     ip = models.GenericIPAddressField()
 
     def __str__(self):

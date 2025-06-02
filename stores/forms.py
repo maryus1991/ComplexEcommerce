@@ -524,7 +524,10 @@ class AddStoreBlogForm(forms.ModelForm):
         queryset=BlogCategory.objects.all(),
         widget=forms.Select(
             attrs={
-                'class': 'form-control',
+                'class': 'form-control select2 select2-hidden-accessible',
+                'style' :"width: 100%;",
+                'tabindex' : "-1",
+                'aria - hidden' : "true"
             }
         )
         , empty_label='لطفا دسته بندی انتخاب کنید'
@@ -570,10 +573,14 @@ class AddStoreBlogCategoryForm(forms.ModelForm):
         queryset=BlogCategory.objects.all(),
         widget=forms.Select(
             attrs={
-                'class': 'form-control',
+                'class': 'form-control select2 select2-hidden-accessible',
+                'style' :"width: 100%;",
+                'tabindex' : "-1",
+                'aria - hidden' : "true"
             }
         )
-        , empty_label='لطفا دسته بندی مادر انتخاب کنید'
+        , empty_label='لطفا دسته بندی مادر انتخاب کنید',
+        required=False
     )
 
     class Meta:
