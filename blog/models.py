@@ -9,7 +9,7 @@ User = get_user_model()
 
 class BlogCategory(models.Model):
     name = models.CharField(max_length=100)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     image = models.ImageField(upload_to='blog_categories/')
     is_active = models.BooleanField(default=True)
 

@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import logout, authenticate, get_user_model, login
 from django.contrib import messages
 from django.utils import timezone
+from django.http import  HttpResponse
 
 from utils.send_otp import send_message
 from user.mixins.logins import CustomLoginRequiredMixin
@@ -451,4 +452,12 @@ class ChangeNumber(CustomLoginRequiredMixin, View):
         return redirect('dashboard:account')
 
 def e_namad(request):
-    return render(request, 'enamad-14545014.html')
+    base_dir = settings.BASE_DIR
+    file_path = f'{base_dir}/14545014.txt'
+    try:
+        with open(file_path, 'rb') as file:
+            response = HttpResponse(file.read(), content_type='text/plain')
+            response['Content-Disposition'] = 'attachment; filename="14545014.txt"'
+            return response
+    except FileNotFoundError:
+        return HttpResponse("File not found!", status=404)

@@ -1,5 +1,7 @@
 {% extends 'Base/Base.html' %}
+{% load static %}
 {% load jalali_tags %}
+
 {% block title %}
     مقالات
 {% endblock %}
@@ -10,103 +12,167 @@
     </li>
 {% endblock %}
 
+{% block header %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="{% static 'admin/jquery.ui.datepicker.jalali/themes/base/jquery-ui.min.css' %}">
+    <script src="{% static 'admin/js/django_jalali.min.js' %}"></script>
+{% endblock %}
+
+
 {% block content %}
     <main class="container child:mt-8">
         <!-- Breadcrumbs -->
 
         <div class="flex flex-col lg:flex-row gap-4">
             <!-- SIDE FILTER BOX -->
-            <div
-                    class="lg:sticky top-5 h-fit lg:w-1/4 flex flex-col gap-y-4 items-center shadow rounded-lg p-4 dark:bg-zinc-700 bg-white">
-                <!-- TITLE -->
-                <div class="flex items-center justify-between w-full">
+
+            <form method="get" action=""
+            "
+            class="lg:sticky top-5 h-fit lg:w-1/4 flex flex-col gap-y-4 items-center shadow rounded-lg p-4
+            dark:bg-zinc-700 bg-white">
+            <!-- TITLE -->
+
+            <div class="flex items-center justify-between w-full">
                     <span class="flex items-center gap-x-1">
                         <svg class="w-5 h-5">
                             <use href="#filter"></use>
                         </svg>
                         <p class="font-DanaMedium ">فیلتر ها</p>
                     </span>
-                    <p class="text-green-500">حدف همه</p>
-                </div>
-                <!-- accordion -->
-                <div class="mt-6 w-full dark:bg-zinc-600 cursor-pointer shadow  rounded-lg">
-                    <div class="accordion-header p-3 flex items-center justify-between">
-                        <p class="font-DanaMedium">دسته بندی </p>
-                        <svg class="w-4 h-4">
-                            <use href="#chevron-left"></use>
-                        </svg>
-                    </div>
-                    <ul
-                            class="accordion-content hidden py-2 mx-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
-                        <li>
-                            <label class="cl-checkbox">
-                                <input checked="" type="checkbox">
-                                <span></span>
-                            </label>
-                            <p> قهوه</p>
-                        </li>
-                        <li>
-                            <label class="cl-checkbox">
-                                <input type="checkbox">
-                                <span></span>
-                            </label>
-                            <p> دانه قهوه</p>
-                        </li>
-                        <li>
-                            <label class="cl-checkbox">
-                                <input type="checkbox">
-                                <span></span>
-                            </label>
-                            <p>قهوه ساز</p>
-                        </li>
-                    </ul>
+                <button type="reset" class="text-green-500">حذف همه</button>
+            </div>
+            <!-- accordion -->
+            <div class="mt-6 w-full dark:bg-zinc-600 cursor-pointer shadow  rounded-lg">
+                <div onclick="categoryFilter('blog-categories-filter')"
+                     class="accordion-header p-3 flex items-center justify-between">
+                    <p class="font-DanaMedium">دسته بندی </p>
+                    <svg class="w-4 h-4">
+                        <use href="#chevron-left"></use>
+                    </svg>
                 </div>
 
-                <div class="w-full dark:bg-zinc-600 cursor-pointer shadow  rounded-lg">
-                    <div class="accordion-header p-3 flex items-center justify-between">
-                        <p class="font-DanaMedium">تاریخ انتشار</p>
-                        <svg class="w-4 h-4">
-                            <use href="#chevron-left"></use>
-                        </svg>
-                    </div>
-                    <ul
-                            class="accordion-content hidden py-2 mx-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
+                <ul id="blog-categories-filter"
+                    class="accordion-content hidden py-2 mx-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
+                    {% for category in categories %}
+                        <hr>
                         <li>
                             <label class="cl-checkbox">
-                                <input type="checkbox">
+                                <input name="category" value="{{ category.id }}" type="checkbox">
                                 <span></span>
                             </label>
-                            <p>امروز</p>
+
+                            <p>{{ category.name }}</p>
+
+                            {% for child in category.children.all %}
+
+                                <li style="padding-right: 2rem; ">
+                                    <label class="cl-checkbox">
+                                        <input name="category" value="{{ child.id }}" type="checkbox">
+                                        <span></span>
+                                    </label>
+                                    <p>{{ child.name }}</p>
+                                </li>
+                                {% for sub_child in child.children.all %}
+                                    <li style="padding-right: 4rem; ">
+                                        <label class="cl-checkbox">
+                                            <input name="category" value="{{ sub_child.id }}" type="checkbox">
+                                            <span></span>
+                                        </label>
+                                        <p>{{ sub_child.name }}</p>
+                                    </li>
+                                    {% for sub_sub_child in sub_child.child.all %}
+                                        <li style="padding-right: 6rem; ">
+                                            <label class="cl-checkbox">
+                                                <input name="category" value="{{ sub_sub_child.id }}"
+                                                       type="checkbox">
+                                                <span></span>
+                                            </label>
+                                            <p>{{ sub_sub_child.name }}</p>
+                                        </li>
+                                    {% endfor %}
+
+                                {% endfor %}
+
+                            {% endfor %}
+
                         </li>
-                        <li>
-                            <label class="cl-checkbox">
-                                <input type="checkbox">
-                                <span></span>
-                            </label>
-                            <p>دیروز</p>
-                        </li>
-                    </ul>
+
+                    {% endfor %}
+                </ul>
+
+            </div>
+
+
+            <div class="w-full dark:bg-zinc-600 cursor-pointer shadow  rounded-lg">
+                <div onclick="categoryFilter('date-filter')"
+                     class="accordion-header p-3 flex items-center justify-between">
+                    <p class="font-DanaMedium">تاریخ انتشار</p>
+                    <svg class="w-4 h-4">
+                        <use href="#chevron-left"></use>
+                    </svg>
                 </div>
-                <!-- CHECK BOX -->
-                <div
-                        class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
-                    <div class="">
-                        <p>داغ ترین</p>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider"></span>
+
+                <ul id="date-filter"
+                    class="accordion-content hidden py-2 mx-2 child:dark:text-gray-200 child:text-gray-600  items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
+                    <li class="flex ">
+                        <label class="cl-checkbox">
+                            <input name="today" type="checkbox">
+                            <span></span>
                         </label>
-                    </div>
-                    <div class="">
-                        <p>بروز ترین </p>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider"></span>
+                        <p>امروز</p>
+                    </li>
+                    <li class="flex text-white">
+                        <label class="cl-checkbox">
+                            <input name="yesterday" type="checkbox">
+                            <span></span>
                         </label>
-                    </div>
+                        <p>دیروز</p>
+
+                    </li>
+
+                    <li class="w-full">
+                        {{ date_input.start_date }}
+                    </li>
+                    <li class="w-full">
+                        {{ date_input.end_date }}
+                    </li>
+                    {{ date_input.media }}
+
+                </ul>
+            </div>
+            <!-- CHECK BOX -->
+            <script>
+                function categoryFilter(id) {
+                    let elem = document.getElementById(id).classList;
+                    if (elem.contains('hidden')) {
+                        elem.remove('hidden')
+                    } else {
+                        elem.add('hidden')
+                    }
+                }
+
+            </script>
+            <div
+                    class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
+                <div class="">
+                    <p>داغ ترین</p>
+                    <label class="switch">
+                        <input name="hottest" type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="">
+                    <p>بروز ترین </p>
+                    <label class="switch">
+                        <input name="newset" type="checkbox">
+                        <span class="slider"></span>
+                    </label>
                 </div>
             </div>
+            <button class="px-4 py-1 bg-green-500 rounded-lg font-DanaMedium"> اعمال</button>
+            </form>
             <!-- FILTER BOXES & articles -->
+
             <div class="lg:w-3/4">
                 <!-- TOP FILTER BOX -->
                 <div
@@ -119,11 +185,37 @@
                     </div>
                     <ul
                             class="flex items-center  gap-x-2 lg:gap-x-5 child:transition-all child:cursor-pointer child-hover:bg-gray-300/30 child:rounded-lg child:px-1 child:py-1 child:text-sm sm:child:text-base">
-                        <li class="text-green-500">محبوب ترین</li>
-                        <li>جدید ترین</li>
-                        <li>پربازدید ترین</li>
+                        <li>
+                            <a  onclick="updateOrdering(1); return false;">محبوب ترین</a>
+                        </li>
+                        <li>
+                            <a  onclick="updateOrdering(2); return false;">جدید ترین</a>
+                        </li>
+                        <li>
+                            <a  onclick="updateOrdering(3); return false;">پربازدید ترین</a>
+                        </li>
+
+                        <script>
+                            function updateOrdering(orderValue) {
+                                const url = new URL(window.location.href);
+                                const params = new URLSearchParams(url.search);
+
+                                // اضافه یا به‌روزرسانی پارامتر ordering
+                                params.set('ordering', orderValue);
+
+                                // رفتن به URL جدید با حفظ پارامترهای دیگر
+                                window.location.href = `${url.pathname}?${params.toString()}`;
+                            }
+                        </script>
                     </ul>
+                    <script>
+                        function OrderingFilter(element, id) {
+                            const params = new URLSearchParams();
+                            params.set('ordering', id);
+                        }
+                    </script>
                 </div>
+
                 <!-- articles -->
                 <div
                         class="mt-4 grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-3  gap-6 sm:gap-8 child-hover:-translate-y-2 child:duration-300
@@ -155,7 +247,7 @@
                                 <svg class="w-4 h-4">
                                     <use href="#calendar"></use>
                                 </svg>
-                                <p class="mt-1">{{ post.updated_at|to_jalali:'%Y/%m/%d'}}</p>
+                                <p class="mt-1">{{ post.updated_at|to_jalali:'%Y/%m/%d' }}</p>
                             </span>
                                 <span class="flex items-start gap-x-1 text-gray-400">
                                 <p class="font-DanaDemiBold">{{ post.view_count }}</p>
@@ -209,4 +301,6 @@
 
     </main>
 {% endblock %}
+
+
 

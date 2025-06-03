@@ -1025,6 +1025,7 @@ class StoreBlogAddCategories(UserStoreStaffMixin, FormView):
     success_url = reverse_lazy('store:blog-list-category')
 
     def form_valid(self, form):
+        form.instance.is_active = True
         form.save()
         messages.success(self.request,
                          'دسته با موفقیت ساخته شد')

@@ -47,6 +47,9 @@ class Product(models.Model):
     description = RichTextUploadingField(null=True, blank=True)
     count = models.IntegerField(default=0)
     weight = models.PositiveBigIntegerField(default=0)
+    length = models.PositiveBigIntegerField(default=0)
+    width = models.PositiveBigIntegerField(default=0)
+    height = models.PositiveBigIntegerField(default=0)
 
     is_active = models.BooleanField(default=False)
 
