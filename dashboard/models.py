@@ -55,7 +55,7 @@ class UserAddress(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='address')
 
-    # todo : fix the model
+
 
     def __str__(self):
         return f'{self.user.get_full_name()}->{self.address}'

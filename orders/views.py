@@ -65,6 +65,7 @@ class AddOrder(LoginRequiredMixin, RedirectView):
                 return request.META.get('HTTP_REFERER', '/')
 
         else:
+
             detail[0].count = int(num)
 
         detail[0].get_item_price()
@@ -139,6 +140,32 @@ class RemoveProductFromOrder(LoginRequiredMixin, RedirectView):
 
         messages.info(self.request, 'ایتم مورد نظر با موفقیت حذف شد از سبد خرید شما')
         return self.request.META.get('HTTP_REFERER', '/')
+
+
+class AddAddressToOrder(LoginRequiredMixin, View):
+    """
+    for add address to order detail
+    """
+
+    def post(self, request, *args, **kwargs):
+        pk = kwargs.get('pk') # order id
+        user = request.user
+        store = kwargs.get('store_id')
+        address = request.POST.get('address')
+
+        store = get_object_or_404(Store, pk=store, is_active=True, is_verified=True)
+        address = get_object_or_404(UserAddress, pk=address, is_active=True, user=user)
+
+        order = get_object_or_404(Order, pk=pk, is_active=True, canceled=False, is_paid=False, store=store, user=user)
+        order.address = address
+        order.save()
+
+        messages.success(
+            request,
+            'ادرس شما با موقعیت ثبت شد'
+        )
+
+        return redirect(reverse('dashboard:order_detail', kwargs={'pk': pk}))
 
 
 class ConformPayment(LoginRequiredMixin, View):

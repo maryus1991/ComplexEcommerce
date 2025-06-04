@@ -1,206 +1,287 @@
-{% load products_tags %}
-{% load jalali_tags %}
 {% load static %}
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>فاکتور فروش</title>
 
+    <!-- افزودن کتابخانه‌های مورد نیاز -->
+    <script src="/static/node_modules/jspdf/dist/jspdf.umd.min.js"></script>
+    <script src="/static/node_modules/html2canvas/dist/html2canvas.min.js"></script>
+    <script src="/static/node_modules/file-saver/dist/FileSaver.min.js"></script>
+
+    <script>
+        // تابع دانلود PDF
+        async function downloadPDF() {
+            const {jsPDF} = window.jspdf;
+            const doc = new jsPDF('p', 'pt', 'a4');
+
+            try {
+                const element = document.getElementById('invoice');
+                if (!element) {
+                    alert('عنصر فاکتور یافت نشد!');
+                    return;
+                }
+
+                // استفاده از html2canvas برای تبدیل HTML به تصویر
+                const canvas = await html2canvas(element, {
+                    scale: 2,
+                    logging: false,
+                    useCORS: true
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = doc.internal.pageSize.getWidth() - 20;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+                doc.save('فاکتور.pdf');
+            } catch (error) {
+                console.error('خطا در تولید PDF:', error);
+                alert('خطا در تولید PDF!');
+            }
+        }
+
+
+    </script>
+
+    <title>فاکتور رسمی فروش</title>
+    <style>
+        .buttons {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .buttons button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        body {
+            font-family: 'Tahoma', sans-serif;
+            margin: 40px;
+            background: #ffffff;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #eee;
+        }
+
+        .section-title {
+            background-color: #ddd;
+            font-weight: bold;
+            padding: 5px;
+            margin-top: 0px;
+        }
+
+        .info-table td {
+            text-align: right;
+        }
+
+        .signature-section {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .note {
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body>
 
-<div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <div class="invoice-box">
-        <button style="width: 25%; padding: 1rem;" onclick="generatePDF()">دانلود PDF</button>
-        <script>
-            function generatePDF() {
-                const element = document.getElementById('pdf_');
-                html2pdf().from(element).save();
-            }
-        </script>
+<div class="buttons">
+    <button onclick="downloadPDF()">دانلود PDF</button>
+{#    <button onclick="downloadWord()">دانلود Word</button>#}
+</div>
+<div id="invoice">
+    <h2>صورت‌حساب فروش کالا و خدمات</h2>
+    <div class="">
+        شماره سریال: ............
+        <br>
+        تاریخ: ............
     </div>
-        <style>
-            @font-face {
-                font-family: "Vazir";
-                src: url("/static/fonts/NotoNaskhArabic-Regular.ttf");
-            }
+    <br>
+    <div class="section-title">مشخصات فروشنده</div>
+    <table class="info-table">
+        <tr>
+            <td>نام شخص حقیقی / حقوقی:</td>
+            <td>شماره اقتصادی:</td>
+            <td>کد پستی ۱۰ رقمی:</td>
+            <td> استان:</td>
+            <td> شهر:</td>
+        </tr>
+        <tr>
+            <td>شماره ثبت / شماره ملی:</td>
+            <td>شماره تماس / نمابر:</td>
+
+            <td colspan="4">نشانی :</td>
+        </tr>
+    </table>
+
+    <div class="section-title">مشخصات خریدار</div>
+    <table class="info-table">
+        <tr>
+            <td>نام شخص حقیقی / حقوقی:</td>
+            <td>شماره اقتصادی:</td>
+            <td>کد پستی ۱۰ رقمی:</td>
+            <td> استان:</td>
+            <td> شهر:</td>
+        </tr>
+        <tr>
+            <td>شماره ثبت / شماره ملی:</td>
+            <td>شماره تماس / نمابر:</td>
+
+            <td colspan="4">نشانی :</td>
+        </tr>
+    </table>
+
+    <div class="section-title">مشخصات کالا یا خدمات مورد معامله</div>
+    <table>
+        <thead>
+        <tr>
+            <th>ردیف</th>
+            <th>کد کالا / خدمات</th>
+            <th>شرح کالا / خدمات</th>
+            <th>مقدار</th>
+            <th>واحد</th>
+            <th>مبلغ واحد (ریال)</th>
+            <th>مبلغ کل (ریال)</th>
+            <th>مبلغ تخفیف (ریال)</th>
+            <th>مبلغ کل پس از تخفیف</th>
+            <th>جمع مالیات و عوارض (ریال)</th>
+            <th>جمع مبلغ کل بعلاوه جمع مالیات و عوارض (ریال)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- سطر نمونه، می‌توانید سطرهای بیشتری اضافه کنید -->
+        <tr>
+            <td>1</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="section-title">
+            <td colspan="6"> جمع کل قابل پرداخت :</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr class="">
+            <td colspan="3" style="text-align: right">شرایط و نحوه فروش :</td>
+            <td colspan="2">نقدی</td>
+            <td colspan="2">غیر نقد</td>
+            <td colspan="5"></td>
+
+        </tr>
+        <tr>
+            <td colspan="11" style="text-align: right">
+                توضیحات :
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
 
-            body {
-                font-family: "Vazir", sans-serif;
-                direction: rtl;
-                text-align: right;
-                margin: 0;
-                padding: 20px;
-                color: #333;
-            }
-
-            .invoice-box {
-                max-width: 800px;
-                margin: auto;
-                padding: 30px;
-                border: 1px solid #eee;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-                font-size: 16px;
-                line-height: 24px;
-            }
-
-            .header {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 30px;
-            }
-
-            .logo {
-                width: 150px;
-            }
-
-            .invoice-title {
-                font-size: 24px;
-
-
-            }
-
-            .info-table {
-                width: 100%;
-                margin-bottom: 30px;
-                border-collapse: collapse;
-            }
-
-            .info-table td {
-                padding: 8px;
-                border: 1px solid #ddd;
-            }
-
-            .info-table tr:nth-child(even) {
-                background-color: #f9f9f9;
-            }
-
-            .items-table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            .items-table th {
-                background-color: #f2f2f2;
-                padding: 10px;
-                border: 1px solid #ddd;
-                text-align: center;
-            }
-
-            .items-table td {
-                padding: 8px;
-                border: 1px solid #ddd;
-                text-align: center;
-            }
-
-            .total {
-                margin-top: 20px;
-                text-align: left;
-                font-weight: bold;
-                font-size: 18px;
-            }
-
-            .footer {
-                margin-top: 50px;
-                text-align: center;
-                font-size: 14px;
-                color: #777;
-            }
-        </style>
-
-    <div id="pdf_" class="invoice-box">
-        <div class="header">
-            <div>
-                <h1 class="invoice-title">فاکتور فروش</h1>
-                <p>شماره : {{ order.id }}</p>
-                <p>تاریخ صدور  : {{ time|to_jalali:' %Y/%m/%d - %H:%M:%S' }}</p>
-                تاریخ باز شدن درخواست خرید:
-                <p>  {{ order.date|to_jalali:' %Y/%m/%d - %H:%M:%S' }}</p>
-                <p>تاریخ بسته شدن : 
-                    {{ order.second_date|to_jalali:' %Y/%m/%d - %H:%M:%S' }}</p>
-
-            </div>
-            <div>
-            </div>
-        </div>
-
-        <table class="info-table">
-            <tr>
-                <td>فروشنده :</td>
-                <td>{{ order.store.name }}</td>
-                <td>خریدار :</td>
-                <td dir="ltr">{{ order.user.PhoneNumber }}</td>
-            </tr>
-            <tr>
-                <td>شماره تماس فروشنده :</td>
-                <td dir="ltr">{{ store.phone }}</td>
-                <td>شماره تماس خریدار :</td>
-                <td dir="ltr">{{ request.user.PhoneNumber }}</td>
-            </tr>
-            <tr>
-                <td>آدرس فروشنده :</td>
-                <td colspan="3">{{ store.address }}</td>
-            </tr>
-        </table>
-
-        <table class="items-table">
-            <thead>
-            <tr>
-                <th>ردیف</th>
-                <th>نام کالا</th>
-                <th>تعداد</th>
-                <th>قیمت واحد</th>
-                <th>تخفیف</th>
-                <th>مبلغ کل</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for item in order.details.all %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ item.product.name }}</td>
-                    <td>{{ item.count }}</td>
-                    <td>{{ item.product.price|tdc }} تومان</td>
-                    <td>{{ item.product.price|clac_tax:item.product.discount }} %</td>
-                    <td>{{ item.get_item_price|tdc }} تومان</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-
-        <div class="total">
-            {% if order.is_paid %}
-                <p>مبلغ پرداخت شده: {{ order.calculate_total_price|tdc }} تومان</p>
-            {% elif order.canceled %}
-                <p> سبد خرید شما لفو شده است </p>
-            {% else %}
-                <p>مبلغ قابل پرداخت: {{ order.calculate_total_price|tdc }} تومان</p>
-
-            {% endif %}
-        </div>
-
-        {% if order.is_paid %}
-
-            <div class="footer">
-                <p>با تشکر از خرید شما </p>
-                <p>{{ site.title }}</p>
-                <p>تلفن پشتیبانی: <span dir="ltr">{{ site.phone }}</span> </p>
-                <p> {{ site.address }}</p>
-
-                {% if order.sending %}
-                    <p>کد پیگری پستی : <span dir="ltr">{{ order.post_id }}</span> </p>
-                        <p> ارسال شده به ادرس : </p>
-                        <p>{{ order.address.province }} {{ order.address.city }} {{ order.address.address }} </p>
-                {% endif %}
-            </div>
-        {% endif %}
+    <br>
+    <div class="signature-section">
+        <div>مهر و امضاء فروشنده</div>
+        <div>مهر و امضاء خریدار</div>
     </div>
+    <br>
+    <br>
+
+
 </div>
 </body>
 </html>
