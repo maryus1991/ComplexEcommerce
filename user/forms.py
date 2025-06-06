@@ -57,6 +57,7 @@ class RegistrationForm(forms.Form):
 
         return phone_number
 
+
 class OTPForm(forms.Form):
     first_digit = forms.CharField(
         required=True,
@@ -136,6 +137,7 @@ class OTPForm(forms.Form):
                 'کد را به درستی وارد کنید'
             )
 
+
 class ActiveAccountForm(forms.Form):
     """
     for activating account
@@ -154,6 +156,7 @@ class ActiveAccountForm(forms.Form):
         phone_number = self.cleaned_data['phone_number']
         validate_phonenumber(phone_number)
         return phone_number
+
 
 class LoginForm(forms.Form):
     """
@@ -182,35 +185,37 @@ class LoginForm(forms.Form):
         validate_phonenumber(phone_number)
         return phone_number
 
+
 class EditUserInformationForm(forms.Form):
     email = forms.EmailField(required=True,
-        widget=forms.EmailInput(attrs={
-            'class': 'tailwind-input',
-            'placeholder': "  ایمیل ...",
+                             widget=forms.EmailInput(attrs={
+                                 'class': 'tailwind-input',
+                                 'placeholder': "  ایمیل ...",
 
-        })
-    )
+                             })
+                             )
 
     first_name = forms.CharField(required=True,
-                               widget=forms.TextInput(
-                                   attrs={
-                                       'class': 'tailwind-input',
-                                       'placeholder': "نام ...",
-                                   }
-                               ))
+                                 widget=forms.TextInput(
+                                     attrs={
+                                         'class': 'tailwind-input',
+                                         'placeholder': "نام ...",
+                                     }
+                                 ))
 
     last_name = forms.CharField(required=True,
-                                       widget=forms.TextInput(
-                                           attrs={
-                                               'class': 'tailwind-input',
-                                               'placeholder': " نام خانوادگی ...",
-                                           }
-                                       ))
+                                widget=forms.TextInput(
+                                    attrs={
+                                        'class': 'tailwind-input',
+                                        'placeholder': " نام خانوادگی ...",
+                                    }
+                                ))
 
     def clean_email(self):
         email = self.cleaned_data['email']
         validate_email(email)
         return email
+
 
 class ChangePasswordForm(forms.Form):
     current_password = forms.CharField(required=True,
@@ -254,3 +259,26 @@ class ChangePasswordForm(forms.Form):
         password = self.cleaned_data['password']
         validate_password(password)
         return password
+
+
+class LegalPersonForm(forms.Form):
+    legal_person_economic_number = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': ' tailwind-input w-full py-3',
+                'placeholder': '  شماره اقتصادی ...'
+            }
+
+        )
+    )
+    legal_person_registration_number = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': ' tailwind-input w-full py-3',
+                'placeholder': '  کد ملی / شماره ثبت ...'
+            }
+
+        )
+    )

@@ -18,7 +18,8 @@ from .forms import (LoginForm,
                     OTPForm,
                     ActiveAccountForm,
                     ChangePasswordForm,
-                    EditUserInformationForm)
+                    EditUserInformationForm,
+                    LegalPersonForm)
 from .forms import ActiveAccountForm as ChangeNumberForm
 
 
@@ -450,6 +451,54 @@ class ChangeNumber(CustomLoginRequiredMixin, View):
                 'لطفا در وارد کردن اطلاعات دقت فرمایید'
             )
         return redirect('dashboard:account')
+
+class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
+
+    """
+    for change legal person information
+    """
+    def post(self, request, *args, **kwargs):
+        form = LegalPersonForm(request.POST or None)
+        if form.is_valid():
+            legal_person_economic_number = form.cleaned_data.get('legal_person_economic_number')
+            legal_person_registration_number = form.cleaned_data.get('legal_person_registration_number')
+
+            if not legal_person_economic_number.isdigit() or not legal_person_registration_number.isdigit():
+
+                messages.error(
+                    request,
+                    'لطفا در وارد کردن اطلاعات دقت فرمایید'
+                )
+
+                return redirect('dashboard:account')
+
+            user = get_object_or_404(User, pk=request.user.id)
+            user.legal_person = True
+            user.legal_person_economic_number = legal_person_economic_number
+            user.legal_person_registration_number = legal_person_registration_number
+            user.save()
+
+            messages.success(
+                request,'اطلاعات شما با موفقیت ثبت شد'
+            )
+
+
+        else:
+            messages.error(
+                request,
+                form.errors
+            )
+
+        return redirect('dashboard:account')
+
+class LegalPersonHelpText(RedirectView):
+
+    def get_redirect_url(self, *args, **kwargs):
+        messages.info(
+            self.request,
+            'برای ورود افراد حقیقی اول با ورود با شماره یا نامبر و تایید ان با وارد کردن پیامک ارسالی به ان شماره و سپس باید وارد قسمت پروفایل کاربری شده و در بخش اطلاعات حساب باید شماره اقتصادی و بقیه اطلاعلات را وارد کنید و بعد از این فرایند شما می توانید فاکتور رسمی دریافت کنید  '
+        )
+        return self.request.META.get('HTTP_REFERER')
 
 def e_namad(request):
     base_dir = settings.BASE_DIR

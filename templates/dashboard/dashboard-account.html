@@ -14,11 +14,40 @@
         <div class="m-5 lg:m-0">
             <div class="grid grid-cols-12 gap-6 mt-6">
                 <div class="col-span-12">
+                    <p class="text-lg"> اطلاعات افراد حقوقی :</p>
+                    <form action="{% url 'user:edit-legal-person-information' %}" method="POST"
+                          class="grid grid-cols-12 child:col-span-12 md:child:col-span-6 gap-5 bg-white shadow child:flex child:flex-col child:gap-x-2 mt-4 p-4 dark:bg-zinc-700 rounded-lg ">
+                        {% csrf_token %}
+
+                        <div>
+                            <label for="" class="mb-2"> شماره اقتصادی :</label>
+                            {{ legal_person.legal_person_economic_number }}
+                        </div>
+                        <div>
+                            <label for="" class="mb-2"> کد ملی / شماره ثبت :</label>
+                            {{ legal_person.legal_person_registration_number }}
+                        </div>
+
+
+                        <div>
+                            <label for="" class="mb-2"><br></label>
+
+                            <button class="main-btn w-[40%] py-2">ثبت</button>
+
+                        </div>
+
+
+                    </form>
+
+                </div>
+            </div>
+            <div class="grid grid-cols-12 gap-6 mt-6">
+                <div class="col-span-12">
                     <p class="text-lg">تغییر رمز عبور :</p>
                     <form method="POST" action="{% url 'user:change-password' %}"
-                            class="grid grid-cols-12 child:col-span-12 md:child:col-span-6 gap-5 bg-white shadow child:flex child:flex-col child:gap-x-2 mt-4 p-4 dark:bg-zinc-700 rounded-lg ">
+                          class="grid grid-cols-12 child:col-span-12 md:child:col-span-6 gap-5 bg-white shadow child:flex child:flex-col child:gap-x-2 mt-4 p-4 dark:bg-zinc-700 rounded-lg ">
                         {% csrf_token %}
-                        
+
                         <div>
                             <label for="" class="mb-2"> رمز عبور فعلی </label>
                             {{ change_password_form.current_password }}
@@ -47,8 +76,8 @@
                 <div class="col-span-12">
                     <p class="text-lg"> جزییات حساب کاربری :</p>
                     <form action="{% url 'user:edit-information' %}" method="POST"
-                            class="grid grid-cols-12 child:col-span-12 md:child:col-span-6 gap-5 bg-white shadow child:flex child:flex-col child:gap-x-2 mt-4 p-4 dark:bg-zinc-700 rounded-lg ">
-                                                {% csrf_token %}
+                          class="grid grid-cols-12 child:col-span-12 md:child:col-span-6 gap-5 bg-white shadow child:flex child:flex-col child:gap-x-2 mt-4 p-4 dark:bg-zinc-700 rounded-lg ">
+                        {% csrf_token %}
 
                         <div>
                             <label for="" class="mb-2"> نام :</label>
@@ -66,10 +95,9 @@
                         <div>
                             <label for="" class="mb-2"><br></label>
 
-                        <button class="main-btn w-[40%] py-2">ثبت </button>
+                            <button class="main-btn w-[40%] py-2">ثبت</button>
 
                         </div>
-
 
 
                     </form>
@@ -80,17 +108,17 @@
                 <div class="col-span-12">
                     <p class="text-lg"> تغییر شماره :</p>
                     <form action="{% url 'user:change-number' %}" method="POST"
-                            class="grid grid-cols-12 child:col-span-12 md:child:col-span-6 gap-5 bg-white shadow child:flex child:flex-col child:gap-x-2 mt-4 p-4 dark:bg-zinc-700 rounded-lg ">
-                                                  {% csrf_token %}
+                          class="grid grid-cols-12 child:col-span-12 md:child:col-span-6 gap-5 bg-white shadow child:flex child:flex-col child:gap-x-2 mt-4 p-4 dark:bg-zinc-700 rounded-lg ">
+                        {% csrf_token %}
 
                         <div class="">
                             <div class="border-b-2 border-green-500 ">
-                            {{ active_number_form.phone_number }}
-                                </div>
+                                {{ active_number_form.phone_number }}
+                            </div>
                         </div>
                         <div>
 
-                            <button class="main-btn w-[40%] py-2">ثبت </button>
+                            <button class="main-btn w-[40%] py-2">ثبت</button>
 
                         </div>
 

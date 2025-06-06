@@ -23,11 +23,16 @@ class User(AbstractUser):
     is_verified = models.BooleanField(default=False)
     is_store_admin = models.BooleanField(default=False)
 
+    # legal person infos
+    legal_person = models.BooleanField(default=False)
+    legal_person_economic_number = models.CharField(max_length=100, null=True, blank=True)
+    legal_person_registration_number = models.CharField(max_length=100, null=True, blank=True)
+
     USERNAME_FIELD = 'PhoneNumber'
     EMAIL_FIELD = 'PhoneNumber'
 
     def __str__(self):
-        return self.get_full_name()
+        return f'{self.PhoneNumber}-{self.id}'
 
     REQUIRED_FIELDS = ['first_name', 'last_name']
 

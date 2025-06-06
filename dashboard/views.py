@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from django.http import FileResponse
 from django.shortcuts import render, reverse, redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView, RedirectView
@@ -17,7 +19,11 @@ from .forms import CreateUserAddress as CreateUserAddressForm
 from .forms import (UserTicketsClientForm,
                     TicketConversationForm,
                     UserTicketsClientFormMobile,
-                    TicketConversationMobileForm)
+                    TicketConversationMobileForm
+                    )
+
+from user.forms import LegalPersonForm
+
 from .models import UserAddress, Ticket, TicketConversation
 from sitesetting.models import SiteSetting
 
@@ -47,6 +53,13 @@ class UserSettingDashboard(LoginRequiredMixin, TemplateView):
                 'first_name':self.request.user.first_name,
                 'last_name':self.request.user.last_name,
             })
+
+        context['legal_person']=LegalPersonForm(
+            initial={
+                'legal_person_economic_number':self.request.user.legal_person_economic_number,
+                'legal_person_registration_number':self.request.user.legal_person_registration_number
+            }
+        )
 
         return context
 
@@ -105,11 +118,50 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
     """
     for Show user order invoice
     """
+
     def get(self, request, *args, **kwargs):
         order_id = self.kwargs.get('pk')
-        obj = get_object_or_404(Order, user=self.request.user, id=order_id, is_active=True, canceled=False, is_paid=True)
-        site = SiteSetting.objects.filter(is_active=True)[0]
-        return render(request, 'utils/invoice_pdf.html', context={'order': obj, 'site': site})
+        obj = get_object_or_404(Order, user=self.request.user, id=order_id)
+
+        # Handle official invoice case
+        if obj.official_invoice:
+            # Check if user is a legal person
+            if not request.user.legal_person:
+                messages.warning(
+                    request,
+                    'برای دریافت فاکتور رسمی لطفا اطلاعات خواسته شده را وارد کنید'
+                )
+                return redirect('dashboard:account')
+
+            # Check if invoice is ready
+            if not obj.official_invoice_conformed_given_to_user:
+                messages.warning(
+                    request,
+                    'پی دی اف  فاکتور رسمی شما هنوز آماده نشده است به محض آماده شدن از طریق پیامک به شما اعلام خواهد شد'
+                )
+                return redirect(reverse('dashboard:order_detail', kwargs={'pk': order_id}))
+
+            # Safely open and return the file
+            try:
+                file = open(obj.official_invoice_pdf.path, 'rb')  # Using .path for FileField
+                response = FileResponse(file)
+                response['Content-Type'] = 'application/pdf'
+                response['Content-Disposition'] = f'attachment; filename="invoice_{order_id}.pdf"'
+                return response
+            except FileNotFoundError:
+                messages.error(request, 'فایل فاکتور یافت نشد')
+                return redirect(reverse('dashboard:order_detail', kwargs={'pk': order_id}))
+            except Exception as e:
+                messages.error(request, f'خطا در دریافت فایل: {str(e)}')
+                return redirect(reverse('dashboard:order_detail', kwargs={'pk': order_id}))
+
+        # Regular invoice case (render template)
+        site = SiteSetting.objects.filter(is_active=True).first()
+        if not site:
+            raise Http404("تنظیمات سایت یافت نشد")
+
+        context = {'order': obj, 'site': site}
+        return render(request, 'utils/invoice_pdf.html', context)
 
 # user favorite product
 

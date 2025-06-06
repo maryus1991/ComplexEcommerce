@@ -15,7 +15,7 @@ class Store(models.Model):
     instagram_app_ID = models.CharField(null=True, blank=True, max_length=20)
     instagram_app_Link = models.URLField(null=True, blank=True, )
 
-    merchant_id = models.BigIntegerField(null=True, blank=True)
+
     logo = models.ImageField(null=True, blank=True)
     address = models.CharField(max_length=200, null=True)
     orgin_city_id = models.BigIntegerField(null=True, blank=True)
@@ -26,6 +26,24 @@ class Store(models.Model):
 
     description = RichTextUploadingField(null=True, blank=True)
     about_image = models.ImageField(null=True, blank=True)
+
+    # official invoice
+    have_official_invoice = models.BooleanField(default=True)
+    official_invoice_price = models.PositiveIntegerField(null=True, blank=True)
+    economic_number = models.CharField(max_length=100, null=True, blank=True)
+    registration_number = models.CharField(max_length=100, null=True, blank=True)
+    official_invoice_phone_number = models.PositiveIntegerField(null=True, blank=True)
+
+    # store delivery
+    have_post_delivery = models.BooleanField(default=True)
+    have_tipax_delivery = models.BooleanField(default=True)
+    have_in_same_city_delivery = models.BooleanField(default=True)
+    have_physical_delivery = models.BooleanField(default=True)
+    in_same_city_delivery_price = models.PositiveIntegerField(null=True, blank=True)
+
+
+    additional_price = models.PositiveIntegerField(null=True, blank=True)
+    additional_tax = models.PositiveIntegerField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

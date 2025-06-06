@@ -7,26 +7,36 @@ from dashboard.models import UserAddress
 from stores.models import Store
 from product.models import Product
 
+from utils.tipax_price_calc import calculate_price as calculate_price_tipax
+from utils.post_price_calc import calculate_price as calculate_price_post
+
+from sitesetting.models import SiteSetting
+from  django.utils.crypto import get_random_string
+
 User = get_user_model()
 
 
 # Create your models here.
+
+def pdf_path_upload_to(instance, filename):
+    return f'files/official_invoice/pdf/{get_random_string(100)}.pdf'
+
 
 class Order(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='orders')
     address = models.ForeignKey(UserAddress, null=True, on_delete=models.CASCADE, related_name='orders')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
 
-    post_price = models.PositiveBigIntegerField(default=0)
-
     vip_post = models.BooleanField(default=False)
     tipax_post_delivery = models.BooleanField(default=False)
-    physical_delivery = models.BooleanField(default=False)
     in_city_delivery = models.BooleanField(default=False)
+    physical_delivery = models.BooleanField(default=False)
 
+    delivery_price = models.PositiveBigIntegerField(default=0)
     sending = models.BooleanField(default=False)
     delivered_to_user = models.BooleanField(default=False)
     sending_id = models.CharField(max_length=500, null=True, blank=True)
+
 
     Authority = models.CharField(max_length=120, null=True, blank=True, unique=True)
     cart = models.CharField(max_length=120, null=True, blank=True, unique=True)
@@ -35,11 +45,21 @@ class Order(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     second_date = models.DateTimeField(null=True, blank=True)
 
+    # discount code
+    use_discount_code = models.BooleanField(default=False)
+    discount_code_price = models.PositiveBigIntegerField(default=0)
+    discount = models.OneToOneField('Discount', null=True,blank=True,
+                                    on_delete=models.CASCADE, related_name='discount')
+
     total_price = models.PositiveBigIntegerField(default=0)
     total_weight = models.PositiveBigIntegerField(default=0)
     total_length = models.PositiveBigIntegerField(default=0)
     total_width = models.PositiveBigIntegerField(default=0)
     total_height = models.PositiveBigIntegerField(default=0)
+
+    official_invoice = models.BooleanField(default=False)
+    official_invoice_conformed_given_to_user = models.BooleanField(default=False)
+    official_invoice_pdf = models.FileField(upload_to=pdf_path_upload_to, null=True, blank=True)
 
     is_paid = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -47,10 +67,18 @@ class Order(models.Model):
 
     additional_descriptions = models.TextField(null=True, blank=True)
 
+    def calculate_tipax_price(self):
+
+        return calculate_price_tipax(self)
+
+    def calculate_post_price(self):
+
+        return calculate_price_post()
+
     def calculate_total_price(self):
         if not self.is_paid or not self.canceled:
             details = self.details.all()
-            total_price = self.post_price
+            total_price = 0
 
             for item in details:
                 total_price += item.get_item_price()
@@ -64,10 +92,10 @@ class Order(models.Model):
     def get_total_weight(self):
         if not self.is_paid or not self.canceled:
             details = self.details.all()
-            total_weight = self.total_weight
+            total_weight = 0
 
             for item in details:
-                total_weight += item.product.weight
+                total_weight += item.product.weight * item.count
 
             self.total_weight = total_weight
             self.save()
@@ -78,10 +106,10 @@ class Order(models.Model):
     def get_total_length(self):
         if not self.is_paid or not self.canceled:
             details = self.details.all()
-            total_length = self.total_length
+            total_length = 0
 
             for item in details:
-                total_length += item.product.length
+                total_length += item.product.length * item.count
 
             self.total_length = total_length
             self.save()
@@ -92,10 +120,10 @@ class Order(models.Model):
     def get_total_width(self):
         if not self.is_paid or not self.canceled:
             details = self.details.all()
-            total_width = self.total_width
+            total_width = 0
 
             for item in details:
-                total_width += item.product.width
+                total_width += item.product.width * item.count
 
             self.total_width = total_width
             self.save()
@@ -106,16 +134,58 @@ class Order(models.Model):
     def get_total_height(self):
         if not self.is_paid or not self.canceled:
             details = self.details.all()
-            total_height = self.total_height
+            total_height = 0
 
             for item in details:
-                total_height += item.product.height
+                total_height += item.product.height * item.count
 
             self.total_height = total_height
             self.save()
             return self.total_height
         else:
             return self.total_height
+
+    def get_items_discount_amount(self):
+        total_amount = 0
+
+        for item in self.details.all():
+            total_amount += item.get_item_discount()
+
+        return total_amount
+
+    def get_total_discount_amount(self):
+        item_discount_amount = self.get_items_discount_amount()
+        result_amount = item_discount_amount
+
+        if self.use_discount_code:
+            result_amount += self.discount_code_price
+
+        return result_amount
+
+    def get_payment_price(self):
+        site = SiteSetting.objects.first()
+
+        total_amount_of_items = self.calculate_total_price()
+
+        total_payment_price = total_amount_of_items + self.delivery_price - self.get_total_discount_amount()
+
+        # store
+
+        if self.official_invoice and self.store.have_official_invoice and site.active_receive_official_invoice:
+
+            total_payment_price +=   (total_amount_of_items * (self.store.official_invoice_price / 100))
+
+        if self.store.additional_price:
+            total_payment_price +=  self.store.additional_price
+
+        if self.store.additional_tax:
+            total_payment_price +=   (total_amount_of_items * (self.store.additional_tax / 100))
+
+        # site
+        total_payment_price +=  (total_amount_of_items * (site.tax / 100))
+
+        return total_payment_price
+
 
     def __str__(self):
         return f'{self.user.PhoneNumber} - {self.store.name} - {self.id}'
@@ -129,6 +199,8 @@ class OrderDetail(models.Model):
     price = models.PositiveBigIntegerField(default=0)
     count = models.PositiveBigIntegerField(default=1)
 
+    is_active = models.BooleanField(default=True)
+
     def get_item_price(self):
         product = self.product.calc_discount()
         price = product * self.count
@@ -137,5 +209,32 @@ class OrderDetail(models.Model):
         self.save()
         return price
 
+    def get_item_discount(self):
+        product_discount = self.product.calc_discount() * self.count
+        product_real_price = self.product.price * self.count
+
+        return product_real_price - product_discount
+
+
     def __str__(self):
         return f'{self.order.id} - {self.id}'
+
+class Discount(models.Model):
+    user = models.ManyToManyField(User, null=True, related_name='discounts', blank=True)
+    product = models.ManyToManyField(Product, related_name='discounts', blank=True, null=True)
+    store = models.ManyToManyField(Store, blank=True, null=True, related_name='discounts')
+    order = models.ManyToManyField(Order, related_name='discounts', null=True, blank=True)
+
+    end_date_discount = models.DateTimeField(null=True, blank=True)
+    count = models.PositiveBigIntegerField(default=0)
+    percentage_discount = models.BooleanField(default=False)
+    percent = models.PositiveBigIntegerField(null=True, blank=True)
+    price = models.PositiveBigIntegerField(null=True, blank=True)
+    name = models.CharField(max_length=100, null=True, blank=True, unique=True, db_index=True)
+
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'{self.percentage_discount}% - {self.id}'
+
+

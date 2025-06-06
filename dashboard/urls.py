@@ -30,4 +30,6 @@ urlpatterns = [
     path('user-address/<int:pk>', views.UpdateUserAddress.as_view(), name='update_address'),
     path('remove-user-address/<int:pk>', views.DeleteUserAddress.as_view(), name='remove_address'),
 
+
+
 ]

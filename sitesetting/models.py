@@ -26,6 +26,14 @@ class SiteSetting(models.Model):
 
     is_active = models.BooleanField(default=True)
 
+    # delivery options for all website
+    active_post_delivery = models.BooleanField(default=True)
+    active_tipax_delivery = models.BooleanField(default=True)
+    active_in_same_city_delivery = models.BooleanField(default=True)
+    active_physical_delivery = models.BooleanField(default=True)
+
+    active_receive_official_invoice = models.BooleanField(default=True)
+
     def __str__(self):
         return self.title
 

@@ -8,7 +8,9 @@ from .views import (
     ForgotPassword,
     EditUserInformation,
     ChangeNumber,
-    ChangePassword
+    ChangePassword,
+ChangeLegalPersonInformation,LegalPersonHelpText
+
 )
 
 
@@ -26,5 +28,7 @@ urlpatterns = [
     path('change-number/', ChangeNumber.as_view(), name='change-number'),
     path('change-password/', ChangePassword.as_view(), name='change-password'),
     path('edit-information/', EditUserInformation.as_view(), name='edit-information'),
+    path('edit-legal-person-information/', ChangeLegalPersonInformation.as_view(), name='edit-legal-person-information'),
+    path('help-legal-person/', LegalPersonHelpText.as_view(), name='help-legal-person'),
 
 ]

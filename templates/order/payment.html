@@ -6,6 +6,9 @@
 
 {% endblock %}
 
+{% block breadcrumb %}
+
+{% endblock %}
 
 {% block content %}
     <svg class="hidden">
@@ -323,13 +326,51 @@
                 <div>
 
 
-                    <form class="group  flex justify-end items-center w-full bg-white dark:bg-zinc-600 rounded-full  group-hover:opacity-100 group-hover:visible group-hover:top-10 transition-all delay-100 child:rounded-full px-2 border dark:border-none border-gray-100 shadow py-1">
-                        <input type="text" name="search" placeholder="   کد تخفیف ... "
-                               class="bg-transparent w-full p-2">
-                        <button type="submit" class="bg-green-500  text-white text-sm py-2 px-3">اعمال</button>
+                    <form action="{% url 'orders:discount' store_id=order.store.id pk=order.id %}" method="post"
+                          class="group  flex justify-end items-center w-full bg-white dark:bg-zinc-600 rounded-full  group-hover:opacity-100 group-hover:visible group-hover:top-10 transition-all delay-100   border dark:border-none border-gray-100 shadow ">
+                        {% csrf_token %}
+                        <input type="text" name="discount_name"
+                               {% if order.use_discount_code %}class="text-green-500 bg-transparent rounded-full w-full p-2"
+                               value=" مبلغ ( {{ order.discount_code_price|tdc }} ) تومان از حساب شما کم شده است"
+                               disabled {% else %} class="bg-transparent rounded-full w-full p-2"
+                               placeholder="   کد تخفیف ... "{% endif %}
+                        >
+                        {% if not order.use_discount_code %}
+                            <button type="submit"
+                                    class="bg-green-500 rounded-full h-full   text-white text-sm py-3 px-3">اعمال
+                            </button>
+                        {% else %}
+                            <a href="{% url 'orders:discount-remove' store_id=order.store.id pk=order.id %}"
+                               class="bg-red-500 rounded-full h-full text-white text-sm py-3 px-3">حذف
+                            </a>
+                        {% endif %}
                     </form>
+                    <hr>
+                    {% if site.active_receive_official_invoice and order.store.have_official_invoice %}
 
+                        <a href="{% url 'orders:invoice-status' store_id=order.store.id pk=order.id %}"
+                           class="grid grid-cols-12  rounded-lg  shadow child:col-span-12 gap-4 child:w-full child:flex child:items-center child:gap-x-2 child:rounded-lg child:shadow child:p-2 mb-5 child:duration-300 child:transition-all dark:child:text-white child:text-sm"
+                        >
+                            <div class="flex items-center">
+                                <input type="checkbox" id="myCheckbox" name="myCheckbox"
+                                        {% if order.official_invoice %} checked {% endif %} disabled
+                                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                >
+                                <label for="myCheckbox"
+                                       class="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                    درخواست دریافت فاکتور رسمی
+                                </label>
+                            </div>
 
+                        </a>
+                        <p class="text-green-500">
+                            {% if order.official_invoice %}
+                                هزینه دریافت فاکتور رسمی از این فروشگاه
+                                ({{ order.calculate_total_price|clac_tax:order.store.official_invoice_price }})
+                                تومان می باشد
+                            {% endif %}
+                        </p>
+                    {% endif %}
                     <hr>
                     <span class="flex items-center gap-x-1 text-blue-500 dark:text-blue-400">
                         <svg class="w-5 h-5">
@@ -338,39 +379,86 @@
                         <p class="font-DanaMedium">نوع ارسال :</p>
                     </span>
 
-                    <form action="" method="post">
-                        {% csrf_token %}
-                        <div class="grid grid-cols-12 child:col-span-12 gap-4 child:w-full child:flex child:items-center child:gap-x-2 child:rounded-lg child:shadow child:p-2 mb-5 child:duration-300child:transition-all dark:child:text-white child:text-sm">
-                            <button type="button"
-                                    class="  group ring-transparent ring-1 focus:ring-blue-500 dark:ring-white/20 dark:focus:ring-blue-400 ">
-                            <span
-                                    class="w-4 h-4 border border-gray-400 rounded-full group-focus:bg-blue-400 group-focus:border-blue-500 duration-300 transition-all"></span>
-                                پست پیشتاز : 70,000 تومان
-                            </button>
-                            <button type="button"
-                                    class="group ring-transparent ring-1 focus:ring-blue-500 dark:ring-white/20 dark:focus:ring-blue-400">
-                            <span
-                                    class="w-4 h-4 border  border-gray-400 rounded-full group-focus:bg-blue-400 group-focus:border-blue-500 duration-300 transition-all "></span>
-                                پست تیپاکس : 20,000 تومان
-                            </button>
-                            <button type="button"
-                                    class="group ring-transparent ring-1 focus:ring-blue-500 dark:ring-white/20 dark:focus:ring-blue-400">
-                            <span
-                                    class="w-4 h-4 border  border-gray-400 rounded-full group-focus:bg-blue-400 group-focus:border-blue-500 duration-300 transition-all "></span>
-                                پست درون شهری : 20,000 تومان
-                            </button>
-                            <button type="button"
-                                    class="group ring-transparent ring-1 focus:ring-blue-500 dark:ring-white/20 dark:focus:ring-blue-400">
-                            <span
-                                    class="w-4 h-4 border  border-gray-400 rounded-full group-focus:bg-blue-400 group-focus:border-blue-500 duration-300 transition-all "></span>
-                                تحویل حضوری
-                            </button>
+                    {% if order.vip_post or order.tipax_post_delivery or order.physical_delivery or  order.in_city_delivery %}
+
+                        <div class="text-sm text-green-500">
+                            <p>
+                                هزینه ارسال (
+                                {% if order.vip_post %} پست
+                                {% elif order.tipax_post_delivery %} تیپاکس
+                                {% elif order.physical_delivery %} تحویل حضوری
+                                {% elif order.in_city_delivery %}  پست درون شهری
+                                {% endif %}
+                                )
+                                {% if order.in_city_delivery %}
+                                    هزینه ارسال درون شهری در شهر ( {{ order.store.orgin_city }} )
+
+                                    {{ order.delivery_price|tdc }}
+                                    تومان می باشد
+                                {% elif order.physical_delivery %}
+                                    رایگان می باشد
+                                {% else %}
+                                    از ({{ order.store.orgin_city }})
+                                    به ({{ order.address.city }})
+                                    {{ order.delivery_price|tdc }}تومان می باشد
+                                {% endif %}
+
+                            </p>
 
                         </div>
+                    {% endif %}
 
-                        <hr>
-                        <br>
+                    <div class="grid grid-cols-12 child:col-span-12 gap-4 child:w-full child:flex child:items-center child:gap-x-2 child:rounded-lg child:shadow child:p-2 mb-5 child:duration-300child:transition-all dark:child:text-white child:text-sm">
+                        {% if site.active_post_delivery and order.store.have_post_delivery %}
 
+                            <a type="button"
+                               href="{% url 'orders:choose-type-of-delivery' store_id=order.store.id pk=order.id did=1 %}"
+                               class="  group ring-transparent ring-1 focus:ring-blue-500 dark:ring-white/20 dark:focus:ring-blue-400 ">
+                            <span
+                                    class="w-4 h-4 border border-gray-400 rounded-full group-focus:bg-blue-400 group-focus:border-blue-500 duration-300 transition-all"></span>
+                                پست پیشتاز : {{ order.calculate_post_price|tdc }} تومان
+                            </a>
+                        {% endif %}
+                        {% if site.active_tipax_delivery and order.store.have_tipax_delivery %}
+
+                            <a type="button"
+                               href="{% url 'orders:choose-type-of-delivery' store_id=order.store.id pk=order.id did=2 %}"
+                               class="group ring-transparent ring-1 focus:ring-blue-500 dark:ring-white/20 dark:focus:ring-blue-400">
+                            <span
+                                    class="w-4 h-4 border  border-gray-400 rounded-full group-focus:bg-blue-400 group-focus:border-blue-500 duration-300 transition-all "></span>
+                                پست تیپاکس : {{ order.calculate_tipax_price|tdc }} تومان
+                            </a>
+                        {% endif %}
+
+                        {% if site.active_in_same_city_delivery and order.store.have_in_same_city_delivery and order.store.orgin_city_id == order.address.city_code %}
+
+                            <a type="button"
+                               href="{% url 'orders:choose-type-of-delivery' store_id=order.store.id pk=order.id did=3 %}"
+                               class="group ring-transparent ring-1 focus:ring-blue-500 dark:ring-white/20 dark:focus:ring-blue-400">
+                            <span
+                                    class="w-4 h-4 border  border-gray-400 rounded-full group-focus:bg-blue-400 group-focus:border-blue-500 duration-300 transition-all "></span>
+                                پست درون شهری
+                                ({{ order.store.orgin_city }}): {{ order.store.in_same_city_delivery_price|tdc }} تومان
+                            </a>
+                        {% endif %}
+
+                        {% if site.active_physical_delivery and order.store.have_physical_delivery %}
+
+                            <a type="button"
+                               href="{% url 'orders:choose-type-of-delivery' store_id=order.store.id pk=order.id did=4 %}"
+                               class="group ring-transparent ring-1 ring-blue-500 dark:ring-white/20 dark:focus:ring-blue-400">
+                            <span
+                                    class="w-4 h-4 border  border-gray-400 rounded-full group-focus:bg-blue-400 group-focus:border-blue-500 duration-300 transition-all "></span>
+                                تحویل حضوری ({{ order.store.orgin_city }})
+                            </a>
+                        {% endif %}
+
+                    </div>
+
+                    <hr>
+                    <br>
+                    <form action="" method="post">
+                        {% csrf_token %}
 
                         <textarea name="order_description" id="" class="tailwind-input col-span-12 h-24" cols="30"
                                   rows="10" placeholder="توضیحات اضافی"></textarea>
@@ -379,24 +467,69 @@
                         <br>
                         <div class="w-full lg:w-100  top-5 ">
                             <!-- PRICE -->
-                            <ul class="child:flex child:items-center child:justify-between space-y-8">
+                            <ul class="child:flex child:items-center child:justify-between space-y-2">
                                 <li>
-                                    <p>جمع مبلغ سفارش :</p>
+                                    <p> مبلغ سفارش محصولات :</p>
                                     <p class="font-DanaMedium text-green-500">{{ order.calculate_total_price|tdc }}
                                         تومان</p>
                                 </li>
                                 <li>
-                                                                    <p>تخفیف :</p>
-                                                                    <p class="font-DanaMedium text-red-600 dark:text-gray-200">220,000 تومان </p>
+                                    <p> تخفیف های اعمال شده از طرف فروشگاه :</p>
+                                    <p class="font-DanaMedium text-red-400">{{ order.get_items_discount_amount|tdc }}
+                                        تومان </p>
                                 </li>
+                                {% if order.use_discount_code and order.discount %}
+                                    <li>
+                                        <p>کد تخفیف :</p>
+                                        <p class="font-DanaMedium text-red-400">{{ order.discount_code_price|tdc }}
+                                            تومان </p>
+                                    </li>
+                                {% endif %}
+                                {% if order.use_discount_code or order.discount_code_price != 0 %}
+                                    <li>
+                                        <p>سود شما از این سفارش :</p>
+                                        <p class="font-DanaMedium text-red-400">{{ order.get_total_discount_amount|tdc }}
+                                            تومان </p>
+                                    </li>
+                                {% endif %}
                                 <li>
                                     <p>هزینه زیر ساخت :</p>
                                     <p class="font-DanaMedium text-green-500">{{ order.calculate_total_price|clac_tax:tax }}
                                         تومان </p>
                                 </li>
+                                {% if order.store.additional_tax %}
+
+                                    <li>
+                                        <p>مالیات بر ارزش افزوده فروشگاه :</p>
+                                        <p class="font-DanaMedium text-green-500">{{ order.calculate_total_price|clac_tax:order.store.additional_tax }}
+                                            تومان </p>
+                                    </li>
+                                {% endif %}
+                                {% if order.store.additional_price %}
+
+                                    <li>
+                                        <p>هزینه های جانبی فروشگاه :</p>
+                                        <p class="font-DanaMedium text-green-500">{{ order.store.additional_price|tdc}}
+                                            تومان </p>
+                                    </li>
+                                {% endif %}
+                                {% if site.active_receive_official_invoice and order.store.have_official_invoice and order.official_invoice %}
+                                    <li>
+                                        <p> هزینه دریافت فاکتور رسمی  :</p>
+                                        <p class="font-DanaMedium text-green-500">{{ order.calculate_total_price|clac_tax:order.store.official_invoice_price }}
+                                            تومان </p>
+                                    </li>
+                                {% endif %}
+
+                                <li>
+                                    <p> هزینه ارسال :</p>
+                                    <p class="font-DanaMedium text-green-500">{{ order.delivery_price|tdc }}
+                                        تومان</p>
+                                </li>
+
                                 <li class="border-t-2 border-dashed border-gray-400 pt-8">
                                     <p> مبلغ قابل پرداخت :</p>
-                                    <p class="font-DanaMedium text-green-500">2,200,000 تومان</p>
+                                    <p class="font-DanaMedium text-green-500">{{ order.get_payment_price|tdc }} تومان</p>
                                 </li>
                             </ul>
 

@@ -4,7 +4,12 @@ from .views import (AddOrder,
                     RemoveItemFromOrder,
                     RemoveProductFromOrder,
                     ConformPayment,
-                    AddAddressToOrder)
+                    AddAddressToOrder,
+                    ChangeInvoiceToOfficial,
+                    OrderSetDiscount,
+                    ChooseTypeOfDelivery,
+OrderRemoveDiscount
+                    )
 
 app_name = 'orders'
 
@@ -14,10 +19,20 @@ urlpatterns = [
     path('remove/<int:pk>/', RemoveItemFromOrder.as_view(), name='remove'),
     path('remove/product/<int:pk>/', RemoveProductFromOrder.as_view(), name='remove-product'),
 
+    path('delivery/choose/<int:store_id>/<int:pk>/<int:did>', ChooseTypeOfDelivery.as_view(), name='choose-type-of-delivery'),
+
     # address
     path('add/address/<int:store_id>/<int:pk>', AddAddressToOrder.as_view(), name='add-address'),
 
     # payment
     path('payment/conform/<int:pk>', ConformPayment.as_view(), name='payment-conform'),
     path('payment/result/<int:pk>/', ConformPayment.as_view(), name='payment-result'),
+
+    # invoice status
+    path('invoice/status/<int:store_id>/<int:pk>', ChangeInvoiceToOfficial.as_view(), name='invoice-status'),
+
+    # set discount for order in conform payment page
+    path('discount/add/<int:store_id>/<int:pk>', OrderSetDiscount.as_view(), name='discount'),
+    path('discount/remove/<int:store_id>/<int:pk>', OrderRemoveDiscount.as_view(), name='discount-remove'),
+
 ]
