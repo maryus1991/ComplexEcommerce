@@ -282,3 +282,13 @@ class LegalPersonForm(forms.Form):
 
         )
     )
+    legal_person_phone = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'class': ' tailwind-input w-full py-3',
+                'placeholder': '  شماره تماس / نمابر ...'
+            }
+
+        )
+    )

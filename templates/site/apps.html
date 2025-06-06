@@ -1,0 +1,160 @@
+{% extends 'Base/Base.html' %}
+{% load static %}
+{% load jalali_tags %}
+
+{% block title %}
+    برنامه های کاربردی
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="flex items-center gap-x-2">
+        <a class="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">برنامه
+            های کاربردی</a>
+    </li>
+{% endblock %}
+
+{% block header %}
+    <script src="{% static 'node_modules/jquery/dist/jquery.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'admin/jquery.ui.datepicker.jalali/themes/base/jquery-ui.min.css' %}">
+    <script src="{% static 'admin/js/django_jalali.min.js' %}"></script>
+    <style>
+        .app-card {
+            transition: all 0.3s ease;
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <main class="container mx-auto px-4 py-8">
+        <!-- Breadcrumbs -->
+
+
+        <div class="flex flex-col lg:flex-row gap-6">
+            <!-- SIDE FILTER BOX -->
+            <form method="get" action=""
+                  class="lg:sticky top-5 h-fit lg:w-1/4 flex flex-col gap-y-4 shadow rounded-lg p-4 dark:bg-zinc-700 bg-white">
+                <div class="flex items-center justify-between w-full">
+                    <span class="flex items-center gap-x-2">
+                        <svg class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor"
+                             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                        </svg>
+                        <p class="font-DanaMedium text-gray-800 dark:text-white">فیلترها</p>
+                    </span>
+                    <button type="reset" class="text-green-500 hover:text-green-600 transition-colors text-sm">حذف همه
+                    </button>
+                </div>
+
+                <div class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
+                    <div class="grid">
+                        <input name="q" placeholder="جستجو ... " class="tailwind-input col-span-6">
+                    </div>
+                </div>
+                <!-- Add your filter components here -->
+
+                <button type="submit"
+                        class="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-DanaMedium transition-colors">
+                    اعمال فیلترها
+                </button>
+            </form>
+
+            <!-- MAIN CONTENT -->
+            <div class="lg:w-3/4">
+                <!-- Apps Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for app in apps %}
+                        <div class="app-card bg-white dark:bg-zinc-700 rounded-lg overflow-hidden shadow-md hover:shadow-lg border border-gray-100 dark:border-gray-600">
+                            <div class="p-4">
+                                <div class="flex justify-between items-start mb-3">
+                                    <div>
+                                        <h3 class="font-DanaDemiBold text-lg text-gray-800 dark:text-white mb-1">
+                                            برنامه {{ app.name }}</h3>
+                                        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                                            </svg>
+                                            <span>{{ app.store.name }}</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="flex justify-between items-center mt-4">
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        {% if app.file %}
+                                            <span>{{ app.file.size|filesizeformat }} </span>
+                                        {% endif %}
+                                    </div>
+                                    <a href="{% url 'site:apps-download' app.id %}"
+                                       class="flex items-center justify-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-DanaMedium rounded-lg transition-colors">
+                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                        </svg>
+                                        دانلود
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- PAGINATION -->
+                {% if page_obj.paginator.num_pages > 1 %}
+                    <div class="mt-10 flex justify-center">
+                        <nav class="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                            {% if page_obj.has_previous %}
+                                <a href="?page={{ page_obj.previous_page_number }}"
+                                   class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white dark:bg-zinc-700 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-zinc-600">
+                                    <span class="sr-only">قبلی</span>
+                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                         fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd"
+                                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                              clip-rule="evenodd"/>
+                                    </svg>
+                                </a>
+                            {% endif %}
+
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <a href="?page={{ num }}"
+                                       class="relative inline-flex items-center px-4 py-2 border border-green-500 bg-green-500 text-white text-sm font-medium">
+                                        {{ num }}
+                                    </a>
+                                {% else %}
+                                    <a href="?page={{ num }}"
+                                       class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white dark:bg-zinc-700 text-sm font-medium text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-600">
+                                        {{ num }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}"
+                                   class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white dark:bg-zinc-700 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-zinc-600">
+                                    <span class="sr-only">بعدی</span>
+                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                         fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd"
+                                              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                              clip-rule="evenodd"/>
+                                    </svg>
+                                </a>
+                            {% endif %}
+                        </nav>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+{% endblock %}

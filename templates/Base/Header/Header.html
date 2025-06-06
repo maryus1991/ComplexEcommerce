@@ -49,8 +49,8 @@
                 <li class="nav-item {% if url == '/about-us' %} text-green-500 {% endif %}">
                     <a href="{% url 'site:about-us' %}">درباره ما</a>
                 </li>
-                <li class="nav-item {% if url == '/about-us' %} text-green-500 {% endif %}">
-                    <a href="{% url 'site:about-us' %}">برنامه های کاربردی</a>
+                <li class="nav-item {% if url == '/apps/' %} text-green-500 {% endif %}">
+                    <a href="{% url 'site:apps-list' %}">برنامه های کاربردی</a>
                 </li>
                 {% if request.user.is_authenticated and request.user.is_verified %}
                     {% if request.user.is_staff and request.user.store is not None %}

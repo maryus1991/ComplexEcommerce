@@ -57,7 +57,6 @@ class StoreApps(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='apps')
     file = models.FileField(upload_to="app/",)
     name = models.CharField(max_length=100)
-
     is_active = models.BooleanField(default=False)
 
     def __str__(self):

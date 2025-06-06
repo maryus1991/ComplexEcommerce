@@ -186,7 +186,11 @@
             {% endif %}
             <td>شماره تماس / نمابر:
                 <span dir="ltr">
-                {{ order.user.PhoneNumber }}
+                    {% if order.official_invoice %}
+                        {{ order.user.legal_person_phone }}
+                    {% else %}
+                        {{ order.user.PhoneNumber }}
+                    {% endif %} 
             </span>
             </td>
 
@@ -262,11 +266,11 @@
         <tr>
             <td colspan="11" style="text-align: right">
                 توضیحات :
-            {% if order.additional_descriptions   %}
-            	{{ order.additional_descriptions  }}
+                {% if order.additional_descriptions %}
+                    {{ order.additional_descriptions }}
                 {% else %}
-                -
-            {% endif %}
+                    -
+                {% endif %}
             </td>
         </tr>
         </tbody>

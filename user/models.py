@@ -27,6 +27,7 @@ class User(AbstractUser):
     legal_person = models.BooleanField(default=False)
     legal_person_economic_number = models.CharField(max_length=100, null=True, blank=True)
     legal_person_registration_number = models.CharField(max_length=100, null=True, blank=True)
+    legal_person_phone = models.CharField(max_length=100, null=True, blank=True)
 
     USERNAME_FIELD = 'PhoneNumber'
     EMAIL_FIELD = 'PhoneNumber'

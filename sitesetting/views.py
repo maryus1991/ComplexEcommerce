@@ -1,16 +1,23 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, RedirectView
+from django.views.generic import TemplateView, RedirectView, View, ListView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.views.generic.edit import FormView
-
+from django.utils.text import slugify
+import os
+from wsgiref.util import FileWrapper
+from mimetypes import guess_type
+from django.db.models import Q
 
 from orders.models import OrderDetail
 from .forms import ContactForm
 from .models import FastLinks, SiteSetting, QuestionAndAnswer, Newsletter
+from stores.models import StoreApps
+from user.mixins.logins import CustomLoginRequiredMixin
 
 from user.forms import ActiveAccountForm as NumberForAddToLettersForm
+
 
 # Create your views here.
 class Main(TemplateView):
@@ -18,6 +25,7 @@ class Main(TemplateView):
     main page
     """
     template_name = 'index.html'
+
 
 class QuestionsPageView(TemplateView):
     """
@@ -30,6 +38,7 @@ class QuestionsPageView(TemplateView):
         context['questions'] = QuestionAndAnswer.objects.all()
         return context
 
+
 class AboutUs(TemplateView):
     """
      about us page
@@ -40,6 +49,7 @@ class AboutUs(TemplateView):
         context = super().get_context_data(**kwargs)
         context['site'] = SiteSetting.objects.filter(is_active=True).first()
         return context
+
 
 class ContactUs(SuccessMessageMixin, FormView):
     """
@@ -65,6 +75,7 @@ class ContactUs(SuccessMessageMixin, FormView):
         messages.error(self.request, 'لطفا در وارد کردن اطلاعات دقت کنید')
         return super().form_invalid(form)
 
+
 class AddTONewsLetters(RedirectView):
     """
     for add phone number to news letters
@@ -79,23 +90,96 @@ class AddTONewsLetters(RedirectView):
         )
         return self.request.META.get('HTTP_REFERER', '/')
 
+
+class UsedAppView(ListView):
+    """
+    for listing the stores apps
+    """
+    model = StoreApps
+    paginate_by = 20
+    context_object_name = 'apps'
+    template_name = 'site/apps.html'
+
+    def get_queryset(self):
+        query = super().get_queryset().order_by('-id').filter(
+            is_active=True,
+            store__is_active=True,
+            store__is_verified=True
+        )
+
+        # Add search functionality
+        search_query = self.request.GET.get('q')
+        print(search_query)
+        if search_query:
+            query = query.filter(
+                Q(name__contains=search_query) |
+                Q(store__name__contains=search_query)
+            )
+
+            return query
+
+
+        return query
+
+
+class DownloadUsedAppView(CustomLoginRequiredMixin, View):
+    """
+    for downloading the stores apps
+    """
+
+    def get(self, request, *args, **kwargs):
+        # Get the app with all necessary validations
+        app = get_object_or_404(
+            StoreApps,
+            pk=self.kwargs.get('pk'),
+            is_active=True,
+            store__is_active=True,
+            store__is_verified=True
+        )
+
+        # Serve the file securely
+        return self.serve_file(app)
+
+    def serve_file(self, app):
+        """Securely serve the file with proper headers"""
+        if not app.file or not os.path.exists(app.file.path):
+            raise Http404("File not available")
+
+        file_path = app.file.path
+        file_name = f"{app.name}"
+        file_size = os.path.getsize(file_path)
+
+        response = HttpResponse(
+            FileWrapper(open(file_path, 'rb')),
+            content_type=guess_type(file_path)[0]
+        )
+
+        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+        response['Content-Length'] = file_size
+        response['X-Accel-Redirect'] = f'/protected/{os.path.basename(file_path)}'  # For nginx
+
+        return response
+
+
 def custom_404_page(request, exception=None):
     return render(request, 'site/404.html')
+
 
 def header_render_partial(request):
     if request.user.is_authenticated:
         orders = OrderDetail.objects.filter(order__user=request.user, order__is_paid=False,
-                                        order__is_active=True, order__canceled=False )
+                                            order__is_active=True, order__canceled=False)
     else:
         orders = None
 
     site = SiteSetting.objects.filter(is_active=True).first()
 
-    return render(request, 'Base/Header/Header.html', {'orders':orders, 'site':site})
+    return render(request, 'Base/Header/Header.html', {'orders': orders, 'site': site})
+
 
 def footer_render_partial(request):
     site = SiteSetting.objects.filter(is_active=True).first()
     links = FastLinks.objects.all().order_by('-id')
     return render(request, 'Base/Footer/Footer.html',
-                  {'site':site, 'links1':links[0:4], 'links2':links[4:8],
-                   'form':NumberForAddToLettersForm()})
+                  {'site': site, 'links1': links[0:4], 'links2': links[4:8],
+                   'form': NumberForAddToLettersForm()})

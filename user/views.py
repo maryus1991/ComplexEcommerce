@@ -462,6 +462,7 @@ class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
         if form.is_valid():
             legal_person_economic_number = form.cleaned_data.get('legal_person_economic_number')
             legal_person_registration_number = form.cleaned_data.get('legal_person_registration_number')
+            legal_person_phone = form.cleaned_data.get('legal_person_phone')
 
             if not legal_person_economic_number.isdigit() or not legal_person_registration_number.isdigit():
 
@@ -476,6 +477,7 @@ class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
             user.legal_person = True
             user.legal_person_economic_number = legal_person_economic_number
             user.legal_person_registration_number = legal_person_registration_number
+            user.legal_person_phone = legal_person_phone
             user.save()
 
             messages.success(
