@@ -123,6 +123,13 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
         order_id = self.kwargs.get('pk')
         obj = get_object_or_404(Order, user=self.request.user, id=order_id)
 
+        if obj.address is None:
+            messages.warning(
+                request,
+                'برای دریافت فاکتور لطفا ادرس انتخاب کنید'
+            )
+            return redirect(reverse('dashboard:order_detail', kwargs={'pk': order_id}))
+
         # Handle official invoice case
         if obj.official_invoice:
             # Check if user is a legal person
@@ -157,8 +164,6 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
 
         # Regular invoice case (render template)
         site = SiteSetting.objects.filter(is_active=True).first()
-        if not site:
-            raise Http404("تنظیمات سایت یافت نشد")
 
         context = {'order': obj, 'site': site}
         return render(request, 'utils/invoice_pdf.html', context)

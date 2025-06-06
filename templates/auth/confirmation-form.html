@@ -4,6 +4,25 @@
     کد تایید شماره همراه
 {% endblock %}
 
+{% block breadcrumb %}
+	
+    <li class="flex items-center gap-x-2">
+        <a>صفحه کابری</a>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>
+    <li class="flex items-center gap-x-2">
+        <a>فعال سازی حساب کاربری</a>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>    
+    <li class="flex items-center gap-x-2">
+        <a>صفحه تایید حساب</a>
+
+    </li>
+{% endblock %}
 
 {% block content %}
     <main class="container flex items-center flex-col justify-center mt-8">

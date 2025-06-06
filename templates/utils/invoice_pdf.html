@@ -1,4 +1,6 @@
 {% load static %}
+{% load jalali_tags %}
+{% load products_tags %}
 
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -121,47 +123,74 @@
 
 <div class="buttons">
     <button onclick="downloadPDF()">دانلود PDF</button>
-{#    <button onclick="downloadWord()">دانلود Word</button>#}
+    {#    <button onclick="downloadWord()">دانلود Word</button>#}
 </div>
 <div id="invoice">
     <h2>صورت‌حساب فروش کالا و خدمات</h2>
     <div class="">
-        شماره سریال: ............
+        شماره سریال: {{ order.id }}
         <br>
-        تاریخ: ............
+        تاریخ: {{ order.date|to_jalali:'%Y/%m/%d' }}
     </div>
     <br>
     <div class="section-title">مشخصات فروشنده</div>
     <table class="info-table">
         <tr>
-            <td>نام شخص حقیقی / حقوقی:</td>
-            <td>شماره اقتصادی:</td>
-            <td>کد پستی ۱۰ رقمی:</td>
-            <td> استان:</td>
-            <td> شهر:</td>
+            <td>نام شخص حقیقی / حقوقی: {{ order.store.name }}</td>
+            {% if order.official_invoice %}
+                <td> شماره اقتصادی: {{ order.store.economic_number }}</td>
+
+            {% else %}
+                <td> شماره اقتصادی: -</td>
+            {% endif %}
+            <td>کد پستی ۱۰ رقمی: {{ order.store.zip_code }}</td>
+            <td> استان: {{ order.store.province }}</td>
+            <td> شهر: {{ order.store.orgin_city }}</td>
         </tr>
         <tr>
-            <td>شماره ثبت / شماره ملی:</td>
-            <td>شماره تماس / نمابر:</td>
+            {% if order.official_invoice %}
+                <td> شماره ثبت / شماره ملی: {{ order.store.registration_number }}</td>
+            {% else %}
+                <td> شماره ثبت / شماره ملی: -</td>
+            {% endif %}
 
-            <td colspan="4">نشانی :</td>
+            <td>شماره تماس / نمابر:
+                <span dir="ltr">
+                    {{ order.store.phone2 }}
+                </span>
+            </td>
+
+            <td colspan="4">نشانی : {{ order.store.address }}</td>
         </tr>
     </table>
 
     <div class="section-title">مشخصات خریدار</div>
     <table class="info-table">
         <tr>
-            <td>نام شخص حقیقی / حقوقی:</td>
-            <td>شماره اقتصادی:</td>
-            <td>کد پستی ۱۰ رقمی:</td>
-            <td> استان:</td>
-            <td> شهر:</td>
+            <td>نام شخص حقیقی / حقوقی: {{ order.user.get_full_name }}</td>
+            {% if order.official_invoice %}
+                <td> شماره اقتصادی: {{ order.user.legal_person_economic_number }}</td>
+
+            {% else %}
+                <td> شماره اقتصادی: -</td>
+            {% endif %}
+            <td>کد پستی ۱۰ رقمی: {{ order.address.zipcode }}</td>
+            <td> استان: {{ order.address.province }}</td>
+            <td> شهر: {{ order.address.city }}</td>
         </tr>
         <tr>
-            <td>شماره ثبت / شماره ملی:</td>
-            <td>شماره تماس / نمابر:</td>
+            {% if order.official_invoice %}
+                <td> شماره ثبت / شماره ملی: {{ order.user.legal_person_registration_number }}</td>
+            {% else %}
+                <td> شماره ثبت / شماره ملی: -</td>
+            {% endif %}
+            <td>شماره تماس / نمابر:
+                <span dir="ltr">
+                {{ order.user.PhoneNumber }}
+            </span>
+            </td>
 
-            <td colspan="4">نشانی :</td>
+            <td colspan="4">نشانی : {{ order.address.address }}</td>
         </tr>
     </table>
 
@@ -172,101 +201,72 @@
             <th>ردیف</th>
             <th>کد کالا / خدمات</th>
             <th>شرح کالا / خدمات</th>
-            <th>مقدار</th>
+
             <th>واحد</th>
-            <th>مبلغ واحد (ریال)</th>
-            <th>مبلغ کل (ریال)</th>
-            <th>مبلغ تخفیف (ریال)</th>
+            <th>مقدار</th>
+            <th>مبلغ واحد )ریال(</th>
+            <th>مبلغ کل )ریال(</th>
+            <th>مبلغ تخفیف )ریال(</th>
             <th>مبلغ کل پس از تخفیف</th>
-            <th>جمع مالیات و عوارض (ریال)</th>
-            <th>جمع مبلغ کل بعلاوه جمع مالیات و عوارض (ریال)</th>
+            <th>جمع مالیات و عوارض )ریال(</th>
+            <th>جمع مبلغ کل بعلاوه جمع مالیات و عوارض )ریال(</th>
         </tr>
         </thead>
         <tbody>
         <!-- سطر نمونه، می‌توانید سطرهای بیشتری اضافه کنید -->
-        <tr>
-            <td>1</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>5</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
+
+        {% for item in order.details.all %}
+
+
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.id }}</td>
+                <td>{{ item.product.name }}</td>
+
+                <td colspan="2">{{ item.count }}</td>
+                <td>{{ item.product.price|tdcR }}</td>
+                <td>{{ item.get_item_price_without_discount|tdcR }}</td>
+                <td>{{ item.get_item_discount|tdcR }}</td>
+                <td>{{ item.get_item_price|tdcR }}</td>
+                {% with item.get_item_price|clac_tax_no_format:site.tax as tax %}
+
+                    <td>{{ tax|tdcR }}</td>
+                    <td>{{ item.get_item_price|sumR:tax }}</td>
+                {% endwith %}
+            </tr>
+        {% endfor %}
+
         <tr class="section-title">
             <td colspan="6"> جمع کل قابل پرداخت :</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{ order.calculate_total_price_with_out_discount|tdcR }}</td>
+            <td>{{ order.get_total_discount_amount|tdcR }}</td>
+            <td>{{ order.calculate_total_price|tdcR }}</td>
+            <td>{{ order.get_payment_price|minesR:order.calculate_total_price }}</td>
+            <td>{{ order.get_payment_price|tdcR }}</td>
         </tr>
         <tr class="">
             <td colspan="3" style="text-align: right">شرایط و نحوه فروش :</td>
             <td colspan="2">نقدی</td>
             <td colspan="2">غیر نقد</td>
-            <td colspan="5"></td>
+            <td colspan="5">
+                {% if order.is_paid %}
+                    این سفارش با موفقیت و به صورت نقد مبلغ {{ order.get_payment_price|tdcR }} ریال پرداخت شده است
+                {% elif order.canceled %}
+                    این سفارش کنسل شده است و پرداختی حاصل نشده است
+                {% else %}
+                    این سفارش هنوز در وضعیت انتظار برای پرداخت می باشد و پرداختی حاصل نشده است
+                {% endif %}
+            </td>
 
         </tr>
         <tr>
             <td colspan="11" style="text-align: right">
                 توضیحات :
+            {% if order.additional_descriptions   %}
+            	{{ order.additional_descriptions  }}
+                {% else %}
+                -
+            {% endif %}
             </td>
         </tr>
         </tbody>

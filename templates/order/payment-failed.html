@@ -5,14 +5,23 @@
 {% endblock %}
 
 {% block breadcrumb %}
+
+
     <li class="flex items-center gap-x-2">
-        <a href="{% url 'dashboard:orders' %}">پرداخت</a>
+        <a>پنل کاربری</a>
         <svg class="w-4 h-4">
             <use href="#chevron-left"></use>
         </svg>
     </li>
     <li class="flex items-center gap-x-2">
-        <a >پرداخت ناموفق</a>
+        <a>سفارشات</a>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>
+
+    <li class="flex items-center gap-x-2">
+        <a>پرداخت ناموفق</a>
     </li>
 {% endblock %}
 

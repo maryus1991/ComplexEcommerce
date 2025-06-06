@@ -89,6 +89,17 @@ class Order(models.Model):
         else:
             return self.total_price
 
+    def calculate_total_price_with_out_discount(self):
+
+        details = self.details.all()
+        total_price = 0
+
+        for item in details:
+            total_price += item.get_item_price_without_discount()
+
+
+        return self.total_price
+
     def get_total_weight(self):
         if not self.is_paid or not self.canceled:
             details = self.details.all()
@@ -203,6 +214,14 @@ class OrderDetail(models.Model):
 
     def get_item_price(self):
         product = self.product.calc_discount()
+        price = product * self.count
+
+        self.price = price
+        self.save()
+        return price
+
+    def get_item_price_without_discount(self):
+        product = self.product.price
         price = product * self.count
 
         self.price = price

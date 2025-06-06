@@ -4,7 +4,20 @@
 {% block title %}
     404
 {% endblock %}
+{% block breadcrumb %}
+	
+    <li class="flex items-center gap-x-2">
+        <a>صفحه کابری</a>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>
+    <li class="flex items-center gap-x-2">
+        <a>صفحه مورد نظر پیدا نشد</a>
 
+    </li> 
+
+{% endblock %}
 
 {% block content %}
     <main class="container mt-14">

@@ -18,6 +18,8 @@ class Store(models.Model):
 
     logo = models.ImageField(null=True, blank=True)
     address = models.CharField(max_length=200, null=True)
+    zip_code = models.CharField(null=True, blank=True, max_length=20)
+    province = models.CharField(null=True, blank=True, max_length=20)
     orgin_city_id = models.BigIntegerField(null=True, blank=True)
     orgin_city = models.CharField(max_length=20 ,null=True, blank=True)
 

@@ -7,6 +7,28 @@
 {% endblock %}
 
 {% block breadcrumb %}
+	
+    <li class="flex items-center gap-x-2">
+        <a>پنل کاربری</a>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>    <li class="flex items-center gap-x-2">
+        <a>سفارشات</a>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>
+    <li class="flex items-center gap-x-2">
+        <a href="{% url 'dashboard:order_detail' order.pk %}">سفارش شماره {{order.id}}</a>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>       
+    <li class="flex items-center gap-x-2">
+        <a > تایید جهت پرداخت </a>
+
+    </li>    
 
 {% endblock %}
 
