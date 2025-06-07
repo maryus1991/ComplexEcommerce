@@ -78,6 +78,10 @@
                                     {% elif order.sending %}
                                         <td class="px-6 py-5 text-green-500">
                                             ارسال شده
+                                        </td>                                    
+                                    {% elif order.delivered_to_user %}
+                                        <td class="px-6 py-5 text-green-500">
+                                            درحال ارسال
                                         </td>
                                     {% elif order.is_paid %}
                                         <td class="px-6 py-5 text-blue-500">

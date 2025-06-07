@@ -12,8 +12,10 @@ from utils.post_price_calc import calculate_price as calculate_price_post
 
 from sitesetting.models import SiteSetting
 from  django.utils.crypto import get_random_string
+from django.utils.timezone import now, timedelta
 
 User = get_user_model()
+
 
 
 # Create your models here.
@@ -21,6 +23,15 @@ User = get_user_model()
 def pdf_path_upload_to(instance, filename):
     return f'files/official_invoice/pdf/{get_random_string(100)}.pdf'
 
+class DeliveryPrices(models.Model):
+    is_tipax = models.BooleanField(default=True)
+    price = models.PositiveBigIntegerField()
+    origin_city_id = models.PositiveIntegerField()
+    destination_city_id = models.PositiveIntegerField()
+    date = models.DateField()
+
+    def __str__(self):
+        return f'{self.origin_city_id}-{self.destination_city_id}-{self.price}-{"tipax" if self.is_tipax else "post"} '
 
 class Order(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='orders')
@@ -32,15 +43,19 @@ class Order(models.Model):
     in_city_delivery = models.BooleanField(default=False)
     physical_delivery = models.BooleanField(default=False)
 
+    vip_post_price = models.PositiveBigIntegerField(default=0)
+    tipax_post_price = models.PositiveBigIntegerField(default=0)
+
     delivery_price = models.PositiveBigIntegerField(default=0)
     sending = models.BooleanField(default=False)
     delivered_to_user = models.BooleanField(default=False)
     sending_id = models.CharField(max_length=500, null=True, blank=True)
 
-
     Authority = models.CharField(max_length=120, null=True, blank=True, unique=True)
-    cart = models.CharField(max_length=120, null=True, blank=True, unique=True)
+    cart = models.CharField(max_length=120, null=True, blank=True)
+    cart_hash = models.CharField(max_length=120, null=True, blank=True)
     payment_id = models.PositiveBigIntegerField(default=0)
+    ZarinPal_fee = models.PositiveBigIntegerField(default=0)
 
     date = models.DateTimeField(auto_now_add=True)
     second_date = models.DateTimeField(null=True, blank=True)
@@ -68,12 +83,44 @@ class Order(models.Model):
     additional_descriptions = models.TextField(null=True, blank=True)
 
     def calculate_tipax_price(self):
-
-        return calculate_price_tipax(self)
+        price = DeliveryPrices.objects.filter(
+            is_tipax=True,
+            origin_city_id=self.store.orgin_city_id,
+            destination_city_id=self.address.city_code,
+            date__range=[now() - timedelta(days=3)  ,now()],
+        )
+        if price.exists() and price.count() == 1:
+            return price.first().price
+        else:
+            price = calculate_price_tipax(self)
+            DeliveryPrices.objects.create(
+                is_tipax=True,
+                origin_city_id=self.store.orgin_city_id,
+                destination_city_id=self.address.city_code,
+                date=now(),
+                price=price,
+            )
+            return price
 
     def calculate_post_price(self):
-
-        return calculate_price_post()
+        price = DeliveryPrices.objects.filter(
+            is_tipax=False,
+            origin_city_id=self.store.orgin_city_id,
+            destination_city_id=self.address.city_code,
+            date__range=[now() - timedelta(days=3)  ,now()],
+        )
+        if price.exists() and price.count() == 1:
+            return price.first().price
+        else:
+            price = calculate_price_post()
+            DeliveryPrices.objects.create(
+                is_tipax=False,
+                origin_city_id=self.store.orgin_city_id,
+                destination_city_id=self.address.city_code,
+                date=now(),
+                price=price,
+            )
+            return price
 
     def calculate_total_price(self):
         if not self.is_paid or not self.canceled:
@@ -197,6 +244,16 @@ class Order(models.Model):
 
         return total_payment_price
 
+    def check_count_of_products(self):
+        return all(
+            item.count <= item.product.count
+            for item in self.details.select_related('product')
+        )
+
+    def mines_order_detail_count_from_products_count(self):
+        for item in self.details.all():
+            item.product.count = item.product.count - item.count
+            item.product.save()
 
     def __str__(self):
         return f'{self.user.PhoneNumber} - {self.store.name} - {self.id}'

@@ -45,7 +45,7 @@ class Product(models.Model):
     brand = models.ForeignKey(ProductBrand, on_delete=models.SET_NULL, null=True, related_name='products')
     category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True, related_name='products')
     description = RichTextUploadingField(null=True, blank=True)
-    count = models.IntegerField(default=0)
+    count = models.PositiveBigIntegerField(default=0)
     weight = models.PositiveBigIntegerField(default=0)
     length = models.PositiveBigIntegerField(default=0)
     width = models.PositiveBigIntegerField(default=0)
@@ -54,7 +54,7 @@ class Product(models.Model):
     is_active = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name
+        return f'{self.name}-{self.id}-{self.count}'
 
     def calc_discount(self):
 

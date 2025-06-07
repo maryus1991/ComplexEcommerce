@@ -15,6 +15,7 @@ from .forms import ProductCommentForm
 from orders.models import OrderDetail, Order
 from sitesetting.models import SiteSetting
 
+
 # Create your views here.
 
 class ProductListView(ListView):
@@ -32,37 +33,10 @@ class ProductListView(ListView):
         url_params = dict(self.request.GET.lists())
         have_filter_url = False
 
-
         # get the product obj
         products = Product.objects.filter(is_active=True)
 
-        sort = None
-        if 'sort' in url_params:
-            sort = url_params['sort']
-            if len(sort) == 1:
-                sort = sort[0]
-                if sort.isdigit():
-                    sort = int(sort)
-                    if 1 <= sort <= 5:
-                        if sort == 1:
-                            return products.all().order_by('-discount')
-                        elif sort == 2:
-                            return products.filter(orders__count__gt=0).order_by('orders__count').distinct().all()
-                        elif sort == 3:
-                            return products.all().order_by('price')
-                        elif sort == 4:
-                            return products.all().order_by('-price')
-                        elif sort == 5:
-                            return products.all().order_by('-id')
-                    else:
-                        sort = None
-                else:
-                    sort = None
-            else:
-                sort = None
-
-
-        if 'available' in url_params :
+        if 'available' in url_params:
             if url_params['available'] == ['on']:
                 available = True
             else:
@@ -83,9 +57,8 @@ class ProductListView(ListView):
                     search = None
             else:
                 search = None
-        else :
+        else:
             search = None
-
 
         # handle the price range
 
@@ -116,7 +89,7 @@ class ProductListView(ListView):
         if 'category' in url_params:
             have_filter_url = True
             category_list_id = url_params['category']
-        else :
+        else:
             category_list_id = []
 
         if 'brand' in url_params:
@@ -125,15 +98,13 @@ class ProductListView(ListView):
         else:
             brand_list_id = []
 
-
         if available:
             products = products.filter(count__gte=1)
 
-
-        if have_start_price and start_price :
+        if have_start_price and start_price:
             products = products.filter(price__gte=start_price)
 
-        if have_end_price and end_price :
+        if have_end_price and end_price:
             products = products.filter(price__lte=end_price)
 
         if have_search_query and search is not None:
@@ -146,10 +117,35 @@ class ProductListView(ListView):
                 Q(features__title__icontains=search)
             )
 
+        sort = None
+        if 'sort' in url_params:
+            sort = url_params['sort']
+            if len(sort) == 1:
+                sort = sort[0]
+                if sort.isdigit():
+                    sort = int(sort)
+                    if 1 <= sort <= 5:
+                        if sort == 1:
+                            products = products.order_by('-discount')
+                        elif sort == 2:
+                            products = products.filter(orders__count__gt=0).order_by('orders__count').distinct()
+                        elif sort == 3:
+                            products = products.order_by('price')
+                        elif sort == 4:
+                            products = products.order_by('-price')
+                        elif sort == 5:
+                            products = products.order_by('-id')
+                    else:
+                        sort = None
+                else:
+                    sort = None
+            else:
+                sort = None
+
         if have_filter_url:
             # set the queryset
-            return_result = products.filter(Q(brand_id__in=brand_list_id)|
-                               Q(category_id__in=category_list_id))
+            return_result = products.filter(Q(brand_id__in=brand_list_id) |
+                                            Q(category_id__in=category_list_id))
 
             return return_result.order_by('-id').all()
 
@@ -166,7 +162,8 @@ class ProductListView(ListView):
         context['brands'] = ProductBrand.objects.order_by('-id').all()
 
         if self.request.user.is_authenticated and self.request.user.is_verified:
-            context['user_favorite'] = list(UserFavorite.objects.filter(user=self.request.user).values_list('product_id', flat=True))
+            context['user_favorite'] = list(
+                UserFavorite.objects.filter(user=self.request.user).values_list('product_id', flat=True))
             context['user_details_orders'] = list(OrderDetail.objects.filter(
                 product__is_active=True,
                 order__user=self.request.user,
@@ -179,6 +176,7 @@ class ProductListView(ListView):
             context['user_details_orders'] = []
 
         return context
+
 
 class ProductDetailView(DetailView):
     """
@@ -195,7 +193,7 @@ class ProductDetailView(DetailView):
         # check if the product is the user favorite or not
         if self.request.user.is_authenticated:
             is_favorite_product = UserFavorite.objects.filter(user=self.request.user,
-                                                       product=self.object).exists()
+                                                              product=self.object).exists()
         else:
             is_favorite_product = False
         context = super().get_context_data(**kwargs)
@@ -210,26 +208,24 @@ class ProductDetailView(DetailView):
         ).order_by('-id').all()[0:50]
         context['comments'] = comments
 
-
         # get the same product
         obj = self.object
         same_product = Product.objects.filter(
-            Q(is_active=True)|
-              Q(brand=obj.brand)|
-              Q(category=obj.category)|
-              Q(tags__name=obj.tags.name)
-            ).exclude(id=obj.id
-            ).distinct().order_by('-id')
+            Q(is_active=True) |
+            Q(brand=obj.brand) |
+            Q(category=obj.category) |
+            Q(tags__name=obj.tags.name)
+        ).exclude(id=obj.id
+                  ).distinct().order_by('-id')
 
         context['same_product'] = same_product
 
-        if self.request.user.is_authenticated :
+        if self.request.user.is_authenticated:
 
             order = Order.objects.get_or_create(
-                    user=self.request.user, store=obj.store,
-                    is_active=True, is_paid=False, canceled=False
-                    )[0]
-
+                user=self.request.user, store=obj.store,
+                is_active=True, is_paid=False, canceled=False
+            )[0]
 
             context['user_order'] = order
             context['user_order_detail'] = order.details.filter(
@@ -244,6 +240,7 @@ class ProductDetailView(DetailView):
             context['user_order_detail'] = []
 
         return context
+
 
 class AddProductComment(LoginRequiredMixin, RedirectView):
     """
@@ -264,7 +261,7 @@ class AddProductComment(LoginRequiredMixin, RedirectView):
                 comment = comment_form.cleaned_data['comment']
                 suggest_product = comment_form.cleaned_data['suggest_product']
 
-                comment_obj  = ProductComment.objects.create(
+                comment_obj = ProductComment.objects.create(
                     Product=product,
                     user=self.request.user,
                     subject=subject,
@@ -279,9 +276,10 @@ class AddProductComment(LoginRequiredMixin, RedirectView):
             else:
                 messages.error(
                     self.request,
-                        'لطفا در ارسال اطلاعات دقت کنید'
+                    'لطفا در ارسال اطلاعات دقت کنید'
                 )
         return super().get_redirect_url(*args, **kwargs)
+
 
 class RemoveProductComment(LoginRequiredMixin, RedirectView):
     """
@@ -291,11 +289,11 @@ class RemoveProductComment(LoginRequiredMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         # get the comment obj
-        comment:ProductComment = get_object_or_404(ProductComment, pk=self.kwargs['pk'])
+        comment: ProductComment = get_object_or_404(ProductComment, pk=self.kwargs['pk'])
 
         # allowed the super user or store staff or comment creator to remove the comment
         if self.request.user.is_superuser or \
-                (self.request.user.store == comment.Product.store ) or \
+                (self.request.user.store == comment.Product.store) or \
                 (self.request.user == comment.user):
             comment.delete()
 
@@ -305,6 +303,7 @@ class RemoveProductComment(LoginRequiredMixin, RedirectView):
         )
 
         return reverse('product:detail', kwargs={'pk': comment.Product.pk})
+
 
 class AddLikeComment(LoginRequiredMixin, RedirectView):
     """
@@ -327,6 +326,7 @@ class AddLikeComment(LoginRequiredMixin, RedirectView):
         )
 
         return reverse('product:detail', kwargs={'pk': self.kwargs['pk']})
+
 
 class DisLikeComment(LoginRequiredMixin, RedirectView):
     """
@@ -353,11 +353,13 @@ class DisLikeComment(LoginRequiredMixin, RedirectView):
         else:
             return Http404('not found')
 
+
 class AddUserToProductAvailability(LoginRequiredMixin, RedirectView):
     """
     for add a user to product availability
     """
     pattern_name = 'product:detail'
+
     def get_redirect_url(self, *args, **kwargs):
         product = get_object_or_404(Product, pk=self.kwargs['pk'])
         NotificationUserForProductAvailability.objects.get_or_create(

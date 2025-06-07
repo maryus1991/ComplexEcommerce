@@ -1,4 +1,5 @@
 {% extends 'Base/Base.html' %}
+{% load jalali_tags %}
 
 {% block title %}
 
@@ -42,7 +43,7 @@
                 <svg class="w-4 h-4">
                     <use href="#info"></use>
                 </svg>
-                <p>چنانچه مبلغی از حساب شما برداشت شده است تا 24 ساعت آینده به حساب شما واریز میگردد</p>
+                <p>چنانچه مبلغی از حساب شما برداشت شده است تا 48 ساعت آینده به حساب شما واریز میگردد</p>
             </span>
             <p class="font-DanaMedium">جزییات سفارش :</p>
             <span class="w-full flex border-t-2 border-gray-200 dark:border-white/20"></span>
@@ -50,7 +51,7 @@
                     class="mt-2 flex flex-wrap w-full items-center justify-center lg:justify-between child:text-center gap-5 lg:child:w-[30%]">
                 <span>
                     <p class="text-gray-400">تاریخ و زمان </p>
-                    <p class="font-DanaMedium mt-2">1404/6/21 | 22:00</p>
+                    <p class="font-DanaMedium mt-2">{{ date|to_jalali:' %H/%M - %Y/%m/%d ' }}</p>
                 </span>
                 <span class="order-4 lg:order-none">
                     <p class="text-gray-400"> وضعیت </p>
@@ -58,15 +59,12 @@
                             class="mt-1 bg-red-400/20 dark:bg-rose-500/20 text-rose-400 text-sm px-2 py-0.5 rounded">پرداخت
                         ناموفق</button>
                 </span>
-                <span>
-                    <p class="text-gray-400"> شماره پیگیری </p>
-                    <p class="font-DanaMedium mt-2">123940222</p>
-                </span>
+
             </div>
             <div
                     class="w-full grid grid-cols-12 child:col-span-6 gap-x-4 child:text-white child:flex child:w-full child:justify-center child:items-center child:py-2 mt-4 child:rounded-lg child:transition-all">
                 <a href="/" class="bg-green-500 hover:bg-green-600">بازگشت به سایت</a>
-                <a href="{% url 'dashboard:orders' %}" class="bg-blue-500 hover:bg-blue-600">پیگیری سفارش</a>
+                <a href="{% url 'dashboard:order_detail' order.id %}" class="bg-blue-500 hover:bg-blue-600">پیگیری سفارش</a>
             </div>
         </section>
     </main>

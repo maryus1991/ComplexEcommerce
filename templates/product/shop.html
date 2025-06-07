@@ -298,22 +298,31 @@
                     </svg>
                     <h2 class="font-DanaDemiBold">مرتب سازی بر اساس :</h2>
                 </div>
+<script>
+    function OrderingFilter(id) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('sort', id);
+        window.location.search = params.toString();
+    }
+</script>
+<ul class="flex items-center gap-x-1 lg:gap-x-5 child:transition-all child:cursor-pointer child-hover:bg-gray-300/30 child:rounded-lg child:px-1 child:py-1 child:text-sm child:lg:text-base">
+    <li class="" id="sort__obj__1">
+        <a onclick="OrderingFilter('1')">پر تخفیف ترین</a>
+    </li>
+    <li class="" id="sort__obj__5">
+        <a onclick="OrderingFilter('5')">جدید ترین</a>
+    </li>
+    <li class="" id="sort__obj__2">
+        <a onclick="OrderingFilter('2')">پرفروش ترین</a>
+    </li>
+    <li class="" id="sort__obj__3">
+        <a onclick="OrderingFilter('3')">ارزان ترین</a>
+    </li>
+    <li class="" id="sort__obj__4">
+        <a onclick="OrderingFilter('4')">گران ترین</a>
+    </li>
+</ul>
 
-                <ul class="flex items-center gap-x-1 lg:gap-x-5 child:transition-all child:cursor-pointer child-hover:bg-gray-300/30 child:rounded-lg child:px-1 child:py-1 child:text-sm child:lg:text-base">
-                    <li id="sort__obj__1" class="">
-                        <a href="?sort=1">پر تخفیف ترین</a></li>
-                    <li id="sort__obj__5" class="">
-                        <a href="?sort=5">جدید ترین</a></li>
-                    <li class="" id="sort__obj__2">
-                        <a href="?sort=2">
-                            پرفروش ترین </a></li>
-                    <li class="" id="sort__obj__3">
-                        <a href="?sort=3">
-                            ارزان ترین </a></li>
-                    <li class="" id="sort__obj__4">
-                        <a href="?sort=4">
-                            گران ترین </a></li>
-                </ul>
             </div>
             <script>
 

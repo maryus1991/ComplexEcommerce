@@ -278,10 +278,16 @@
 
 
     <br>
-    <div class="signature-section">
-        <div>مهر و امضاء فروشنده</div>
-        <div>مهر و امضاء خریدار</div>
-    </div>
+    {% if order.official_invoice %}
+        <div class="signature-section">
+
+            <div>مهر و امضاء فروشنده</div>
+            <div>مهر و امضاء خریدار</div>
+        </div>
+
+
+    {% endif %}
+
     <br>
     <br>
 

@@ -165,7 +165,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-OTP_EXPIRATION = timedelta(seconds=30)
+OTP_EXPIRATION = timedelta(seconds=120)
 
 AUTH_USER_MODEL= "user.User"
 LOGIN_URL = 'user:login'
@@ -222,8 +222,12 @@ melipayamak_username = os.getenv('melipayamak_panel_username')
 melipayamak_password = os.getenv('melipayamak_panel_password')
 melipayamak_from_number = os.getenv('melipayamak_panel_from_number')
 
-# merchant id
+# zrinpal payment
 MERCHANT_ID = os.getenv('MERCHANT_ID')
+ZARINPAL_SEND_DATA_URL = os.getenv('ZARINPAL_SEND_DATA_URL')
+ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE = os.getenv('ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE')
+ZARINPAL_VERIFY_PAYMENT = os.getenv('ZARINPAL_VERIFY_PAYMENT')
+
 
 # tipax config
 TIPAX_USERNAME = os.getenv('TIPAX_USERNAME')

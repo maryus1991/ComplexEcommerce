@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from .models import User
 
+
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     """
@@ -17,27 +18,31 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         ('Authentication',
          {'fields':
-              (
-                'PhoneNumber',
-                'password1',
-                'password2',
-                'first_name',
-                'last_name',
-                'email',
-                'store'
-               )
+             (
+                 'PhoneNumber',
+                 'password1',
+                 'password2',
+                 'first_name',
+                 'last_name',
+                 'email',
+                 'store'
+             )
          }
-         ),(
+         ), (
             'Permissions',
             {'fields':
-                 ('is_staff', 'is_superuser', 'is_active')
+                 ('is_staff', 'is_superuser', 'is_active',
+                                              'is_verified', 'is_store_admin', 'legal_person',
+                  'legal_person_economic_number',
+                  'legal_person_registration_number',
+                  )
              }
-        ),("Group&Permissions", {"fields": ("groups", "user_permissions")}),
+        ), ("Group&Permissions", {"fields": ("groups", "user_permissions")}),
     )
 
     fieldsets = (
         ('Authentication',
-         {'fields':(
+         {'fields': (
              "PhoneNumber",
              "email",
              "password",
@@ -47,12 +52,14 @@ class CustomUserAdmin(UserAdmin):
              'store'
          )}),
         ('Permissions',
-         {'fields':(
-             "is_staff",
-             "is_superuser",
-             'is_active',
-
-         )}),
+         {'fields':
+              ('is_staff', 'is_superuser', 'is_active',
+                                           'is_verified', 'is_store_admin', 'legal_person',
+               'legal_person_economic_number',
+               'legal_person_registration_number',
+               )
+          }
+         ),
         ("Group&Permissions", {"fields": ("groups", "user_permissions")}),
         ("Important Date", {"fields": ("last_login", 'date_joined', 'otp_expiry_date',)}),
     )

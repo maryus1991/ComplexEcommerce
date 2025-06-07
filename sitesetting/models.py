@@ -2,6 +2,12 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor_uploader.fields import RichTextUploadingField
 
+from django.utils.crypto import get_random_string
+
+def photo_path_upload_to(*args, **kwargs):
+    return f'images/slider/{get_random_string(100)}'
+
+
 class SiteSetting(models.Model):
     title = models.CharField(max_length=100)
     tax = models.FloatField(default=1)
@@ -65,3 +71,25 @@ class ContactUs(models.Model):
 
     def __str__(self):
         return f'{self.subject} - {self.email} - {self.phone}'
+
+class Slider(models.Model):
+    image = models.ImageField(upload_to=photo_path_upload_to)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    name2 = models.CharField(max_length=100, null=True, blank=True)
+    text = models.CharField(max_length=250, null=True, blank=True)
+    link = models.URLField()
+    is_active = models.BooleanField(default=True, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class Banners(models.Model):
+    image = models.ImageField(upload_to=photo_path_upload_to)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    name2 = models.CharField(max_length=100, null=True, blank=True)
+    link = models.URLField()
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+

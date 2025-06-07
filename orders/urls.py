@@ -8,7 +8,8 @@ from .views import (AddOrder,
                     ChangeInvoiceToOfficial,
                     OrderSetDiscount,
                     ChooseTypeOfDelivery,
-OrderRemoveDiscount
+OrderRemoveDiscount,
+VerifyPayment
                     )
 
 app_name = 'orders'
@@ -26,7 +27,7 @@ urlpatterns = [
 
     # payment
     path('payment/conform/<int:pk>', ConformPayment.as_view(), name='payment-conform'),
-    path('payment/result/<int:pk>/', ConformPayment.as_view(), name='payment-result'),
+    path('payment/result/<int:pk>', VerifyPayment.as_view(), name='payment-result'),
 
     # invoice status
     path('invoice/status/<int:store_id>/<int:pk>', ChangeInvoiceToOfficial.as_view(), name='invoice-status'),

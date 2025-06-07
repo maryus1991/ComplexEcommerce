@@ -12,12 +12,17 @@ from django.db.models import Q
 
 from orders.models import OrderDetail
 from .forms import ContactForm
-from .models import FastLinks, SiteSetting, QuestionAndAnswer, Newsletter
+from .models import (FastLinks,
+                     SiteSetting,
+                     QuestionAndAnswer,
+                     Newsletter, Slider, Banners)
 from stores.models import StoreApps
 from user.mixins.logins import CustomLoginRequiredMixin
 
 from user.forms import ActiveAccountForm as NumberForAddToLettersForm
 
+from product.models import Product, ProductCategory
+from blog.models import Blog
 
 # Create your views here.
 class Main(TemplateView):
@@ -25,6 +30,22 @@ class Main(TemplateView):
     main page
     """
     template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        products = Product.objects.filter(is_active=True)
+
+        context['Sliders'] = Slider.objects.filter(is_active=True)
+        context['categories'] = ProductCategory.objects.filter(is_active=True).order_by('products__count').all()[0:5]
+        context['products_newst'] = products.order_by('-id').all()
+        context['products_most_selled'] = products.filter().all()
+        context['products_most_discount'] = products.filter(have_discount=True).order_by('-discount').all()
+        context['Banners'] = Banners.objects.filter(is_active=True)
+        context['blogs'] = Blog.objects.filter(is_active=True).all()[0:4]
+
+        return context
+
 
 
 class QuestionsPageView(TemplateView):

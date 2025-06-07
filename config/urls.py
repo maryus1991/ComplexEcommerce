@@ -7,7 +7,6 @@ from django.utils.crypto import get_random_string
 from user.views import e_namad
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
     path("user/", include("user.urls")),
     path("dashboard/", include("dashboard.urls")),
     path("product/", include("product.urls")),
@@ -16,6 +15,7 @@ urlpatterns = [
     # path(f"{get_random_string(100)}-store/", include("stores.urls")),
     path("store/", include("stores.urls")),
     # path(f"{get_random_string(500)}-admin/", include("stores.urls")),
+    path("admin/", admin.site.urls),
     path("ckeditor/", include("ckeditor_uploader.urls")),
     path("", include("sitesetting.urls")),
     path("14545014.txt", e_namad, name='e-namad'),
