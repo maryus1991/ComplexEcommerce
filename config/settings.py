@@ -32,12 +32,12 @@ if path.isfile(local_env_file):
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-ro6c-*c+t$b2_hj9=lg1r=&mf9p^*66s6+v%+&5u_&uk%s+uy^"
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DJANGO_DEBUG", default="True")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", default="*").split(",")
 
 # Application definition
 
@@ -110,8 +110,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": os.getenv("POSTGRES_ENGIN", default="django.db.backends.postgresql"),
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST", default="postgres"),
+        "PORT": os.getenv("POSTGRES_PORT", default="5432"),
     }
 }
 
@@ -233,3 +237,4 @@ ZARINPAL_VERIFY_PAYMENT = os.getenv('ZARINPAL_VERIFY_PAYMENT')
 TIPAX_USERNAME = os.getenv('TIPAX_USERNAME')
 TIPAX_PASSWORD = os.getenv('TIPAX_PASSWORD')
 TIPAX_API_KEY = os.getenv('TIPAX_API_KEY')
+
