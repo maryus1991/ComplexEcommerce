@@ -80,8 +80,6 @@ class Slider(models.Model):
     link = models.URLField()
     is_active = models.BooleanField(default=True, null=True, blank=True)
 
-    def __str__(self):
-        return self.name
 
 class Banners(models.Model):
     image = models.ImageField(upload_to=photo_path_upload_to)
@@ -89,7 +87,4 @@ class Banners(models.Model):
     name2 = models.CharField(max_length=100, null=True, blank=True)
     link = models.URLField()
     is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.name
 
