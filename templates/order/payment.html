@@ -537,7 +537,7 @@
                                 {% endif %}
                                 {% if site.active_receive_official_invoice and order.store.have_official_invoice and order.official_invoice %}
                                     <li>
-                                        <p> هزینه دریافت فاکتور رسمی  :</p>
+                                        <p> جمع عوارض و مالیات  :</p>
                                         <p class="font-DanaMedium text-green-500">{{ order.calculate_total_price|clac_tax:order.store.official_invoice_price }}
                                             تومان </p>
                                     </li>

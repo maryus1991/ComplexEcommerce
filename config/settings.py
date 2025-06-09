@@ -1,3 +1,4 @@
+
 """
 Django settings for ComplexEcommerce project.
 
@@ -35,9 +36,18 @@ if path.isfile(local_env_file):
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DJANGO_DEBUG", default="True")
+DEBUG = False
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", default="*").split(",")
+
+CSRF_COOKIE_SECURE = True      # ارسال کوکی CSRF فقط از طریق HTTPS
+SESSION_COOKIE_SECURE = True    # ارسال کوکی session فقط از طریق HTTPS
+CSRF_COOKIE_HTTPONLY = True    # جلوگیری از دسترسی JavaScript به کوکی C
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://amvajsarmad.com',
+    'https://*.amvajsarmad.com',
+]
 
 # Application definition
 
@@ -155,16 +165,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "/static/"
+#STATICFILES_DIRS = [
+#    BASE_DIR / "static",
+#]
 
-if DEBUG:
-    STATICFILES_DIRS = [
-        BASE_DIR / "static",
-    ]
-
-    STATIC_ROOT = BASE_DIR / "static-cdn"
-else:
-    STATIC_ROOT = BASE_DIR / "static"
-
+STATIC_ROOT = BASE_DIR / "static"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"

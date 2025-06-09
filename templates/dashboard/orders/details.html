@@ -515,7 +515,6 @@
                                     </div>
                                 </div>
                             {% endif %}
-                    {% if  details.first.order.is_active and details.first.order.is_paid and not details.first.order.canceled %}
 
                                 <!-- لینک دریافت فاکتور -->
                                 <a href="{% url 'dashboard:order-generate-invoice' details.first.order.id %}"
@@ -539,7 +538,6 @@
                                 });
                             }
                         </script>
-                    {% endif %}
                     {% endif %}
                     <br>
                     {% if details.exists and not details.first.order.canceled and not details.first.order.is_paid %}

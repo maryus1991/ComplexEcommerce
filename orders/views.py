@@ -531,12 +531,12 @@ class ConformPayment(LoginRequiredMixin, View):
 
             result = self.result
 
-            if result < 100000 and not settings.DEBUG:
-                messages.warning(
-                    request,
-                    'قیمت سفارش شما نباید کمتر از100,000 تومان باشد'
-                )
-                return redirect('orders:payment-conform', pk=pk)
+#            if result < 100000 and not settings.DEBUG:
+#                messages.warning(
+#                    request,
+#                    'قیمت سفارش شما نباید کمتر از100,000 تومان باشد'
+#                )
+#                return redirect('orders:payment-conform', pk=pk)
 
             base = 'https://' if request.is_secure() else 'http://'
 

@@ -293,24 +293,24 @@
                         <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
                     </div>
                     <div class="flex items-start justify-start gap-x-10">
-                        راهای ارتباط با فروشنده :
+                        
                         {% if product.store.whats_app_link and product.store.whats_app_ID %}
                             <a href="{{ product.store.whats_app_link }}" class="flex items-center gap-x-2">
-                                <p dir="ltr">{{ product.store.whats_app_ID }}</p>
+
                                 <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-6 h-6" alt="instagram"/>
                             </a>
                         {% endif %}
 
                         {% if product.store.instagram_app_Link and product.store.instagram_app_ID %}
                             <a href="{{ product.store.instagram_app_Link }}" class="flex items-center gap-x-2">
-                                <p dir="ltr">{{ product.store.instagram_app_ID }}</p>
+
                                 <img src="/static/Images/svg/instagram.png" class="w-6 h-6" alt="instagram"/>
                             </a>
                         {% endif %}
 
                         {% if product.store.telegram_app_Link and product.store.telegram_app_ID %}
                             <a href="{{ product.store.telegram_app_Link }}" class="flex items-center gap-x-2">
-                                <p dir="ltr">{{ product.store.telegram_app_ID }}</p>
+
                                 <img src="/static/Images/svg/telegram.png" class="w-6 h-6" alt="instagram"/>
                             </a>
                         {% endif %}

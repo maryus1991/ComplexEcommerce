@@ -88,3 +88,4 @@ class Banners(models.Model):
     link = models.URLField()
     is_active = models.BooleanField(default=True)
 
+  
