@@ -16,6 +16,226 @@
 
 {% block body %}
     <section class="content" style="margin-top: 40px">
+        <div class="">
+            <form class="form-horizontal" method="GET"  enctype="multipart/form-data">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title text-center">فرم جستجوی پیشرفته محصول</h3>
+
+                    </div>
+
+
+                    <div class="panel-body">
+
+                        {% csrf_token %}
+
+                        <!-- نام محصول -->
+                        <div class=" ">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat">{{ search_form.name.label }}</span>
+                            </span>
+{{ search_form.name }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #f56954; color: white;">{{ search_form.have_discount.label }}</span>
+{{ search_form.have_discount }}
+
+                                </div>
+                            </div>
+                            <div class="col-md-3 ">
+                                <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #f56954; color: white;"> {{ search_form.is_active.label }}</span>
+{{ search_form.is_active }}
+
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- قیمت: ابتدا و انتها -->
+
+
+                        <div class="clearfix"></div>
+                        <br>
+
+                        <!-- تخفیف -->
+                        <div>
+
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon btn btn-flat"
+                                          style="background-color: #f56954; color: white;">{{ search_form.discount_min.label }}</span>
+
+{{ search_form.discount_min }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                                                        <span class="input-group-addon btn btn-flat"
+                                                                              style="background-color: #f56954; color: white;">{{ search_form.discount_max.label }}</span>
+{{ search_form.discount_max }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <br>
+
+                        <!-- دسته‌بندی و برند -->
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #ed59f4; color: white;">{{ search_form.category.label }}</span>
+{{ search_form.category }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #0000ff; color: white;">{{ search_form.brand.label }}</span>
+{{ search_form.brand }}
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <br>
+
+                        <!-- تعداد: ابتدا و انتها -->
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #f56954; color: white;">{{ search_form.count_min.label }}</span>
+{{ search_form.count_min }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #f56954; color: white;">{{ search_form.count_max.label }}</span>
+{{ search_form.count_max }}
+                            </div>
+                        </div>
+
+
+                        <div class="clearfix"></div>
+                        <br>
+
+                        <!-- وزن: ابتدا و انتها -->
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #726204; color: white;">{{ search_form.weight_min.label }}</span>
+{{ search_form.weight_min }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #726204; color: white;">{{ search_form.weight_max.label }}</span>
+{{ search_form.weight_max }}
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <br>
+
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="btn btn-info input-group-addon  btn-flat">{{ search_form.price_min.label }}</span>
+{{ search_form.price_min }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon btn btn-success btn-flat">{{ search_form.price_max.label }}</span>
+{{ search_form.price_max }}
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <br>
+
+                        <!-- ابعاد: ارتفاع، طول، عرض -->
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #f56954; color: white;">{{ search_form.height_min.label }}</span>
+{{ search_form.height_min }}
+                            </div>
+                            <br>
+                            <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #f56954; color: white;">{{ search_form.height_max.label }}</span>
+{{ search_form.height_max }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #726204; color: white;">{{ search_form.length_min.label }}</span>
+{{ search_form.length_min }}
+                            </div>
+                            <br>
+                            <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #726204; color: white;">{{ search_form.length_max.label }}</span>
+{{ search_form.length_max }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #726204; color: white;">{{ search_form.width_min.label }}</span>
+                            {{ search_form.width_min }}
+                            </div>
+                            <br>
+                            <div class="input-group">
+                                <span class="input-group-addon btn btn-flat"
+                                      style="background-color: #726204; color: white;">{{ search_form.width_min.label }}</span>
+{{ search_form.width_min }}
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <br>
+                        <div class="col-md-6">
+                                                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat">{{ search_form.feature.label }}</span>
+                            </span>
+{{ search_form.feature }} 
+                                </div>
+                        </div>
+                        <div class="col-md-6">
+                                                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat">{{ search_form.tag.label }}</span>
+                            </span>
+ {{ search_form.tag }} 
+                                </div>
+                        </div>
+
+                    </div>
+
+                    <div class="panel-footer text-center">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            جستجوی محصول
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
         <div class="row">
             <div class="col-xs-12">
                 <div class="box">
@@ -155,7 +375,7 @@
                                                 بازدید ها
 
                                             </th>
-                                                                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
                                                 colspan="1" aria-label="قیمت: activate to sort column ascending">
                                                 قیمت
                                             </th>
@@ -184,7 +404,7 @@
                                                 حذف کردن محصول
                                             </th>
                                         </tr>
-                                        
+
                                         </tfoot>
                                     </table>
                                 </div>

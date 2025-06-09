@@ -36,7 +36,7 @@ if path.isfile(local_env_file):
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", default="*").split(",")
 
@@ -118,17 +118,23 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": os.getenv("POSTGRES_ENGIN", default="django.db.backends.postgresql"),
+#         "NAME": os.getenv("POSTGRES_DB"),
+#         "USER": os.getenv("POSTGRES_USER"),
+#         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+#         "HOST": os.getenv("POSTGRES_HOST", default="postgres"),
+#         "PORT": os.getenv("POSTGRES_PORT", default="5432"),
+#     }
+# }
+
 DATABASES = {
-    "default": {
-        "ENGINE": os.getenv("POSTGRES_ENGIN", default="django.db.backends.postgresql"),
-        "NAME": os.getenv("POSTGRES_DB"),
-        "USER": os.getenv("POSTGRES_USER"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("POSTGRES_HOST", default="postgres"),
-        "PORT": os.getenv("POSTGRES_PORT", default="5432"),
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -165,11 +171,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "/static/"
-#STATICFILES_DIRS = [
-#    BASE_DIR / "static",
-#]
 
-STATIC_ROOT = BASE_DIR / "static"
+if DEBUG:
+    STATICFILES_DIRS = [
+       BASE_DIR / "static",
+    ]
+    STATIC_ROOT = BASE_DIR / "static-cdn"
+else:
+    STATIC_ROOT = BASE_DIR / "static"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"

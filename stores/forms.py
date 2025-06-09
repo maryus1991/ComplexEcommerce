@@ -16,6 +16,154 @@ from .upload_multi_image import MultiImageField
 
 from user.models import User
 
+from django import forms
+
+
+class ProductSearchForm(forms.Form):
+    name = forms.CharField(label='عنوان محصول', required=False,
+                           widget=forms.TextInput(
+                               attrs={
+                                   'class': 'form-control'
+                               }
+                           )
+                           )
+    have_discount = forms.ChoiceField(
+        label='دارای تخفیف',
+        choices=[('', '-- انتخاب --'), ('1', 'بله'), ('0', 'خیر')],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+    is_active = forms.ChoiceField(
+        label='فعال / غیرفعال',
+        choices=[('', '-- انتخاب --'), ('1', 'فعال'), ('0', 'غیرفعال')],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+    discount_min = forms.IntegerField(label='حداقل تخفیف', required=False,
+                                      widget=forms.NumberInput(
+                                          attrs={
+                                              'class': 'form-control'
+                                          }
+                                      ))
+    discount_max = forms.IntegerField(label='حداکثر تخفیف', required=False,
+                                      widget=forms.NumberInput(
+                                          attrs={
+                                              'class': 'form-control'
+                                          }
+                                      ))
+    category = forms.ModelChoiceField(queryset=ProductCategory.objects.filter(is_active=True).all(),
+                                      label='دسته‌بندی', required=False,
+                                      widget=forms.Select(
+                                          attrs={
+                                              'class': 'form-control'
+                                          }
+                                      )
+                                      )
+    brand = forms.ModelChoiceField(queryset=ProductBrand.objects.filter(is_active=True).all(),
+                                   label='برند', required=False,
+                                   widget=forms.Select(
+                                       attrs={
+                                           'class': 'form-control'
+                                       }
+                                   )
+                                   )
+    count_min = forms.IntegerField(label='حداقل تعداد', required=False,
+                                   widget=forms.NumberInput(
+                                       attrs={
+                                           'class': 'form-control'
+                                       }
+                                   ))
+    count_max = forms.IntegerField(label='حداکثر تعداد', required=False,
+                                   widget=forms.NumberInput(
+                                       attrs={
+                                           'class': 'form-control'
+                                       }
+                                   ))
+    weight_min = forms.IntegerField(label='حداقل وزن', required=False,
+                                    widget=forms.NumberInput(
+                                        attrs={
+                                            'class': 'form-control'
+                                        }
+                                    ))
+    weight_max = forms.IntegerField(label='حداکثر وزن', required=False,
+                                    widget=forms.NumberInput(
+                                        attrs={
+                                            'class': 'form-control'
+                                        }
+                                    ))
+    price_min = forms.IntegerField(label='حداقل قیمت', required=False,
+                                   widget=forms.NumberInput(
+                                       attrs={
+                                           'class': 'form-control'
+                                       }
+                                   ))
+    price_max = forms.IntegerField(label='حداکثر قیمت', required=False,
+                                   widget=forms.NumberInput(
+                                       attrs={
+                                           'class': 'form-control'
+                                       }
+                                   ))
+    height_min = forms.IntegerField(label='حداقل ارتفاع', required=False,
+                                    widget=forms.NumberInput(
+                                        attrs={
+                                            'class': 'form-control'
+                                        }
+                                    ))
+    height_max = forms.IntegerField(label='حداکثر ارتفاع', required=False,
+                                    widget=forms.NumberInput(
+                                        attrs={
+                                            'class': 'form-control'
+                                        }
+                                    ))
+    length_min = forms.IntegerField(label='حداقل طول', required=False,
+                                    widget=forms.NumberInput(
+                                        attrs={
+                                            'class': 'form-control'
+                                        }
+                                    ))
+    length_max = forms.IntegerField(label='حداکثر طول', required=False,
+                                    widget=forms.NumberInput(
+                                        attrs={
+                                            'class': 'form-control'
+                                        }
+                                    ))
+    width_min = forms.IntegerField(label='حداقل عرض', required=False,
+                                   widget=forms.NumberInput(
+                                       attrs={
+                                           'class': 'form-control'
+                                       }
+                                   ))
+    width_max = forms.IntegerField(label='حداکثر عرض', required=False,
+                                   widget=forms.NumberInput(
+                                       attrs={
+                                           'class': 'form-control'
+                                       }
+                                   ))
+    feature = forms.CharField(label='جستجو در ویژگی‌ها', required=False,
+                              widget=forms.TextInput(
+                                  attrs={
+                                      'class': 'form-control',
+                                      'placeholder':'ایتم های مورد نظر را بنویسید و با - از هم جدا کنید'
+                                  }
+                              )
+                              )
+    tag = forms.CharField(label='جستجو در تگ‌ها', required=False,
+                          widget=forms.TextInput(
+                              attrs={
+                                  'class': 'form-control',
+                                  'placeholder':'ایتم های مورد نظر را بنویسید و با - از هم جدا کنید'
+                              }
+                          )
+                          )
+
 
 class AddProductForm(forms.ModelForm):
     description = RichTextUploadingFormField()
@@ -108,7 +256,9 @@ class AddProductForm(forms.ModelForm):
         fields = ('name', 'price', 'description',
                   'category', 'have_discount', 'discount',
                   'picture', 'brand', 'count',
-                  'weight', 'tags', 'features', 'gallery')
+                  'weight', 'tags', 'features', 'gallery',
+                  'length', 'width', 'height',
+                  )
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -117,6 +267,18 @@ class AddProductForm(forms.ModelForm):
             'price': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'قیمت'
+            }),
+            'length': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'ارتفاع'
+            }),
+            'width': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'طول'
+            }),
+            'height': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'عرض'
             }),
 
             'discount': forms.NumberInput(attrs={
@@ -543,9 +705,9 @@ class AddStoreBlogForm(forms.ModelForm):
         widget=forms.Select(
             attrs={
                 'class': 'form-control select2 select2-hidden-accessible',
-                'style' :"width: 100%;",
-                'tabindex' : "-1",
-                'aria - hidden' : "true"
+                'style': "width: 100%;",
+                'tabindex': "-1",
+                'aria - hidden': "true"
             }
         )
         , empty_label='لطفا دسته بندی انتخاب کنید'
@@ -592,9 +754,9 @@ class AddStoreBlogCategoryForm(forms.ModelForm):
         widget=forms.Select(
             attrs={
                 'class': 'form-control select2 select2-hidden-accessible',
-                'style' :"width: 100%;",
-                'tabindex' : "-1",
-                'aria - hidden' : "true"
+                'style': "width: 100%;",
+                'tabindex': "-1",
+                'aria - hidden': "true"
             }
         )
         , empty_label='لطفا دسته بندی مادر انتخاب کنید',

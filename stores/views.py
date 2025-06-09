@@ -35,6 +35,7 @@ from .forms import (
 , AddStoreAppForm
 , AddStoreBlogForm
 , AddStoreBlogCategoryForm
+, ProductSearchForm
 )
 from product.models import (
     Product,
@@ -86,20 +87,33 @@ class StoreProductListView(UserStoreStaffMixin, ListView):
     for listing the products of store
     """
 
-    template_name = 'store/product_list.html'
+    template_name = 'store/product/product_list.html'
     ordering = '-id'
     paginate_by = 50
     context_object_name = 'products'
 
     def get_queryset(self):
-        return Product.objects.filter(store=self.request.user.store).prefetch_related('comments')
+        queryset = Product.objects.filter(store=self.request.user.store).prefetch_related('comments')
 
+        params = ProductSearchForm(self.request.GET or None)
+
+        if params.is_valid():
+            print(params.cleaned_data)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_form'] = ProductSearchForm(
+            self.request.GET
+        )
+        return context
 
 class StoreAddProduct(UserStoreStaffMixin, FormView):
     """
     for add product
     """
-    template_name = 'store/add_product.html'
+    template_name = 'store/product/add_product.html'
     form_class = AddProductForm
     success_url = reverse_lazy('store:list-product')
 
@@ -146,6 +160,14 @@ class StoreAddProduct(UserStoreStaffMixin, FormView):
         product.save()
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['category_form']=AddCategoryForm()
+        context['brand_form']=AddBrandForm()
+
+        return context
+
 
 class StoreEditProductView(UserStoreStaffMixin, UpdateView):
     """
@@ -153,7 +175,7 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
     """
     form_class = AddProductForm
     model = Product
-    template_name = 'store/add_product.html'
+    template_name = 'store/product/add_product.html'
     success_url = reverse_lazy('store:list-product')
 
     def get_context_data(self, **kwargs):
@@ -280,7 +302,7 @@ class ListBrandView(UserStoreStaffMixin, ListView):
     for list the brands
     """
     model = ProductBrand
-    template_name = 'store/list_brand.html'
+    template_name = 'store/product/brand/list_brand.html'
     paginate_by = 50
     context_object_name = 'brands'
 
@@ -294,13 +316,14 @@ class StoreAddBrandView(UserStoreStaffMixin, CreateView):
     """
     form_class = AddBrandForm
     model = ProductBrand
-    template_name = 'store/add_brand.html'
+    template_name = 'store/product/brand/add_brand.html'
     success_url = reverse_lazy('store:list-brands')
 
     def form_valid(self, form):
         messages.success(self.request,
                          'برند شما ساخته شد')
-        return super().form_valid(form)
+        form.save()
+        return redirect(self.request.META.get('HTTP_REFERER', '/'))
 
 
 class StoreListCategoryView(UserStoreStaffMixin, ListView):
@@ -308,7 +331,7 @@ class StoreListCategoryView(UserStoreStaffMixin, ListView):
     for list the categories
     """
     model = ProductCategory
-    template_name = 'store/list_category.html'
+    template_name = 'store/product/category/list_category.html'
     paginate_by = 25
     context_object_name = 'categories'
 
@@ -322,13 +345,14 @@ class StoreAddCategoryView(UserStoreStaffMixin, CreateView):
     """
     form_class = AddCategoryForm
     model = ProductCategory
-    template_name = 'store/add_category.html'
+    template_name = 'store/product/category/add_category.html'
     success_url = reverse_lazy('store:list-category')
 
     def form_valid(self, form):
         messages.success(self.request,
                          'دسته شما ساخته شد')
-        return super().form_valid(form)
+        form.save()
+        return redirect(self.request.META.get('HTTP_REFERER', '/'))
 
 
 ### admin staff
