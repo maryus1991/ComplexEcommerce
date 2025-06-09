@@ -10,3 +10,7 @@ notes.txt
 *.png
 /static-cdn
 stage.yml
+/static/admin/*
+*.zip
+/static/ckeditor/*
+/static/node_modules/*
