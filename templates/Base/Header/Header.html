@@ -307,9 +307,9 @@
                         </svg>
                     </div>
                     <div class="submenu hidden flex-col gap-y-3 mt-3 child:text-sm mr-7">
-                        <a class="{% if url == '/product/' %} text-green-500 {% else %} text-white {% endif %}"
+                        <a class="{% if url == '/product/' %} text-green-500  {% endif %}"
                            href="{% url 'product:list' %}">محصولات</a>
-                        <a class="{% if  url == '/store/' %} text-green-500 {% else %} text-white {% endif %}"
+                        <a class="{% if  url == '/store/' %} text-green-500  {% endif %}"
                            href="shop.html">فروشگاها</a>
                     </div>
 
@@ -338,15 +338,14 @@
                         درباره ما
                     </a>
                 </li>
-                <li class="{% if url == '/about-us' %} text-green-500 {% endif %}">
-                    <a href="{% url 'site:about-us' %}" class="flex items-center gap-x-2">
+                <li class="{% if url == '/apps/' %} text-green-500 {% endif %}">
+                    <a href="{% url 'site:apps-list' %}" class="flex items-center gap-x-2">
                         <svg class="w-5 h-5">
                             <use href="#document"></use>
                         </svg>
                         برنامه های کاربردی
                     </a>
-                </li>
-            </ul>
+                </li>            </ul>
         {% endwith %}
         <!-- BORDER -->
         <span class="flex w-full border-t dark:border-white/10 border-gray-200 my-8"></span>

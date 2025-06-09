@@ -121,7 +121,11 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         order_id = self.kwargs.get('pk')
-        obj = get_object_or_404(Order, user=self.request.user, id=order_id)
+        obj = get_object_or_404(Order, is_paid=True,
+				is_active=True,
+				canceled=False, 
+				user=self.request.user, 
+				id=order_id)
 
         if obj.address is None:
             messages.warning(
