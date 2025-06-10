@@ -93,14 +93,75 @@ class StoreProductListView(UserStoreStaffMixin, ListView):
     context_object_name = 'products'
 
     def get_queryset(self):
-        queryset = Product.objects.filter(store=self.request.user.store).prefetch_related('comments')
+        # Base queryset
+        queryset = Product.objects.filter(store=self.request.user.store)
 
+        # Process search parameters if form is valid
         params = ProductSearchForm(self.request.GET or None)
 
-        if params.is_valid():
-            print(params.cleaned_data)
+        if not params.is_valid():
+            return queryset
 
-        return queryset
+        cleaned_data = params.cleaned_data
+
+        # Boolean filters
+        if cleaned_data.get('is_active'):
+            is_active = cleaned_data.get('is_active')
+            print(is_active)
+            if is_active:
+                queryset = queryset.filter(is_active=False)
+            else : queryset = queryset.filter(is_active=True)
+
+
+
+        if cleaned_data.get('have_discount'):
+            have_discount = cleaned_data.get('have_discount')
+            if have_discount:
+                queryset = queryset.filter(have_discount=False)
+            else:
+                queryset = queryset.filter(have_discount=True)
+
+        # Text search
+        if name := cleaned_data.get('name'):
+            queryset = queryset.filter(
+                Q(name__icontains=name) |
+                Q(description__icontains=name)
+            )
+
+        # Numeric range filters
+        range_filters = {
+            'discount': ('discount_min', 'discount_max'),
+            'count': ('count_min', 'count_max'),
+            'weight': ('weight_min', 'weight_max'),
+            'price': ('price_min', 'price_max'),
+            'height': ('height_min', 'height_max'),
+            'length': ('length_min', 'length_max'),
+            'width': ('width_min', 'width_max'),
+        }
+
+        for field, (min_key, max_key) in range_filters.items():
+            if min_val := cleaned_data.get(min_key):
+                queryset = queryset.filter(**{f'{field}__gte': min_val})
+            if max_val := cleaned_data.get(max_key):
+                queryset = queryset.filter(**{f'{field}__lte': max_val})
+
+        # Foreign key filters
+        if category := cleaned_data.get('category'):
+            queryset = queryset.filter(category_id=category)
+
+        if brand := cleaned_data.get('brand'):
+            queryset = queryset.filter(brand_id=brand)
+
+        # Many-to-many filters
+        if features := cleaned_data.get('feature'):
+            for item in features:
+                queryset = queryset.filter(features__title__icontains=item)
+
+        if tags := cleaned_data.get('tag'):
+            for item in tags:
+                queryset = queryset.filter(tags__name__icontains=item)
+
+        return queryset.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

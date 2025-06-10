@@ -4,6 +4,7 @@ from django.core.validators import (FileExtensionValidator,
                                     ValidationError,
                                     validate_email)
 from django.contrib.auth.password_validation import validate_password
+
 from dashboard.models import Ticket, TicketConversation
 from multiupload.fields import MultiUploadMetaInput
 from phonenumber_field.formfields import PhoneNumberField
@@ -37,6 +38,16 @@ class ProductSearchForm(forms.Form):
             }
         ),
     )
+    # ordering = forms.ChoiceField(
+    #     label='دارای تخفیف',
+    #     choices=[('', '-- انتخاب --'), ('1', 'بیشترین بازدید'), ('0', 'کمترین بازدید'), ('0', 'کمترین بازدید'), ('0', 'کمترین بازدید')],
+    #     required=False,
+    #     widget=forms.Select(
+    #         attrs={
+    #             'class': 'form-control'
+    #         }
+    #     ),
+    # )
     is_active = forms.ChoiceField(
         label='فعال / غیرفعال',
         choices=[('', '-- انتخاب --'), ('1', 'فعال'), ('0', 'غیرفعال')],
@@ -63,7 +74,10 @@ class ProductSearchForm(forms.Form):
                                       label='دسته‌بندی', required=False,
                                       widget=forms.Select(
                                           attrs={
-                                              'class': 'form-control'
+                                              'class': 'form-control select2 select2-hidden-accessible"',
+                                              'style': "width: 100%;",
+                                              'tabindex ': "-1",
+                                              'aria - hidden ': "true",
                                           }
                                       )
                                       )
@@ -71,7 +85,10 @@ class ProductSearchForm(forms.Form):
                                    label='برند', required=False,
                                    widget=forms.Select(
                                        attrs={
-                                           'class': 'form-control'
+                                           'class': 'form-control select2 select2-hidden-accessible"',
+                                           'style': "width: 100%;",
+                                           'tabindex ': "-1",
+                                           'aria - hidden ': "true",
                                        }
                                    )
                                    )
@@ -151,7 +168,7 @@ class ProductSearchForm(forms.Form):
                               widget=forms.TextInput(
                                   attrs={
                                       'class': 'form-control',
-                                      'placeholder':'ایتم های مورد نظر را بنویسید و با - از هم جدا کنید'
+                                      'placeholder': 'ایتم های مورد نظر را بنویسید و با - از هم جدا کنید'
                                   }
                               )
                               )
@@ -159,10 +176,56 @@ class ProductSearchForm(forms.Form):
                           widget=forms.TextInput(
                               attrs={
                                   'class': 'form-control',
-                                  'placeholder':'ایتم های مورد نظر را بنویسید و با - از هم جدا کنید'
+                                  'placeholder': 'ایتم های مورد نظر را بنویسید و با - از هم جدا کنید'
                               }
                           )
                           )
+
+    def clean(self):
+        items = self.cleaned_data
+        # Create a list of keys to remove first
+        keys_to_remove = [key for key, value in items.items()
+                          if value is None or value == '']
+        # Then remove them
+        for key in keys_to_remove:
+            items.pop(key)
+        return items
+
+    def clean_tag(self):
+        result = self.cleaned_data.get("tag")
+        if result is not None and result != '':
+            return result.strip('-')
+        else:
+            return None
+
+    def clean_feature(self):
+        result = self.cleaned_data.get("feature")
+        if result is not None and result != '':
+            return result.strip('-')
+        else:
+            return None
+
+    def clean_have_discount(self):
+        have_discount: str = self.cleaned_data.get("have_discount")
+        if have_discount == '0':
+            return True
+        else:
+            return 0
+
+    def clean_is_active(self):
+        is_active: str = self.cleaned_data.get("is_active")
+        if is_active == '0':
+            return True
+        else:
+            return 0
+
+    def clean_name(self):
+        name = self.cleaned_data.get("name")
+
+        if name is not None and name != '':
+            return name
+        else:
+            return None
 
 
 class AddProductForm(forms.ModelForm):
@@ -172,7 +235,10 @@ class AddProductForm(forms.ModelForm):
         empty_label='دسته بندی مربوطه را انتخاب کنید',
         widget=forms.Select(
             attrs={
-                'class': 'form-control',
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
                 'placeholder': 'درسته بندی'
 
             }
@@ -182,7 +248,10 @@ class AddProductForm(forms.ModelForm):
         empty_label='برند مربوطه را انتخاب کنید',
         widget=forms.Select(
             attrs={
-                'class': 'form-control',
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
                 'placeholder': 'برند'
 
             }
