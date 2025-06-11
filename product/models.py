@@ -112,6 +112,11 @@ class ProductTag(models.Model):
     Product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='tags')
     name = models.CharField(max_length=100)
 
+class ProductViews(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='views')
+    ip = models.GenericIPAddressField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='views', null=True, blank=True)
+    count = models.PositiveBigIntegerField(default=0)
 
 class UserFavorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorite')

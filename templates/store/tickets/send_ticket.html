@@ -27,41 +27,45 @@
 {% endblock %}
 
 {% block body %}
-    <div class="box box-primary" style="margin-top:100px">
-        <div class="box-header with-border">
-            <h3 class="box-title">ارسال تیکت</h3>
-        </div>
-        <!-- /.box-header -->
-        <!-- form start -->
-        <form role="form" method='POST' action='' enctype='multipart/form-data'>
-            {% csrf_token %}
-            <div class="box-body">
-                <div class="form-group">
-
-
-                    {{ form.subject }}
-                </div>
-                <br>
-                <div class="form-group" dir="rtl">
-                    <label >
-                        لطفا فروشگاهی که می خوایید تیکت به ان ارسال شود را انتخاب کنید و برای ارسال به ادمین لطفا گزینه فروشگاه مرکزی را انتخاب کنید یا این فیلد را خالی نگه دارید
-                    </label>
-                    {{ form.store }}
-                </div>
-
-                <div class="form-group">
-                    {{ form.media }}
-                    {{ form.message_message }}
-                </div>
-
-            </div>
-            <!-- /.box-body -->
-
-            <div class="box-footer">
-                <button type="submit" class="btn btn-primary">ارسال</button>
-            </div>
-        </form>
+<div class="box box-primary" style="margin-top: 20px;">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-plus-circle"></i> ارسال تیکت</h3>
     </div>
+
+    <form role="form" method="POST" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="box-body">
+
+            <div class="form-group">
+                <label for="{{ form.subject.id_for_label }}">عنوان تیکت</label>
+                {{ form.subject }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.store.id_for_label }}">
+                    انتخاب فروشگاه
+                </label>
+                <p class="help-block text-muted" style="font-size: 12px;">
+                    اگر قصد دارید تیکت را به مدیریت ارسال کنید، این فیلد را خالی بگذارید یا «فروشگاه مرکزی» را انتخاب کنید.
+                </p>
+                {{ form.store }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.message_message.id_for_label }}">متن پیام</label>
+                {{ form.message_message }}
+                {{ form.media }}  {# برای جاوااسکریپت‌های مربوط به فیلدهای فرم (مانند WYSIWYG editors) #}
+            </div>
+
+        </div>
+
+        <div class="box-footer text-left">
+            <button type="submit" class="btn btn-primary btn-block btn-lg">
+                <i class="fa fa-paper-plane"></i> ارسال تیکت
+            </button>
+        </div>
+    </form>
+</div>
 
 {% endblock %}
 

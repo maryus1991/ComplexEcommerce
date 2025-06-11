@@ -506,5 +506,5 @@ class CreateUserTicket(LoginRequiredMixin, FormView):
             self.request,
             'مشکلی پیش امده است'
         )
-        return super().form.form_invalid(form)
+        return super().form_invalid(form)
 

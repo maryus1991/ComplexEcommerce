@@ -9,12 +9,12 @@ from django.views.generic import (
 , View
 )
 from django.db.models import Q
+from django.db.models.aggregates import Count
 from django.shortcuts import (get_object_or_404
 , reverse
 , render
 , redirect
-, get_list_or_404
-                              )
+, get_list_or_404)
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
 from django.contrib import messages
@@ -26,7 +26,7 @@ from .models import Store, StoreComment, StoreTag, StoreCategory, StoreApps
 from dashboard.models import Ticket, TicketConversation
 
 from .forms import (
-    AddProductForm
+AddProductForm
 , AddBrandForm
 , AddCategoryForm
 , AddStoreForm
@@ -36,6 +36,8 @@ from .forms import (
 , AddStoreBlogForm
 , AddStoreBlogCategoryForm
 , ProductSearchForm
+, BrandAndCategorySearchForm
+, TicketFilterForm
 )
 from product.models import (
     Product,
@@ -94,7 +96,8 @@ class StoreProductListView(UserStoreStaffMixin, ListView):
 
     def get_queryset(self):
         # Base queryset
-        queryset = Product.objects.filter(store=self.request.user.store)
+        queryset = Product.objects.filter(store=self.request.user.store
+                                          ).prefetch_related('comments', 'views')
 
         # Process search parameters if form is valid
         params = ProductSearchForm(self.request.GET or None)
@@ -107,18 +110,18 @@ class StoreProductListView(UserStoreStaffMixin, ListView):
         # Boolean filters
         if cleaned_data.get('is_active'):
             is_active = cleaned_data.get('is_active')
-            print(is_active)
-            if is_active:
+
+            if is_active == '0':
                 queryset = queryset.filter(is_active=False)
-            else : queryset = queryset.filter(is_active=True)
-
-
+            elif is_active == '1':
+                queryset = queryset.filter(is_active=True)
 
         if cleaned_data.get('have_discount'):
             have_discount = cleaned_data.get('have_discount')
-            if have_discount:
+
+            if have_discount == '0':
                 queryset = queryset.filter(have_discount=False)
-            else:
+            elif have_discount == '1':
                 queryset = queryset.filter(have_discount=True)
 
         # Text search
@@ -154,12 +157,48 @@ class StoreProductListView(UserStoreStaffMixin, ListView):
 
         # Many-to-many filters
         if features := cleaned_data.get('feature'):
+            # Clean and split features while handling edge cases
+            features = [feature.strip() for feature in features.split('-') if feature.strip()]
+
+            # Create a single query with multiple conditions
+            query = Q()
             for item in features:
-                queryset = queryset.filter(features__title__icontains=item)
+                query |= Q(features__title__icontains=item)
+
+            # Apply the combined filter once
+            queryset = queryset.filter(query).distinct()
 
         if tags := cleaned_data.get('tag'):
+            # Clean and split features while handling edge cases
+            tags = [tags.strip() for tag in tags.split('-') if tag.strip()]
+
+            # Create a single query with multiple conditions
+            query = Q()
             for item in tags:
-                queryset = queryset.filter(tags__name__icontains=item)
+                query |= Q(tags__name__icontains=item)
+
+            # Apply the combined filter once
+            queryset = queryset.filter(query).distinct()
+
+        if ordering := cleaned_data.get('ordering'):
+            if ordering == '11':
+                queryset = queryset.annotate(views_count=Count('views')).order_by('-views_count')  # بیشترین بازدید
+            elif ordering == '12':
+                queryset = queryset.annotate(views_count=Count('views')).order_by('views_count')  # کمترین بازدید
+            elif ordering == '21':
+                queryset = queryset.order_by('-price')  # بیشترین قیمت
+            elif ordering == '22':
+                queryset = queryset.order_by('price')  # کمترین قیمت
+            elif ordering == '31':
+                queryset = queryset.annotate(comments_count=Count('comments')).order_by(
+                    '-comments_count')  # بیشترین تعداد کامنت
+            elif ordering == '32':
+                queryset = queryset.annotate(comments_count=Count('comments')).order_by(
+                    'comments_count')  # کمترین  تعداد کامنت
+            elif ordering == '41':
+                queryset = queryset.order_by('-count')  # بیشترین موجودی کالا
+            elif ordering == '42':
+                queryset = queryset.order_by('count')  # کمترین موجودی کالا
 
         return queryset.all()
 
@@ -169,6 +208,7 @@ class StoreProductListView(UserStoreStaffMixin, ListView):
             self.request.GET
         )
         return context
+
 
 class StoreAddProduct(UserStoreStaffMixin, FormView):
     """
@@ -224,8 +264,8 @@ class StoreAddProduct(UserStoreStaffMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['category_form']=AddCategoryForm()
-        context['brand_form']=AddBrandForm()
+        context['category_form'] = AddCategoryForm()
+        context['brand_form'] = AddBrandForm()
 
         return context
 
@@ -364,11 +404,50 @@ class ListBrandView(UserStoreStaffMixin, ListView):
     """
     model = ProductBrand
     template_name = 'store/product/brand/list_brand.html'
-    paginate_by = 50
+    paginate_by = 25
     context_object_name = 'brands'
 
     def get_queryset(self):
-        return super().get_queryset().filter(is_active=True).order_by('name').prefetch_related('products')
+        query = super().get_queryset().order_by('name'
+            ).prefetch_related('products'
+            ).annotate(product_count=Count('products'))
+
+        params = BrandAndCategorySearchForm(self.request.GET)
+        if not params.is_valid():
+            return query
+
+        cleaned_params = params.cleaned_data
+
+        if name := cleaned_params.get('name'):
+            query = query.filter(name__icontains=name)
+
+        if is_active := cleaned_params.get('is_active'):
+            if is_active == '1':
+                query = query.filter(is_active=True)
+            elif is_active == '0':
+                query = query.filter(is_active=False)
+
+        if ordering := cleaned_params.get('ordering'):
+
+            if ordering == '41':  # بیشترین تعداد کالا
+                query = query.order_by('-product_count').distinct()
+            elif ordering == '42':  # کمترین تعداد کالا
+                query = query.order_by('product_count').distinct()
+            elif ordering == '51':  # جدید ترین
+                query = query.order_by('-id')
+            elif ordering == '52':  # قدیمی ترین
+                query = query.order_by('id')
+
+        return query
+
+    def get_context_data(
+            self, *, object_list=..., **kwargs
+    ):
+        context = super().get_context_data(**kwargs)
+
+        context['form'] = BrandAndCategorySearchForm()
+
+        return context
 
 
 class StoreAddBrandView(UserStoreStaffMixin, CreateView):
@@ -397,7 +476,49 @@ class StoreListCategoryView(UserStoreStaffMixin, ListView):
     context_object_name = 'categories'
 
     def get_queryset(self):
-        return super().get_queryset().filter(is_active=True).order_by('name').prefetch_related('products')
+        query = super().get_queryset().order_by('name'
+            ).prefetch_related('products').prefetch_related('child').annotate(
+            product_count=Count('products'))
+
+        form = BrandAndCategorySearchForm(self.request.GET)
+
+        if not form.is_valid():
+            return query
+
+        cleaned_params = form.cleaned_data
+
+        if name := cleaned_params.get('name'):
+            query = query.filter(name__icontains=name)
+
+        if is_active := cleaned_params.get('is_active'):
+            if is_active == '1':
+                query = query.filter(is_active=True)
+            elif is_active == '0':
+                query = query.filter(is_active=False)
+
+        if ordering := cleaned_params.get('ordering'):
+            if ordering == '41':  # بیشترین تعداد کالا
+                query = query.order_by('-product_count').distinct()
+            elif ordering == '42':  # کمترین تعداد کالا
+                query = query.order_by('product_count').distinct()
+            elif ordering == '51':  # جدید ترین
+                query = query.order_by('-id')
+            elif ordering == '52':  # قدیمی ترین
+                query = query.order_by('id')
+
+        if parent := cleaned_params.get('category_parent'):
+            query = query.filter(parent_id=parent)
+
+        return query.all()
+
+    def get_context_data(
+            self, *, object_list=..., **kwargs
+    ):
+        context = super().get_context_data(**kwargs)
+
+        context['form'] = BrandAndCategorySearchForm()
+
+        return context
 
 
 class StoreAddCategoryView(UserStoreStaffMixin, CreateView):
@@ -415,26 +536,6 @@ class StoreAddCategoryView(UserStoreStaffMixin, CreateView):
         form.save()
         return redirect(self.request.META.get('HTTP_REFERER', '/'))
 
-
-### admin staff
-# brands
-class StoreUpdateBrandView(AdminUserMixin, UpdateView): pass
-
-
-class StoreActiveDeActivateBrandView(AdminUserMixin, RedirectView): pass
-
-
-class StoreRemoveBrandView(AdminUserMixin, View): pass
-
-
-# categories
-class StoreUpdateCategoryView(AdminUserMixin, UpdateView): pass
-
-
-class StoreActiveDeActivateCategoryView(AdminUserMixin, RedirectView): pass
-
-
-class StoreRemoveCategoryView(AdminUserMixin, View): pass
 
 
 ####
@@ -461,7 +562,7 @@ class StoreUpdateInformationView(StoreAdminUserStaff, UpdateView):
         return super().form_valid(form)
 
 
-# tickets
+# close tickets
 
 class StoreCloseTicketViewSenderSide(UserStoreStaffMixin, RedirectView):
     """
@@ -544,9 +645,18 @@ class StoreSendTicketsListView(UserStoreStaffMixin, ListView):
     paginate_by = 25
 
     def get_queryset(self):
-        return super().get_queryset().filter(
+        query = super().get_queryset().filter(
             user=self.request.user
-        ).order_by('-closed_at').all()
+        ).order_by('-closed_at')
+
+        return query.all()
+
+    def get_context_data(
+        self, *, object_list = ..., **kwargs
+    ):
+        context = super().get_context_data(**kwargs)
+        context['form'] = TicketFilterForm()
+        return context
 
 
 class StoreConversationsView(UserStoreStaffMixin, View):
@@ -603,9 +713,18 @@ class StoreReceiveTicketListView(UserStoreStaffMixin, ListView):
     paginate_by = 25
 
     def get_queryset(self):
-        return super().get_queryset().filter(
+        query = super().get_queryset().filter(
             store=self.request.user.store,
-        ).order_by('-closed_at').all()
+        ).order_by('-closed_at')
+
+        return query.all()
+
+    def get_context_data(
+        self, *, object_list = ..., **kwargs
+    ):
+        context = super().get_context_data(**kwargs)
+        context['form'] = TicketFilterForm()
+        return context
 
 
 class StoreResponseToUsersTicketView(UserStoreStaffMixin, View):
@@ -1051,6 +1170,7 @@ class StoreBlogDeleteView(StoreAdminUserStaff, View):
     """
     for delete blog posts
     """
+
     def get(self, request, *args, **kwargs):
         pk = self.kwargs['pk']
         post = get_object_or_404(Blog, pk=pk, store=self.request.user.store)
@@ -1061,7 +1181,7 @@ class StoreBlogDeleteView(StoreAdminUserStaff, View):
         pk = self.kwargs['pk']
         post = get_object_or_404(Blog, pk=pk, store=self.request.user.store)
 
-        post_title:str = request.POST.get('conform')
+        post_title: str = request.POST.get('conform')
 
         if not post_title.isspace():
             if post_title == post.title:
@@ -1069,16 +1189,18 @@ class StoreBlogDeleteView(StoreAdminUserStaff, View):
                 messages.info(request, 'پست شما با موفقیت حذف شد')
 
             else:
-                messages.error(request,'در وارد کردن اطلاعات خواسته شده دقت کنید')
+                messages.error(request, 'در وارد کردن اطلاعات خواسته شده دقت کنید')
         else:
             messages.error(request, 'در وارد کردن اطلاعات خواسته شده دقت کنید')
 
         return redirect('store:blog-list')
 
+
 class StoreActiveOrDeactivate(UserStoreStaffMixin, RedirectView):
     """
     for active or deactivate posts
     """
+
     def get_redirect_url(self, *args, **kwargs):
         pk = self.kwargs['pk']
 
@@ -1101,6 +1223,7 @@ class StoreActiveOrDeactivate(UserStoreStaffMixin, RedirectView):
 
         return reverse('store:blog-list')
 
+
 class StoreBlogAddCategories(UserStoreStaffMixin, FormView):
     """
     for add blog categories
@@ -1120,6 +1243,7 @@ class StoreBlogAddCategories(UserStoreStaffMixin, FormView):
         messages.error(self.request,
                        form.errors)
         return super().form_invalid(form)
+
 
 class StoreBlogListCategories(UserStoreStaffMixin, ListView):
     """

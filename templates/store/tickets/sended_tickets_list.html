@@ -6,37 +6,68 @@
 {% endblock %}
 
 {% block breadcrumb %}
-    <li class="active">تیکت ها</li>
+    <li class="">تیکت ها</li>
+    <li class="">تیکت های ارسالی</li>
 {% endblock %}
 
 {% block body %}
-    <div class="box" style="margin-top: 100px;">
-        <div class="box-header">
-            <h3 class="box-title"> لیست تیکت ها</h3>
+    <section class="content" style="margin-top: 30px">
 
-            <div class="box-tools">
-                <ul class="pagination pagination-sm no-margin pull-right">
-
-                    {% if page_obj.has_previous %}
-                        <li><a href="?page={{ page_obj.previous_page_number }}">«</a></li>
-                    {% endif %}
-                    {% for page_number in page_obj.paginator.page_range %}
-
-                        <li class="{% if page_number == page_obj.number %} active {% endif %}"><a
-                                href="?page={{ page_number }}">{{ page_number }}</a></li>
-
-                    {% endfor %}
-                    {% if page_obj.has_next %}
-                        <li><a href="?page={{ page_obj.next_page_number }}">»</a></li>
-                    {% endif %}
-                </ul>
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading text-center">
+                    <h3 class="panel-title"><i class="fa fa-search"></i> جستجوی پیشرفته</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="GET" action="" class="form-horizontal">
+                        {% csrf_token %}
+                        <div class="row">
+                            {{ form.media }}
+                            {% for field in form.visible_fields %}
+                                <div class="col-md-4" style="margin-bottom: 15px;">
+                                    <label>{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center" style="margin-top: 15px;">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-search"></i> جستجو
+                                </button>
+                                <button type="reset" class="btn btn-default">
+                                    <i class="fa fa-undo"></i> بازنشانی
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-        <!-- /.box-header -->
-        <div class="box-body no-padding">
-            <table class="table">
-                <tbody>
-                <tr>
+<div class="box box-primary" style="margin-top: 400px;">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-ticket"></i> لیست تیکت‌ها ارسالی</h3>
+        <div class="box-tools pull-left">
+            <ul class="pagination pagination-sm no-margin">
+                {% if page_obj.has_previous %}
+                    <li><a href="?page={{ page_obj.previous_page_number }}"><i class="fa fa-angle-right"></i></a></li>
+                {% endif %}
+                {% for page_number in page_obj.paginator.page_range %}
+                    <li class="{% if page_number == page_obj.number %}active{% endif %}">
+                        <a href="?page={{ page_number }}">{{ page_number }}</a>
+                    </li>
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}"><i class="fa fa-angle-left"></i></a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="box-body no-padding">
+        <table class="table table-bordered table-hover table-striped text-center">
+            <thead>
+                <tr class="bg-primary">
                     <th>#</th>
                     <th>عنوان</th>
                     <th>ارسال شده به</th>
@@ -44,44 +75,46 @@
                     <th>وضعیت</th>
                     <th>مشاهده</th>
                 </tr>
+            </thead>
+            <tbody>
                 {% for ticket in tickets %}
                     <tr>
-
-
                         <td>{{ ticket.id }}</td>
                         <td>{{ ticket.subject }}</td>
                         <td>
                             {% if ticket.store %}
-                                {{ ticket.store.name }}
+                                <span class="label label-info">{{ ticket.store.name }}</span>
                             {% else %}
-                                ارسال شده به ادمین
+                                <span class="label label-default"> ادمین سایت</span>
                             {% endif %}
                         </td>
-                        <td><p>{{ ticket.date|to_jalali:'  %H:%M - %Y/%m/%d ' }}</p></td>
-                                            <td>
+                        <td>
+                            <i class="fa fa-clock-o text-muted"></i>
+                            {{ ticket.date|to_jalali:'  %H:%M - %Y/%m/%d ' }}
+                        </td>
+                        <td>
                             {% if ticket.close_ticket %}
-                            	<p class="btn btn-info ">
-                                بسته
-                                </p>
-                                {% else %}
-                                <p class="btn btn-warning ">
-                                باز
-                                </p>
+                                <span class="label label-success"><i class="fa fa-check"></i> بسته</span>
+                            {% else %}
+                                <span class="label label-warning"><i class="fa fa-envelope-open"></i> باز</span>
                             {% endif %}
                         </td>
-                        <td><a href="{% url 'store:conversation-ticket' ticket.id %}" class="btn btn-success">
-                            مشاهده
-                        </a></td>
-
-
+                        <td>
+                            <a href="{% url 'store:conversation-ticket' ticket.id %}" class="btn btn btn-success">
+                                <i class="fa fa-eye"></i> مشاهده
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6">هیچ تیکتی یافت نشد.</td>
                     </tr>
                 {% endfor %}
-
-                </tbody>
-            </table>
-        </div>
-        <!-- /.box-body -->
+            </tbody>
+        </table>
     </div>
+</div>
+    </section>
 {% endblock %}
 
 

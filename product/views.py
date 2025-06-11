@@ -144,8 +144,10 @@ class ProductListView(ListView):
 
         if have_filter_url:
             # set the queryset
-            return_result = products.filter(Q(brand_id__in=brand_list_id) |
-                                            Q(category_id__in=category_list_id))
+            return_result = products.filter(
+                Q(brand_id__in=brand_list_id) , Q(brand__is_active=True) |
+                Q(category_id__in=category_list_id) , Q(category__is_active=True)
+            )
 
             return return_result.order_by('-id').all()
 
@@ -190,6 +192,7 @@ class ProductDetailView(DetailView):
         return super().get_queryset().filter(is_active=True)
 
     def get_context_data(self, **kwargs):
+
         # check if the product is the user favorite or not
         if self.request.user.is_authenticated:
             is_favorite_product = UserFavorite.objects.filter(user=self.request.user,

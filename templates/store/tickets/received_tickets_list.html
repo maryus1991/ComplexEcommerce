@@ -11,79 +11,115 @@
 {% endblock %}
 
 {% block body %}
-    <div class="box" style="margin-top: 100px;">
-        <div class="box-header">
-            <h3 class="box-title"> لیست تیکت ها</h3>
+    <section class="content" style="margin-top: 30px">
 
-            <div class="box-tools">
-                <ul class="pagination pagination-sm no-margin pull-right">
-
-                    {% if page_obj.has_previous %}
-                        <li><a href="?page={{ page_obj.previous_page_number }}">«</a></li>
-                    {% endif %}
-                    {% for page_number in page_obj.paginator.page_range %}
-
-                        <li class="{% if page_number == page_obj.number %} active {% endif %}"><a
-                                href="?page={{ page_number }}">{{ page_number }}</a></li>
-
-                    {% endfor %}
-                    {% if page_obj.has_next %}
-                        <li><a href="?page={{ page_obj.next_page_number }}">»</a></li>
-                    {% endif %}
-                </ul>
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading text-center">
+                    <h3 class="panel-title"><i class="fa fa-search"></i> جستجوی پیشرفته</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="GET" action="" class="form-horizontal">
+                        {% csrf_token %}
+                        <div class="row">
+                            {{ form.media }}
+                            {% for field in form.visible_fields %}
+                                <div class="col-md-4" style="margin-bottom: 15px;">
+                                    <label>{{ field.label }}</label>
+                                    {{ field }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center" style="margin-top: 15px;">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-search"></i> جستجو
+                                </button>
+                                <button type="reset" class="btn btn-default">
+                                    <i class="fa fa-undo"></i> بازنشانی
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-        <!-- /.box-header -->
-        <div class="box-body no-padding">
-            <table class="table">
-                <tbody>
-                <tr>
-                    <th>#</th>
-                    <th>عنوان</th>
-                    <th>ارسال شده به</th>
-                    <th>ارسال شده توسط</th>
-                    <th>زمان ارسال</th>
-                    <th>وضعیت</th>
-                    <th>مشاهده</th>
-                </tr>
-                {% for ticket in tickets %}
-                    <tr>
 
+        <!-- فاصله میان فرم و لیست -->
 
-                        <td>{{ ticket.id }}</td>
-                        <td>{{ ticket.subject }}</td>
-                        <td>
-                            {% if ticket.store %}
-                                {{ ticket.store.name }}
-                            {% else %}
-                                ارسال شده به ادمین
-                            {% endif %}
-                        </td>
-                        <td>{{ ticket.user.PhoneNumber }}-{{ ticket.user.get_full_name }}</td>
-                        <td><p>{{ ticket.date|to_jalali:'  %H:%M - %Y/%m/%d ' }}</p></td>
-                        <td>
-                            {% if ticket.close_ticket %}
-                            	<p class="btn btn-info ">
-                                بسته
-                                </p>
-                                {% else %}
-                                <p class="btn btn-warning ">
-                                باز
-                                </p>
-                            {% endif %}
-                        </td>
-                        <td><a href="{% url 'store:response-received-ticket' ticket.id %}" class="btn btn-success">
-                            مشاهده
-                        </a></td>
+        <!-- لیست تیکت‌ها -->
+        <div class="box box-primary" style="margin-top: 400px">
+            <div class="box-header with-border">
+                <h3 class="box-title"><i class="fa fa-ticket"></i> لیست تیکت‌های دریافتی</h3>
+                <div class="box-tools pull-left">
+                    <ul class="pagination pagination-sm no-margin">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}"><i
+                                    class="fa fa-angle-right"></i></a></li>
+                        {% endif %}
+                        {% for page_number in page_obj.paginator.page_range %}
+                            <li class="{% if page_number == page_obj.number %}active{% endif %}">
+                                <a href="?page={{ page_number }}">{{ page_number }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}"><i class="fa fa-angle-left"></i></a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
 
+            <div class="box-body">
+                <table class="table table-bordered table-striped table-hover text-center">
+                    <thead>
+                    <tr class="bg-primary">
+                        <th>#</th>
+                        <th>عنوان</th>
+                        <th>ارسال‌کننده</th>
+                        <th>تاریخ</th>
+                        <th>وضعیت</th>
+                        <th>مشاهده</th>
                     </tr>
-                {% endfor %}
-
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ ticket.id }}</td>
+                            <td>{{ ticket.subject }}</td>
+                            <td>
+                                {{ ticket.user.get_full_name }}<br>
+                                {% if ticket.user.store %}
+                                    <span class="text-muted small">{{ ticket.user.store.name }}</span><br>
+                                {% endif %}
+                                <span class="text-muted small" dir="ltr">{{ ticket.user.PhoneNumber }}</span>
+                            </td>
+                            <td dir="ltr">{{ ticket.date|to_jalali:"%Y/%m/%d - %H:%M" }}</td>
+                            <td>
+                                {% if ticket.close_ticket %}
+                                    <span class="label  label-success">بسته</span>
+                                {% else %}
+                                    <span class="label label-warning">باز</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'store:response-received-ticket' ticket.id %}"
+                                   class="btn btn btn-success">
+                                    <i class="fa fa-eye"></i> مشاهده
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">هیچ تیکتی یافت نشد.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <!-- /.box-body -->
-    </div>
+    </section>
+
 {% endblock %}
 
 

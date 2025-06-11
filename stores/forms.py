@@ -14,14 +14,114 @@ from ckeditor_uploader.fields import RichTextUploadingFormField
 from blog.models import Blog, BlogCategory
 from .models import Store, StoreApps
 from .upload_multi_image import MultiImageField
-
 from user.models import User
+
+from jalali_date.fields import JalaliDateField
+from jalali_date.widgets import AdminJalaliDateWidget
 
 from django import forms
 
+class TicketFilterForm(forms.Form):
+    subject = forms.CharField(
+        label="جستوجو",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    store_name = forms.CharField(
+        label="نام فروشگاه",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    user_name = forms.CharField(
+        label="نام کاربر",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    user_number = PhoneNumberField(
+        label="شماره کاربر",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'dir':'rtl'
+        })
+    )
+
+    start_date = JalaliDateField(
+        label='از تاریخ '
+        ,widget=AdminJalaliDateWidget(
+            attrs={
+                'class' : 'form-control',
+                'dir':'rtl'
+            }
+        )
+    )
+    end_date = JalaliDateField(
+        label='تا تاریخ'
+        ,widget=AdminJalaliDateWidget(
+            attrs={
+                'class' : 'form-control',
+                'dir':'rtl'
+            }
+        )
+    )
+
+    ticket_status =  forms.ChoiceField(
+        label='وضعیت',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'بسته'),
+            ('12', 'باز'),
+            ('12', 'خوانده نشده '),
+            ('12', 'خوانده شده'),
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+    ticket_status_read_in_responder =  forms.ChoiceField(
+        label='وضعیت در دریافت کننده',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'خوانده شده توسط دریافت کننده'),
+            ('12', 'خوانده نشده توسط دریافت کننده'),
+
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+
+    ordering =  forms.ChoiceField(
+        label='ترتیب بندی ',
+        choices=[
+            ('', '-- انتخاب --'),
+
+            ('12', 'جدیدترین '),
+            ('12', 'قدیمی ترین'),
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+
+
 
 class ProductSearchForm(forms.Form):
-    name = forms.CharField(label='عنوان محصول', required=False,
+    name = forms.CharField(label='جستجوی محصول', required=False,
                            widget=forms.TextInput(
                                attrs={
                                    'class': 'form-control'
@@ -38,16 +138,28 @@ class ProductSearchForm(forms.Form):
             }
         ),
     )
-    # ordering = forms.ChoiceField(
-    #     label='دارای تخفیف',
-    #     choices=[('', '-- انتخاب --'), ('1', 'بیشترین بازدید'), ('0', 'کمترین بازدید'), ('0', 'کمترین بازدید'), ('0', 'کمترین بازدید')],
-    #     required=False,
-    #     widget=forms.Select(
-    #         attrs={
-    #             'class': 'form-control'
-    #         }
-    #     ),
-    # )
+
+    ordering = forms.ChoiceField(
+        label='ترتیب بندی بر اساس',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'بیشترین بازدید'),
+            ('12', 'کمترین بازدید'),
+            ('21', 'بیشترین قیمت'),
+            ('22', 'کمترین قیمت'),
+            ('31', 'بیشترین تعداد کامنت'),
+            ('32', 'کمترین  تعداد کامنت'),
+            ('41', 'بیشترین موجودی کالا'),
+            ('42', 'کمترین موجودی کالا'),
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+
     is_active = forms.ChoiceField(
         label='فعال / غیرفعال',
         choices=[('', '-- انتخاب --'), ('1', 'فعال'), ('0', 'غیرفعال')],
@@ -191,34 +303,6 @@ class ProductSearchForm(forms.Form):
             items.pop(key)
         return items
 
-    def clean_tag(self):
-        result = self.cleaned_data.get("tag")
-        if result is not None and result != '':
-            return result.strip('-')
-        else:
-            return None
-
-    def clean_feature(self):
-        result = self.cleaned_data.get("feature")
-        if result is not None and result != '':
-            return result.strip('-')
-        else:
-            return None
-
-    def clean_have_discount(self):
-        have_discount: str = self.cleaned_data.get("have_discount")
-        if have_discount == '0':
-            return True
-        else:
-            return 0
-
-    def clean_is_active(self):
-        is_active: str = self.cleaned_data.get("is_active")
-        if is_active == '0':
-            return True
-        else:
-            return 0
-
     def clean_name(self):
         name = self.cleaned_data.get("name")
 
@@ -228,10 +312,76 @@ class ProductSearchForm(forms.Form):
             return None
 
 
+class BrandAndCategorySearchForm(forms.Form):
+    name = forms.CharField(
+        label='جستجوی',
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+
+    is_active = forms.ChoiceField(
+        label='فعال / غیرفعال',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('1', 'فعال'),
+            ('0', 'غیرفعال')
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+    ordering = forms.ChoiceField(
+        label='ترتیب بندی بر اساس',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('41', 'بیشترین تعداد کالا'),
+            ('42', 'کمترین تعداد کالا'),
+            ('51', 'جدید ترین'),
+            ('52', 'قدیمی ترین'),
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+
+    category_parent = forms.ModelChoiceField(
+        queryset=ProductCategory.objects.filter(is_active=True).all(),
+        label='دسته‌بندی مادر   ', required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+            }
+        )
+    )
+
+    def clean(self):
+        items = self.cleaned_data
+        # Create a list of keys to remove first
+        keys_to_remove = [key for key, value in items.items()
+                          if value is None or value == '']
+        # Then remove them
+        for key in keys_to_remove:
+            items.pop(key)
+        return items
+
+
 class AddProductForm(forms.ModelForm):
     description = RichTextUploadingFormField()
     category = forms.ModelChoiceField(
-        queryset=ProductCategory.objects.all(), required=True,
+        queryset=ProductCategory.objects.filter(is_active=True).all(), required=True,
         empty_label='دسته بندی مربوطه را انتخاب کنید',
         widget=forms.Select(
             attrs={
@@ -244,7 +394,7 @@ class AddProductForm(forms.ModelForm):
             }
         ))
     brand = forms.ModelChoiceField(
-        queryset=ProductBrand.objects.all(), required=True,
+        queryset=ProductBrand.objects.filter(is_active=True).all(), required=True,
         empty_label='برند مربوطه را انتخاب کنید',
         widget=forms.Select(
             attrs={
@@ -590,7 +740,8 @@ class StoreSendTicketForm(forms.ModelForm):
                 'class': 'form-control select2 select2-hidden-accessible',
                 'style': "width: 100%",
                 'aria - hidden': "true",
-                'tabindex': "-1"
+                'tabindex': "-1",
+                'dir':'rtl'
             }
         ), empty_label='لطفا فروشگاهی که می خوایید تیکت به ان ارسال شود را انتخاب کنید'
     )
