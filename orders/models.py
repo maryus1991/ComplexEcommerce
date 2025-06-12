@@ -242,6 +242,8 @@ class Order(models.Model):
         # site
         total_payment_price +=  (total_amount_of_items * (site.tax / 100))
 
+        self.total_price = total_payment_price
+        self.save()
         return total_payment_price
 
     def check_count_of_products(self):
@@ -311,6 +313,6 @@ class Discount(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'{self.percentage_discount}% - {self.id}'
+        return f'{self.name} - {self.id}'
 
 

@@ -31,157 +31,107 @@
 {% block body %}
 
 
-    <div style="margin-top:20px; " class="box box-success direct-chat direct-chat-success">
-        <div class="box-header with-border">
-            <h3 class="box-title">{{ obj.subject }}</h3>
-            <br>
-            <br>
-            <br>
-            <br>
-
-
-            <div class="box-tools pull-right">
-                <span data-toggle="tooltip" title="" class="btn btn-default"
-                      data-original-title="3 New Messages">      فرستنده : {{ obj.store.name }}
-                    </span>
-                <span data-toggle="tooltip" title="" class="btn btn-success"
-                      data-original-title="3 New Messages"> تعداد : {{ obj.message.count }}</span>
-
-                <button type="button" class="btn btn-default" data-toggle="tooltip" title=""
-                        data-widget="chat-pane-toggle" data-original-title="Contacts">
-                    <span class="">تاریخ باز شدن این تیکت : {{ obj.date|to_jalali:' %H:%M - %Y/%m/%d ' }}</span>
-
+<div class="panel panel-success direct-chat mt-20">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ obj.subject }}</h3>
+        <div class="panel-tools">
+            <div class="btn-group btn-group-sm pull-left">
+                <span class="btn btn-info">
+                    شماره فرستنده: <span dir="ltr">{{ obj.user.PhoneNumber }}</span>
+                </span>
+                <span class="btn btn-default">فرستنده: {{ obj.user.get_full_name }}</span>
+                <span class="btn btn-default">گیرنده: {{ obj.store.name }}</span>
+                <span class="btn btn-info">
+                    شماره گیرنده: <span dir="ltr">{{ obj.store.phone }} - {{ obj.store.phone2 }}</span>
+                </span>
+                <span class="btn btn-success">تعداد: {{ obj.message.count }}</span>
+                <button type="button" class="btn btn-default">
+                    تاریخ باز شدن: {{ obj.date|to_jalali:' %H:%M - %Y/%m/%d ' }}
                 </button>
 
                 {% if obj.close_ticket %}
-                    <p class="btn btn-warning"> این تیکت در تاریخ {{ obj.closed_at|to_jalali:'%H:%M - %Y/%m/%d' }} بسته
-                        شده است</p>
+                    <span class="btn btn-warning">بسته شده در: {{ obj.closed_at|to_jalali:'%H:%M - %Y/%m/%d' }}</span>
                 {% else %}
                     {% if obj.user == user %}
-                        <a class="btn btn-warning" href="{% url 'store:close-ticket-sender-side' obj.id %}">بستن
-                            تیکت </a>
+                        <a class="btn btn-warning" href="{% url 'store:close-ticket-sender-side' obj.id %}">بستن تیکت</a>
                     {% elif obj.store == user.store or user.is_superuser %}
-                        <a class="btn btn-warning" href="{% url 'store:close-ticket-receiver-side' obj.id %}">بستن
-                            تیکت </a>
-
+                        <a class="btn btn-warning" href="{% url 'store:close-ticket-receiver-side' obj.id %}">بستن تیکت</a>
                     {% endif %}
                 {% endif %}
             </div>
         </div>
-        <!-- /.box-header -->
-        <div class="direct-chat-messages" style="height: 400px;">
-            <div class="box-body">
-                {% for message in obj.message.all %}
-                    {% if not message.admin_message %}
-                        <!-- Conversations are loaded here -->
-                        <!-- Message. Default to the left -->
-                        <div class="direct-chat-msg ">
-                            <div class="direct-chat-info ">
-                                <span class="direct-chat-name pull-right "
-                                      style="margin-left: 10px; margin-right: 10px"> {{ obj.user.store.name }} </span>
-                                <span class="direct-chat-timestamp pull-right">{{ message.date|to_jalali:'%H:%M - %Y/%m/%d' }}</span>
-                            </div>
-                            <br>
-                            <!-- /.direct-chat-info -->
-
-                            <!-- /.direct-chat-img -->
-                            <div class="input-group">
-                                <span class="input-group-btn">
-                                    <button type="submit"
-                                            class="btn btn-block btn-flat btn-info">پیام فرستنده :</button>
-                                  </span>
-                                <span style="padding: 6px" class=" btn-block btn-flat btn-default">
-                                     {{ message.message|safe }}
-                                </span>
-                            </div>
-
-                            <!-- /.direct-chat-text -->
-                        </div>
-                        <br>
-                        <!-- /.direct-chat-msg -->
-
-                    {% else %}
-                        <!-- Message to the right -->
-                        <div class="direct-chat-msg right">
-                            <div class="direct-chat-info clearfix">
-                                <span class="direct-chat-name pull-right">
-
-                                </span>
-                                <span class="direct-chat-timestamp pull-left">
-                                    {{ message.date|to_jalali:'%H:%M - %Y/%m/%d' }}
-                                </span>
-                            </div>
-                            <!-- /.direct-chat-info -->
-                            <div class="input-group">
-
-
-                                <span class="input-group-btn">
-                                    <button type="submit" class="btn btn-block btn-flat btn-warning">
-                                                                            {% if obj.store %}
-                                                                                پیام {{ obj.store.name }} :
-                                                                            {% else %}
-                                                                                پیام ادمین سایت
-                                                                            {% endif %}
-                                    </button>
-                                  </span>
-                                <span style="padding: 6px" class=" btn-block btn-flat btn-default">
-                                     {{ message.message|safe }}
-                                </span>
-                            </div>
-                            <!-- /.direct-chat-text -->
-                        </div>
-                        <!-- /.direct-chat-msg -->
-                        <!--/.direct-chat-messages-->
-                        <!-- Contacts are loaded here -->
-
-                        <!-- /.direct-chat-pane -->
-                    {% endif %}
-
-                {% endfor %}
-            </div>
-            <div class="direct-chat-contacts">
-                <ul class="contacts-list">
-                    <li>
-                        <a>
-                            <img class="contacts-list-img" src="/static/dist/img/user1-128x128.jpg"
-                                 alt="User Image">
-
-                            <div class="contacts-list-info">
-                            <span class="contacts-list-name">
-                                    {% if obj.store %}
-                                        {{ obj.store.name }}
-                                    {% else %}
-                                        ادمین سایت
-                                    {% endif %}
-                                <small class="contacts-list-date pull-right"></small>
-                            </span>
-                                <span class="contacts-list-msg">پشتیبانی</span>
-                            </div>
-
-                        </a>
-                    </li>
-
-                </ul>
-
-            </div>
-        </div>
-        <!-- /.box-body -->
-        <!-- /.box-footer-->
     </div>
-    {% if not obj.close_ticket %}
 
-        <div class="box-footer">
+    <div class="panel-body chat-container" style="height: 400px; overflow-y: auto; width: 100%;">
+        {% for message in obj.message.all %}
+            {% if not message.admin_message %}
+                <!-- پیام فرستنده -->
+                <div class="chat-message sender-message clearfix">
+                    <div class="message-header text-right">
+                        <strong class="message-sender">{{ obj.user.store.name }}</strong>
+                        <small class="text-muted">{{ message.date|to_jalali:'%H:%M - %Y/%m/%d' }}</small>
+                    </div>
+                    <div class="message-body bg-light rounded p-10 m-t-5">
+                        <div class="input-group">
+                            <span class="input-group-addon bg-info text-white">پیام فرستنده:</span>
+                            <div class="form-control" style="height: auto; min-height: 34px;">
+                                {{ message.message|safe }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <!-- پیام گیرنده -->
+                <div class="chat-message receiver-message clearfix">
+                    <div class="message-header text-left">
+                        <small class="text-muted">{{ message.date|to_jalali:'%H:%M - %Y/%m/%d' }}</small>
+                    </div>
+                    <div class="message-body bg-primary rounded p-10 m-t-5 text-white">
+                        <div class="input-group">
+                            <span class="input-group-addon bg-warning text-white">
+                                {% if obj.store %}
+                                    پیام {{ obj.store.name }}:
+                                {% else %}
+                                    پیام ادمین سایت
+                                {% endif %}
+                            </span>
+                            <div class="form-control" style="height: auto; min-height: 34px; background-color: #3c8dbc; color: white;">
+                                {{ message.message|safe }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="panel-footer">
+        {% if not obj.close_ticket %}
             <form action="" method="post">
                 {% csrf_token %}
                 <div class="input-group">
                     <input type="text" name="message" class="form-control" placeholder="پیام ...">
                     <span class="input-group-btn">
-                        <button type="submit" class="btn btn-success btn-flat">ارسال</button>
-                      </span>
+                        <button type="submit" class="btn btn-success">ارسال</button>
+                    </span>
                 </div>
             </form>
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .mt-20 { margin-top: 20px; }
+    .m-t-5 { margin-top: 5px; }
+    .p-10 { padding: 10px; }
+    .chat-container { padding: 15px; }
+    .chat-message { margin-bottom: 15px; }
+    .sender-message { margin-left: 20%; }
+    .receiver-message { margin-right: 20%; }
+    .message-header { margin-bottom: 5px; }
+    .message-sender { margin-left: 5px; }
+    .panel-tools { margin-top: 10px; }
+</style>
     <!-- /.box-header -->
     <!-- form start -->
 

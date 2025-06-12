@@ -21,63 +21,187 @@ from jalali_date.widgets import AdminJalaliDateWidget
 
 from django import forms
 
-class TicketFilterForm(forms.Form):
-    subject = forms.CharField(
-        label="جستوجو",
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-        })
+from orders.models import Discount
+
+
+class OrderFilteringForm(forms.Form):
+    discount = forms.ModelChoiceField(
+        queryset=Discount.objects.filter(is_active=True).all(),
+        label='کد تخفیف استفاده',
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+                'dir':'rtl'
+            }
+        )
+    )
+    brands = forms.ModelChoiceField(
+        queryset=ProductBrand.objects.filter(is_active=True).all(),
+        label='جستجو در برند های محصولات ',
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+                'dir':'rtl'
+            }
+        )
+    )
+    category = forms.ModelChoiceField(
+        queryset=ProductCategory.objects.filter(is_active=True).all(),
+        label='جستجو در دسته بندی محصولات ',
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+                'dir':'rtl'
+            }
+        )
     )
 
-    store_name = forms.CharField(
-        label="نام فروشگاه",
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-        })
+    address_search = forms.CharField(
+        required=False,
+        label='ادرس',
+        widget=forms.TextInput(
+            attrs={
+                'class':'form-control'
+            }
+        )
+    )
+    product_search = forms.CharField(
+        required=False,
+        label='جستجوی محصول',
+        widget=forms.TextInput(
+            attrs={
+                'class':'form-control'
+                ,'placeholder':'نام محصولات رو با - جدا کنید'
+            }
+        )
+    )
+    product_features_search = forms.CharField(
+        required=False,
+        label='جستجوی در ویژگی های محصول',
+        widget=forms.TextInput(
+            attrs={
+                'class':'form-control'
+                ,'placeholder':' با - جدا کنید'
+            }
+        )
+    )
+    product_tags_search = forms.CharField(
+        required=False,
+        label='جستجوی در تگ های محصول',
+        widget=forms.TextInput(
+            attrs={
+                'class':'form-control'
+                ,'placeholder':' با - جدا کنید'
+            }
+        )
+    )
+    user_phone_number = PhoneNumberField(
+        required=False,
+        label='شماره',
+        widget=forms.NumberInput(
+            attrs={
+                'class':'form-control',
+                'dir':'ltr'
+            }
+        )
     )
 
-    user_name = forms.CharField(
-        label="نام کاربر",
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-        })
+    sending_id = forms.CharField(
+        required=False,
+        label='کد پیگیری ارسال',
+        widget=forms.TextInput(
+            attrs={
+                'class':'form-control'
+            }
+        )
     )
 
-    user_number = PhoneNumberField(
-        label="شماره کاربر",
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'dir':'rtl'
-        })
+    cart = forms.CharField(
+        required=False,
+        label='شماره کارت',
+        widget=forms.TextInput(
+            attrs={
+                'class':'form-control'
+            }
+        )
+    )
+    payment_id = forms.CharField(
+        required=False,
+        label='کد پیگیری پرداخت',
+        widget=forms.TextInput(
+            attrs={
+                'class':'form-control'
+            }
+        )
     )
 
     start_date = JalaliDateField(
+        required=False,
         label='از تاریخ '
-        ,widget=AdminJalaliDateWidget(
+        , widget=AdminJalaliDateWidget(
             attrs={
-                'class' : 'form-control',
-                'dir':'rtl'
+                'class': 'form-control',
+                'dir': 'rtl',
+                'placeholder':' تاریخ  باز شدن سفارش '
             }
         )
     )
     end_date = JalaliDateField(
-        label='تا تاریخ'
-        ,widget=AdminJalaliDateWidget(
+        required=False,
+        label='تا تاریخ (باز شدن سفارش)'
+        , widget=AdminJalaliDateWidget(
             attrs={
-                'class' : 'form-control',
-                'dir':'rtl'
+                'class': 'form-control',
+                'dir': 'rtl',
+                'placeholder':' تاریخ  باز شدن سفارش '
+            }
+        )
+    )
+    start_second_date = JalaliDateField(
+        required=False,
+        label='از تاریخ '
+        , widget=AdminJalaliDateWidget(
+            attrs={
+                'class': 'form-control',
+                'dir': 'rtl',
+                'placeholder': ' تاریخ پرداخت یا کنسل شدن سفارش '
+
+            }
+        )
+    )
+    end_second_date = JalaliDateField(
+        required=False,
+        label='تا تاریخ'
+        , widget=AdminJalaliDateWidget(
+            attrs={
+                'class': 'form-control',
+                'dir': 'rtl',
+                'placeholder': ' تاریخ پرداخت یا کنسل شدن سفارش '
+
             }
         )
     )
 
-    ticket_status =  forms.ChoiceField(
-        label='وضعیت',
+    deliver_status = forms.ChoiceField(
+        label='نحوه ارسال',
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'بسته'),
-            ('12', 'باز'),
-            ('12', 'خوانده نشده '),
-            ('12', 'خوانده شده'),
+            ('', 'همه'),
+            ('11', 'پست'),
+            ('12', 'تیپاکس'),
+            ('21', 'ارسال درون شهری'),
+            ('22', 'تحویل حضوری'),
         ],
         required=False,
         widget=forms.Select(
@@ -86,7 +210,308 @@ class TicketFilterForm(forms.Form):
             }
         ),
     )
-    ticket_status_read_in_responder =  forms.ChoiceField(
+    payment_status = forms.ChoiceField(
+        label='وضعیت پرداخت',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'پرداخت شده'),
+            ('12', 'درحال ارسال'),
+            ('21', 'تحویل شده'),
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+    official_status = forms.ChoiceField(
+        label='وضعیت کلی',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'کنسل شده'),
+            ('12', 'پرداخت شده'),
+            ('21', 'باز'),
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+    invoice_status = forms.ChoiceField(
+        label='وضعیت فاکتور',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'رسمی'),
+            ('12', 'غیر رسمی'),
+
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+    invoice_status_ready_pdf = forms.ChoiceField(
+        label='وضعیت فاکتور رسمی',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'فاکتور رسمی تحویل داده شده'),
+            ('12', 'فاکتور رسمی تحویل داده نشده'),
+
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+    use_discount_code = forms.ChoiceField(
+        label='وضعیت تخفیف',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'با تخفیف'),
+            ('12', 'بدون تخفیف'),
+
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+
+    min_total_price = forms.IntegerField(
+        required=False,
+        label='کمترین قیمت کل',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    max_total_price = forms.IntegerField(
+        required=False,
+        label='بیشترین قیمت کل',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    min_total_weight = forms.IntegerField(
+        required=False,
+        label='کمترین وزن',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    max_total_weight = forms.IntegerField(
+        required=False,
+        label='بیشترین وزن',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    min_total_length = forms.IntegerField(
+        required=False,
+        label='کمترین ارتفاع',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    max_total_length = forms.IntegerField(
+        required=False,
+        label='بیشترین ارتفاع',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    min_total_width = forms.IntegerField(
+        required=False,
+        label='کمترین طول',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    max_total_width = forms.IntegerField(
+        required=False,
+        label='بیشترین طول',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    min_total_height = forms.IntegerField(
+        required=False,
+        label='کمترین عرض',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    max_total_height = forms.IntegerField(
+        required=False,
+        label='بیشترین عرض',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    min_discount_code_price = forms.IntegerField(
+        required=False,
+        label='کمترین قیمت تخفیف',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    max_discount_code_price =  forms.IntegerField(
+        required=False,
+        label='بیشترین قیمت تخفیف',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    min_delivery_price = forms.IntegerField(
+        required=False,
+        label='کمترین قیمت ارسال',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    max_delivery_price = forms.IntegerField(
+        required=False,
+        label='بیشترین قیمت ارسال',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+
+    min_count_of_product = forms.IntegerField(
+        required=False,
+        label='کمترین تعداد کالای درخواستی',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+    max_count_of_product = forms.IntegerField(
+        required=False,
+        label='بیشترین تعداد کالای درخواستی',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+
+    def clean(self):
+        items = self.cleaned_data
+        keys_to_remove = [key for key, value in items.items()
+                          if value is None or value == '']
+        for key in keys_to_remove:
+            items.pop(key)
+        return items
+
+class TicketFilterForm(forms.Form):
+    subject = forms.CharField(
+        required=False,
+        label="جستوجو",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    store_name = forms.CharField(
+        required=False,
+        label="نام فروشگاه",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    user_name = forms.CharField(
+        required=False,
+        label="نام کاربر",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    user_number = PhoneNumberField(
+        required=False,
+        label="شماره کاربر",
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'dir': 'rtl'
+        })
+    )
+
+    start_date = JalaliDateField(
+        required=False,
+        label='از تاریخ '
+        , widget=AdminJalaliDateWidget(
+            attrs={
+                'class': 'form-control',
+                'dir': 'rtl'
+            }
+        )
+    )
+    end_date = JalaliDateField(
+        required=False,
+        label='تا تاریخ'
+        , widget=AdminJalaliDateWidget(
+            attrs={
+                'class': 'form-control',
+                'dir': 'rtl'
+            }
+        )
+    )
+
+    ticket_status = forms.ChoiceField(
+        label='وضعیت',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'بسته'),
+            ('12', 'باز'),
+            ('21', 'خوانده نشده '),
+            ('22', 'خوانده شده'),
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+    ticket_status_read_in_responder = forms.ChoiceField(
         label='وضعیت در دریافت کننده',
         choices=[
             ('', '-- انتخاب --'),
@@ -102,12 +527,11 @@ class TicketFilterForm(forms.Form):
         ),
     )
 
-    ordering =  forms.ChoiceField(
+    ordering = forms.ChoiceField(
         label='ترتیب بندی ',
         choices=[
             ('', '-- انتخاب --'),
-
-            ('12', 'جدیدترین '),
+            ('11', 'جدیدترین '),
             ('12', 'قدیمی ترین'),
         ],
         required=False,
@@ -118,6 +542,13 @@ class TicketFilterForm(forms.Form):
         ),
     )
 
+    def clean(self):
+        items = self.cleaned_data
+        keys_to_remove = [key for key, value in items.items()
+                          if value is None or value == '']
+        for key in keys_to_remove:
+            items.pop(key)
+        return items
 
 
 class ProductSearchForm(forms.Form):
@@ -741,7 +1172,7 @@ class StoreSendTicketForm(forms.ModelForm):
                 'style': "width: 100%",
                 'aria - hidden': "true",
                 'tabindex': "-1",
-                'dir':'rtl'
+                'dir': 'rtl'
             }
         ), empty_label='لطفا فروشگاهی که می خوایید تیکت به ان ارسال شود را انتخاب کنید'
     )
