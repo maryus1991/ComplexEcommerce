@@ -422,37 +422,6 @@ desired effect
                 </li>
                 <li class="treeview">
                     <a><i class="fa fa-link"></i>
-                        <span>سفارشات</span>
-                        <span class="pull-left-container">
-                             <i class="fa fa-angle-right pull-left"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li class="link-activator">
-                            <a href="{% url 'store:orders-list-wait-for-sending-list' %}"><i class="fa fa-link"></i>
-                                <span>سفارشات منتظر ارسال</span>
-                            </a>
-                        </li>
-                        <li class="link-activator">
-                            <a href="{% url 'store:orders-list-wait-for-sending-list' %}"><i class="fa fa-link"></i>
-                                <span>سفارشات ارسال شده</span>
-                            </a>
-                        </li>
-                        <li class="link-activator">
-                            <a href="{% url 'store:orders-list-wait-for-sending-list' %}"><i class="fa fa-link"></i>
-                                <span>سفارشات کنسل شده</span>
-                            </a>
-                        </li>
-                        <li class="link-activator">
-                            <a href="{% url 'store:orders-list-wait-for-sending-list' %}"><i class="fa fa-link"></i>
-                                <span>سفارشات در وضعیت انتظار</span>
-                            </a>
-                        </li>
-
-                    </ul>
-                </li>
-                <li class="treeview">
-                    <a><i class="fa fa-link"></i>
                         <span>بلاگ</span>
                         <span class="pull-left-container">
                              <i class="fa fa-angle-right pull-left"></i>
@@ -507,9 +476,9 @@ desired effect
                     </li>
 
                 {% endif %}
-                <li class="link-activator">
+                <li class="link-activator" >
                     <a href="{% url 'store:orders-list-wait-for-sending-list' %}"><i class="fa fa-link"></i>
-                        <span>سفارشات منتظر ارسال</span>
+                        <span style="color: #ff7700"> سفارشات </span>
                     </a>
                 </li>
                 <li class="link-activator"><a href="{% url 'store:update' %}"><i class="fa fa-link"></i> <span>ویرایش اطلاعات فروشگاه</span></a>

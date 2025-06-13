@@ -39,7 +39,8 @@ urlpatterns = [
 
     # orders
     path('orders/list/', views.StoreOrdersView.as_view(), name='orders-list-wait-for-sending-list'),
-    path('orders/detial/<int:pk>/', views.StoreOrderDetailView.as_view(), name='orders-detail'),
+    path('orders/details/<int:pk>/', views.StoreOrderDetailView.as_view(), name='orders-detail'),
+    path('orders/detials/invoice/offical/<int:pk>/generate/', views.AddOfficialInvoiceView.as_view(), name='official_invoice-pdf-generate'),
 
     # users
     path('users/list/', views.StoreUserListView.as_view(), name='user-list'),

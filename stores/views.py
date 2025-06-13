@@ -50,6 +50,8 @@ from product.models import (
 
 )
 
+from django.db.models import Value
+from django.db.models.functions import Concat
 from blog.models import (
     Blog, BlogCategory
 )
@@ -766,7 +768,6 @@ class StoreSendTicketsListView(UserStoreStaffMixin, ListView):
 
         return query.distinct().all()
 
-
     def get_context_data(
             self, *, object_list=..., **kwargs
     ):
@@ -1024,25 +1025,63 @@ class StoreOrdersView(UserStoreStaffMixin, ListView):
         data = form.cleaned_data
         if data.get('brands'):
             query = query.filter(
-                details__products__brand=data.get('brands')
+                details__product__brand=data.get('brands')
             )
         if data.get('category'):
             query = query.filter(
-                details__products__category=data.get('category')
+                details__product__category=data.get('category')
             )
 
-        ### fix this section
-        if data.get('product_features_search'):pass
-        if data.get('product_tags_search'):pass
+        if features := data.get('product_features_search'):
+            features = [feature.strip() for feature in features.split('-') if feature.strip()]
 
-        if data.get('product_search'):
-            products_names = data.get('product_search').split('-')
-            query = query.filter(
-                Q(details__products__name__in=products_names) |
-                Q(details__products__description__in=products_names)
-            )
+            if features:
+                q_obj = Q()
+                for feature in features:
+                    q_obj |= Q(details__product__features__title__icontains=feature)
 
-        ###
+                query = query.filter(q_obj).annotate(
+                    features_info=Concat(
+                        'details__product__features__title',
+                        Value(' '),
+                    )
+                ).filter(
+                    features_info__icontains=features[0]  # جستجوی ترکیبی
+                )
+
+        if tags := data.get('product_tags_search'):
+            tags = [tag.strip() for tag in tags.split('-') if tag.strip()]
+
+            if tags:
+                q_obj = Q()
+                for tag in tags:
+                    q_obj |= Q(details__product__tags__name__icontains=tag)
+
+                query = query.filter(q_obj).annotate(
+                    product_info=Concat(
+                        'details__product__tags__name',
+                        Value(' '),
+                    )
+                ).filter(
+                    product_info__icontains=tags[0]  # یا همینجا جستجو دقیق‌تر
+                )
+
+        if product_search := data.get('product_search'):
+            names = [name.strip() for name in product_search.split('-') if name.strip()]
+
+            if names:
+                q_obj = Q()
+                for name in names:
+                    q_obj |= Q(details__product__name__icontains=name)
+
+                query = query.filter(q_obj).annotate(
+                    product_info=Concat(
+                        'details__product__name',
+                        Value(' '),
+                    )
+                ).filter(
+                    product_info__icontains=names[0]  # یا همینجا جستجو دقیق‌تر
+                )
 
         # فیلتر بر اساس شماره کاربر
         if data.get('user_phone_number'):
@@ -1052,10 +1091,10 @@ class StoreOrdersView(UserStoreStaffMixin, ListView):
         if data.get('address_search'):
             query = query.filter(
 
-                Q(address__province__icontains=data.get('address_search'))|
-                Q(address__city__icontains=data.get('address_search'))|
-                Q(address__address__icontains=data.get('address_search'))|
-                Q(address__zipcode__icontains=data.get('address_search'))|
+                Q(address__province__icontains=data.get('address_search')) |
+                Q(address__city__icontains=data.get('address_search')) |
+                Q(address__address__icontains=data.get('address_search')) |
+                Q(address__zipcode__icontains=data.get('address_search')) |
                 Q(address__additional_decryption__icontains=data.get('address_search'))
             )
 
@@ -1261,6 +1300,112 @@ class StoreOrderDetailView(UserStoreStaffMixin, DetailView):
 
     def get_object(self, queryset=None):
         return get_object_or_404(self.model, pk=self.kwargs.get('pk'), store=self.request.user.store)
+
+from django.db import transaction
+from django.core.exceptions import PermissionDenied, SuspiciousOperation
+from django.views.decorators.http import require_http_methods
+from django.utils.decorators import method_decorator
+from django.core.files.uploadedfile import UploadedFile
+
+class AddOfficialInvoiceView(UserStoreStaffMixin, View):
+    """
+    Handles secure upload of official invoice PDFs for orders
+    with comprehensive validation and error handling.
+    """
+
+    # Security constants
+    MAX_FILE_SIZE = 50 * 1024 * 1024
+    ALLOWED_MIME_TYPES = ['application/pdf']
+    ALLOWED_FILE_EXTENSIONS = ['.pdf']
+
+    @method_decorator(require_http_methods(["POST"]))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return self._process_invoice_upload(request, *args, **kwargs)
+        except PermissionDenied as e:
+            messages.error(request, 'مجوز صدور فاکتور رسمی را ندارید لطفا اطلاعات خود را ویرایش منید')
+            return redirect('store:update')
+        except SuspiciousOperation as e:
+            print(e)
+
+            messages.error(request, 'فایل آپلود شده معتبر نیست')
+            return redirect(request.META.get('HTTP_REFERER', reverse('dashboard:orders')))
+        except Exception as e:
+            messages.error(request, 'خطایی در آپلود فاکتور رخ داد')
+            return redirect(request.META.get('HTTP_REFERER', reverse('dashboard:orders')))
+
+    def _validate_store_requirements(self, store):
+        """Validate store meets all requirements for issuing official invoices"""
+        requirements = {
+            'have_official_invoice': False,
+            'economic_number': None,
+            'registration_number': None,
+            'official_invoice_phone_number': None
+        }
+
+        for field, invalid_value in requirements.items():
+            if getattr(store, field) == invalid_value:
+                raise PermissionDenied(
+                    f"Store missing requirement: {field}"
+                )
+
+    def _validate_uploaded_file(self, uploaded_file):
+        """Perform comprehensive validation of the uploaded file"""
+        if not isinstance(uploaded_file, UploadedFile):
+            raise SuspiciousOperation("Invalid file type")
+
+        if uploaded_file.size > self.MAX_FILE_SIZE:
+            raise SuspiciousOperation(f"File size exceeds {self.MAX_FILE_SIZE / 1024 / 1024}MB limit")
+
+        if uploaded_file.content_type not in self.ALLOWED_MIME_TYPES:
+            raise SuspiciousOperation("Invalid file content type")
+
+        if not any(uploaded_file.name.lower().endswith(ext) for ext in self.ALLOWED_FILE_EXTENSIONS):
+            raise SuspiciousOperation("Invalid file extension")
+
+    def _get_validated_order(self, store, order_id):
+        """Retrieve and validate the target order"""
+        order = get_object_or_404(
+            Order,
+            pk=order_id,
+            store=store,
+            is_paid=True,
+            canceled=False,
+            is_active=True,
+            official_invoice=True
+        )
+        return order
+
+    def _process_invoice_upload(self, request, *args, **kwargs):
+        """Main processing logic with transaction safety"""
+        order_id = kwargs.get('pk')
+        store = request.user.store
+
+        # Validate store requirements
+        self._validate_store_requirements(store)
+
+        # Validate order exists and meets criteria
+        order = self._get_validated_order(store, order_id)
+
+
+        # Validate file upload
+        if 'invoice_pdf' not in request.FILES:
+            raise SuspiciousOperation("No file uploaded")
+
+        pdf_file = request.FILES['invoice_pdf']
+        self._validate_uploaded_file(pdf_file)
+
+        # Process in atomic transaction
+        with transaction.atomic():
+            order.official_invoice_conformed_given_to_user = True
+            order.official_invoice_pdf = pdf_file
+            order.save()
+
+        messages.success(request, 'فاکتور رسمی با موفقیت برای کاربر ارسال شد')
+        return redirect(request.META.get('HTTP_REFERER'))
 
 
 # store users list

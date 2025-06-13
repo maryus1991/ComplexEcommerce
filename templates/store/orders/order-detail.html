@@ -32,155 +32,193 @@
 {% endblock %}
 
 {% block body %}
-    <div class="" style=" margin-top: 70px;">
-        <div class="box ">
-            <div class="box-header">
-                <div class="box-body table-responsive ">
-                    <table class="table table-hover">
-                        <tbody>
-                        <tr>
-                            <td>
-                                <h3 class="box-title">سفارش شماره {{ order.id }}</h3>
-                            </td>
-                            <td>
-                                <h3 class="box-title">کابر : {{ order.user.PhoneNumber }}</h3>
-                            </td>
-                            <td>
-                                <h3 class="box-title"> نام فروشگاه : {{ order.store.name }}</h3>
-                            </td>
-                            <td>
-                                قیمت نهایی سفارش :{{ order.calculate_total_price|tdc }}
-                            </td>
-                            <td>
-                                <h3 class="box-title"> هزینه پست : {{ order.post_price|tdc }}</h3>
-                            </td>
-
-                        </tr>
-                        <tr>
-
-                            <td>
-                                نحوه ارسال :
-                                <p class="btn btn-warning">
-                                    {% if order.vip_post %}
-                                        ارسال با پست
-                                    {% elif order.tipax_post_delivery %}
-                                        ارسال با تیپاکس
-                                    {% elif order.physical_delivery %}
-                                        تحویل حضوری
-                                    {% elif order.in_city_delivery %}
-                                        تحویل درون شهری ({{ order.store.orgin_city }})
-                                    {% endif %}</p>
-                            </td>
-                            <td>
-                                وضعیت ارسال :
-                                <p class="btn btn-info">
-                                    {% if order.sending and order.delivered_to_user %}
-                                        تحویل شده به کاربر
-                                    {% elif order.sending and not order.delivered_to_user %}
-                                        درحال ارسال
-                                    {% elif not order.sending %}
-                                        ارسال نشده
-                                    {% endif %}
-                                </p>
-                            </td>
-                            <td>
-                                کد پیگیری :{{ order.sending_id }}
-                            </td>
-                            <td>
-                                شماره کارت پرداخت کننده :{{ order.cart }}
-                            </td>
-                            <td>
-                                کد پیگیری پرداخت :{{ order.payment_id }}
-                            </td>
-
-                        </tr>
-                        <tr>
-                            <td>
-                                تاریخ باز شدن :{{ order.date|to_jalali:' %H/%M - %Y/%m/%d ' }}
-                            </td>
-                            <td>
-                                تاریخ تعیین وضعیت نهایی :{{ order.second_date|to_jalali:' %H/%M - %Y/%m/%d ' }}
-                            </td>
-
-                            <td>
-                                قیمت نهایی سفارش :{{ order.calculate_total_price|tdc }}
-                            </td>
-                            <td>
-                                وضعیت:
-                                {% if order.is_paid %}
-                                    <span class="label label-success">پرداخت شده</span>
-                                {% elif order.canceled %}
-                                    <span class="label label-danger">کنسل شده</span>
-                                {% else %}
-                                    <span class="label label-primary">در انتظار</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                تعداد تنوع محصولات :
-                                {{ order.details.count }}
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="box-tools">
-                    <div class="input-group input-group-sm" style="width: 150px;">
-
-                        <div class="input-group-btn">
-
-                        </div>
-                    </div>
-                </div>
+    <div class="container" style="margin-top: 70px;">
+        <div class="panel panel-primary">
+            <div class="panel-heading text-center">
+                <h3 class="panel-title">اطلاعات سفارش شماره {{ order.id }}</h3>
             </div>
-            <hr>
-            <h5> ادرس ارسالی :
-                {% if  order.address is not None %}
-                    {{ order.address.province }} - {{ order.address.city }}-
-                    {{ order.address.address }}
-                {% else %}
-                    ثبت نشده
-                {% endif %}
-            </h5>
+            <div class="panel-body">
 
-            <hr>
-            <h4>
-                محصولات اضافه شده:
-
-            </h4>
-            <!-- /.box-header -->
-            <div class="box-body table-responsive ">
-                <table class="table table-hover">
+                <!-- جدول اطلاعات کلی سفارش -->
+                <table class="table table-bordered table-striped">
                     <tbody>
                     <tr>
-                        <th>محصول</th>
-                        <th>تعداد</th>
-                        <th>قسمت پایه محصول</th>
-                        <th>تاریخ اضافه شدن</th>
-                        <th>قیمت نهایی</th>
+                        <td><strong>کاربر:</strong> <span dir="ltr">{{ order.user.PhoneNumber }}</span></td>
+                        <td><strong>نام فروشگاه:</strong> {{ order.store.name }}</td>
+                        <td><strong>قیمت کل محصولات:</strong> <span
+                                class="text-success">{{ order.calculate_total_price|tdc }}</span></td>
+                        <td><strong>هزینه ارسال:</strong> <span
+                                class="text-danger">{{ order.delivery_price|tdc }}</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>نحوه ارسال:</strong>
+                            <span class="label label-warning">
+                                {% if order.vip_post %} ارسال با پست
+                                {% elif order.tipax_post_delivery %} ارسال با تیپاکس
+                                {% elif order.physical_delivery %} تحویل حضوری
+                                {% elif order.in_city_delivery %} تحویل درون شهری ({{ order.store.orgin_city }})
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td><strong>وضعیت ارسال:</strong>
+                            <span class="label label-info">
+                                {% if order.sending and order.delivered_to_user %} تحویل شده به کاربر
+                                {% elif order.sending and not order.delivered_to_user %} درحال ارسال
+                                {% else %} ارسال نشده
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td><strong>کد پیگیری:</strong> <span dir="ltr">{{ order.sending_id }}</span></td>
+                        <td><strong>کارت پرداخت‌کننده:</strong> {{ order.cart }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>کد پیگیری پرداخت:</strong> {{ order.payment_id }}</td>
+                        <td><strong>تاریخ ثبت:</strong> {{ order.date|to_jalali:' %H/%M - %Y/%m/%d ' }}</td>
+                        <td><strong>تاریخ وضعیت نهایی:</strong> {{ order.second_date|to_jalali:' %H/%M - %Y/%m/%d ' }}
+                        </td>
+                        <td><strong>وضعیت پرداخت:</strong>
+                            {% if order.is_paid %}
+                                <span class="label label-success">پرداخت شده</span>
+                            {% elif order.canceled %}
+                                <span class="label label-danger">کنسل شده</span>
+                            {% else %}
+                                <span class="label label-primary">در انتظار</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>تنوع محصولات:</strong> {{ order.details.count }}</td>
+                        <td><strong>تخفیف:</strong> {{ order.discount_code_price|tdc }}</td>
+                        <td><strong>کد تخفیف:</strong> {{ order.discount.name }}</td>
+                        <td><strong>قیمت نهایی سفارش:</strong> {{ order.get_payment_price|tdc }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>وزن کل:</strong> {{ order.total_weight }}</td>
+                        <td><strong>ارتفاع کل:</strong> {{ order.total_length }}</td>
+                        <td><strong>طول کل:</strong> {{ order.total_width }}</td>
+                        <td><strong>عرض کل:</strong> {{ order.total_height }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>فاکتور:</strong>
+                            <span class="label label-default">
+                                {% if order.official_invoice %} رسمی {% else %} غیررسمی {% endif %}
+                            </span>
+                        </td>
+                        <td><strong>تحویل فاکتور:</strong>
+                            {% if order.official_invoice_conformed_given_to_user %}
+                                <span class="label label-success">تحویل داده شده</span>
+                            {% else %}
+                                <span class="label label-danger">تحویل نشده</span>
+                            {% endif %}
+                        </td>
+                        <td class="form-group form-inline">
+                            {% if order.official_invoice %}
+                                <form action="{% url 'store:official_invoice-pdf-generate' order.id %}"
+                                      method="post"
+
+                                      novalidate
+                                      enctype="multipart/form-data"
+                                      id="officialInvoiceForm">
+                                    {% csrf_token %}
+
+
+                                    <input type="file"
+                                           name="invoice_pdf"
+                                           class="form-control"
+                                           id="invoicePdfInput"
+                                           accept="application/pdf"
+                                           required
+                                           aria-label="آپلود فاکتور رسمی">
+
+                                    <button class="btn btn-warning" type="submit">
+                                        ثبت
+                                    </button>
+                                </form>
+                            {% else %}
+                                <a class="btn btn-info bt-block">
+                                    این فکتور رسمی نیست
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if order.official_invoice and order.official_invoice_pdf is not None %}
+                                <a href="{{ order.official_invoice_pdf.url }}" class="btn btn-success btn-block">
+                                    مشاهده فاکتور رسمی
+                                </a>
+                            {% else %}
+                                {% if order.is_paid and not order.canceled %}
+
+                                    <a href="{% url 'dashboard:order-generate-invoice' order.id %}"
+                                       class="btn btn-success btn-block">
+                                        مشاهده فاکتور غیر رسمی رسمی
+                                    </a>
+                                {% elif order.canceled %}
+                                    <a class="btn btn-danger btn-block">
+                                        این سفارش کنسل شده
+                                    </a>
+                                {% else %}
+                                    <a class="btn btn-warning btn-block">
+                                        این سفارش هنوز تصفیه نشده است
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"><strong>توضیحات:</strong> {{ order.additional_descriptions }}</td>
 
                     </tr>
-                    {% for detail in order.details.all %}
-
-                        <tr>
-                            <td><a href="{% url 'product:detail' detail.product.id %}">
-                                {{ detail.product.name }}
-                            </a></td>
-                            <td>{{ detail.count }}</td>
-                            <td>{{ detail.product.price }}</td>
-                            <td>{{ detail.date|to_jalali:' %H/%M - %Y/%m/%d ' }}</td>
-                            <td>
-                                {{ detail.get_item_price|tdc }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-
                     </tbody>
                 </table>
+
+                <!-- آدرس ارسال -->
+                <hr>
+                <h4><i class="fa fa-map-marker"></i> آدرس ارسال:</h4>
+                <p class="well">
+                    {% if order.address %}
+                        {{ order.address.name }} {{ order.address.last_name }} - {{ order.address.province }} -
+                        {{ order.address.city }} - {{ order.address.address }} - 
+                        <span dir="ltr">{{ order.address.zipcode }} - {{ order.address.phone }}</span> -
+                        {{ order.address.additional_decryption }}
+                    {% else %}
+                        <span class="text-danger">ثبت نشده</span>
+                    {% endif %}
+                </p>
+
+                <!-- جدول محصولات -->
+                <hr>
+                <h4><i class="fa fa-shopping-cart"></i> محصولات سفارش داده شده:</h4>
+                <table class="table table-hover table-bordered table-striped">
+                    <thead>
+                    <tr class="info">
+                        <th>محصول</th>
+                        <th>تعداد</th>
+                        <th>قیمت پایه</th>
+                        <th>تاریخ افزودن</th>
+                        <th>قیمت نهایی</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for detail in order.details.all %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'product:detail' detail.product.id %}">
+                                    {{ detail.product.name }}
+                                </a>
+                            </td>
+                            <td>{{ detail.count }}</td>
+                            <td>{{ detail.product.price|tdc }}</td>
+                            <td>{{ detail.date|to_jalali:' %H/%M - %Y/%m/%d ' }}</td>
+                            <td><span class="text-success">{{ detail.get_item_price|tdc }}</span></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
             </div>
-            <!-- /.box-body -->
         </div>
     </div>
+
 {% endblock %}
 
 {% block footer_reference %}

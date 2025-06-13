@@ -516,18 +516,18 @@
                                 </div>
                             {% endif %}
 
-                                <!-- لینک دریافت فاکتور -->
-                                <a href="{% url 'dashboard:order-generate-invoice' details.first.order.id %}"
-                                   class="flex items-center gap-2 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors font-DanaMedium">
-                                    دریافت فاکتور
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                         viewBox="0 0 24 24"
-                                         stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                    </svg>
-                                </a>
-                                </div>
+                            <!-- لینک دریافت فاکتور -->
+                            <a href="{% url 'dashboard:order-generate-invoice' details.first.order.id %}"
+                               class="flex items-center gap-2 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors font-DanaMedium">
+                                دریافت فاکتور
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                     viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                </svg>
+                            </a>
+                        </div>
 
                         <!-- اسکریپت کپی کردن -->
                         <script>

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponseForbidden
 from django.shortcuts import render, reverse, redirect
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView, RedirectView
@@ -29,7 +29,6 @@ from sitesetting.models import SiteSetting
 
 from utils.tipax_price_calc import validate_city
 
-
 User = get_user_model()
 
 
@@ -49,19 +48,20 @@ class UserSettingDashboard(LoginRequiredMixin, TemplateView):
         context['change_password_form'] = ChangePasswordForm()
         context['edit_user_information_form'] = EditUserInformationForm(
             initial={
-                'email':self.request.user.email,
-                'first_name':self.request.user.first_name,
-                'last_name':self.request.user.last_name,
+                'email': self.request.user.email,
+                'first_name': self.request.user.first_name,
+                'last_name': self.request.user.last_name,
             })
 
-        context['legal_person']=LegalPersonForm(
+        context['legal_person'] = LegalPersonForm(
             initial={
-                'legal_person_economic_number':self.request.user.legal_person_economic_number,
-                'legal_person_registration_number':self.request.user.legal_person_registration_number
+                'legal_person_economic_number': self.request.user.legal_person_economic_number,
+                'legal_person_registration_number': self.request.user.legal_person_registration_number
             }
         )
 
         return context
+
 
 class Dashboard(LoginRequiredMixin, TemplateView):
     """
@@ -89,6 +89,7 @@ class Dashboard(LoginRequiredMixin, TemplateView):
 
         return context
 
+
 # order section in dashboard
 
 class OrdersHistoryDashboard(LoginRequiredMixin, ListView):
@@ -102,6 +103,7 @@ class OrdersHistoryDashboard(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user, ).order_by('-id')
 
+
 class OrdersDetailHistoryDashboard(LoginRequiredMixin, ListView):
     """
     for Show user orders history
@@ -114,6 +116,7 @@ class OrdersDetailHistoryDashboard(LoginRequiredMixin, ListView):
         obj = get_object_or_404(self.model, user=self.request.user, id=self.kwargs.get('pk'))
         return obj.details.all()
 
+
 class GenerateOrderInvoice(LoginRequiredMixin, View):
     """
     for Show user order invoice
@@ -121,11 +124,15 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         order_id = self.kwargs.get('pk')
-        obj = get_object_or_404(Order, is_paid=True,
-				is_active=True,
-				canceled=False, 
-				user=self.request.user, 
-				id=order_id)
+        obj = get_object_or_404(Order,
+                                is_paid=True,
+                                is_active=True,
+                                canceled=False,
+                                id=order_id)
+
+        if (obj.user != self.request.user) or (obj.store != self.request.user.store):
+            return HttpResponseForbidden()
+
 
         if obj.address is None:
             messages.warning(
@@ -172,6 +179,7 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
         context = {'order': obj, 'site': site}
         return render(request, 'utils/invoice_pdf.html', context)
 
+
 # user favorite product
 
 class FavoriteProductsDashboard(LoginRequiredMixin, ListView):
@@ -199,6 +207,7 @@ class FavoriteProductsDashboard(LoginRequiredMixin, ListView):
         ).values_list('product_id', flat=True))
         return context
 
+
 class AddFavoriteProduct(LoginRequiredMixin, RedirectView):
     """
     for Add Favorite Product to User
@@ -211,6 +220,7 @@ class AddFavoriteProduct(LoginRequiredMixin, RedirectView):
             UserFavorite.objects.get_or_create(user=self.request.user, product=product)
             messages.success(self.request, 'ایتم مورد نظر به لیست ایتم های مورد علاقه اضافه شد')
         return self.request.META.get('HTTP_REFERER', '/')
+
 
 class RemoveFavoriteProduct(LoginRequiredMixin, RedirectView):
     """
@@ -250,6 +260,7 @@ class UserAddressDashboard(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return UserAddress.objects.filter(user=self.request.user).order_by('-id').all()
+
 
 class CreateUserAddress(LoginRequiredMixin, FormView):
     """
@@ -291,6 +302,7 @@ class CreateUserAddress(LoginRequiredMixin, FormView):
         )
         return super().form_valid(form)
 
+
 class UpdateUserAddress(LoginRequiredMixin, UpdateView):
     """
     for Create User Address
@@ -309,14 +321,14 @@ class UpdateUserAddress(LoginRequiredMixin, UpdateView):
         city = form.cleaned_data['city']
         validate_city_result = validate_city(city)
 
-        if validate_city_result is None :
+        if validate_city_result is None:
             messages.error(
                 self.request,
                 'مشکلی پیش امد'
             )
             return redirect(self.request.META.get('HTTP_REFERER', '/'))
 
-        if  len(validate_city_result) > 1 :
+        if len(validate_city_result) > 1:
             messages.warning(
                 self.request,
                 f'''
@@ -335,6 +347,7 @@ class UpdateUserAddress(LoginRequiredMixin, UpdateView):
         )
         return super().form_valid(form)
 
+
 class DeleteUserAddress(LoginRequiredMixin, RedirectView):
     """
     for Delete User Address
@@ -346,6 +359,7 @@ class DeleteUserAddress(LoginRequiredMixin, RedirectView):
         address.delete()
         messages.success(self.request, 'ادرس مورد نظر با موفقیت حذف شد')
         return reverse('dashboard:address')
+
 
 # user ticket
 
@@ -359,6 +373,7 @@ class UserTicketDashboard(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Ticket.objects.filter(user=self.request.user).order_by('-id').all()
+
 
 class UserTicketConversation(LoginRequiredMixin, View):
     """
@@ -378,8 +393,8 @@ class UserTicketConversation(LoginRequiredMixin, View):
 
         if self.request.user_agent.is_mobile:
             form = TicketConversationMobileForm()
-        else: form = TicketConversationForm()
-
+        else:
+            form = TicketConversationForm()
 
         context = {
             'ticket': tickets,
@@ -391,7 +406,8 @@ class UserTicketConversation(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         if self.request.user_agent.is_mobile:
             form = TicketConversationMobileForm(request.POST or None)
-        else: form = TicketConversationForm(request.POST or None)
+        else:
+            form = TicketConversationForm(request.POST or None)
 
         ticket_id = kwargs['pk']
         ticket = get_object_or_404(Ticket, pk=ticket_id)
@@ -421,6 +437,7 @@ class UserTicketConversation(LoginRequiredMixin, View):
             'pk': ticket_id
         }))
 
+
 class CloseTicket(LoginRequiredMixin, RedirectView):
     """
     for Close Ticket
@@ -437,6 +454,7 @@ class CloseTicket(LoginRequiredMixin, RedirectView):
             "تیکیت شما بسته شد"
         )
         return reverse('dashboard:tickets-conversation', kwargs={'pk': ticket_id})
+
 
 class DeleteMessageTicket(LoginRequiredMixin, RedirectView):
     """
@@ -460,6 +478,7 @@ class DeleteMessageTicket(LoginRequiredMixin, RedirectView):
             )
         return url
 
+
 class CreateUserTicket(LoginRequiredMixin, FormView):
     """
     for Show user ticket
@@ -470,11 +489,9 @@ class CreateUserTicket(LoginRequiredMixin, FormView):
 
     # todo fix the checkeditor config
     def get_form_class(self):
-
         if self.request.user_agent.is_mobile:
             return UserTicketsClientFormMobile
         return UserTicketsClientForm
-
 
     def form_valid(self, form):
         store = form.cleaned_data['store']
@@ -507,4 +524,3 @@ class CreateUserTicket(LoginRequiredMixin, FormView):
             'مشکلی پیش امده است'
         )
         return super().form_invalid(form)
-
