@@ -10,91 +10,106 @@
 {% endblock %}
 
 {% block body %}
-    <div class="box" style="margin-top: 100px;">
-        <div class="box-header">
-            <h3 class="box-title"> لیست دسته بندی ها </h3>
+<div class="box box-primary" style="margin-top: 30px">
+    <div class="box-header with-border">
+        <h3 class="box-title"><i class="fa fa-list"></i> لیست دسته بندی ها</h3>
 
-            <div class="box-tools">
-                <ul class="pagination pagination-sm no-margin pull-right">
-                    {% if page_obj.has_previous %}
-                        <li><a href="?page={{ page_obj.previous_page_number }}">«</a></li>
-                    {% endif %}
-                    {% for page_number in page_obj.paginator.page_range %}
+        <div class="box-tools">
+            <form method="get" class="form-inline">
+                <div class="input-group input-group-sm" style="width: 200px; margin-right: 10px;">
+                    <input type="text" name="search" class="form-control" placeholder="جستجو بر اساس نام..." value="{{ request.GET.search }}">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
 
-                        <li class="{% if page_number == page_obj.number %} active {% endif %}"><a
-                                href="?page={{ page_number }}">{{ page_number }}</a></li>
+                <div class="form-group" style="margin-right: 10px;">
+                    <select name="status" class="form-control input-sm">
+                        <option value="">همه وضعیت‌ها</option>
+                        <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>فعال</option>
+                        <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>غیرفعال</option>
+                    </select>
+                </div>
 
-                    {% endfor %}
-                    {% if page_obj.has_next %}
-                        <li><a href="?page={{ page_obj.next_page_number }}">»</a></li>
-                    {% endif %}
-                </ul>
-            </div>
+
+                <div class="form-group" style="margin-right: 10px;">
+                    <select name="posts" class="form-control input-sm">
+                        <option value="">تعداد پست ها</option>
+                        <option value="most_posts" {% if request.GET.posts == 'most_posts' %}selected{% endif %}>بیشترین پست ها</option>
+                        <option value="least_posts" {% if request.GET.posts == 'least_posts' %}selected{% endif %}>کمترین پست ها</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-filter"></i> فیلتر</button>
+                {% if request.GET.search or request.GET.status or request.GET.views %}
+                    <a href="?" class="btn btn-sm btn-default" style="margin-right: 5px;">
+                        <i class="fa fa-times"></i> حذف فیلترها
+                    </a>
+                {% endif %}
+            </form>
         </div>
-        <!-- /.box-header -->
-        <div class="box-body no-padding">
-            <table class="table">
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="bg-light-blue">
+                        <th style="width: 50px;">#</th>
+                        <th>نام دسته</th>
+                        <th style="width: 120px;">تعداد پست ها</th>
+                        <th style="width: 100px;">وضعیت</th>
+                        <th style="width: 150px;">مشاهده محصولات</th>
+                    </tr>
+                </thead>
                 <tbody>
-                <tr>
-                    <th>#</th>
-                    <th>نام دسته</th>
-                    <th>تعداد پست ها</th>
-                    <th>مشاهده محصولات</th>
-                    <th>ویرایش</th>
-                    <th>فعال / غیر فعال کردن</th>
-                    <th>حذف</th>
-                </tr>
                 {% for category in categories %}
-
-
                     <tr>
                         <td>{{ category.id }}</td>
-                        <td>{{ category.name }}</td>
-                        <td>{{ category.blogs.count }}</td>
+                        <td><strong>{{ category.name }}</strong></td>
+                        <td><span class="badge bg-blue">{{ category.blogs.count }}</span></td>
                         <td>
-                            <a class="btn btn-block btn-success"
-                               href="">
-                                مشاهده
+                            {% if category.is_active %}
+                                <span class="label label-success">فعال</span>
+                            {% else %}
+                                <span class="label label-danger">غیرفعال</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-info btn-block" href="{% url 'blog:list' %}?category={{ category.id }}">
+                                <i class="fa fa-eye"></i> مشاهده
                             </a>
-                        </td>
-                        <td>
-                            {% if  user.is_superuser %}
-
-                                <a class="btn btn-block btn-success" href="">
-                                    مشاهده
-                                </a>
-                            {% else %}
-                                برای انجام این کار با ادمین تماس بگیرید
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if   user.is_superuser %}
-
-                                <a class="btn btn-block btn-success" href="">
-                                    مشاهده
-                                </a>
-                            {% else %}
-                                برای انجام این کار با ادمین تماس بگیرید
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if user.is_superuser %}
-
-                                <a class="btn btn-block btn-success" href="/product/3/">
-                                    مشاهده
-                                </a>
-                            {% else %}
-                                برای انجام این کار با ادمین تماس بگیرید
-                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
-
                 </tbody>
             </table>
         </div>
-        <!-- /.box-body -->
     </div>
+    <!-- /.box-body -->
+    <div class="box-footer clearfix">
+        <ul class="pagination pagination-sm no-margin pull-left">
+            {% if page_obj.has_previous %}
+                <li><a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.views %}&views={{ request.GET.views }}{% endif %}">« صفحه قبل</a></li>
+            {% endif %}
+
+            {% for page_number in page_obj.paginator.page_range %}
+                {% if page_number == page_obj.number %}
+                    <li class="active"><span>{{ page_number }}</span></li>
+                {% else %}
+                    <li><a href="?page={{ page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.views %}&views={{ request.GET.views }}{% endif %}">{{ page_number }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li><a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.views %}&views={{ request.GET.views }}{% endif %}">صفحه بعد »</a></li>
+            {% endif %}
+        </ul>
+        <div class="pull-right" style="margin-top: 5px;">
+            <span class="text-muted">نمایش {{ page_obj.start_index }} تا {{ page_obj.end_index }} از {{ page_obj.paginator.count }} مورد</span>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 

@@ -67,7 +67,7 @@ INSTALLED_APPS = [
     'django_render_partial',
     'django_user_agents',
     'multiupload',
-
+    'auditlog',
 
     # installed apps
     'user',
@@ -78,7 +78,16 @@ INSTALLED_APPS = [
     'orders',
     'blog',
     'admin_panel',
+
+
 ]
+
+# auditlog config
+
+AUDITLOG_INCLUDE_TRACKING_MODELS = [
+    'auth.User',
+]
+AUDITLOG_DISABLE_ON_RAW_SAVE = False
 
 USER_AGENTS_CACHE = 'default'
 
@@ -91,6 +100,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'django_user_agents.middleware.UserAgentMiddleware',
+    'auditlog.middleware.AuditlogMiddleware',
 ]
 
 ROOT_URLCONF = "config.urls"

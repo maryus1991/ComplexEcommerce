@@ -287,7 +287,7 @@ class CreateUserAddress(LoginRequiredMixin, FormView):
             messages.warning(
                 self.request,
                 f'''
-                شهر شما یافت نشد لطفا در نشونت ان دقت فرمایید
+                شهر شما یافت نشد لطفا در نشونتن ان دقت فرمایید
                 لیست شهر های پیدا شده با این اسم ارسالی شما 
                     {" , ".join([x['title'] for x in list(validate_city_result)])}''')
             return redirect(self.request.META.get('HTTP_REFERER', '/'))

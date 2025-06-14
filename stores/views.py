@@ -20,7 +20,11 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.utils.timezone import now
 from phonenumbers.phonenumber import PhoneNumber
-
+from django.db import transaction
+from django.core.exceptions import PermissionDenied, SuspiciousOperation, ValidationError
+from django.views.decorators.http import require_http_methods
+from django.utils.decorators import method_decorator
+from django.core.files.uploadedfile import UploadedFile
 from orders.models import Order
 from .models import Store, StoreComment, StoreTag, StoreCategory, StoreApps
 from dashboard.models import Ticket, TicketConversation
@@ -39,6 +43,8 @@ from .forms import (
 , BrandAndCategorySearchForm
 , TicketFilterForm
 , OrderFilteringForm
+, StoreBlogFilteringForm
+, StoreUsersStaffFilteringForm
 )
 from product.models import (
     Product,
@@ -55,6 +61,9 @@ from django.db.models.functions import Concat
 from blog.models import (
     Blog, BlogCategory
 )
+from django.views.generic import ListView
+from auditlog.models import LogEntry
+from django.contrib.contenttypes.models import ContentType
 
 from user.mixins.logins import (UserStoreStaffMixin,
                                 AdminUserMixin,
@@ -63,6 +72,7 @@ from dashboard.forms import TicketConversationForm
 import jdatetime
 
 from .validators import is_valid_message
+from utils.tipax_price_calc import validate_city
 
 User = get_user_model()
 
@@ -563,7 +573,42 @@ class StoreUpdateInformationView(StoreAdminUserStaff, UpdateView):
         return super().form_invalid(form)
 
     def form_valid(self, form):
+
+        data = form.cleaned_data
+
+        if data.get('have_official_invoice'):
+            if (data.get('have_official_invoice') is None or
+                data.get('official_invoice_price') is None or
+                data.get('economic_number') is None or
+                data.get('registration_number') is None or
+                data.get('official_invoice_phone_number') is None):
+
+                    raise ValidationError('برای فعال شدن صدور فاکتور رسمی باید همه فیلد های مربوط به فاکتور رسمی پر شود')
+
+        if self.request.user.store.orgin_city != data.get('orgin_city'):
+            validate_city_result = validate_city(data.get('orgin_city'))
+
+            if validate_city_result is None:
+                messages.error(
+                    self.request,
+                    'مشکلی پیش امد'
+                )
+                return redirect(self.request.META.get('HTTP_REFERER', '/'))
+
+            if len(validate_city_result) > 1:
+                messages.warning(
+                    self.request,
+                    f'''
+                    شهر شما یافت نشد لطفا در نشونتن ان دقت فرمایید
+                    لیست شهر های پیدا شده با این اسم ارسالی شما 
+                        {" , ".join([x['title'] for x in list(validate_city_result)])}''')
+                return redirect(self.request.META.get('HTTP_REFERER', '/'))
+
+            if len(validate_city_result) == 1:
+                form.instance.orgin_city_id  = validate_city_result[0]['id']
+
         messages.success(self.request, 'اطلاعات شما با موقیت ثبت شد')
+
         return super().form_valid(form)
 
 
@@ -1301,11 +1346,6 @@ class StoreOrderDetailView(UserStoreStaffMixin, DetailView):
     def get_object(self, queryset=None):
         return get_object_or_404(self.model, pk=self.kwargs.get('pk'), store=self.request.user.store)
 
-from django.db import transaction
-from django.core.exceptions import PermissionDenied, SuspiciousOperation
-from django.views.decorators.http import require_http_methods
-from django.utils.decorators import method_decorator
-from django.core.files.uploadedfile import UploadedFile
 
 class AddOfficialInvoiceView(UserStoreStaffMixin, View):
     """
@@ -1390,7 +1430,6 @@ class AddOfficialInvoiceView(UserStoreStaffMixin, View):
         # Validate order exists and meets criteria
         order = self._get_validated_order(store, order_id)
 
-
         # Validate file upload
         if 'invoice_pdf' not in request.FILES:
             raise SuspiciousOperation("No file uploaded")
@@ -1417,8 +1456,17 @@ class StoreUserListView(StoreAdminUserStaff, ListView):
     context_object_name = 'users'
 
     def get_queryset(self):
-        return get_object_or_404(Store, pk=self.request.user.store.id,
-                                 ).users.all()
+        query = get_object_or_404(Store,
+          pk=self.request.user.store.id,
+          ).users.all()
+
+
+        return query
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = StoreUsersStaffFilteringForm()
+        return context
 
 
 class StoreAddUsersView(StoreAdminUserStaff, FormView):
@@ -1616,6 +1664,34 @@ class StoreRemoveUser(StoreAdminUserStaff, View):
         return redirect('store:user-list')
 
 
+class StoreUserShowActivities(StoreAdminUserStaff, ListView):
+    """
+    نمایش فعالیت‌های کاربر با استفاده از ListView
+    """
+    template_name = 'store/users/user_activities.html'
+    context_object_name = 'activities'
+    paginate_by = 25  # نمایش 25 فعالیت در هر صفحه
+
+    def get_queryset(self):
+        user = get_object_or_404(
+            self.request.user.store.users,
+            pk=self.kwargs['pk']
+        )
+
+        return LogEntry.objects.filter(
+            actor=user  # در django-auditlog از فیلد actor استفاده می‌شود
+        ).order_by('-timestamp')
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # اضافه کردن کاربر به context
+        context['user'] = get_object_or_404(
+            self.request.user.store.users,
+            pk=self.kwargs['pk']
+        )
+        return context
+
 # store apps
 
 class StoreAppsView(UserStoreStaffMixin, View):
@@ -1625,8 +1701,26 @@ class StoreAppsView(UserStoreStaffMixin, View):
 
     def get(self, request, *args, **kwargs):
         store = request.user.store
-        obj = StoreApps.objects.filter(store=store).all()
-        return render(request, 'store/apps/store-apps.html', {'items': obj,
+        obj = StoreApps.objects.filter(store=store)
+
+        if request.method == 'GET':
+            data = dict(request.GET.copy())
+            if 'is_active' in data:
+                is_active = data['is_active']
+                if 'on' in is_active:
+                    obj = obj.filter(is_active=True)
+
+            if 'not_active' in data:
+                is_active = data['not_active']
+                if 'on' in is_active:
+                    obj = obj.filter(is_active=False)
+
+            if 'search' in data:
+                search = data['search'][0]
+                if  search != '' and search is not None:
+                    obj = obj.filter(name__icontains=search)
+
+        return render(request, 'store/apps/store-apps.html', {'items': obj.all(),
                                                               'form': AddStoreAppForm()})
 
     def post(self, request, *args, **kwargs):
@@ -1703,6 +1797,11 @@ class StoreAddBlog(UserStoreStaffMixin, FormView):
                          'پست شما با موفقیت ایجاد شد لطفا برای انتشار ان پست را فعال کنید')
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category_form'] = AddStoreBlogCategoryForm()
+        return context
+
 
 class StoreBlogListView(UserStoreStaffMixin, ListView):
     """
@@ -1714,7 +1813,53 @@ class StoreBlogListView(UserStoreStaffMixin, ListView):
     paginate_by = 25
 
     def get_queryset(self):
-        return super().get_queryset().filter(store=self.request.user.store).all()
+        query = super().get_queryset().filter(store=self.request.user.store).prefetch_related('views')
+
+        form = StoreBlogFilteringForm(self.request.GET)
+
+        if not form.is_valid():
+            return query
+
+        data = form.cleaned_data
+
+        if user_number := data.get('user_number'):
+            query = query.filter(user__PhoneNumber=user_number)
+        if start_date := data.get('start_date'):
+            query = query.filter(updated_at__gte=start_date, is_active=True)
+        if end_date := data.get('end_date'):
+            query = query.filter(updated_at__lte=end_date, is_active=True)
+        if category := data.get('category'):
+            query = query.filter(category=category)
+        if is_active := data.get('is_active'):
+            if is_active == '11':
+                query = query.filter(is_active=True)
+            elif is_active == '12':
+                query = query.filter(is_active=False)
+
+        if ordering := data.get('ordering'):
+            if ordering == '11':  # جدید ترین
+                query = query.order_by('-id')
+            elif ordering == '12':  # قدیمی ترین
+                query = query.order_by('id')
+            elif ordering == '21':  # بیشترین بازدید
+                query = query.annotate(view_count=Count('views')).order_by('-view_count')
+            elif ordering == '22':  # کمترین بازید
+                query = query.annotate(view_count=Count('views')).order_by('view_count')
+
+        if title := data.get('title'):
+            query = query.filter(
+                Q(title__icontains=title) |
+                Q(content__icontains=title)
+            )
+
+        return query
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+
+        data['form'] = StoreBlogFilteringForm()
+
+        return data
 
 
 class StoreBlogUpdateView(UserStoreStaffMixin, UpdateView):
@@ -1807,12 +1952,12 @@ class StoreBlogAddCategories(UserStoreStaffMixin, FormView):
         form.save()
         messages.success(self.request,
                          'دسته با موفقیت ساخته شد')
-        return super().form_valid(form)
+        return redirect(self.request.META.get('HTTP_REFERER'))
 
     def form_invalid(self, form):
         messages.error(self.request,
                        form.errors)
-        return super().form_invalid(form)
+        return redirect(self.request.META.get('HTTP_REFERER'))
 
 
 class StoreBlogListCategories(UserStoreStaffMixin, ListView):
@@ -1823,3 +1968,42 @@ class StoreBlogListCategories(UserStoreStaffMixin, ListView):
     template_name = 'store/blog/category/list.html'
     context_object_name = 'categories'
     paginate_by = 25
+
+    from django.db.models import Count, Q
+
+    def get_queryset(self):
+        # دریافت کوئری‌ست پایه با prefetch_related برای بهینه‌سازی
+        query = super().get_queryset().prefetch_related('blogs')
+
+        # دریافت پارامترهای فیلتر از request
+        search = self.request.GET.get('search')
+        status = self.request.GET.get('status')
+        views = self.request.GET.get('views')
+        posts = self.request.GET.get('posts')
+
+        # فیلتر بر اساس جستجو (نام یا توضیحات)
+        if search:
+            query = query.filter(
+                name__icontains=search
+            )
+
+        # فیلتر بر اساس وضعیت فعال/غیرفعال
+        if status == 'active':
+            query = query.filter(is_active=True)
+        elif status == 'inactive':
+            query = query.filter(is_active=False)
+
+        # فیلتر بر اساس تعداد پست‌ها
+        if posts:
+            # ابتدا تعداد پست‌ها را annotate کنیم
+            query = query.annotate(posts_count=Count('blogs'))
+
+            if posts == 'most_posts':
+                query = query.order_by('-posts_count')
+            elif posts == 'least_posts':
+                query = query.order_by('posts_count')
+            elif posts.isdigit():
+                # فیلتر بر اساس تعداد دقیق پست‌ها
+                query = query.filter(posts_count=int(posts))
+
+        return query.distinct()

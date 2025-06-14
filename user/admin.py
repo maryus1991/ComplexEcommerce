@@ -1,8 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from auditlog.registry import auditlog
 
 from .models import User
 
+auditlog.register(User)
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):

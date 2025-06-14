@@ -35,7 +35,7 @@ class OrderFilteringForm(forms.Form):
                 'style': "width: 100%;",
                 'tabindex ': "-1",
                 'aria - hidden ': "true",
-                'dir':'rtl'
+                'dir': 'rtl'
             }
         )
     )
@@ -49,7 +49,7 @@ class OrderFilteringForm(forms.Form):
                 'style': "width: 100%;",
                 'tabindex ': "-1",
                 'aria - hidden ': "true",
-                'dir':'rtl'
+                'dir': 'rtl'
             }
         )
     )
@@ -63,7 +63,7 @@ class OrderFilteringForm(forms.Form):
                 'style': "width: 100%;",
                 'tabindex ': "-1",
                 'aria - hidden ': "true",
-                'dir':'rtl'
+                'dir': 'rtl'
             }
         )
     )
@@ -73,7 +73,7 @@ class OrderFilteringForm(forms.Form):
         label='ادرس',
         widget=forms.TextInput(
             attrs={
-                'class':'form-control'
+                'class': 'form-control'
             }
         )
     )
@@ -82,8 +82,8 @@ class OrderFilteringForm(forms.Form):
         label='جستجوی محصول',
         widget=forms.TextInput(
             attrs={
-                'class':'form-control'
-                ,'placeholder':'نام محصولات رو با - جدا کنید'
+                'class': 'form-control'
+                , 'placeholder': 'نام محصولات رو با - جدا کنید'
             }
         )
     )
@@ -92,8 +92,8 @@ class OrderFilteringForm(forms.Form):
         label='جستجوی در ویژگی های محصول',
         widget=forms.TextInput(
             attrs={
-                'class':'form-control'
-                ,'placeholder':' با - جدا کنید'
+                'class': 'form-control'
+                , 'placeholder': ' با - جدا کنید'
             }
         )
     )
@@ -102,8 +102,8 @@ class OrderFilteringForm(forms.Form):
         label='جستجوی در تگ های محصول',
         widget=forms.TextInput(
             attrs={
-                'class':'form-control'
-                ,'placeholder':' با - جدا کنید'
+                'class': 'form-control'
+                , 'placeholder': ' با - جدا کنید'
             }
         )
     )
@@ -112,8 +112,8 @@ class OrderFilteringForm(forms.Form):
         label='شماره',
         widget=forms.NumberInput(
             attrs={
-                'class':'form-control',
-                'dir':'ltr'
+                'class': 'form-control',
+                'dir': 'ltr'
             }
         )
     )
@@ -123,7 +123,7 @@ class OrderFilteringForm(forms.Form):
         label='کد پیگیری ارسال',
         widget=forms.TextInput(
             attrs={
-                'class':'form-control'
+                'class': 'form-control'
             }
         )
     )
@@ -133,7 +133,7 @@ class OrderFilteringForm(forms.Form):
         label='شماره کارت',
         widget=forms.TextInput(
             attrs={
-                'class':'form-control'
+                'class': 'form-control'
             }
         )
     )
@@ -142,7 +142,7 @@ class OrderFilteringForm(forms.Form):
         label='کد پیگیری پرداخت',
         widget=forms.TextInput(
             attrs={
-                'class':'form-control'
+                'class': 'form-control'
             }
         )
     )
@@ -154,7 +154,7 @@ class OrderFilteringForm(forms.Form):
             attrs={
                 'class': 'form-control',
                 'dir': 'rtl',
-                'placeholder':' تاریخ  باز شدن سفارش '
+                'placeholder': ' تاریخ  باز شدن سفارش '
             }
         )
     )
@@ -165,7 +165,7 @@ class OrderFilteringForm(forms.Form):
             attrs={
                 'class': 'form-control',
                 'dir': 'rtl',
-                'placeholder':' تاریخ  باز شدن سفارش '
+                'placeholder': ' تاریخ  باز شدن سفارش '
             }
         )
     )
@@ -385,7 +385,7 @@ class OrderFilteringForm(forms.Form):
             }
         )
     )
-    max_discount_code_price =  forms.IntegerField(
+    max_discount_code_price = forms.IntegerField(
         required=False,
         label='بیشترین قیمت تخفیف',
         widget=forms.NumberInput(
@@ -439,6 +439,7 @@ class OrderFilteringForm(forms.Form):
         for key in keys_to_remove:
             items.pop(key)
         return items
+
 
 class TicketFilterForm(forms.Form):
     subject = forms.CharField(
@@ -1075,15 +1076,7 @@ class AddStoreForm(forms.ModelForm):
         validators=[validate_phonenumber]
     )
 
-    merchant_id = forms.CharField(
-        required=False,
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'مرچنت کد زرین پال'
-            }
-        )
-    )
+    description = RichTextUploadingFormField()
 
     class Meta:
         model = Store
@@ -1092,8 +1085,19 @@ class AddStoreForm(forms.ModelForm):
                   'whats_app_ID', 'whats_app_link',
                   'telegram_app_ID', 'telegram_app_Link',
                   'instagram_app_ID', 'instagram_app_Link',
-                  'merchant_id', 'logo', 'address', 'about_image',
-                  'orgin_city_id', 'is_active',
+                  'logo', 'about_image', 'is_active', 'description',
+
+                  'orgin_city', 'address', 'zip_code', 'province',
+
+                  'have_official_invoice', 'official_invoice_price',
+                  'economic_number', 'registration_number',
+                  'official_invoice_phone_number',
+
+                  'have_post_delivery', 'have_tipax_delivery',
+                  'have_in_same_city_delivery', 'have_physical_delivery',
+                  'in_same_city_delivery_price',
+
+                  'additional_price', 'additional_tax'
                   )
 
         widgets = {
@@ -1147,7 +1151,19 @@ class AddStoreForm(forms.ModelForm):
                     'placeholder': 'ادرس فرشگاه'
                 }
             ),
-            'orgin_city_id': forms.TextInput(
+            'zip_code': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'کد پستی فرشگاه'
+                }
+            ),
+            'province': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'استان فرشگاه'
+                }
+            ),
+            'orgin_city': forms.TextInput(
                 attrs={
                     'class': 'form-control',
                     'placeholder': ' شهر مبدا'
@@ -1156,6 +1172,73 @@ class AddStoreForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(
                 attrs={
 
+                }
+            ),
+            'have_post_delivery': forms.CheckboxInput(
+                attrs={
+
+                }
+            ),
+            'have_tipax_delivery': forms.CheckboxInput(
+                attrs={
+
+                }
+            ),
+            'have_in_same_city_delivery': forms.CheckboxInput(
+                attrs={
+
+                }
+            ),
+            'have_physical_delivery': forms.CheckboxInput(
+                attrs={
+
+                }
+            ),
+            'have_official_invoice': forms.CheckboxInput(
+                attrs={
+
+                }
+            ),
+            'in_same_city_delivery_price': forms.NumberInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'هزینه ارسال درون شهری'
+                }
+            ),
+            'additional_price': forms.NumberInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'هزینه اضافی'
+                }
+            ),
+            'additional_tax': forms.NumberInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'مالیات اضافی(درصد)'
+                }
+            ),
+            'official_invoice_price': forms.NumberInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'درصد برای صدور فاکتور رسمی'
+                }
+            ),
+            'economic_number': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'شماره اقتصادی'
+                }
+            ),
+            'registration_number': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'شماره ثبت'
+                }
+            ),
+            'official_invoice_phone_number': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'شماره تلفن یا نامبر جهت صدور فاکتور رسمی'
                 }
             ),
         }
@@ -1359,6 +1442,7 @@ class AddStoreBlogForm(forms.ModelForm):
                 'style': "width: 100%;",
                 'tabindex': "-1",
                 'aria - hidden': "true"
+                , 'dir': 'rtl'
             }
         )
         , empty_label='لطفا دسته بندی انتخاب کنید'
@@ -1374,6 +1458,108 @@ class AddStoreBlogForm(forms.ModelForm):
                 'placeholder': 'عنوان را وارد کنید'
             })
         }
+
+
+class StoreBlogFilteringForm(forms.Form):
+    user_number = PhoneNumberField(
+        required=False,
+        label='شماره کاربر نویسنده پست',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+                'dir': 'ltr'
+            }
+        )
+    )
+
+    start_date = JalaliDateField(
+        required=False,
+        label='از تاریخ انتشار'
+        , widget=AdminJalaliDateWidget(
+            attrs={
+                'class': 'form-control',
+                'dir': 'rtl',
+            }
+        )
+    )
+
+    end_date = JalaliDateField(
+        required=False,
+        label='تا تاریخ انتشار'
+        , widget=AdminJalaliDateWidget(
+            attrs={
+                'class': 'form-control',
+                'dir': 'rtl',
+            }
+        )
+    )
+
+    category = forms.ModelChoiceField(
+        queryset=BlogCategory.objects.filter(is_active=True).all(),
+        label='دسته بندی مورد استفاده',
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+                'dir': 'rtl'
+            }
+        )
+    )
+
+    is_active = forms.ChoiceField(
+        label='وضعیت',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'فعال'),
+            ('12', 'غیر فعال'),
+
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+
+    ordering = forms.ChoiceField(
+        label='ترتیب بندی',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'جدید ترین'),
+            ('12', 'قدیمی ترین'),
+            ('21', 'بیشترین بازدید'),
+            ('22', 'کمترین بازید'),
+
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+
+    title = forms.CharField(
+        required=False,
+        label='جستجوی در متن',
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+
+    def clean(self):
+        items = self.cleaned_data
+        keys_to_remove = [key for key, value in items.items()
+                          if value is None or value == '']
+        for key in keys_to_remove:
+            items.pop(key)
+        return items
 
 
 class AddStoreBlogCategoryForm(forms.ModelForm):
@@ -1408,6 +1594,8 @@ class AddStoreBlogCategoryForm(forms.ModelForm):
                 'style': "width: 100%;",
                 'tabindex': "-1",
                 'aria - hidden': "true"
+                , 'dir': 'rtl'
+
             }
         )
         , empty_label='لطفا دسته بندی مادر انتخاب کنید',
@@ -1424,3 +1612,130 @@ class AddStoreBlogCategoryForm(forms.ModelForm):
             }),
 
         }
+
+
+class StoreUsersStaffFilteringForm(forms.Form):
+    user_PhoneNumber = PhoneNumberField(
+        required=False,
+        label='شماره کاربر ',
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control',
+                'dir': 'ltr'
+            }
+        )
+    )
+
+    user_email = forms.EmailField(
+        required=False,
+        label='ایمیل کاربر  ',
+        widget=forms.EmailInput(
+            attrs={
+                'class': 'form-control',
+                'dir': 'ltr'
+            }
+        )
+    )
+
+    user_name = forms.CharField(
+        required=False,
+        label='نام',
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control'
+            }
+        )
+    )
+
+    user_is_store_admin = forms.ChoiceField(
+        label='وضعیت ادمین بودن',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'ادمین میباشد'),
+            ('12', 'ادمین نمیباشد'),
+
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+
+    user_verify_account = forms.ChoiceField(
+        label='وضعیت تایید بودن حساب',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'تایید شده'),
+            ('12', 'تایید نشده'),
+
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+
+    user_is_active = forms.ChoiceField(
+        label='وضعیت فعال بودن حساب',
+        choices=[
+            ('', '-- انتخاب --'),
+            ('11', 'فعال '),
+            ('12', 'غیر فعال'),
+
+        ],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control'
+            }
+        ),
+    )
+
+    start_date_joined = JalaliDateField(
+        required=False,
+        label='از  (تاریخ ثبت نام)'
+        , widget=AdminJalaliDateWidget(
+            attrs={
+                'class': 'form-control',
+                'dir': 'rtl',
+
+            }
+        )
+    )
+
+    end_date_joined = JalaliDateField(
+        required=False,
+        label='تا  (تاریخ ثبت نام)'
+        , widget=AdminJalaliDateWidget(
+            attrs={
+                'class': 'form-control',
+                'dir': 'rtl',
+            }
+        )
+    )
+
+    start_last_login = JalaliDateField(
+        required=False,
+        label='از  (تاریخ اخرین ورود به سایت)'
+        , widget=AdminJalaliDateWidget(
+            attrs={
+                'class': 'form-control',
+                'dir': 'rtl',
+            }
+        )
+    )
+
+    end_last_login = JalaliDateField(
+        required=False,
+        label='تا  (تاریخ اخرین ورود به سایت)'
+        , widget=AdminJalaliDateWidget(
+            attrs={
+                'class': 'form-control',
+                'dir': 'rtl',
+            }
+        )
+    )

@@ -24,7 +24,7 @@ class UserStoreStaffMixin(AccessMixin):
                     return super().dispatch(request, *args, **kwargs)
 
         messages.error(request, "شما دسترسی ورود با این صفحه را ندارید")
-        return redirect(request.META.get('HTTP_REFERER', '/'))
+        return redirect('user:login')
 
 class StoreAdminUserStaff(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
@@ -35,7 +35,7 @@ class StoreAdminUserStaff(AccessMixin):
                         return super().dispatch(request, *args, **kwargs)
 
         messages.error(request, "شما دسترسی ورود با این صفحه را ندارید")
-        return redirect(request.META.get('HTTP_REFERER', '/'))
+        return redirect('user:login')
 
 class AdminUserMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
@@ -44,4 +44,4 @@ class AdminUserMixin(AccessMixin):
                 return super().dispatch(request, *args, **kwargs)
 
         messages.error(request, "شما دسترسی ورود با این صفحه را ندارید")
-        return redirect(request.META.get('HTTP_REFERER', '/'))
+        return redirect('user:login')

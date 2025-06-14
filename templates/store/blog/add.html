@@ -26,42 +26,67 @@
 {% endblock %}
 
 {% block body %}
-    <div class="box box-primary" style="margin-top:40px">
-        <div class="box-header with-border">
-            <h3 class="box-title">اضافه کردن پست</h3>
+<div class="container" style="margin-top: 40px;">
+    <div class="row">
+        <!-- فرم افزودن دسته بندی -->
+        <div class="col-md-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">افزودن دسته بندی</h3>
+                </div>
+                <div class="panel-body">
+                    <form method="POST" action="{% url 'store:blog-add-category' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>عنوان:</label>
+                            {{ category_form.name }}
+                        </div>
+                        <div class="form-group">
+                            <label>انتخاب دسته بندی مادر:</label>
+                            {{ category_form.parent }}
+                        </div>
+                        <div class="form-group">
+                            <label>انتخاب لوگوی دسته:</label>
+                            {{ category_form.image }}
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">ارسال</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <!-- /.box-header -->
-        <!-- form start -->
-        <form role="form" method='POST' action='' enctype='multipart/form-data'>
-            {% csrf_token %}
-            <div class="box-body">
-                <div class="form-group">
-                    <label for="exampleInputFile">عنوان : </label>
 
-                    {{ form.title }}
+        <!-- فرم افزودن پست -->
+        <div class="col-md-9">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">اضافه کردن پست</h3>
                 </div>
-
-                <div class="form-group">
-                    <label for="exampleInputFile">انتخاب دسته بندی </label>
-                    {{ form.category }}
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputFile">انتخاب عکس  </label>
-                    {{ form.image }}
-                </div>
-                <div class="form-group">
-                    {{ form.media }}
-                    {{ form.content }}
-
+                <div class="panel-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>عنوان:</label>
+                            {{ form.title }}
+                        </div>
+                        <div class="form-group">
+                            <label>انتخاب دسته بندی:</label>
+                            {{ form.category }}
+                        </div>
+                        <div class="form-group">
+                            <label>انتخاب عکس:</label>
+                            {{ form.image }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.media }}
+                            {{ form.content }}
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">ارسال</button>
+                    </form>
                 </div>
             </div>
-            <!-- /.box-body -->
-
-            <div class="box-footer">
-                <button type="submit" class="btn btn-primary">ارسال</button>
-            </div>
-        </form>
+        </div>
     </div>
+</div>
 
 {% endblock %}
 

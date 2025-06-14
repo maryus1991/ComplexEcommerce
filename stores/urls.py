@@ -48,6 +48,7 @@ urlpatterns = [
     path('users/update/<int:pk>', views.StoreUpdateUsersView.as_view(), name='user-update'),
     path('users/update/active-deative/<int:pk>', views.StoreUserActiveOrDeativate.as_view(), name='user-active-or-deactivate'),
     path('users/remove/<int:pk>', views.StoreRemoveUser.as_view(), name='user-remove'),
+    path('users/<int:pk>/activities/', views.StoreUserShowActivities.as_view(), name='user_activities'),
 
     # store apps
     path('app/list/', views.StoreAppsView.as_view(), name='app-list'),
