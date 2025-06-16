@@ -16,6 +16,8 @@ urlpatterns = [
     path("store/", include("stores.urls")),
     # path(f"{get_random_string(500)}-admin/", include("stores.urls")),
     path("admin/", admin.site.urls),
+    path("admin-panel/", include('admin_panel.urls')),
+
     path("ckeditor/", include("ckeditor_uploader.urls")),
     path("", include("sitesetting.urls")),
     path("14545014.txt", e_namad, name='e-namad'),
