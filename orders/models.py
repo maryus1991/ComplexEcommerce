@@ -11,17 +11,17 @@ from utils.tipax_price_calc import calculate_price as calculate_price_tipax
 from utils.post_price_calc import calculate_price as calculate_price_post
 
 from sitesetting.models import SiteSetting
-from  django.utils.crypto import get_random_string
+from django.utils.crypto import get_random_string
 from django.utils.timezone import now, timedelta
 
 User = get_user_model()
-
 
 
 # Create your models here.
 
 def pdf_path_upload_to(instance, filename):
     return f'files/official_invoice/pdf/{get_random_string(100)}.pdf'
+
 
 class DeliveryPrices(models.Model):
     is_tipax = models.BooleanField(default=True)
@@ -32,6 +32,7 @@ class DeliveryPrices(models.Model):
 
     def __str__(self):
         return f'{self.origin_city_id}-{self.destination_city_id}-{self.price}-{"tipax" if self.is_tipax else "post"} '
+
 
 class Order(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='orders')
@@ -63,7 +64,7 @@ class Order(models.Model):
     # discount code
     use_discount_code = models.BooleanField(default=False)
     discount_code_price = models.PositiveBigIntegerField(default=0)
-    discount = models.OneToOneField('Discount', null=True,blank=True,
+    discount = models.OneToOneField('Discount', null=True, blank=True,
                                     on_delete=models.CASCADE, related_name='discount')
 
     total_price = models.PositiveBigIntegerField(default=0)
@@ -87,7 +88,7 @@ class Order(models.Model):
             is_tipax=True,
             origin_city_id=self.store.orgin_city_id,
             destination_city_id=self.address.city_code,
-            date__range=[now() - timedelta(days=3)  ,now()],
+            date__range=[now() - timedelta(days=3), now()],
         )
         if price.exists() and price.count() == 1:
             return price.first().price
@@ -107,7 +108,7 @@ class Order(models.Model):
             is_tipax=False,
             origin_city_id=self.store.orgin_city_id,
             destination_city_id=self.address.city_code,
-            date__range=[now() - timedelta(days=3)  ,now()],
+            date__range=[now() - timedelta(days=3), now()],
         )
         if price.exists() and price.count() == 1:
             return price.first().price
@@ -143,7 +144,6 @@ class Order(models.Model):
 
         for item in details:
             total_price += item.get_item_price_without_discount()
-
 
         return self.total_price
 
@@ -230,17 +230,16 @@ class Order(models.Model):
         # store
 
         if self.official_invoice and self.store.have_official_invoice and site.active_receive_official_invoice:
-
-            total_payment_price +=   (total_amount_of_items * (self.store.official_invoice_price / 100))
+            total_payment_price += (total_amount_of_items * (self.store.official_invoice_price / 100))
 
         if self.store.additional_price:
-            total_payment_price +=  self.store.additional_price
+            total_payment_price += self.store.additional_price
 
         if self.store.additional_tax:
-            total_payment_price +=   (total_amount_of_items * (self.store.additional_tax / 100))
+            total_payment_price += (total_amount_of_items * (self.store.additional_tax / 100))
 
         # site
-        total_payment_price +=  (total_amount_of_items * (site.tax / 100))
+        total_payment_price += (total_amount_of_items * (site.tax / 100))
 
         self.total_price = total_payment_price
         self.save()
@@ -293,9 +292,9 @@ class OrderDetail(models.Model):
 
         return product_real_price - product_discount
 
-
     def __str__(self):
         return f'{self.order.id} - {self.id}'
+
 
 class Discount(models.Model):
     user = models.ManyToManyField(User, null=True, related_name='discounts', blank=True)
@@ -316,3 +315,10 @@ class Discount(models.Model):
         return f'{self.name} - {self.id}'
 
 
+class StoreSoldOrders(models.Model):
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='store_sold_orders')
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='store_sold_orders')
+    price = models.PositiveBigIntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.price} <-> {self.store.name}'

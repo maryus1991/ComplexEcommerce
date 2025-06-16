@@ -13,7 +13,7 @@ import json, uuid, requests
 
 from product.models import Product
 from sitesetting.models import SiteSetting
-from .models import Order, OrderDetail, Discount
+from .models import Order, OrderDetail, Discount, StoreSoldOrders
 
 from config.settings import (
     MERCHANT_ID,
@@ -471,7 +471,8 @@ class ConformPayment(LoginRequiredMixin, View):
 
     def dispatch(self, request, *args, **kwargs):
         self.pk = kwargs.get('pk')
-        self.order = get_object_or_404(Order, pk=self.pk, user=request.user, is_paid=False, is_active=True, canceled=False)
+        self.order = get_object_or_404(Order, pk=self.pk, user=request.user, is_paid=False, is_active=True,
+                                       canceled=False)
         self.site = SiteSetting.objects.first()
         self.result = self.order.get_payment_price()
 
@@ -515,14 +516,15 @@ class ConformPayment(LoginRequiredMixin, View):
         pk = self.pk
         order = self.order
 
-        if (    order.vip_post or
+        if (order.vip_post or
                 order.tipax_post_delivery or
                 order.in_city_delivery or
-                order.physical_delivery ):
+                order.physical_delivery):
 
             if order.in_city_delivery:
                 if order.address.city_code != order.store.orgin_city_id:
-                    messages.error(request, 'شما نمی توانید با ادرس وارد شده تحویل با پیک شهری را انتخاب کنید لطفا راه ارسال دیگری را انتخاب کنید')
+                    messages.error(request,
+                                   'شما نمی توانید با ادرس وارد شده تحویل با پیک شهری را انتخاب کنید لطفا راه ارسال دیگری را انتخاب کنید')
                     return redirect('dashboard:order_detail', pk=pk)
 
             if not order.details.exists():
@@ -531,12 +533,12 @@ class ConformPayment(LoginRequiredMixin, View):
 
             result = self.result
 
-#            if result < 100000 and not settings.DEBUG:
-#                messages.warning(
-#                    request,
-#                    'قیمت سفارش شما نباید کمتر از100,000 تومان باشد'
-#                )
-#                return redirect('orders:payment-conform', pk=pk)
+            #            if result < 100000 and not settings.DEBUG:
+            #                messages.warning(
+            #                    request,
+            #                    'قیمت سفارش شما نباید کمتر از100,000 تومان باشد'
+            #                )
+            #                return redirect('orders:payment-conform', pk=pk)
 
             base = 'https://' if request.is_secure() else 'http://'
 
@@ -546,7 +548,8 @@ class ConformPayment(LoginRequiredMixin, View):
                 'merchant_id': MERCHANT_ID,
                 'amount': int(result * 10),
                 'callback_url': callback_url,
-                'description': order.additional_descriptions[0:500] if order.additional_descriptions is not None else 'کاربر توضیجاتی وارد نکرده ' ,
+                'description': order.additional_descriptions[
+                               0:500] if order.additional_descriptions is not None else 'کاربر توضیجاتی وارد نکرده ',
                 'metadata': {
                     'mobile': str(request.user.PhoneNumber),
                     'order_id': str(order.id),
@@ -559,7 +562,6 @@ class ConformPayment(LoginRequiredMixin, View):
             response = requests.post(
                 ZARINPAL_SEND_DATA_URL
                 , data=data, headers=headers, timeout=20)
-
 
             if response.status_code == 200:
                 authority = response.json()['data']['authority']
@@ -582,13 +584,14 @@ class ConformPayment(LoginRequiredMixin, View):
             return redirect('orders:payment-conform', pk=pk)
 
 
-class VerifyPayment(LoginRequiredMixin , View):
+class VerifyPayment(LoginRequiredMixin, View):
 
     def dispatch(self, request, *args, **kwargs):
         self.pk = kwargs.get('pk')
         self.authority = request.GET.get('Authority')
         self.status = request.GET.get('Status')
-        self.order = get_object_or_404(Order, pk=self.pk, Authority=self.authority, is_paid=False, is_active=True, canceled=False)
+        self.order = get_object_or_404(Order, pk=self.pk, Authority=self.authority, is_paid=False, is_active=True,
+                                       canceled=False)
         self.result = self.order.get_payment_price()
 
         return super().dispatch(request, *args, **kwargs)
@@ -607,7 +610,6 @@ class VerifyPayment(LoginRequiredMixin , View):
             ZARINPAL_VERIFY_PAYMENT,
             data=json.dumps(data), timeout=20, headers=headers
         )
-
 
         if response.status_code == 200:
             response = response.json()
@@ -629,9 +631,15 @@ class VerifyPayment(LoginRequiredMixin , View):
                 order.mines_order_detail_count_from_products_count()
                 order.save()
 
+                StoreSoldOrders.objects.create(
+                    order=order,
+                    price=order.total_price,
+                    store=order.store
+                )
+
                 messages.success(
                     request,
-                    'از پرداخت شما متشکریم'
+                    'از خرید شما متشکریم'
                 )
 
                 return render(request, 'order/successful-payment.html', {
@@ -642,4 +650,4 @@ class VerifyPayment(LoginRequiredMixin , View):
             error_code = response.json()['errors']['code']
             error_message = get_zarinpal_error_code_return_perian_message(str(error_code))
             return render(request, 'order/payment-failed.html',
-                          {'error': error_message, 'date':now(), 'order': self.order})
+                          {'error': error_message, 'date': now(), 'order': self.order})

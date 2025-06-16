@@ -20,8 +20,8 @@ class UserIP(models.Model):
 class Ticket(models.Model):
 
     subject = models.CharField(max_length=400)
-    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True, blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True, blank=True, related_name='tickets')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tickets')
     date = models.DateTimeField(auto_now_add=True)
     close_ticket = models.BooleanField(default=False)
     closed_at = models.DateTimeField(auto_now_add=True)

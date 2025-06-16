@@ -53,6 +53,9 @@ class Store(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Store'
+
 class StoreApps(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='apps')
     file = models.FileField(upload_to="app/",)

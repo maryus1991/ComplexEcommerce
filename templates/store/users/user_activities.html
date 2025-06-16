@@ -76,9 +76,11 @@
                                         </span>
                                     </td>
                                     <td>
-                                        {% if log.change_message %}
+                                        {% if log.object_repr %}
                                             <div class="activity-changes">
-                                                <pre style="margin: 0; padding: 5px; background: #f5f5f5; border-radius: 3px;">{{ log.change_message }}</pre>
+                                                <pre style="margin: 0; padding: 5px; background: #f5f5f5; border-radius: 3px;">
+                                                     {{ log.changes }}  : {{ log.object_repr }}
+                                                </pre>
                                             </div>
                                         {% else %}
                                             <span class="text-muted">بدون تغییرات قابل نمایش</span>
