@@ -73,22 +73,22 @@ class ContactUs(models.Model):
         return f'{self.subject} - {self.email} - {self.phone}'
 
 class Slider(models.Model):
-    image = models.ImageField(upload_to=photo_path_upload_to)
-    name = models.CharField(max_length=100, null=True, blank=True)
-    name2 = models.CharField(max_length=100, null=True, blank=True)
-    text = models.CharField(max_length=250, null=True, blank=True)
-    link = models.URLField()
-    is_active = models.BooleanField(default=True, null=True, blank=True)
+    image = models.ImageField(upload_to=photo_path_upload_to, verbose_name='عکس')
+    name = models.CharField(max_length=100, null=True, blank=True, verbose_name='عنوان اول')
+    name2 = models.CharField(max_length=100, null=True, blank=True, verbose_name='عنوان دوم')
+    text = models.CharField(max_length=250, null=True, blank=True, verbose_name='متن')
+    link = models.URLField(verbose_name='لینک')
+    is_active = models.BooleanField(default=True, null=True, blank=True, verbose_name='فعال یا فعال نبودن')
 
     def __str__(self):
         return f'{self.id}'
 
 class Banners(models.Model):
-    image = models.ImageField(upload_to=photo_path_upload_to)
-    name = models.CharField(max_length=100, null=True, blank=True)
-    name2 = models.CharField(max_length=100, null=True, blank=True)
-    link = models.URLField()
-    is_active = models.BooleanField(default=True)
+    image = models.ImageField(upload_to=photo_path_upload_to, verbose_name='عکس')
+    name = models.CharField(max_length=100, null=True, blank=True, verbose_name='عنوان اول')
+    name2 = models.CharField(max_length=100, null=True, blank=True, verbose_name='عنوان دوم')
+    link = models.URLField(verbose_name='لینک')
+    is_active = models.BooleanField(default=True, verbose_name='فعال یا فعال نبودن')
 
     def __str__(self):
         return f'{self.id}'

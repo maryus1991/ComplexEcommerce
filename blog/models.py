@@ -2,7 +2,7 @@ from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
 
 from django.contrib.auth import get_user_model
-
+from django.shortcuts import reverse
 from stores.models import Store
 
 User = get_user_model()
@@ -16,6 +16,8 @@ class BlogCategory(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('blog:list') + f'?category={self.id}'
 
 class Blog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blogs')
@@ -31,6 +33,9 @@ class Blog(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('blog:detail', kwargs={'pk': self.pk})
 
 class BlogTag(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='tags')

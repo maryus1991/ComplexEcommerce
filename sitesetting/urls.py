@@ -11,6 +11,8 @@ header_render_partial,
 UsedAppView,
 DownloadUsedAppView
 )
+from .sitemap import StaticSitemap, UsedAppSiteMap
+
 
 app_name = "site"
 
@@ -24,7 +26,12 @@ urlpatterns = [
     path('apps/', UsedAppView.as_view(), name='apps-list'),
     path('apps/download/<int:pk>', DownloadUsedAppView.as_view(), name='apps-download'),
 
-
     path('partial/header/', header_render_partial, name='partial-header'),
     path('partial/footer/', footer_render_partial, name='partial-footer'),
 ]
+
+sitemaps = {
+    'static': StaticSitemap,
+    'apps': UsedAppSiteMap,
+}
+

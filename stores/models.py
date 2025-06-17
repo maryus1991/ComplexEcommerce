@@ -1,7 +1,7 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor_uploader.fields import RichTextUploadingField
-
+from django.shortcuts import reverse
 
 class Store(models.Model):
     name = models.CharField(max_length=100)
@@ -64,6 +64,9 @@ class StoreApps(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('site:apps-list') + f'?q={self.name}'
 
 
 class StoreComment(models.Model):

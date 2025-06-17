@@ -9,6 +9,7 @@ from .views import (
     DisLikeComment
 )
 
+
 app_name = 'product'
 
 urlpatterns = [
@@ -20,3 +21,10 @@ urlpatterns = [
     path('<int:pk>/dislike/<int:comment_id>', DisLikeComment.as_view(), name='dislike_comment'),
     path('<int:pk>/notif-me', AddUserToProductAvailability.as_view(), name='notif_me'),
 ]
+
+from .sitemap import ProductSitemap, ProductCategorySitemap, ProductBrandSitemap
+sitemaps = {
+    'products': ProductSitemap,
+    'categories': ProductCategorySitemap,
+    'brands': ProductBrandSitemap,
+}

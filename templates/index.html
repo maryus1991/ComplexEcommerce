@@ -382,12 +382,19 @@
 
                     <a href="{{ Banner.link }}" class="banner  group child:duration-300"
                        style="background: linear-gradient(270deg, rgba(0, 0, 0, 0.6) 33.85%, rgba(0, 0, 0, 0.1) 100%), url('{{ Banner.image.url }}');">
-                        <h2 class="font-MorabbaMedium text-xl lg:text-3xl group-hover:mr-5">
-                            {{ Banner.name }}
-                        </h2>
-                        <p class="text-base lg:text-lg group-hover:mr-5">
-                            {{ Banner.name2 }}
-                        </p>
+                        {% if Banner.name %}
+
+                            <h2 class="font-MorabbaMedium text-xl lg:text-3xl group-hover:mr-5">
+                                {{ Banner.name }}
+                            </h2>
+                        {% endif %}
+                        {% if Banner.name2 %}
+
+                            <p class="text-base lg:text-lg group-hover:mr-5">
+                                {{ Banner.name2 }}
+                            </p>
+                        {% endif %}
+
                     </a>
                 {% endfor %}
 

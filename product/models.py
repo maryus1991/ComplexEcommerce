@@ -3,8 +3,9 @@ from django.contrib.auth import get_user_model
 from ckeditor_uploader.fields import RichTextUploadingField
 from ckeditor.fields import RichTextField
 import secrets, os
-
+from django.shortcuts import reverse
 from stores.models import Store
+from django.utils.timezone import now
 
 
 def photo_path_upload_to(instance, filename):
@@ -17,23 +18,29 @@ User = get_user_model()
 class ProductBrand(models.Model):
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to=photo_path_upload_to, null=True)
-
+    updated_at = models.DateTimeField(default=now())
     is_active = models.BooleanField(default=True)
 
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('product:list') + '?brand=' + str(self.id)
 
 class ProductCategory(models.Model):
 
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='child')
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to=photo_path_upload_to, null=True)
-
+    updated_at = models.DateTimeField(default=now())
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('product:list') + '?category=' + str(self.id)
 
 class Product(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='products')
@@ -50,7 +57,7 @@ class Product(models.Model):
     length = models.PositiveBigIntegerField(default=0)
     width = models.PositiveBigIntegerField(default=0)
     height = models.PositiveBigIntegerField(default=0)
-
+    updated_at = models.DateTimeField(default=now())
     is_active = models.BooleanField(default=False)
 
     def __str__(self):
@@ -64,6 +71,9 @@ class Product(models.Model):
             price = self.price
 
         return price
+
+    def get_absolute_url(self):
+        return reverse('product:detail', kwargs={'pk': self.id})
 
 class NotificationUserForProductAvailability(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

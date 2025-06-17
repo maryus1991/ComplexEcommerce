@@ -81,8 +81,8 @@ desired effect
             <span class="logo-lg"><b>
                 {% if user.is_superuser and 'admin' in request.path %}
                     مدیریت سایت
-                	{% else %}
-                {{ user.store.name }}
+                {% else %}
+                    {{ user.store.name }}
                 {% endif %} 
             </b></span>
         </a>
@@ -453,12 +453,12 @@ desired effect
                                 </a>
                             </li>
                             <li class="link-activator">
-                                <a href="{% url 'store:blog-list' %}"><i class="fa fa-link"></i>
+                                <a href="{% url 'admin_panel:sliders-list' %}"><i class="fa fa-link"></i>
                                     <span>اسلایدر های صفحه اصلی</span>
                                 </a>
                             </li>
                             <li class="link-activator">
-                                <a href="{% url 'store:blog-add-category' %}"><i class="fa fa-link"></i>
+                                <a href="{% url 'admin_panel:banners-list' %}"><i class="fa fa-link"></i>
                                     <span>بنر های صفحه اصلی</span>
                                 </a>
                             </li>
@@ -471,7 +471,8 @@ desired effect
                         <li class="link-activator"><a href="{% url 'store:home' %}"><i class="fa fa-link"></i> <span>صفحه فروشگاه</span></a>
                         </li>
                     {% endif %}
-
+                    <li class="link-activator"><a href="/"><i class="fa fa-link"></i> <span>صفحه اصلی سایت</span></a>
+                    </li>
 
                 {% endif %}
 

@@ -1,4 +1,3 @@
-
 """
 Django settings for ComplexEcommerce project.
 
@@ -19,8 +18,6 @@ from os import path
 
 import os
 
-
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -40,9 +37,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", default="*").split(",")
 
-CSRF_COOKIE_SECURE = True      # ارسال کوکی CSRF فقط از طریق HTTPS
-SESSION_COOKIE_SECURE = True    # ارسال کوکی session فقط از طریق HTTPS
-CSRF_COOKIE_HTTPONLY = True    # جلوگیری از دسترسی JavaScript به کوکی C
+CSRF_COOKIE_SECURE = True  # ارسال کوکی CSRF فقط از طریق HTTPS
+SESSION_COOKIE_SECURE = True  # ارسال کوکی session فقط از طریق HTTPS
+CSRF_COOKIE_HTTPONLY = True  # جلوگیری از دسترسی JavaScript به کوکی C
 
 CSRF_TRUSTED_ORIGINS = [
     'https://amvajsarmad.com',
@@ -58,6 +55,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.admin",
+    'django.contrib.sitemaps',
 
     # third party apps
     'phonenumber_field',
@@ -78,7 +76,6 @@ INSTALLED_APPS = [
     'orders',
     'blog',
     'admin_panel',
-
 
 ]
 
@@ -124,7 +121,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
@@ -164,7 +160,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
@@ -176,7 +171,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
@@ -184,7 +178,7 @@ STATIC_URL = "/static/"
 
 if DEBUG:
     STATICFILES_DIRS = [
-       BASE_DIR / "static",
+        BASE_DIR / "static",
     ]
     STATIC_ROOT = BASE_DIR / "static-cdn"
 else:
@@ -200,7 +194,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 OTP_EXPIRATION = timedelta(seconds=120)
 
-AUTH_USER_MODEL= "user.User"
+AUTH_USER_MODEL = "user.User"
 LOGIN_URL = 'user:login'
 LOGIN_REDIRECT_URL = '/'
 
@@ -212,7 +206,7 @@ CKEDITOR_CONFIGS = {
         'toolbar': 'advance',
         'width': 750,
         'height': 200,
-        'skin':'moono',
+        'skin': 'moono',
     },
     'mobile': {
         'toolbar': 'Basic',
@@ -227,9 +221,9 @@ CKEDITOR_CONFIGS = {
 
 # jalali date config
 JALALI_DATE_DEFAULTS = {
-   # if change it to true then all dates of the list_display will convert to the Jalali.
-   'LIST_DISPLAY_AUTO_CONVERT': True,
-   'Strftime': {
+    # if change it to true then all dates of the list_display will convert to the Jalali.
+    'LIST_DISPLAY_AUTO_CONVERT': True,
+    'Strftime': {
         'date': '%y/%m/%d',
         'datetime': '%y/%m/%-d%H:%M:%S',
     },
@@ -239,7 +233,7 @@ JALALI_DATE_DEFAULTS = {
         ],
         'css': {
             'all': [
-              'admin/css/django_jalali.min.css',
+                'admin/css/django_jalali.min.css',
             ]
         }
     },
@@ -261,9 +255,7 @@ ZARINPAL_SEND_DATA_URL = os.getenv('ZARINPAL_SEND_DATA_URL')
 ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE = os.getenv('ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE')
 ZARINPAL_VERIFY_PAYMENT = os.getenv('ZARINPAL_VERIFY_PAYMENT')
 
-
 # tipax config
 TIPAX_USERNAME = os.getenv('TIPAX_USERNAME')
 TIPAX_PASSWORD = os.getenv('TIPAX_PASSWORD')
 TIPAX_API_KEY = os.getenv('TIPAX_API_KEY')
-

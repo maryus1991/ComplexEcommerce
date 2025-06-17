@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse, reverse
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, RedirectView, View, ListView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -24,6 +24,38 @@ from user.forms import ActiveAccountForm as NumberForAddToLettersForm
 from product.models import Product, ProductCategory
 from blog.models import Blog
 
+from django.http import HttpResponse
+from django.urls import reverse
+
+def robots_txt(request):
+    # ساختن آدرس‌های خاص برای دیس‌الو
+    disallows = [
+        '/user/',
+        '/dashboard/',
+        '/order/',
+        '/store/',
+        '/admin/',
+        '/admin-panel/',
+        '/ckeditor/'
+    ]
+
+    lines = ["User-Agent: *"]
+
+    # افزودن مسیرهای مسدودشده
+    for path in disallows:
+        lines.append(f"Disallow: {path}")
+
+    # اجازه ایندکس بقیه مسیرها
+    lines.append("Allow: /")
+
+    # لینک کامل sitemap با پروتکل صحیح
+    sitemap_url = request.build_absolute_uri(reverse('sitemap'))
+    print(sitemap_url)
+    lines.append(f"Sitemap: {sitemap_url}")
+
+    return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
 # Create your views here.
 class Main(TemplateView):
     """
@@ -45,7 +77,6 @@ class Main(TemplateView):
         context['blogs'] = Blog.objects.filter(is_active=True).all()[0:4]
 
         return context
-
 
 
 class QuestionsPageView(TemplateView):
@@ -138,7 +169,6 @@ class UsedAppView(ListView):
             )
 
             return query
-
 
         return query
 

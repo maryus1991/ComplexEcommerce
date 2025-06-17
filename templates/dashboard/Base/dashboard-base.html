@@ -165,15 +165,14 @@
             <!-- NAME AND AVATAR  -->
             <div class="flex items-center justify-between border-b border-gray-200 dark:border-white/20 py-3">
                 <div class="flex items-center gap-x-3">
-                    {#                        <img src="/static/Images/svg/user.png" class="w-12 h-12 ring-2 ring-gray-400/20 rounded-full"#}
-                    {#                            alt="AVATAR">#}
+ 
                     <span class="felx flex-col gap-y-2">
                             <p dir="ltr" class="font-DanaMedium text-lg">{{ request.user.PhoneNumber }}</p>
                             <p class="text-gray-400">{{ request.user.get_full_name }}</p>
                         </span>
                 </div>
                 <div>
-                <a href="{% url 'dashboard:account' %}">
+                    <a href="{% url 'dashboard:account' %}">
                     <span>
                         <svg class="w-6 h-6 cursor-pointer ">
                             <use href="#edit"></use>
@@ -223,6 +222,28 @@
                     </svg>
                     <a href="{% url 'dashboard:account' %}">اطلاعات حساب </a>
                 </li>
+                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600">
+                    <svg class="w-6 h-6 ">
+                        <use href="#arrow-left-start-on-rectangle"></use>
+                    </svg>
+                    <a href="/">صفحه اصلی</a>
+                </li>
+                {% if user.is_superuser %}
+                    <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600">
+                        <svg class="w-6 h-6 ">
+                            <use href="#arrow-left-start-on-rectangle"></use>
+                        </svg>
+                        <a href="{% url 'admin_panel:main' %}">صفحه مدیریت سایت</a>
+                    </li>
+                {% endif %}
+                {% if user.is_staff and user.store is not None %}
+                    <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600">
+                        <svg class="w-6 h-6 ">
+                            <use href="#arrow-left-start-on-rectangle"></use>
+                        </svg>
+                        <a href="{% url 'store:home' %}">صفحه مدیریت فروشگاه</a>
+                    </li>
+                {% endif %}
                 <li class="text-red-500 hover:bg-red-500/20">
                     <svg class="w-6 h-6 ">
                         <use href="#arrow-left-start-on-rectangle"></use>
@@ -251,18 +272,18 @@
             </div>
             <!-- MENU -->
             <script>
-window.onload = function() {
-    const currentUrl = window.location.href;
-    const navLinks = document.querySelectorAll("a");
+                window.onload = function () {
+                    const currentUrl = window.location.href;
+                    const navLinks = document.querySelectorAll("a");
 
-    navLinks.forEach(link => {
-        if (link.href === currentUrl) {
-            const parent = link.parentElement;
-            parent.classList.remove("hover:bg-zinc-100", "dark:hover:bg-zinc-600");
-            parent.classList.add("text-green-500", "bg-green-500/10");
-        }
-    });
-};
+                    navLinks.forEach(link => {
+                        if (link.href === currentUrl) {
+                            const parent = link.parentElement;
+                            parent.classList.remove("hover:bg-zinc-100", "dark:hover:bg-zinc-600");
+                            parent.classList.add("text-green-500", "bg-green-500/10");
+                        }
+                    });
+                };
             </script>
 
             <ul class="relative mt-4 space-y-2 child:duration-300 child:transition-all child:p-2 child:flex child:items-center child:gap-x-2  child:cursor-pointer child:rounded-lg">
@@ -412,8 +433,6 @@ window.onload = function() {
 
 
 </main>
-
-
 
 
 {#{% include 'Base/Footer/Footer.html' %}#}

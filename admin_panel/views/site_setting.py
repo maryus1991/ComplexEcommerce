@@ -8,10 +8,14 @@ from user.mixins.logins import AdminUserMixin
 from django.contrib import messages
 
 class UpdateSiteSettingView(AdminUserMixin, UpdateView):
+    """
+    for updating site setting
+    """
     model = SiteSetting
     template_name = 'admin_panel/site_setting/site_setting.html'
     form_class = SiteSettingModelForm
     success_url = reverse_lazy('admin_panel:update-site-setting')
+    context_object_name = 'site'
 
     def get_object(self):
         site = SiteSetting.objects
