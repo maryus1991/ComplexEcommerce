@@ -9,6 +9,19 @@
             <img src="{{ site.logo.url }}" alt="logo" class="w-20 h-10 "/>
 
         </a>
+<script>
+    window.onload = function () {
+        // 1. Create a new <link> element
+        const link = document.createElement('link');
+
+        // 2. Set its attributes
+        link.rel = 'icon';
+        link.href = '{{ site.logo.url }}'; // Make sure 'site.logo.url' is correctly rendered by your template engine
+
+        // 3. Append the created link element to the <head>
+        document.getElementsByTagName('head')[0].appendChild(link);
+    };
+</script>
         {% with request.path as url %}
 
             <!-- MENU -->

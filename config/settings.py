@@ -33,9 +33,10 @@ if path.isfile(local_env_file):
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.getenv("DJANGO_DEBUG", default='0')))
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", default="*").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="*").split(",")
+
 
 CSRF_COOKIE_SECURE = True  # ارسال کوکی CSRF فقط از طریق HTTPS
 SESSION_COOKIE_SECURE = True  # ارسال کوکی session فقط از طریق HTTPS
@@ -124,23 +125,23 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": os.getenv("POSTGRES_ENGIN", default="django.db.backends.postgresql"),
-#         "NAME": os.getenv("POSTGRES_DB"),
-#         "USER": os.getenv("POSTGRES_USER"),
-#         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-#         "HOST": os.getenv("POSTGRES_HOST", default="postgres"),
-#         "PORT": os.getenv("POSTGRES_PORT", default="5432"),
-#     }
-# }
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / "db.sqlite3",
+    "default": {
+        "ENGINE": os.getenv("POSTGRES_ENGIN", default="django.db.backends.postgresql"),
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST", default="postgres"),
+        "PORT": os.getenv("POSTGRES_PORT", default="5432"),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

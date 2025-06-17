@@ -13,7 +13,7 @@
 </head>
 <body class="font-Dana bg-[#f3f4f6] text-zinc-900 dark:bg-zinc-900 dark:text-white overflow-x-hidden transition-all">
 
-  {% render_partial 'sitesetting.views.header_render_partial' %}
+{% render_partial 'sitesetting.views.header_render_partial' %}
 <main class="container child:mt-8">
     <!-- Breadcrumbs -->
     <section>
@@ -46,7 +46,7 @@
                    style="background-color: rgba(0,91,255,0.41)"
                         {% endif %}
                 >{{ message }}</p>
-                
+
             {% endfor %}
         </div>
     {% endif %}
@@ -54,7 +54,7 @@
     {% endblock %}
 </main>
 
-  {% render_partial 'sitesetting.views.footer_render_partial' %}
+{% render_partial 'sitesetting.views.footer_render_partial' %}
 {% include 'Base/Footer/References/References.html' %}
 {% block footer %}
 {% endblock %}

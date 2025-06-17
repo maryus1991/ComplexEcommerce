@@ -15,7 +15,7 @@ class SiteSetting(models.Model):
     address = models.CharField(max_length=500, default='0', verbose_name='ادرس')
     phone = PhoneNumberField( default='0111111111', verbose_name='شماره اول')
     phone2 = PhoneNumberField( default='0111111111', verbose_name='شماره دوم')
-    email = models.EmailField( default='test@test.test', verbose_name='ایمی')
+    email = models.EmailField( default='test@test.test', verbose_name='ایمیل')
 
     telegram_link = models.URLField( default='0', verbose_name='لینک تلگرام')
     telegram_ID = models.CharField(max_length=100, default='0', verbose_name='ایدی تلگرام')
@@ -23,12 +23,12 @@ class SiteSetting(models.Model):
     instagram_link = models.URLField( default='0', verbose_name='لینک حساب ایسنتاگرام')
     instagram_ID = models.CharField(max_length=100, default='0', verbose_name='ایدی ایسنتاگرام')
 
-    logo = models.ImageField(upload_to="site/logo/", null=True, verbose_name='لوگو')
+    logo = models.ImageField(upload_to="site/logo/", null=True, verbose_name='لوگو', blank=True)
     short_description = models.TextField( default='0', verbose_name='توضیحات کوتاه')
 
     long_description = RichTextUploadingField(default='0', verbose_name='توضیحات طولانی')
 
-    about_image = models.ImageField(upload_to="site/about_image/", null=True, verbose_name='عکس معرفی')
+    about_image = models.ImageField(upload_to="site/about_image/", null=True, verbose_name='عکس معرفی', blank=True)
 
     is_active = models.BooleanField(default=True, verbose_name='فعال کردن سایت')
 

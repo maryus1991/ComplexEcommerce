@@ -404,7 +404,8 @@
                                             {{ form.active_receive_official_invoice }}
                                             </span>
                                         </div>
-                                    </div><div class="col-md-3 no-padding">
+                                    </div>
+                                    <div class="col-md-3 no-padding">
                                         <div class="input-group">
                                             <span class="input-group-addon"
                                                   style="background-color: #22c55e; color: white;">
@@ -429,13 +430,17 @@
                             </div>
 
                         </form>
-                        عکس های ذخیره شده <br>برای عوض کردن انها عکس جدید اپلود کنید در غیر این صورت عکسی رو اپلود نکنید
-                        <br>
-                        لوگو =>
-                        <img src="{{ site.logo.url }}" width="100px" height="100px" alt="">
-                        br
-                        عکس معرفی =>
-                        <img src="{{ site.about_image.url }}" width="100px" height="100px" alt="">
+                        {% if site.logo and site.about_image %}
+
+                            عکس های ذخیره شده <br>برای عوض کردن انها عکس جدید اپلود کنید در غیر این صورت عکسی رو اپلود
+                            نکنید
+                            <br>
+                            لوگو =>
+                            <img src="{{ site.logo.url }}" width="100px" height="100px" alt="">
+                            <br>
+                            عکس معرفی =>
+                            <img src="{{ site.about_image.url }}" width="100px" height="100px" alt="">
+                        {% endif %}
 
                     </div>
                 </div>

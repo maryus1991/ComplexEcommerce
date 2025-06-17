@@ -34,7 +34,7 @@ class Store(models.Model):
     official_invoice_price = models.PositiveIntegerField(null=True, blank=True)
     economic_number = models.CharField(max_length=100, null=True, blank=True)
     registration_number = models.CharField(max_length=100, null=True, blank=True)
-    official_invoice_phone_number = models.PositiveIntegerField(null=True, blank=True)
+    official_invoice_phone_number = models.CharField(max_length=100, null=True, blank=True)
 
     # store delivery
     have_post_delivery = models.BooleanField(default=True)

@@ -75,6 +75,7 @@ class Main(TemplateView):
         context['products_most_discount'] = products.filter(have_discount=True).order_by('-discount').all()
         context['Banners'] = Banners.objects.filter(is_active=True)
         context['blogs'] = Blog.objects.filter(is_active=True).all()[0:4]
+        context['site'] = SiteSetting.objects.filter(is_active=True).first()
 
         return context
 
