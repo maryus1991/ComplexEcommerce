@@ -40,6 +40,15 @@ class SiteSetting(models.Model):
 
     active_receive_official_invoice = models.BooleanField(default=True, verbose_name='فعال کردن دریافت فاکتور رسمی')
 
+
+    active_slider_in_main_page = models.BooleanField(default=True, verbose_name='فعال کردن سلایدر ها در صفحه اصلی')
+    active_banner_in_main_page = models.BooleanField(default=True, verbose_name='فعال کردن بنر ها در صفحه اصلی')
+    active_categories_in_main_page = models.BooleanField(default=True, verbose_name='فعال کردن محبوب ترین دسته ها در صفحه اصلی')
+    active_newset_peoduct_in_main_page = models.BooleanField(default=True, verbose_name='فعال کردن جدیدترین محصولات در صفحه اصلی')
+    active_most_soled_product_in_main_page = models.BooleanField(default=True, verbose_name='فعال کردن محصولات پر فروش  در صفحه اصلی')
+    active_most_discount_in_main_page = models.BooleanField(default=True, verbose_name='فعال کردن بیشترین تخفیف ها در صفحه اصلی')
+    active_most_read_posts_in_main_page = models.BooleanField(default=True, verbose_name='فعال کردن مطالب خواندنی در صفحه اصلی')
+
     def __str__(self):
         return self.title
 

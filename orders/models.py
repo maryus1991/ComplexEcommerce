@@ -297,10 +297,10 @@ class OrderDetail(models.Model):
 
 
 class Discount(models.Model):
-    user = models.ManyToManyField(User, null=True, related_name='discounts', blank=True)
-    product = models.ManyToManyField(Product, related_name='discounts', blank=True, null=True)
-    store = models.ManyToManyField(Store, blank=True, null=True, related_name='discounts')
-    order = models.ManyToManyField(Order, related_name='discounts', null=True, blank=True)
+    user = models.ManyToManyField(User, related_name='discounts', blank=True)
+    product = models.ManyToManyField(Product, related_name='discounts', blank=True)
+    store = models.ManyToManyField(Store, blank=True, related_name='discounts')
+    order = models.ManyToManyField(Order, related_name='discounts',  blank=True)
 
     end_date_discount = models.DateTimeField(null=True, blank=True)
     count = models.PositiveBigIntegerField(default=0)

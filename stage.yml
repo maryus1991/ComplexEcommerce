@@ -17,7 +17,7 @@ services:
     container_name : app
     restart: always
     build: .
-    command: gunicorn config.wsgi --bind 0.0.0.0:8000
+    command: gunicorn config.wsgi --bind  185.97.116.199:32852
     volumes:
       - ./:/app
       - static_volume:/app/static

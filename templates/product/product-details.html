@@ -293,7 +293,7 @@
                         <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
                     </div>
                     <div class="flex items-start justify-start gap-x-10">
-                        
+
                         {% if product.store.whats_app_link and product.store.whats_app_ID %}
                             <a href="{{ product.store.whats_app_link }}" class="flex items-center gap-x-2">
 
@@ -333,34 +333,40 @@
                         </svg>
                         <p>دسته‌بندی : {{ product.category.name }}</p>
                     </div>
-                    {% if product.features %}
+                    {% if product.features.exists %}
 
 
                         <p class="mt-2 font-DanaMedium">ویژگی های محصول :</p>
                         <div class="grid grid-cols-12 gap-4 child:col-span-12 xl:child:col-span-6 child:dark:bg-zinc-800 child:bg-gray-100 child:h-12 child:rounded-lg child:text-sm child:flex child:items-center child:justify-center">
                             {% for feature in product.features.all %}
 
+                                {% if feature.title != '' %}
+                                    <div>
+                                        <p class="text-zinc-600 dark:text-gray-400">
+                                            {{ feature.title }}
+                                        </p>
+                                    </div>
+                                {% endif %}
 
-                                <div>
-                                    <p class="text-zinc-600 dark:text-gray-400">
-                                        {{ feature.title }}
-                                    </p>
-                                </div>
                             {% endfor %}
                         </div>
                     {% endif %}
                 </div>
             </div>
-            {% if product.tags %}
+
+            {% if product.specs.exists %}
                 <p class="mt-2 font-DanaMedium">مشخصات محصول :</p>
                 <div class="lg:mr-2 grid  child:col-span-6 xl:child:col-span-3 gap-x-1 gap-y-2 lg:gap-4 child:border child:text-gray-400 child:dark:border-white/20 child:border-gray-200 child:rounded-lg child:h-12  child:p-2 child:flex child:items-center child:gap-x-1 lg:child:gap-x-2 child:text-sm lg:text-base">
-                    {% for tag in product.tags.all %}
-                        <span>
-                        <p>{{ tag.name }}</p>
-                    </span>
+                    {% for spec in product.specs.all %}
+                        {% if spec.name != ' ' and spec.name != '' and spec.name is not None %}
+
+                            <span>
+                                    <p>{{ spec.name }}</p>
+                                </span>
+                        {% endif %}
+
                     {% endfor %}
                 </div>
-
             {% endif %}
             <div class="lg:mr-2">
                 <h2 class="font-MorabbaMedium text-2xl pb-1 mb-2 ">معرفی محصول
@@ -369,12 +375,16 @@
                     {{ product.description|safe }}
                 </p>
             </div>
-            {% if product.tags %}
+            {% if product.tags.exists %}
                 <div class="col-span-12 flex flex-wrap gap-2 ">
                     {% for tag in product.tags.all %}
-                        <span class="inline-flex items-center justify-between dark:bg-zinc-800 dark:text-gray-400 bg-gray-100 rounded-lg font-DanaMedium text-sm px-3 py-1">
-            <p>{{ tag.name }}</p>
-        </span>
+                        {% if tag.name != '' %}
+
+                            <span class="inline-flex items-center justify-between dark:bg-zinc-800 dark:text-gray-400 bg-gray-100 rounded-lg font-DanaMedium text-sm px-3 py-1">
+                                <p>{{ tag.name }}</p>
+                            </span>
+                        {% endif %}
+
                     {% endfor %}
                 </div>
             {% endif %}
@@ -499,7 +509,7 @@
                     ارسال کالا و نهایی کردن سبد خرید
                 </a>
                 <p>
-                برای مشاهده سبد خرید لطفا وارد سایت شوید
+                    برای مشاهده سبد خرید لطفا وارد سایت شوید
                 </p>
             {% endif %}
         </div>

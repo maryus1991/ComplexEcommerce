@@ -901,6 +901,16 @@ class AddProductForm(forms.ModelForm):
             }
         )
     )
+    specs = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'مشخصات محصول را اضافه کنید ... ',
+                'id': 'id_specs'
+            }
+        )
+    )
 
     class Meta:
         model = Product
@@ -908,7 +918,7 @@ class AddProductForm(forms.ModelForm):
                   'category', 'have_discount', 'discount',
                   'picture', 'brand', 'count',
                   'weight', 'tags', 'features', 'gallery',
-                  'length', 'width', 'height',
+                  'length', 'width', 'height', 'specs'
                   )
         widgets = {
             'name': forms.TextInput(attrs={

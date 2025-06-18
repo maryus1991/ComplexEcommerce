@@ -34,7 +34,10 @@ class ProductListView(ListView):
         have_filter_url = False
 
         # get the product obj
-        products = Product.objects.filter(is_active=True)
+        products = Product.objects.filter(is_active=True
+                 ).prefetch_related('features'
+                 ).prefetch_related('tags'
+                 ).prefetch_related('specs')
 
         if 'available' in url_params:
             if url_params['available'] == ['on']:
@@ -145,8 +148,8 @@ class ProductListView(ListView):
         if have_filter_url:
             # set the queryset
             return_result = products.filter(
-                Q(brand_id__in=brand_list_id) , Q(brand__is_active=True) |
-                Q(category_id__in=category_list_id) , Q(category__is_active=True)
+                Q(brand_id__in=brand_list_id), Q(brand__is_active=True) |
+                                               Q(category_id__in=category_list_id), Q(category__is_active=True)
             )
 
             return return_result.order_by('-id').all()

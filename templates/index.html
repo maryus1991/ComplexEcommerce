@@ -141,73 +141,77 @@
     </svg>
 
     <!-- ALERT TOP -->
+    {% if site.active_slider_in_main_page %}
 
-    <header>
-        <!-- SLIDER -->
-        <div>
-            <div class="swiper mySwiper w-full h-48 md:h-72 lg:h-[450px] mt-4 lg:mt-6">
-                <div class="swiper-wrapper">
-                    <!-- SLIDER ITEM -->
-                    {% for Slider in Sliders %}
-
-
-                        <div class="swiper-slide absolute">
-                            <a href="{{ Slider.link }}">
-                                <img class="w-full h-full object-cover" src="{{ Slider.image.url }}" alt="">
-                                <div class="flex items-start  flex-col absolute  right-5 top-5 md:right-10 md:top-10 lg:top-20 lg:right-40 xl:right-48  text-white">
-                                    {% if Slider.name is not None %}
-
-                                        <h2 class="font-MorabbaMedium text-xl lg:text-5xl mb-2 lg:mb-4">
-                                            {{ Slider.name }}
-                                        </h2>
-                                    {% endif %}
-                                    {% if Slider.name2 is not None %}
-
-                                        <p
-                                                class="text-base lg:text-2xl font-MorabbaLight border-b border-gray-300 pb-2 lg:pb-4 mb-2 lg:mb-4">
-
-                                            {{ Slider.name2 }}
-                                        </p>
-                                    {% endif %}
-                                    {% if Slider.text is not None %}
-
-                                        <p class="w-[60%] text-sm lg:text-base lg:leading-8 mb-2 lg:mb-4 line-clamp-2">
-                                            {{ Slider.text }}
-                                        </p>
-                                    {% endif %}
-
-                                </div>
-                            </a>
-
-                        </div>
-                    {% endfor %}
+        <header>
+            <!-- SLIDER -->
+            <div>
+                <div class="swiper mySwiper w-full h-48 md:h-72 lg:h-[450px] mt-4 lg:mt-6">
+                    <div class="swiper-wrapper">
+                        <!-- SLIDER ITEM -->
+                        {% for Slider in Sliders %}
 
 
-                </div>
-                <!-- NEXT & PREV BTN -->
-                <div class="container absolute  flex items-center justify-end gap-x-3 left-4 lg:left-0 bottom-5 z-30 child:cursor-pointenr
-            child:bg-white 
+                            <div class="swiper-slide absolute">
+                                <a href="{{ Slider.link }}">
+                                    <img class="w-full h-full object-cover" src="{{ Slider.image.url }}" alt="">
+                                    <div class="flex items-start  flex-col absolute  right-5 top-5 md:right-10 md:top-10 lg:top-20 lg:right-40 xl:right-48  text-white">
+                                        {% if Slider.name is not None %}
+
+                                            <h2 class="font-MorabbaMedium text-xl lg:text-5xl mb-2 lg:mb-4">
+                                                {{ Slider.name }}
+                                            </h2>
+                                        {% endif %}
+                                        {% if Slider.name2 is not None %}
+
+                                            <p
+                                                    class="text-base lg:text-2xl font-MorabbaLight border-b border-gray-300 pb-2 lg:pb-4 mb-2 lg:mb-4">
+
+                                                {{ Slider.name2 }}
+                                            </p>
+                                        {% endif %}
+                                        {% if Slider.text is not None %}
+
+                                            <p class="w-[60%] text-sm lg:text-base lg:leading-8 mb-2 lg:mb-4 line-clamp-2">
+                                                {{ Slider.text }}
+                                            </p>
+                                        {% endif %}
+
+                                    </div>
+                                </a>
+
+                            </div>
+                        {% endfor %}
+
+
+                    </div>
+                    <!-- NEXT & PREV BTN -->
+                    <div class="container absolute  flex items-center justify-end gap-x-3 left-4 lg:left-0 bottom-5 z-30 child:cursor-pointenr
+            child:bg-white
             child:dark:bg-zinc-700 child:shadow child:rounded-full child:p-1 child:lg:p-1.5 ">
-                    <button class="button-prev ">
-                        <svg class="w-5 h-5">
-                            <use href="#arrow-long-right"></use>
-                        </svg>
-                    </button>
-                    <button class="button-next dark:bg-zinc-700 shadow rounded-full p-1 lg:p-1.5">
-                        <svg class="w-5 h-5">
-                            <use href="#arrow-long-left"></use>
-                        </svg>
-                    </button>
+                        <button class="button-prev ">
+                            <svg class="w-5 h-5">
+                                <use href="#arrow-long-right"></use>
+                            </svg>
+                        </button>
+                        <button class="button-next dark:bg-zinc-700 shadow rounded-full p-1 lg:p-1.5">
+                            <svg class="w-5 h-5">
+                                <use href="#arrow-long-left"></use>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
+    {% endif %}
 
     <main class="child:mt-14">
         <!-- CATEGORIES -->
-        <section class="container">
-            <!-- TITLE -->
-            <a href="{% url 'product:list' %}" class="flex items-center justify-center">
+        {% if site.active_categories_in_main_page %}
+
+            <section class="container">
+                <!-- TITLE -->
+                <a href="{% url 'product:list' %}" class="flex items-center justify-center">
             <span class="cursor-pointer transition-colors gap-x-2 flex items-center justify-center">
                 <h2 class="text-xl lg:text-3xl font-MorabbaMedium">
                     محبوب ترین دسته ها
@@ -216,26 +220,29 @@
                     <use href="#arrow-down-circle"></use>
                 </svg>
             </span>
-            </a>
-            <!-- ITEMS -->
-            <div
-                    class="flex items-center justify-evenly lg:justify-between flex-wrap mt-10 child:mb-8 gap-x-8 child:flex child:items-center child:flex-col child-hover:-translate-y-5 child:duration-300 child:cursor-pointer child:gap-y-2.5">
-                {% for category in categories %}
+                </a>
+                <!-- ITEMS -->
+                <div
+                        class="flex items-center justify-evenly lg:justify-between flex-wrap mt-10 child:mb-8 gap-x-8 child:flex child:items-center child:flex-col child-hover:-translate-y-5 child:duration-300 child:cursor-pointer child:gap-y-2.5">
+                    {% for category in categories %}
 
 
-                    <a href="{% url 'product:list' %}?category={{ category.id }}" class="rounded-full">
-                        <img src="{{ category.image.url }}"
-                             class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                             alt="category1"/>
-                        <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
-                            {{ category.name }}
-                        </p>
-                    </a>
-                {% endfor %}
+                        <a href="{% url 'product:list' %}?category={{ category.id }}" class="rounded-full">
+                            <img src="{{ category.image.url }}"
+                                 class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
+                                 alt="category1"/>
+                            <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
+                                {{ category.name }}
+                            </p>
+                        </a>
+                    {% endfor %}
 
-            </div>
-        </section>
+                </div>
+            </section>
+        {% endif %}
 
+    {% if site.active_newset_peoduct_in_main_page %}
+    	
         <!-- Latest Products -->
         <section class="container">
             <!-- TITLE -->
@@ -304,7 +311,10 @@
                 </div>
             </div>
         </section>
+    {% endif %} 
 
+    {% if site.active_most_soled_product_in_main_page %}
+    	
         <!-- Best-selling products -->
         <section class="container">
             <!-- TITLE -->
@@ -372,7 +382,10 @@
                 </div>
             </div>
         </section>
+    {% endif %} 
 
+    {% if site.active_banner_in_main_page %}
+    	
         <!-- BANNERS -->
         <section class="container">
             <div
@@ -401,7 +414,10 @@
 
             </div>
         </section>
+    {% endif %} 
 
+    {% if site.active_most_discount_in_main_page %}
+    	
         <!--  Offer Box -->
         <section class="container">
             <!-- ITEMS SLIDER -->
@@ -472,7 +488,10 @@
                 </div>
             </div>
         </section>
+    {% endif %} 
 
+    {% if site.active_most_read_posts_in_main_page %}
+    	
         <!-- ARTICLES -->
         <section class="container">
             <!-- TITLE -->
@@ -538,6 +557,8 @@
                 <!-- ITEM -->
             </div>
         </section>
+    {% endif %} 
+
     </main>
 {% endblock %}
 

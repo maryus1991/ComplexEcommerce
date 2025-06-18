@@ -53,6 +53,7 @@ from product.models import (
     ProductGallery,
     ProductBrand,
     ProductCategory,
+    ProductSpecifications
 
 )
 
@@ -235,20 +236,38 @@ class StoreAddProduct(UserStoreStaffMixin, FormView):
         for img in gallery:
             ProductGallery.objects.create(product=product, image=img).save()
 
-        for feature in features:
-            if feature.isalnum and feature != ' ' and feature is not None:
-                ProductFeature.objects.create(product=product, title=feature)
-            else:
-                messages.warning(self.request,
-                                 f'{feature} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
-                                 )
-        for tags in tags:
-            if tags.isalnum and tags != ' ' and tags is not None:
-                ProductTag.objects.create(Product=product, name=tags)
-            else:
-                messages.warning(self.request,
-                                 f'{tags} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
-                                 )
+        if features:
+            features_list = ProductFeature.objects.filter(product=product).all().delete()
+
+            for feature in features_list:
+                if feature.title == ' ' or feature.title == '' :
+                    feature.delete()
+
+            for feature in features:
+                if feature.isalnum and feature != ' ' and feature != '' and feature is not None:
+                    ProductFeature.objects.create(product=product, title=feature)
+                else:
+                    if feature != ' ' and feature != '' and feature is not None :
+                        messages.warning(self.request,
+                                         f'{feature} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
+
+        if tags:
+            tags_list = ProductTag.objects.filter(Product=product).all().delete()
+
+            for tag in tags_list:
+                if tag.name == ' ' or tag.name == '' :
+                    tag.delete()
+
+            for tag in tags:
+                if tag.isalnum and tag != ' ' and tag != '' and tag is not None:
+                    ProductTag.objects.create(Product=product, name=tag)
+                else:
+                    if tag != ' ' and tag != '' and tag is not None:
+
+                        messages.warning(self.request,
+                                         f'{tag} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
 
         messages.success(self.request,
                          'محصول شما با موفقیت ذخیره شد')
@@ -273,6 +292,12 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
     template_name = 'store/product/add_product.html'
     success_url = reverse_lazy('store:list-product')
 
+    def get_queryset(self):
+        queryset = super().get_queryset().prefetch_related('features'
+        ).prefetch_related('tags'
+        ).prefetch_related('specs')
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['product'] = self.get_object()
@@ -282,6 +307,7 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
         store = self.request.user.store
         tags = form.cleaned_data['tags'].split('**')
         features = form.cleaned_data['features'].split('**')
+        specs = form.cleaned_data['specs'].split('**')
         gallery = form.cleaned_data['gallery']
         product = Product.objects.filter(pk=self.kwargs.get('pk'), store=store).update(
             name=form.cleaned_data['name'],
@@ -302,23 +328,41 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
         for img in gallery:
             ProductGallery.objects.create(product=product, image=img).save()
 
-        ProductFeature.objects.filter(product=product).delete()
-        for feature in features:
-            if feature.isalnum and feature != ' ' and feature is not None:
-                ProductFeature.objects.create(product=product, title=feature)
-            else:
-                messages.warning(self.request,
-                                 f'{feature} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
-                                 )
+        if specs:
 
-        ProductTag.objects.filter(Product=product).delete()
-        for tags in tags:
-            if tags.isalnum and tags != ' ' and tags is not None:
-                ProductTag.objects.create(Product=product, name=tags)
-            else:
-                messages.warning(self.request,
-                                 f'{tags} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
-                                 )
+            ProductSpecifications.objects.filter(product=product).all().delete()
+
+            for spec in specs:
+                if spec.isalnum and spec != ' ' and spec != '' and spec is not None:
+                    ProductSpecifications.objects.create(product=product, name=spec)
+                else:
+                    if spec != ' ' and spec != '' and spec is not None:
+                        messages.warning(self.request,
+                                         f'{spec} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
+
+        if features:
+            ProductFeature.objects.filter(product=product).all().delete()
+
+            for feature in features:
+                if feature.isalnum and feature != ' ' and feature != '' and feature is not None:
+                    ProductFeature.objects.create(product=product, title=feature)
+                else:
+                    if feature != ' ' and feature != '' and feature is not None:
+                        messages.warning(self.request,
+                                         f'{feature} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
+        if tags:
+            ProductTag.objects.filter(Product=product).all().delete()
+
+            for tag in tags:
+                if tag.isalnum and tag != ' ' and tag != '' and tag is not None:
+                    ProductTag.objects.create(Product=product, name=tag)
+                else:
+                    if tag != ' ' and tag != '' and tag is not None:
+                        messages.warning(self.request,
+                                         f'{tag} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
 
         messages.success(self.request,
                          'تغییرات شما با موفقیت ثبت شد')

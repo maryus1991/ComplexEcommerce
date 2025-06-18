@@ -77,7 +77,6 @@ from utils.tipax_price_calc import validate_city
 User = get_user_model()
 
 
-
 class StoreDetailView(DetailView):
     """
     for store detail view
@@ -93,10 +92,10 @@ class StoreMainPage(UserStoreStaffMixin, DetailView):
 
     template_name = 'store/index2.html'
     pk_url_kwarg = None
+    context_object_name = 'store'
 
     def get_object(self):
         return self.request.user.store
 
     def get_queryset(self):
         return self.request.user.store
-

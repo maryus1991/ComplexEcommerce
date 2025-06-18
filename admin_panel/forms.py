@@ -120,31 +120,19 @@ class SiteSettingModelForm(forms.ModelForm):
 
                 }
             ),
-            'is_active': forms.CheckboxInput(
-                attrs={
-                }
-            ),
-            'active_post_delivery': forms.CheckboxInput(
-                attrs={
-                }
-            ),
-            'active_tipax_delivery': forms.CheckboxInput(
-                attrs={
-                }
-            ),
-            'active_in_same_city_delivery': forms.CheckboxInput(
-                attrs={
-                }
-            ),
-            'active_physical_delivery': forms.CheckboxInput(
-                attrs={
-                }
-            ),
-            'active_receive_official_invoice': forms.CheckboxInput(
-                attrs={
-
-                }
-            ),
+            'is_active': forms.CheckboxInput(),
+            'active_post_delivery': forms.CheckboxInput(),
+            'active_tipax_delivery': forms.CheckboxInput(),
+            'active_in_same_city_delivery': forms.CheckboxInput(),
+            'active_physical_delivery': forms.CheckboxInput(),
+            'active_receive_official_invoice': forms.CheckboxInput(),
+            'active_slider_in_main_page': forms.CheckboxInput(),
+            'active_banner_in_main_page': forms.CheckboxInput(),
+            'active_categories_in_main_page': forms.CheckboxInput(),
+            'active_newset_peoduct_in_main_page': forms.CheckboxInput(),
+            'active_most_soled_product_in_main_page': forms.CheckboxInput(),
+            'active_most_discount_in_main_page': forms.CheckboxInput(),
+            'active_most_read_posts_in_main_page': forms.CheckboxInput(),
         }
 
 

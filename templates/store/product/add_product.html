@@ -403,6 +403,47 @@
                                     }
                                 </script>
                             </div>
+                            <div class="form-group col-md-12">
+                                <script>
+                                    var counter = 0
+
+                                    function setSpecs() {
+                                        elem = document.getElementById("tags-specs");
+                                        elem2 = document.getElementById("id_specs");
+
+                                        elem.innerHTML += " <input data-toggle='modal' onclick='tag_feature_remove(this)' class='btn btn-default form-group specs-input-x' data-target='#modal-default' value='" + elem2.value + " '>";
+                                        elem2.value = ''
+                                        counter++;
+                                        console.log(counter)
+                                    }
+                                </script>
+                                <div class="col-md-3">
+                                    <div class="input-group input-group-sm">
+                                        {{ form.specs }}
+
+                                        <span class="input-group-btn">
+                                          <button type="button" onclick="setSpecs()" class="btn btn-info btn-flat">
+                                              ثبت
+                                          </button>
+                                        </span>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-span-9" id="tags-specs">
+                                    {% if product %}
+
+                                        {% for spec in product.specs.all %}
+                                            <input data-toggle='modal' onclick="tag_feature_remove(this)"
+                                                   class='btn btn-default form-group specs-input-x'
+                                                   data-target='#modal-default' value='{{ spec.name }}'>
+                                        {% endfor %}
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
 
                             <div class="form-group col-md-12" style="">
 
@@ -461,16 +502,20 @@
                                 function submitForm() {
                                     let tags = document.getElementsByClassName('tags-input-x')
                                     let features = document.getElementsByClassName('features-input-x')
+                                    let specs = document.getElementsByClassName('specs-input-x')
                                     let tagsContainer = document.getElementById('id_tags')
                                     let featuresContainer = document.getElementById('id_features')
+                                    let specsContainer = document.getElementById('id_specs')
                                     for (items of features) {
                                         featuresContainer.value += items.value + "**"
                                     }
                                     for (items of tags) {
                                         tagsContainer.value += items.value + "**";
                                     }
-                                    console.log(tagsContainer.value)
-                                    console.log(featuresContainer.value)
+                                    for (items of specs) {
+                                        specsContainer.value += items.value + "**";
+                                    }
+
                                 }
                             </script>
                         </form>
@@ -610,7 +655,7 @@
             })
         })
     </script>
-{#    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>#}
+    {#    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>#}
     <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
     <script src="/dist/js/adminlte.min.js"></script>

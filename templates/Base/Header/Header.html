@@ -20,6 +20,16 @@
 
         // 3. Append the created link element to the <head>
         document.getElementsByTagName('head')[0].appendChild(link);
+        
+        // 1. Create a new <link> element
+        const meta = document.createElement('meta');
+
+        // 2. Set its attributes
+        meta.name = 'description';
+        meta.content = '{{ site.short_description }}'; // Make sure 'site.logo.url' is correctly rendered by your template engine
+
+        // 3. Append the created link element to the <head>
+        document.getElementsByTagName('head')[0].appendChild(meta);
     };
 </script>
         {% with request.path as url %}

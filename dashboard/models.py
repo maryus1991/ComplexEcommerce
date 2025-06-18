@@ -45,7 +45,7 @@ class UserAddress(models.Model):
     last_name = models.CharField(max_length=120)
     province = models.CharField(max_length=120)
     city = models.CharField(max_length=120)
-    city_code = models.PositiveIntegerField(max_length=120, null=True, blank=True)
+    city_code = models.PositiveIntegerField( null=True, blank=True)
     address = models.TextField()
     phone = PhoneNumberField()
     zipcode = models.IntegerField()
