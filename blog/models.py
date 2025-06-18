@@ -30,6 +30,8 @@ class Blog(models.Model):
     image = models.ImageField(upload_to='blogs/', null=True)
 
     is_active = models.BooleanField(default=False)
+    admin_verified = models.BooleanField(default=True)
+
 
     def __str__(self):
         return self.title

@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import TemplateView
 from django.views.generic import ListView, DetailView
 from django.utils.timezone import now, datetime, timedelta
+from unicodedata import category
 
 from .models import Blog, BlogView, BlogCategory, BlogTag
 from ipware import get_client_ip
@@ -27,9 +28,8 @@ class ListArticlesView(ListView):
         """
 
         item = super().get_queryset(
-        ).filter(is_active=True
-                 ).annotate(view_count=Count('views'
-                                             ))
+        ).filter(is_active=True, admin_verified=True, category__is_active=True
+                 ).annotate(view_count=Count('views'))
 
         url_params = dict(self.request.GET.lists())
 
@@ -162,11 +162,10 @@ class DetailArticleView(DetailView):
 
     def get_object(self):
         pk = self.kwargs['pk']
-        obj = self.get_queryset().filter(
-            pk=pk, is_active=True
-        ).prefetch_related('tags'
-                           ).first()
-        return obj
+        obj =get_object_or_404(self.model,
+            pk=pk, is_active=True, admin_verified=True, category__is_active=True
+        )
+        return self.get_queryset().filter(id=obj.id).prefetch_related('tags').first()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

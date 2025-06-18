@@ -33,9 +33,9 @@ def robots_txt(request):
         '/user/',
         '/dashboard/',
         '/order/',
-        '/store/',
-        '/admin/',
-        '/admin-panel/',
+        'store/',
+        'admin/',
+        'admin-panel/',
         '/ckeditor/'
     ]
 
@@ -88,7 +88,7 @@ class QuestionsPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['questions'] = QuestionAndAnswer.objects.all()
+        context['questions'] = QuestionAndAnswer.objects.filter(is_active=True).all()
         return context
 
 
@@ -157,7 +157,8 @@ class UsedAppView(ListView):
         query = super().get_queryset().order_by('-id').filter(
             is_active=True,
             store__is_active=True,
-            store__is_verified=True
+            store__is_verified=True,
+            admin_verified=True
         )
 
         # Add search functionality
@@ -186,7 +187,8 @@ class DownloadUsedAppView(CustomLoginRequiredMixin, View):
             pk=self.kwargs.get('pk'),
             is_active=True,
             store__is_active=True,
-            store__is_verified=True
+            store__is_verified=True,
+            admin_verified=True
         )
 
         # Serve the file securely
@@ -231,7 +233,7 @@ def header_render_partial(request):
 
 def footer_render_partial(request):
     site = SiteSetting.objects.filter(is_active=True).first()
-    links = FastLinks.objects.all().order_by('-id')
+    links = FastLinks.objects.all().filter(is_active=True).order_by('-id')
     return render(request, 'Base/Footer/Footer.html',
                   {'site': site, 'links1': links[0:4], 'links2': links[4:8],
                    'form': NumberForAddToLettersForm()})

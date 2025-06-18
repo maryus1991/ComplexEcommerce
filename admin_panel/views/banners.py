@@ -28,7 +28,7 @@ class BannersCreateView(AdminUserMixin, CreateView):
 
 
     def form_valid(self, form):
-        messages.success(self.request, 'بنر شما با موفقت ساخته شد')
+        messages.success(self.request, 'بنر  مورد نظر با موفقت ساخته شد')
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -44,7 +44,7 @@ class BannersUpdateView(AdminUserMixin, UpdateView):
     context_object_name = 'banner'
 
     def form_valid(self, form):
-        messages.success(self.request, 'بنر شما با موفقت ساخته شد')
+        messages.success(self.request, 'بنر  مورد نظر با موفقت ساخته شد')
         return super().form_valid(form)
 
     def form_invalid(self, form):

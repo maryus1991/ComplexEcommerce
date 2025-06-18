@@ -12,6 +12,10 @@ from sitesetting.models import (
     ContactUs
 )
 
+from stores.models import StoreApps, Store
+from blog.models import Blog, BlogCategory
+from django.contrib.auth import get_user_model
+
 
 class SiteSettingModelForm(forms.ModelForm):
     logo = forms.ImageField(
@@ -233,8 +237,198 @@ class FastLinksModelForm(forms.ModelForm):
         model = FastLinks
         fields = '__all__'
 
+        widgets = {
+            'title': forms.TextInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+            'link': forms.URLInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+            'is_active': forms.CheckboxInput()
+        }
+
 
 class QuestionAndAnswerModelForm(forms.ModelForm):
     class Meta:
         model = QuestionAndAnswer
         fields = '__all__'
+        widgets = {
+            'question': forms.TextInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+            'answer': forms.TextInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+            'is_active': forms.CheckboxInput()
+        }
+
+
+class UsedAppModelForm(forms.ModelForm):
+    store = forms.ModelChoiceField(
+        queryset=Store.objects.filter(is_active=True, is_verified=True).all(),
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+
+            }
+        ), empty_label='فروشگاه را انتخاب کنید'
+    )
+
+    class Meta:
+        model = StoreApps
+        fields = '__all__'
+
+        widgets = {
+            'is_active': forms.CheckboxInput(),
+            'admin_verified': forms.CheckboxInput(),
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'نام را وارد کنید'
+            }),
+            'file': forms.ClearableFileInput(attrs={
+                'class': 'form-control',
+                'placeholder': "برنامه را وارد کنید"
+            })
+        }
+
+
+class AddBlogModelForm(forms.ModelForm):
+    user = forms.ModelChoiceField(
+        queryset=get_user_model(
+        ).objects.filter(
+            is_active=True,
+            is_verified=True,
+            is_staff=True,
+            store__isnull=False
+        ).all(),
+
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+
+            }
+        ), empty_label='نویسنده را انتخاب کنید'
+    )
+
+    store = forms.ModelChoiceField(
+        queryset=Store.objects.filter(is_active=True, is_verified=True).all(),
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+
+            }
+        ), empty_label='فروشگاه را انتخاب کنید'
+    )
+    category = forms.ModelChoiceField(
+        queryset=BlogCategory.objects.filter(is_active=True).all(),
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+
+            }
+        ), empty_label='دسته را انتخاب کنید'
+    )
+
+
+    content = RichTextUploadingFormField()
+
+    image = forms.ImageField(
+
+        label='عکس',
+        widget=forms.FileInput(
+            attrs={
+                'class': 'form-control',
+
+            }
+        ),
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'heic'])
+        ]
+    )
+
+
+
+    class Meta:
+        model = Blog
+        fields = ( 'user',
+                   'title',
+                   'store',
+                   'category',
+                   'content',
+                   'image',
+                   'is_active',
+                   )
+        widgets = {
+            'title':forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder':'عنوان'
+                }
+            ),
+            'is_active':forms.CheckboxInput(),
+        }
+
+
+class AddBlogCategoryModelForm(forms.ModelForm):
+    parent = forms.ModelChoiceField(
+        queryset=Store.objects.filter(is_active=True, is_verified=True).all(),
+        required=False,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+
+            }
+        ),
+        empty_label='دسته مادر یا دسته بالا دست را انتخاب کنید(این قسمت می تواند خالی باشد یا انتخاب نشود)',
+
+    )
+
+    image = forms.ImageField(
+
+        label='لوگو',
+        widget=forms.FileInput(
+            attrs={
+                'class': 'form-control',
+
+            }
+        ),
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'heic'])
+        ]
+    )
+
+    class Meta:
+        model = BlogCategory
+        fields = '__all__'
+        widgets = {
+            'name':forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder':'نام'
+                }
+            ),
+            'is_active': forms.CheckboxInput(),
+        }

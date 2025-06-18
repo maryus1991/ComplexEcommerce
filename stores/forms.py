@@ -1004,7 +1004,8 @@ class AddCategoryForm(forms.ModelForm):
                 'aria - hidden ': "true",
 
             }
-        ), empty_label='دسته مادر یا دسته بالا دست را انتخاب کنید'
+        ),
+        empty_label='دسته مادر یا دسته بالا دست را انتخاب کنید(این قسمت می تواند خالی باشد یا انتخاب نشود)'
     )
 
     image = forms.ImageField(
@@ -1607,9 +1608,11 @@ class AddStoreBlogCategoryForm(forms.ModelForm):
                 , 'dir': 'rtl'
 
             }
-        )
-        , empty_label='لطفا دسته بندی مادر انتخاب کنید',
+        ),
+        empty_label='دسته مادر یا دسته بالا دست را انتخاب کنید(این قسمت می تواند خالی باشد یا انتخاب نشود)',
+
         required=False
+
     )
 
     class Meta:

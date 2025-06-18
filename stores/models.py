@@ -57,10 +57,11 @@ class Store(models.Model):
         verbose_name = 'Store'
 
 class StoreApps(models.Model):
-    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='apps')
-    file = models.FileField(upload_to="app/",)
-    name = models.CharField(max_length=100)
-    is_active = models.BooleanField(default=False)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='apps', verbose_name='فروشگاه')
+    file = models.FileField(upload_to="app/", verbose_name='فایل')
+    name = models.CharField(max_length=100, verbose_name='نام')
+    is_active = models.BooleanField(default=False, verbose_name='فعال / غیر فعال')
+    admin_verified = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name

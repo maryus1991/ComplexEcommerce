@@ -45,8 +45,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     {% endblock %}
 
     <!-- Google Font -->
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+{#    <link rel="stylesheet"#}
+{#          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">#}
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -466,7 +466,48 @@ desired effect
 
                         </ul>
                     </li>
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
+                            <span>بلاگ </span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:blog-list' %}"><i class="fa fa-link"></i>
+                                    <span>پست ها</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:blog-category-list' %}"><i class="fa fa-link"></i>
+                                    <span>دسته بندی ها</span>
+                                </a>
+                            </li>
+ 
 
+
+                        </ul>
+                    </li>
+                    <li class="link-activator"><a href="{% url 'admin_panel:fast-links-list' %}"><i
+                            class="fa fa-link"></i> <span>
+                        لینک های سریع
+                    </span></a>
+                    </li>
+                    <li class="link-activator"><a href="{% url 'admin_panel:Q&A-list' %}"><i class="fa fa-link"></i>
+                        <span>
+                        سوال جواب
+                    </span></a>
+                    <li class="link-activator"><a href="{% url 'admin_panel:apps-list' %}"><i class="fa fa-link"></i>
+                        <span>
+برنامه ها
+                    </span></a>
+                    </li>
+                    <li class="link-activator"><a href="{% url 'admin_panel:contact-list' %}"><i class="fa fa-link"></i>
+                        <span>
+پیام ها (صفحه تماس با ما)
+                    </span></a>
+                    </li>
                     {% if user.is_staff and user.store %}
                         <li class="link-activator"><a href="{% url 'store:home' %}"><i class="fa fa-link"></i> <span>صفحه فروشگاه</span></a>
                         </li>

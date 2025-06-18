@@ -2,7 +2,6 @@ from .apps import *
 from .banners import *
 from .blog import *
 from .contact_us import *
-from .fast_links import *
 from .main import *
 from .products import *
 from .site_setting import *

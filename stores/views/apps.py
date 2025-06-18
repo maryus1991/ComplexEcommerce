@@ -134,20 +134,25 @@ class RemoveAppsOrActiveOrDeactivateAppsView(UserStoreStaffMixin, View):
         pk = self.kwargs['pk']
         obj = get_object_or_404(StoreApps, pk=pk, store=store)
 
-        if obj.is_active:
-            obj.is_active = False
-            obj.save()
-            messages.success(
-                self.request,
-                'فایل شما غیر فعال شد و کابران نمی توانند ان را دانلود و مشاهده کنند'
-            )
+        if obj.admin_verified:
+            if obj.is_active :
+                obj.is_active = False
+                obj.save()
+                messages.success(
+                    self.request,
+                    'فایل شما غیر فعال شد و کابران نمی توانند ان را دانلود و مشاهده کنند'
+                )
+            else:
+                obj.is_active = True
+                obj.save()
+                messages.success(
+                    self.request,
+                    'فایل شما فعال شد و  کاربران می توانند انرا مشاهده کنند و ان را دانلود کنند'
+                )
         else:
-            obj.is_active = True
-            obj.save()
-            messages.success(
-                self.request,
-                'فایل شما فعال شد و  کاربران می توانند انرا مشاهده کنند و ان را دانلود کنند'
-            )
+            messages.error(self.request,
+                           'ادمین سایت این برنامه را غیر فعال کرده است برای فعال کردن ان و انتشار ان با ادمین سایت در ارتباط باشید'
+                           )
         return redirect('store:app-list')
 
     def post(self, request, *args, **kwargs):

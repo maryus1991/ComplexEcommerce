@@ -1,0 +1,117 @@
+{% extends 'Base/AdminBase.html' %}
+{% load jalali_tags %}
+
+{% block title %}
+    پیام ها
+
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">
+        صفحه مدیریت
+    </li>
+    <li class="active">پیام ها
+    </li>
+{% endblock %}
+
+
+{% block body %}
+    <div class="panel box box-primary panel-default" style="margin-top: 20px;">
+        <div class="panel-heading clearfix">
+            <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست پیام های ارسالی </h3>
+
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered table-striped">
+                <thead>
+                <tr class="bg-primary">
+                    <th class="text-center" width="5%">#</th>
+                    <th width="25%">عنوان</th>
+                    <th class="text-center" width="10%">ایمیل</th>
+                    <th class="text-center" width="10%">شماره</th>
+                    <th colspan="2" class="text-center" width="35%"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td class="text-center">{{ item.id }}
+                        </td>
+
+                        <td>
+                            <strong>{{ item.subject }}</strong>
+
+                        </td>
+
+                        <td>
+                            <strong>{{ item.email }}</strong>
+                        </td>
+                        <td dir="ltr">
+                            <strong>{{ item.phone }}</strong>
+                        </td>
+
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:contact-details' item.id %}" class="btn btn-sm btn-success"
+                               data-toggle="tooltip" title="مشاهده">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:contact-delete' item.id %}" class="btn btn-sm btn-danger"
+                               data-toggle="tooltip" title="حذف">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="text-muted">تعداد کل ایتم ها: {{ items.count }}</small>
+                </div>
+                <div class="col-md-6 text-left">
+                    <ul class="pagination pagination-sm no-margin">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}">&raquo;</a></li>
+                        {% endif %}
+                        {% for page_number in page_obj.paginator.page_range %}
+                            <li {% if page_number == page_obj.number %}class="active" {% endif %}>
+                                <a href="?page={{ page_number }}">{{ page_number }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">&laquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip({
+                placement: 'top',
+                delay: {"show": 500, "hide": 100}
+            });
+
+            // افزودن کلاس form-control به تمام فیلدهای فرم
+            // This is already well-handled by Django's form rendering if using crispy forms or similar.
+            // If not, this line is good.
+            $('form input, form select, form textarea').addClass('form-control');
+
+            // تنظیمات برای فیلدهای تاریخ
+            $('.datepicker').datepicker({
+                format: 'yyyy/mm/dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+    </script>
+{% endblock %}

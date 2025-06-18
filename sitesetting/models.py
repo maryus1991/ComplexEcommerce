@@ -53,8 +53,10 @@ class SiteSetting(models.Model):
         return self.title
 
 class FastLinks(models.Model):
-    title = models.CharField(max_length=100)
-    link = models.URLField()
+    title = models.CharField(verbose_name='عنوان', max_length=100)
+    link = models.URLField(verbose_name='لینک',)
+
+    is_active = models.BooleanField(default=True, verbose_name='فعال یا غیر فعال')
 
     def __str__(self):
         return self.title
@@ -66,8 +68,10 @@ class Newsletter(models.Model):
         return self.phone_number
 
 class QuestionAndAnswer(models.Model):
-    question = models.TextField()
-    answer = models.TextField()
+    question = models.TextField(verbose_name='سوال')
+    answer = models.TextField(verbose_name='جواب')
+
+    is_active = models.BooleanField(default=True, verbose_name='فعال یا غیر فعال')
 
     def __str__(self):
         return self.question

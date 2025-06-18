@@ -120,8 +120,10 @@
                                 <td>{{ item.name }}</td>
                                 <td>{{ item.file.size|filesizeformat }}</td>
                                 <td>
-                                    {% if item.is_active %}
+                                    {% if item.is_active and item.admin_verified %}
                                         <span class="label label-success">فعال</span>
+                                    {% elif not item.admin_verified %}
+                                        <span class="label label-danger">توسط ادمین سایت غیرفعال شده است</span>
                                     {% else %}
                                         <span class="label label-danger">غیرفعال</span>
                                     {% endif %}
