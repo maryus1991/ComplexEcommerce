@@ -56,7 +56,8 @@ class UserSettingDashboard(LoginRequiredMixin, TemplateView):
         context['legal_person'] = LegalPersonForm(
             initial={
                 'legal_person_economic_number': self.request.user.legal_person_economic_number,
-                'legal_person_registration_number': self.request.user.legal_person_registration_number
+                'legal_person_registration_number': self.request.user.legal_person_registration_number,
+                'legal_person_phone': self.request.user.legal_person_phone
             }
         )
 
