@@ -34,10 +34,13 @@ class ProductListView(ListView):
         have_filter_url = False
 
         # get the product obj
-        products = Product.objects.filter(is_active=True
-                 ).prefetch_related('features'
-                 ).prefetch_related('tags'
-                 ).prefetch_related('specs')
+        products = Product.objects.filter(
+            is_active=True,
+            store__is_active=True,
+            store__is_verified=True,
+        ).prefetch_related('features'
+                           ).prefetch_related('tags'
+                                              ).prefetch_related('specs')
 
         if 'available' in url_params:
             if url_params['available'] == ['on']:
@@ -192,7 +195,13 @@ class ProductDetailView(DetailView):
     context_object_name = 'product'
 
     def get_queryset(self):
-        return super().get_queryset().filter(is_active=True)
+        return super().get_queryset().filter(
+            is_active=True,
+            store__is_active=True,
+            store__is_verified=True,
+                ).prefetch_related('features'
+                ).prefetch_related('tags'
+                ).prefetch_related('specs')
 
     def get_context_data(self, **kwargs):
 

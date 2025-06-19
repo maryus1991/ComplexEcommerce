@@ -86,6 +86,7 @@ class StoreUpdateInformationView(StoreAdminUserStaff, UpdateView):
     form_class = AddStoreForm
     model = Store
     success_url = reverse_lazy('store:update')
+    context_object_name = 'item'
 
     def get_object(self, queryset=None):
         return get_object_or_404(Store, id=self.request.user.store.id, is_active=True, is_verified=True)

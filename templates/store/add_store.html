@@ -287,7 +287,14 @@
             {{ form.description }}
             {{ form.media }}
         </div>
-
+ 
+        {% if item is not None %}
+            عکس مورد استفاده :
+            <img width="100px" height="100px" src="{{ item.about_image.url }}" alt="">
+            <br>
+            لوگو:
+            <img width="100px" height="100px" src="{{ item.logo.url }}" alt="">
+        {% endif %}
         <!-- دکمه ثبت -->
         <div class="box-footer">
             <button type="submit" class="btn btn-info btn-sm btn-block">ثبت</button>

@@ -66,9 +66,16 @@ urlpatterns = [
     # tickets
     path('tickets/create/', views.SendTicketCreateView.as_view(), name='ticket-create'),
     path('tickets/conversation/<int:pk>', views.TicketConversationDetailView.as_view(), name='ticket-conversation'),
-    # received
     path('tickets/receivd/', views.TicketReceivedListView.as_view(), name='ticket-received-list'),
-    #send
     path('tickets/send/', views.TicketSendListView.as_view(), name='ticket-send-list'),
+
+    # store
+    path('stores/', views.StoreListView.as_view(), name='store-list'),
+    path('stores/create/', views.StoreCreateView.as_view(), name='store-create'),
+    path('stores/update/<int:pk>', views.StoreUpdateView.as_view(), name='store-update'),
+    path('stores/detail/<int:pk>', views.StoreDetailView.as_view(), name='store-detail'),
+    path('stores/verify/<int:pk>', views.StoreVerifyView.as_view(), name='store-verify'),
+    path('stores/active-deactivate/<int:pk>', views.StoreActiveAndDeactivateView.as_view(), name='store-active-deactivate'),
+    path('stores/delete/<int:pk>', views.StoreDeleteView.as_view(), name='store-delete'),
 
 ]

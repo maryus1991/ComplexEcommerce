@@ -43,7 +43,6 @@ class Store(models.Model):
     have_physical_delivery = models.BooleanField(default=True)
     in_same_city_delivery_price = models.PositiveIntegerField(null=True, blank=True)
 
-
     additional_price = models.PositiveIntegerField(null=True, blank=True)
     additional_tax = models.PositiveIntegerField(null=True, blank=True)
 
