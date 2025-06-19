@@ -45,8 +45,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     {% endblock %}
 
     <!-- Google Font -->
-{#    <link rel="stylesheet"#}
-{#          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">#}
+
 </head>
 <!--
 BODY TAG OPTIONS:
@@ -105,22 +104,26 @@ desired effect
                         <ul class="dropdown-menu">
                             {# Assuming this is part of a dropdown, otherwise a standard <ul> would work #}
                             {% for item in user.store.tickets|ticket_obj_response %}
-                                <li>
-                                    <a href="{% url 'store:response-received-ticket' item.id %}" class="clearfix">
-                                        <p class="pull-left">
-                                            {{ item.user.get_full_name }}
-                                            <br>
-                                            <small class="text-muted"><i
-                                                    class="fa fa-clock-o"></i> {{ item.message.last.date|to_jalali:'%H:%m - %Y/%M/%d ' }}
-                                            </small>
-                                        </p>
-                                        {# You could add a snippet of the last message here for more context #}
-                                        {# <p class="text-muted pull-right">{{ item.message.last.content|truncatechars:50 }}</p> #}
-                                    </a>
-                                </li>
+                                {% if forloop.counter <= 5 %}
+
+                                    <li>
+                                        <a href="{% url 'store:response-received-ticket' item.id %}" class="clearfix">
+                                            <p class="pull-left">
+                                                {{ item.user.get_full_name }}
+                                                <br>
+                                                <small class="text-muted"><i
+                                                        class="fa fa-clock-o"></i> {{ item.message.last.date|to_jalali:'%H:%m - %Y/%M/%d ' }}
+                                                </small>
+                                            </p>
+                                            {# You could add a snippet of the last message here for more context #}
+                                            {# <p class="text-muted pull-right">{{ item.message.last.content|truncatechars:50 }}</p> #}
+                                        </a>
+                                    </li>
+                                {% endif %}
+
                                 {% if not forloop.last %}
                                     <li role="separator" class="divider"></li> {# Adds a separator between items #}
-                                {% endif %}
+                                {% endif     %}
                             {% empty %}
                                 <li class="text-center" style="padding: 10px;">
                                     <p class="text-muted">هنوز پیامی دریافت نکردید</p>
@@ -468,6 +471,31 @@ desired effect
                     </li>
                     <li class="treeview">
                         <a><i class="fa fa-link"></i>
+                            <span>تیکت ها </span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:ticket-received-list' %}"><i class="fa fa-link"></i>
+                                    <span>تیک های دریافتی</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:ticket-send-list' %}"><i class="fa fa-link"></i>
+                                    <span>تیک های ارسالی</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:ticket-create' %}"><i class="fa fa-link"></i>
+                                    <span>ارسال تیکت </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
                             <span>بلاگ </span>
                             <span class="pull-left-container">
                              <i class="fa fa-angle-right pull-left"></i>
@@ -484,7 +512,6 @@ desired effect
                                     <span>دسته بندی ها</span>
                                 </a>
                             </li>
- 
 
 
                         </ul>

@@ -133,7 +133,7 @@
     <div class="panel box box-primary panel-default" style="margin-top: 20px;">
         <div class="panel-heading clearfix">
             <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست دسته بندی های بلاگ </h3>
-            <a href="" class="pull-left btn btn-success">ساختن دسته جدید</a>
+            <a href="{% url 'admin_panel:blog-category-create' %}" class="pull-left btn btn-success">ساختن دسته جدید</a>
         </div>
 
         <div class="table-responsive">
@@ -142,6 +142,7 @@
                 <tr class="bg-primary">
                     <th class="text-center" width="5%">#</th>
                     <th width="30%">نام</th>
+                    <th width="10%">تعداد پست ها</th>
                     <th width="20%">دسته مادر</th>
                     <th width="20%">دسته های زیر دست</th>
                     <th colspan="4" class="text-center" width="3%">عملیات</th>
@@ -157,8 +158,10 @@
                                 <span class="label label-default pull-left">غیر فعال</span>
                             {% endif %}
                         </td>
-                        <td><strong>{{ item.parent.name|default:'-' }}</strong></td>
-                        <td>
+                        <td class="text-center"> <span class="badge label-primary">{{ item.blogs.count }}</span></td>
+
+                        <td class="text-center"><strong class="label label-primary">{{ item.parent.name|default:'-' }}</strong></td>
+                        <td class="text-center">
                             {% for child in item.children.all %}
                             	<span class="label label-primary" style="margin-right: 5px; margin-left: 5px; ">
                                 <strong>{{ child.name }}</strong>
@@ -171,19 +174,19 @@
 
 
                         <td class="text-center">
-                            <a href="{% url 'blog:list'  %}?category={{ item.id }}" class="btn btn-sm btn-success"
+                            <a href="{{ item.get_absolute_url }}" class="btn btn-sm btn-success"
                                data-toggle="tooltip" title="مشاهده">
                                 <i class="fa fa-eye"></i>
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:Q&A-update' item.id %}" class="btn btn-sm btn-info"
+                            <a href="{% url 'admin_panel:blog-category-update' item.id %}" class="btn btn-sm btn-info"
                                data-toggle="tooltip" title="ویرایش">
                                 <i class="fa fa-edit"></i>
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:Q&A-active-deactivate' item.id %}"
+                            <a href="{% url 'admin_panel:blog-category-active-deactivate' item.id %}"
                                class="btn btn-sm btn-warning"
                                data-toggle="tooltip"
                                title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
@@ -191,7 +194,7 @@
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:Q&A-delete' item.id %}" class="btn btn-sm btn-danger"
+                            <a href="{% url 'admin_panel:blog-category-delete' item.id %}" class="btn btn-sm btn-danger"
                                data-toggle="tooltip" title="حذف">
                                 <i class="fa fa-trash"></i>
                             </a>

@@ -51,8 +51,24 @@ urlpatterns = [
 
     # blog
     path('blog/', views.BlogListView.as_view(), name='blog-list'),
+    path('blog/create/', views.BlogCreate.as_view(), name='blog-create'),
+    path('blog/update/<int:pk>', views.BlogUpdate.as_view(), name='blog-update'),
+    path('blog/active-deactivate/<int:pk>', views.BlogActiveAndDeactivate.as_view(), name='blog-active-deactivate'),
+    path('blog/delete/<int:pk>', views.BlogDelete.as_view(), name='blog-delete'),
 
     # blog category
     path('blog/categories/', views.BlogCategoryListView.as_view(), name='blog-category-list'),
+    path('blog/categories/create/', views.BlogCategoryCreate.as_view(), name='blog-category-create'),
+    path('blog/categories/update/<int:pk>', views.BlogCategoryUpdate.as_view(), name='blog-category-update'),
+    path('blog/categories/active-deactivate/<int:pk>', views.BlogCategoryActiveAndDeactivate.as_view(), name='blog-category-active-deactivate'),
+    path('blog/categories/delete/<int:pk>', views.BlogCategoryDelete.as_view(), name='blog-category-delete'),
+
+    # tickets
+    path('tickets/create/', views.SendTicketCreateView.as_view(), name='ticket-create'),
+    path('tickets/conversation/<int:pk>', views.TicketConversationDetailView.as_view(), name='ticket-conversation'),
+    # received
+    path('tickets/receivd/', views.TicketReceivedListView.as_view(), name='ticket-received-list'),
+    #send
+    path('tickets/send/', views.TicketSendListView.as_view(), name='ticket-send-list'),
 
 ]

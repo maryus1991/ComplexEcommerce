@@ -20,8 +20,8 @@ class UserIP(models.Model):
 class Ticket(models.Model):
 
     subject = models.CharField(max_length=400)
-    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True, blank=True, related_name='tickets')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tickets')
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True, blank=True, related_name='tickets') # receiver
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tickets') # sender
     date = models.DateTimeField(auto_now_add=True)
     close_ticket = models.BooleanField(default=False)
     closed_at = models.DateTimeField(auto_now_add=True)

@@ -320,6 +320,8 @@ class AddBlogModelForm(forms.ModelForm):
                 'tabindex ': "-1",
                 'aria - hidden ': "true",
 
+                'dir':'ltr'
+
             }
         ), empty_label='نویسنده را انتخاب کنید'
     )
@@ -333,11 +335,12 @@ class AddBlogModelForm(forms.ModelForm):
                 'tabindex ': "-1",
                 'aria - hidden ': "true",
 
+
             }
         ), empty_label='فروشگاه را انتخاب کنید'
     )
     category = forms.ModelChoiceField(
-        queryset=BlogCategory.objects.filter(is_active=True).all(),
+        queryset=BlogCategory.objects.filter().all(),
         widget=forms.Select(
             attrs={
                 'class': 'form-control select2 select2-hidden-accessible"',
@@ -378,6 +381,7 @@ class AddBlogModelForm(forms.ModelForm):
                    'image',
                    'is_active',
                    )
+
         widgets = {
             'title':forms.TextInput(
                 attrs={
@@ -391,7 +395,7 @@ class AddBlogModelForm(forms.ModelForm):
 
 class AddBlogCategoryModelForm(forms.ModelForm):
     parent = forms.ModelChoiceField(
-        queryset=Store.objects.filter(is_active=True, is_verified=True).all(),
+        queryset=BlogCategory.objects.filter().all(),
         required=False,
         widget=forms.Select(
             attrs={
