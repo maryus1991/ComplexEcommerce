@@ -78,4 +78,13 @@ urlpatterns = [
     path('stores/active-deactivate/<int:pk>', views.StoreActiveAndDeactivateView.as_view(), name='store-active-deactivate'),
     path('stores/delete/<int:pk>', views.StoreDeleteView.as_view(), name='store-delete'),
 
+    # users
+    path('users/', views.UserListView.as_view(), name='user-list'),
+    path('users/create/', views.UserCreateView.as_view(), name='user-create'),
+    path('users/update/<int:pk>', views.UserUpdateView.as_view(), name='user-update'),
+    path('users/detail/<int:pk>', views.UserDetailsView.as_view(), name='user-detail'),
+    path('users/verify/<int:pk>', views.UserVerifyView.as_view(), name='user-verify'),
+    path('users/active-deactivate/<int:pk>', views.UserActiveDeactivateView.as_view(), name='user-active-deactivate'),
+    path('users/delete/<int:pk>', views.UserDeleteView.as_view(), name='user-delete'),
+
 ]

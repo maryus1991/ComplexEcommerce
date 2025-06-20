@@ -123,7 +123,7 @@ desired effect
 
                                 {% if not forloop.last %}
                                     <li role="separator" class="divider"></li> {# Adds a separator between items #}
-                                {% endif     %}
+                                {% endif %}
                             {% empty %}
                                 <li class="text-center" style="padding: 10px;">
                                     <p class="text-muted">هنوز پیامی دریافت نکردید</p>
@@ -516,10 +516,14 @@ desired effect
 
                         </ul>
                     </li>
+                    <li class="link-activator"><a href="{% url 'admin_panel:user-list' %}"><i
+                            class="fa fa-link"></i> <span>
+                            کاربران
+                    </span></a>
                     <li class="link-activator"><a href="{% url 'admin_panel:fast-links-list' %}"><i
                             class="fa fa-link"></i> <span>
                         لینک های سریع
-                    </span></a>                    
+                    </span></a>
                     <li class="link-activator"><a href="{% url 'admin_panel:store-list' %}"><i
                             class="fa fa-link"></i> <span>
                         فروشگاها

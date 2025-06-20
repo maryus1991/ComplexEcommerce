@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import AccessMixin
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.shortcuts import Http404
 
 class CustomLoginRequiredMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
@@ -23,8 +24,7 @@ class UserStoreStaffMixin(AccessMixin):
                 if request.user.store is not None:
                     return super().dispatch(request, *args, **kwargs)
 
-        messages.error(request, "شما دسترسی ورود با این صفحه را ندارید")
-        return redirect('user:login')
+        raise Http404()
 
 class StoreAdminUserStaff(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
@@ -34,8 +34,7 @@ class StoreAdminUserStaff(AccessMixin):
                     if request.user.is_store_admin:
                         return super().dispatch(request, *args, **kwargs)
 
-        messages.error(request, "شما دسترسی ورود با این صفحه را ندارید")
-        return redirect('user:login')
+        raise Http404()
 
 class AdminUserMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
@@ -43,5 +42,4 @@ class AdminUserMixin(AccessMixin):
             if request.user.is_active and request.user.is_superuser and request.user.is_verified :
                 return super().dispatch(request, *args, **kwargs)
 
-        messages.error(request, "شما دسترسی ورود با این صفحه را ندارید")
-        return redirect('user:login')
+        raise Http404()

@@ -9,29 +9,29 @@
             <img src="{{ site.logo.url }}" alt="logo" class="w-20 h-10 "/>
 
         </a>
-<script>
-    window.onload = function () {
-        // 1. Create a new <link> element
-        const link = document.createElement('link');
+        <script>
+            window.onload = function () {
+                // 1. Create a new <link> element
+                const link = document.createElement('link');
 
-        // 2. Set its attributes
-        link.rel = 'icon';
-        link.href = '{{ site.logo.url }}'; // Make sure 'site.logo.url' is correctly rendered by your template engine
+                // 2. Set its attributes
+                link.rel = 'icon';
+                link.href = '{{ site.logo.url }}'; // Make sure 'site.logo.url' is correctly rendered by your template engine
 
-        // 3. Append the created link element to the <head>
-        document.getElementsByTagName('head')[0].appendChild(link);
-        
-        // 1. Create a new <link> element
-        const meta = document.createElement('meta');
+                // 3. Append the created link element to the <head>
+                document.getElementsByTagName('head')[0].appendChild(link);
 
-        // 2. Set its attributes
-        meta.name = 'description';
-        meta.content = '{{ site.short_description }}'; // Make sure 'site.logo.url' is correctly rendered by your template engine
+                // 1. Create a new <link> element
+                const meta = document.createElement('meta');
 
-        // 3. Append the created link element to the <head>
-        document.getElementsByTagName('head')[0].appendChild(meta);
-    };
-</script>
+                // 2. Set its attributes
+                meta.name = 'description';
+                meta.content = '{{ site.short_description }}'; // Make sure 'site.logo.url' is correctly rendered by your template engine
+
+                // 3. Append the created link element to the <head>
+                document.getElementsByTagName('head')[0].appendChild(meta);
+            };
+        </script>
         {% with request.path as url %}
 
             <!-- MENU -->
@@ -78,9 +78,14 @@
                 {% if request.user.is_authenticated and request.user.is_verified %}
                     {% if request.user.is_staff and request.user.store is not None %}
                         <li class="nav-item ">
-                            <a href="{% url 'store:home' %}"> صفحه مدیریت فروشگاه</a>
+                            <a href="{% url 'store:home' %}">مدیریت فروشگاه</a>
                         </li>
                     {% endif %}
+                {% endif %}
+                {% if user.is_superuser and user.is_verified and user.is_staff %}
+                    <li class="nav-item ">
+                        <a href="{% url 'admin_panel:main' %}">مدیریت سایت</a>
+                    </li>
                 {% endif %}
             </ul>
         {% endwith %}
@@ -368,7 +373,8 @@
                         </svg>
                         برنامه های کاربردی
                     </a>
-                </li>            </ul>
+                </li>
+            </ul>
         {% endwith %}
         <!-- BORDER -->
         <span class="flex w-full border-t dark:border-white/10 border-gray-200 my-8"></span>

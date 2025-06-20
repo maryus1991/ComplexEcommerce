@@ -2,7 +2,9 @@ from django import forms
 from django.core.validators import FileExtensionValidator
 from ckeditor_uploader.fields import RichTextUploadingFormField
 from phonenumber_field.formfields import PhoneNumberField
+from phonenumber_field.validators import validate_phonenumber
 
+from django.core.validators import EmailValidator, ValidationError
 from sitesetting.models import (
     SiteSetting,
     Banners,
@@ -15,6 +17,85 @@ from sitesetting.models import (
 from stores.models import StoreApps, Store
 from blog.models import Blog, BlogCategory
 from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+
+class AddUserModelForm(forms.ModelForm):
+    PhoneNumber = PhoneNumberField(
+        widget=forms.TextInput(attrs={
+           'class': 'form-control',
+        }),
+        validators=[validate_phonenumber],
+    )
+    store = forms.ModelChoiceField(
+        required=False,
+        queryset=Store.objects.all(),
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+                'dir':'rtl'
+            }
+        ), empty_label='فروشگاه را انتخاب کنید (می تواند خالی باشد و انتخاب نشود)'
+    )
+
+    conform_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+    class Meta:
+        model = User
+        fields = [ 'password', 'first_name', 'last_name',
+                  'PhoneNumber', 'store','legal_person',
+                  'legal_person_economic_number', 'is_active',
+                  'legal_person_registration_number', 'is_superuser',
+                  'legal_person_phone', 'is_verified', 'is_store_admin', 'is_staff']
+
+        widgets = {
+            'password': forms.PasswordInput(
+                attrs={
+                    'class':'form-control'
+                }
+            ),
+            'first_name': forms.TextInput(
+                attrs={
+                    'class':'form-control'
+                }
+            ),
+            'last_name': forms.TextInput(
+                attrs={
+                    'class':'form-control'
+                }
+            ),
+            'legal_person_economic_number': forms.TextInput(
+                attrs={
+                    'class':'form-control'
+                }
+            ),
+            'legal_person_registration_number': forms.TextInput(
+                attrs={
+                    'class':'form-control'
+                }
+            ),
+            'legal_person_phone': forms.TextInput(
+                attrs={
+                    'class':'form-control'
+                }
+            ),
+            'is_active':forms.CheckboxInput(),
+            'is_superuser':forms.CheckboxInput(),
+            'is_verified':forms.CheckboxInput(),
+            'is_store_admin':forms.CheckboxInput(),
+            'is_staff':forms.CheckboxInput(),
+            'legal_person':forms.CheckboxInput(),
+        }
+
 
 
 class SiteSettingModelForm(forms.ModelForm):
@@ -320,7 +401,7 @@ class AddBlogModelForm(forms.ModelForm):
                 'tabindex ': "-1",
                 'aria - hidden ': "true",
 
-                'dir':'ltr'
+                'dir': 'ltr'
 
             }
         ), empty_label='نویسنده را انتخاب کنید'
@@ -334,7 +415,6 @@ class AddBlogModelForm(forms.ModelForm):
                 'style': "width: 100%;",
                 'tabindex ': "-1",
                 'aria - hidden ': "true",
-
 
             }
         ), empty_label='فروشگاه را انتخاب کنید'
@@ -352,7 +432,6 @@ class AddBlogModelForm(forms.ModelForm):
         ), empty_label='دسته را انتخاب کنید'
     )
 
-
     content = RichTextUploadingFormField()
 
     image = forms.ImageField(
@@ -369,27 +448,25 @@ class AddBlogModelForm(forms.ModelForm):
         ]
     )
 
-
-
     class Meta:
         model = Blog
-        fields = ( 'user',
-                   'title',
-                   'store',
-                   'category',
-                   'content',
-                   'image',
-                   'is_active',
-                   )
+        fields = ('user',
+                  'title',
+                  'store',
+                  'category',
+                  'content',
+                  'image',
+                  'is_active',
+                  )
 
         widgets = {
-            'title':forms.TextInput(
+            'title': forms.TextInput(
                 attrs={
                     'class': 'form-control',
-                    'placeholder':'عنوان'
+                    'placeholder': 'عنوان'
                 }
             ),
-            'is_active':forms.CheckboxInput(),
+            'is_active': forms.CheckboxInput(),
         }
 
 
@@ -428,10 +505,10 @@ class AddBlogCategoryModelForm(forms.ModelForm):
         model = BlogCategory
         fields = '__all__'
         widgets = {
-            'name':forms.TextInput(
+            'name': forms.TextInput(
                 attrs={
                     'class': 'form-control',
-                    'placeholder':'نام'
+                    'placeholder': 'نام'
                 }
             ),
             'is_active': forms.CheckboxInput(),

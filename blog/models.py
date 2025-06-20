@@ -23,7 +23,7 @@ class BlogCategory(models.Model):
         return reverse('blog:list') + f'?category={self.id}'
 
 class Blog(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blogs', verbose_name='نویسنده')
+    user = models.ForeignKey(User, on_delete=models.PROTECT,  null=True, related_name='blogs', verbose_name='نویسنده')
     title = models.CharField(max_length=100, verbose_name='عنوان')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='زمان ساخت')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='زمان انتشار')
