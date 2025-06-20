@@ -11,7 +11,7 @@
 
 {% block breadcrumb %}
     <li class="active">فروشگاها</li>
-    <li class="active">جزییات کاربر   {{ item.PhoneNuber }}</li>
+    <li class="active">جزییات کاربر {{ item.PhoneNuber }}</li>
 {% endblock %}
 
 {% block body %}
@@ -26,9 +26,8 @@
                 <table class="table table-bordered table-striped">
                     <tbody>
                     <tr>
-                        <td><strong>نام:</strong> <span>{{ item.name }}</span></td>
-                        <td><strong>شماره :</strong> {{ item.phone }}</td>
-                        <td><strong>شماره ثابت :</strong> {{ item.phone2 }}</td>
+                        <td><strong> نام:</strong> <span>{{ item.get_full_name|default:' وارد نشده' }}</></td>
+                        <td><strong> شماره :</strong> <span dir="ltr">{{ item.PhoneNumber }}</span></td>
                         <td><strong>وضعیت:</strong>
                             {% if item.is_active %}
                                 <span class="text-success">فعال</span>
@@ -38,40 +37,60 @@
                         </td>
                         <td><strong>وضعیت اطلاعات:</strong>
                             {% if item.is_verified %}
-
                                 <span class="text-success">تایید شده</span>
                             {% else %}
                                 <span class="text-danger">تایید نشده</span>
                             {% endif %}
                         </td>
+                    <tr>
+                        <td><strong> فروشگاه :</strong> <span>{{ item.store.name|default:'-' }}</span></td>
+
+                        <td><strong>وضعیت کارمندی:</strong>
+                            {% if item.is_staff %}
+                                <span class="text-success">کارمند می باشد</span>
+                            {% else %}
+                                <span class="text-default">کارمند نمی باشد</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>وضعیت ادمین فروشگاه:</strong>
+                            {% if item.is_store_admin %}
+                                <span class="text-success">ادمین فروشگاه می باشد</span>
+                            {% else %}
+                                <span class="text-default">ادمین فروشگاه نمی باشد</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>وضعیت مدیر سایت:</strong>
+                            {% if item.is_superuser %}
+                                <span class="text-success">ادمین سایت می باشد</span>
+                            {% else %}
+                                <span class="text-default">ادمین سایت نمی باشد</span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    <tr>
+
+                        <td><strong>وضعیت حقوقی / حقیقی:</strong>
+                            {% if item.legal_person %}
+                                <span class="text-success">حقوقی</span>
+                            {% else %}
+                                <span class="text-default">حقیقی</span>
+                            {% endif %}
+                        </td>
+                        <td><strong> شماره اقتصادی :</strong> {{ item.legal_person_economic_number|default:'-' }}</td>
+                        <td><strong> شماره ثبت :</strong> {{ item.legal_person_registration_number|default:'-' }}</td>
+                        <td><strong> شماره یا نامبر :</strong> {{ item.legal_person_phone|default:'-' }}</td>
+
                     </tr>
 
-
-                    <tr>
-                        <td colspan="5">
-                            {{ item.description|safe }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <img src="{{ item.logo.url }}" height="200" alt="">
-                        </td>
-                        <td colspan="3">
-                            <img src="{{ item.about_image.url }}" height="200" alt="">
-                        </td>
-                    </tr>
 
                     </tbody>
                 </table>
 
-
-                <!-- جدول محصولات -->
-                <hr>
-
             </div>
             <div class="panel box box-primary panel-default" style="margin-top: 20px;">
                 <div class="panel-heading clearfix">
-                    <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست کاربران فروشگاه </h3>
+                    <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست ادرس های کاربر </h3>
                 </div>
 
                 <div class="table-responsive">
@@ -79,126 +98,42 @@
                         <thead>
                         <tr class="bg-primary">
                             <th class="text-center" width="5%">#</th>
-                            <th width="25%" class="text-center">نام</th>
+                            <th class="text-center" width="10%">نام</th>
+                            <th width="5%" class="text-center">استان</th>
+                            <th class="text-center" width="5%">شهر</th>
+                            <th class="text-center" width="10%">کد پستی</th>
                             <th class="text-center" width="10%">شماره</th>
-                            <th class="text-center" width="10%">وضعیت</th>
-                            <th class="text-center" width="10%">وضعیت اطلاعات</th>
-                            <th class="text-center" width="35%">مشاهده</th>
+                            <th class="text-center">ادرس</th>
+                            <th class="text-center">توضیحات</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for item in item.users.all %}
-                            <tr>
-                                <td class="text-center">{{ item.id }}
-                                </td>
-
-                                <td class="text-center">
-                                    <strong>{{ item.get_full_name }}</strong>
-                                </td>
-                                <td class="text-center" dir="ltr">
-                                    <strong>{{ item.PhoneNumber }}</strong>
-                                </td>
-
-                                <td class="text-center">
-                                    <strong>
-                                        {% if item.is_active %}
-                                            <span class="label label-success">
-                                    فعال
-                                    </span>
-                                        {% else %}
-                                            <span class="label label-danger">
-                                    غیر فعال
-                                    </span>
-                                        {% endif %}
-                                    </strong>
-                                </td>
-                                <td class="text-center">
-                                    <strong>
-                                        {% if item.is_verified %}
-                                            <span class="label label-success">
-                                    تایید شده
-                                    </span>
-                                        {% else %}
-                                            <span class="label label-danger">
-                                    غیر فعال
-                                    </span>
-                                        {% endif %}
-                                    </strong>
-                                </td>
-
-                                <td class="text-center">
-                                    <a href=""
-                                       class="btn btn-sm btn-success"
-                                       data-toggle="tooltip" title="مشاهده">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="panel-footer">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <small class="text-muted">تعداد کل ایتم ها: {{ item.users.count }}</small>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="panel box box-primary panel-default" style="margin-top: 20px;">
-                <div class="panel-heading clearfix">
-                    <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست محصولات فروشگاه </h3>
-
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered table-striped">
-                        <thead>
-                        <tr class="bg-primary">
-                            <th class="text-center" width="5%">#</th>
-                            <th width="25%" class="text-center">نام</th>
-                            <th class="text-center" width="10%">قیمت</th>
-                            <th class="text-center" width="10%">وضعیت</th>
-                            <th class="text-center" width="35%">مشاهده</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for item in item.products.all %}
+                        {% for item in item.address.all %}
                             <tr>
                                 <td class="text-center">{{ item.id }}
                                 </td>
 
                                 <td class="text-center">
                                     <strong>{{ item.name }}</strong>
+                                    <strong>{{ item.last_name }}</strong>
                                 </td>
                                 <td class="text-center">
-                                    <strong>{{ item.calc_discount|tdc }}</strong>
+                                    <strong>{{ item.province }}</strong>
                                 </td>
-
                                 <td class="text-center">
-                                    <strong>
-                                        {% if item.is_active %}
-                                            <span class="label label-success">
-                                    فعال
-                                    </span>
-                                        {% else %}
-                                            <span class="label label-danger">
-                                    غیر فعال
-                                    </span>
-                                        {% endif %}
-                                    </strong>
+                                    <strong>{{ item.city }}</strong>
                                 </td>
-
-                                <td class="text-center">
-                                    <a href="{{ item.get_absolute_url }}"
-                                       class="btn btn-sm btn-success"
-                                       data-toggle="tooltip" title="مشاهده">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
+                                <td dir="ltr" class="text-center">
+                                    <strong>{{ item.zipcode }}</strong>
+                                </td>
+                                <td dir="ltr" class="text-center">
+                                    <strong>{{ item.phone }}</strong>
+                                </td>
+                                <td dir="ltr" class="text-center">
+                                    <strong>{{ item.address }}</strong>
+                                </td>
+                                <td dir="ltr" class="text-center">
+                                    <strong>{{ item.additional_decryption }}</strong>
                                 </td>
 
                             </tr>
@@ -210,7 +145,7 @@
                 <div class="panel-footer">
                     <div class="row">
                         <div class="col-md-6">
-                            <small class="text-muted">تعداد کل ایتم ها: {{ item.products.count }}</small>
+                            <small class="text-muted">تعداد کل ایتم ها: {{ item.address.count }}</small>
                         </div>
 
                     </div>
@@ -219,7 +154,7 @@
 
             <div class="panel box box-primary panel-default" style="margin-top: 20px;">
                 <div class="panel-heading clearfix">
-                    <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست پست های فروشگاه </h3>
+                    <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست پست های کاربر </h3>
 
                 </div>
 
@@ -229,9 +164,12 @@
                         <tr class="bg-primary">
                             <th class="text-center" width="5%">#</th>
                             <th width="25%" class="text-center">عنوان</th>
-                            <th width="25%" class="text-center">نویسنده</th>
+                            <th width="25%" class="text-center">فروشگاه</th>
+                            <th class="text-center" width="10%">تایید ادمین</th>
                             <th class="text-center" width="10%">وضعیت</th>
-                            <th class="text-center" width="35%">مشاهده</th>
+                            <th width="25%" class="text-center">زمان انتشار</th>
+                            <th width="10%" class="text-center">دسته</th>
+                            <th class="text-center" width="10%">مشاهده</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -244,7 +182,20 @@
                                     <strong>{{ item.title }}</strong>
                                 </td>
                                 <td class="text-center" dir="ltr">
-                                    <strong>{{ item.user.PhoneNumber }}</strong>
+                                    <strong>{{ item.user.store.name }}</strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>
+                                        {% if item.admin_verified %}
+                                            <span class="label label-success">
+                                    فعال
+                                    </span>
+                                        {% else %}
+                                            <span class="label label-danger">
+                                    غیر فعال
+                                    </span>
+                                        {% endif %}
+                                    </strong>
                                 </td>
 
                                 <td class="text-center">
@@ -258,6 +209,29 @@
                                     غیر فعال
                                     </span>
                                         {% endif %}
+                                    </strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>
+                                        {% if item.is_active %}
+                                            <span class="label label-success">
+                                           {{ item.updated_at|to_jalali:'%H:%M - %Y/%m/%d' }}
+                                    </span>
+                                        {% else %}
+                                            <span class="label label-danger">
+                                    غیر فعال
+                                    </span>
+                                        {% endif %}
+                                    </strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>
+
+
+                                            <span class="label label-default">
+                                                {{ item.category.name }}
+                                            </span>
+
                                     </strong>
                                 </td>
 
@@ -285,7 +259,7 @@
             </div>
             <div class="panel box box-primary panel-default" style="margin-top: 20px;">
                 <div class="panel-heading clearfix">
-                    <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست سفارشات فروشگاه </h3>
+                    <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست سفارشات کاربر </h3>
 
                 </div>
 
@@ -295,14 +269,14 @@
                         <tr class="bg-primary">
                             <th class="text-center" width="5%">#</th>
                             <th width="10%" class="text-center">قیمت</th>
-                            <th width="15%" class="text-center">خریدار</th>
+                            <th width="15%" class="text-center">فروشگاه</th>
                             <th width="10%" class="text-center"> وضعیت</th>
                             <th width="15%" class="text-center">تاریخ ثانویه</th>
-                            <th class="text-center" width="35%">مشاهده</th>
+                            <th class="text-center" width="10%">مشاهده</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for item in item.orders.all %}
+                        {% for item in item.orders.all|order_by:'-id' %}
                             <tr>
                                 <td class="text-center">{{ item.id }}
                                 </td>
@@ -311,7 +285,7 @@
                                     <strong>{{ item.get_payment_price|tdc }}</strong>
                                 </td>
                                 <td class="text-center" dir="ltr">
-                                    <strong>{{ item.user.PhoneNumber }}</strong>
+                                    <strong>{{ item.store.name }}</strong>
                                 </td>
 
                                 <td class="text-center">
@@ -331,7 +305,7 @@
                                         {% endif %}
                                     </strong>
                                 </td>
-                                <td class="text-center" >
+                                <td class="text-center">
                                     <strong>{{ item.second_date|to_jalali:' %H/%M - %Y/%m/%d ' }}</strong>
                                 </td>
                                 <td class="text-center">

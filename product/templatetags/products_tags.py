@@ -63,3 +63,7 @@ def minesR(x, y):
         return '{:,}'.format((int(x) - int(y)) * 10)
     else:
         return '{:,}'.format((int(y) - int(x)) * 10)
+
+@register.filter
+def order_by(orm, sort):
+    return orm.order_by(sort)

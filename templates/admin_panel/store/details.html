@@ -16,14 +16,14 @@
 
 {% block body %}
     <div class="container" style="margin-top: 70px;">
-        <div class="panel panel-primary">
+        <div class="panel panel-primary ">
             <div class="panel-heading text-center">
                 <h3 class="panel-title">جزییات {{ item.name }}</h3>
             </div>
             <div class="panel-body">
 
                 <!-- جدول اطلاعات کلی سفارش -->
-                <table class="table table-bordered table-striped">
+                <table class="table table-bordered table-striped ">
                     <tbody>
                     <tr>
                         <td><strong>نام:</strong> <span>{{ item.name }}</span></td>
@@ -129,8 +129,8 @@
                         <thead>
                         <tr class="bg-primary">
                             <th class="text-center" width="5%">#</th>
-                            <th width="25%" class="text-center">نام</th>
-                            <th class="text-center" width="10%">شماره</th>
+                            <th class="text-center" width="25%">شماره</th>
+                            <th width="15%" class="text-center">نام</th>
                             <th class="text-center" width="10%">وضعیت</th>
                             <th class="text-center" width="10%">وضعیت اطلاعات</th>
                             <th class="text-center" width="35%">مشاهده</th>
@@ -142,11 +142,11 @@
                                 <td class="text-center">{{ item.id }}
                                 </td>
 
-                                <td class="text-center">
-                                    <strong>{{ item.get_full_name }}</strong>
-                                </td>
                                 <td class="text-center" dir="ltr">
                                     <strong>{{ item.PhoneNumber }}</strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>{{ item.get_full_name }}</strong>
                                 </td>
 
                                 <td class="text-center">
@@ -177,7 +177,7 @@
                                 </td>
 
                                 <td class="text-center">
-                                    <a href=""
+                                    <a href="{% url 'admin_panel:user-detail' item.id %}"
                                        class="btn btn-sm btn-success"
                                        data-toggle="tooltip" title="مشاهده">
                                         <i class="fa fa-eye"></i>
@@ -217,7 +217,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for item in item.products.all %}
+                        {% for item in item.products.all|order_by:'-id' %}
                             <tr>
                                 <td class="text-center">{{ item.id }}
                                 </td>
@@ -285,7 +285,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for item in item.blogs.all %}
+                        {% for item in item.blogs.all|order_by:'-id' %}
                             <tr>
                                 <td class="text-center">{{ item.id }}
                                 </td>
@@ -352,7 +352,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for item in item.orders.all %}
+                        {% for item in item.orders.all|order_by:'-id' %}
                             <tr>
                                 <td class="text-center">{{ item.id }}
                                 </td>

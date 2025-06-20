@@ -444,6 +444,33 @@ desired effect
 
                     <li class="treeview">
                         <a><i class="fa fa-link"></i>
+                            <span>محصولات</span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:product-list' %}"><i class="fa fa-link"></i>
+                                    <span>محصولات</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:product-category-list' %}"><i class="fa fa-link"></i>
+                                    <span>دسته بندی ها</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:product-brand-list' %}"><i class="fa fa-link"></i>
+                                    <span>برند ها</span>
+                                </a>
+                            </li>
+
+
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
                             <span>تنظیمات </span>
                             <span class="pull-left-container">
                              <i class="fa fa-angle-right pull-left"></i>

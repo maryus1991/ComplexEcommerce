@@ -5,6 +5,8 @@ from django.shortcuts import get_object_or_404, redirect, reverse, render
 from django.urls import reverse_lazy
 from user.mixins.logins import AdminUserMixin
 from admin_panel.forms import AddUserModelForm
+from auditlog.models import LogEntry
+from django.contrib.contenttypes.models import ContentType
 
 User = get_user_model()
 
@@ -246,4 +248,50 @@ class UserActiveDeactivateView(AdminUserMixin, RedirectView):
         return reverse('admin_panel:user-list')
 
 
-class UserDeleteView(AdminUserMixin, View): pass
+class UserDeleteView(AdminUserMixin, View):
+    """for deleting users"""
+    def get(self, request, *args, **kwargs):
+        messages.error(request ,'با حذف کاربر موارد دیگه هم حذف خواهمد شد')
+        messages.warning(request ,'بهتر است به جای حذف کاربر ان را غیر فعال کنید')
+        obj = get_object_or_404(User, pk=kwargs.get('pk'))
+        return render(request, 'admin_panel/users/delete.html', {'item': obj})
+
+    def post(self, request, *args, **kwargs):
+        obj = get_object_or_404(User, pk=kwargs.get('pk'))
+        conform = request.POST.get('conform')
+
+        if obj.PhoneNumber == conform:
+            obj.delete()
+            messages.info(request, 'کاربر مورد نظر حذف شد')
+            return redirect('admin_panel:user-list')
+        else:
+            messages.info(request, 'در وارد کردن شماره کاربر دقت کنید')
+            return redirect(request.META.get('HTTP_REFERER'))
+
+class UserActivitiesView(AdminUserMixin, ListView):
+    """
+    نمایش فعالیت‌های کاربر با استفاده از ListView
+    """
+    template_name = 'admin_panel/users/activities.html'
+    context_object_name = 'activities'
+    paginate_by = 50
+
+    def get_queryset(self):
+        user = get_object_or_404(
+            User,
+            pk=self.kwargs['pk']
+        )
+
+        return LogEntry.objects.filter(
+            actor=user
+        ).order_by('-timestamp')
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # اضافه کردن کاربر به context
+        context['user'] = get_object_or_404(
+            User,
+            pk=self.kwargs['pk']
+        )
+        return context
