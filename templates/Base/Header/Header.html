@@ -192,19 +192,23 @@
                             ورود
                         </a>
                         <span class="border-t dark:border-gray-100/20 border-gray-100-gray-100"></span>
+
                         <a href="{% url 'user:register' %}"
-                           class="flex items-center gap-x-3 w-full hover:bg-red-400/20 dark:hover:bg-rose-500/20 rounded hover:text-rose-400">
+                           class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
                             <svg class="h-5 w-5">
                                 <use href="#arrow-left-start-on-rectangle"></use>
+
                             </svg>
                             ثبت نام
+
                         </a>
+
                     {% endif %}
 
                 </div>
             </button>
             <!-- LOGIN BTN -->
-            <a href="login.html"
+            <a href="{% url 'user:login' %}"
                class="hidden relative px-2 lg:px-3 py-2 items-center justify-end gap-x-1 text-white transition-colors bg-green-500 hover:bg-green-600 rounded-lg">
                 <svg class="h-5 w-5 flex rotate-180">
                     <use href="#arrow-left-start-on-rectangle"></use>

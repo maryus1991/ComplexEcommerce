@@ -43,6 +43,15 @@ class AddUserModelForm(forms.ModelForm):
     )
 
     conform_password = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(
+            attrs={
+                'class': 'form-control',
+            }
+        )
+    )
+    password = forms.CharField(
+        required=False,
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control',
@@ -51,7 +60,7 @@ class AddUserModelForm(forms.ModelForm):
     )
     class Meta:
         model = User
-        fields = [ 'password', 'first_name', 'last_name',
+        fields = ['first_name', 'last_name',
                   'PhoneNumber', 'store','legal_person',
                   'legal_person_economic_number', 'is_active',
                   'legal_person_registration_number', 'is_superuser',

@@ -1,5 +1,5 @@
 from django.views.generic import RedirectView, CreateView, UpdateView, ListView, View, DetailView
-from django.shortcuts import get_object_or_404, redirect, reverse, render
+from django.shortcuts import get_object_or_404, redirect, reverse, render, Http404
 from django.urls import reverse_lazy
 from user.mixins.logins import AdminUserMixin
 from stores.models import Store
@@ -147,11 +147,16 @@ class StoreDetailView(AdminUserMixin, DetailView):
     template_name = 'admin_panel/store/details.html'
 
     def get_object(self, queryset=None):
-        return self.model.objects.filter(
+        user = self.model.objects.filter(
             pk=self.kwargs['pk']
         ).prefetch_related(
             'blogs', 'products', 'users', 'orders'
-        ).first()
+        )
+
+        if user.count() != 1:
+            raise Http404()
+
+        return user.first()
 
 
 class StoreVerifyView(AdminUserMixin, RedirectView):
@@ -164,11 +169,11 @@ class StoreVerifyView(AdminUserMixin, RedirectView):
         if store.is_verified:
             store.is_verified = False
             store.save()
-            messages.success(self.request, 'وضعیت اطلاعات فروشگاه تایید شد')
+            messages.warning(self.request, 'وضعیت اطلاعات فروشگاه تایید نشد')
         else:
             store.is_verified = True
             store.save()
-            messages.warning(self.request, 'وضعیت اطلاعات فروشگاه تایید نشد')
+            messages.success(self.request, 'وضعیت اطلاعات فروشگاه تایید شد')
 
         return reverse('admin_panel:store-list')
 
@@ -181,11 +186,11 @@ class StoreActiveAndDeactivateView(AdminUserMixin, RedirectView):
         if store.is_active:
             store.is_active = False
             store.save()
-            messages.success(self.request, 'وضعیت اطلاعات فروشگاه فعال شد')
+            messages.warning(self.request, 'وضعیت اطلاعات فروشگاه غیر فعال شد')
         else:
             store.is_active = True
             store.save()
-            messages.warning(self.request, 'وضعیت اطلاعات فروشگاه غیر فعال شد')
+            messages.success(self.request, 'وضعیت اطلاعات فروشگاه فعال شد')
 
         return reverse('admin_panel:store-list')
 

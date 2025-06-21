@@ -9,3 +9,5 @@ from .sliders import *
 from .stores import *
 from .tickets import *
 from .users import *
+from .discount import *
+from .orders import *

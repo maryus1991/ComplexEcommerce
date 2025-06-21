@@ -1,7 +1,7 @@
 from django.views.generic import RedirectView, CreateView, UpdateView, ListView, View, DetailView
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404, redirect, reverse, render
+from django.shortcuts import get_object_or_404, redirect, reverse, render, Http404
 from django.urls import reverse_lazy
 from user.mixins.logins import AdminUserMixin
 from admin_panel.forms import AddUserModelForm
@@ -46,6 +46,11 @@ class UserCreateView(AdminUserMixin, CreateView):
         if conform_password != password:
             messages.error(self.request, 'رمز های وارد با هم متفاوت هستند')
             return redirect(self.request.META.get('HTTP_REFERER'))
+
+        if password is None or password == '' or not password.isalnum():
+            messages.error(self.request, 'رمز باید وارد شود')
+            return redirect(self.request.META.get('HTTP_REFERER'))
+
 
         if is_staff or is_store_admin:
             if store is None:
@@ -155,8 +160,10 @@ class UserUpdateView(AdminUserMixin, UpdateView):
 
         user_object = get_object_or_404(User, pk=self.kwargs['pk'])
 
-        if not user_object.check_password(password) and user_object != password:
-            user_object.set_password(password)
+        if password is None or password != '' or password.isalnum():
+            print(password, '123')
+            if not user_object.check_password(password) and user_object != password:
+                user_object.set_password(password)
 
         if PhoneNumber != user_object.PhoneNumber:
             phone_check = User.objects.filter(PhoneNumber=PhoneNumber)
@@ -198,10 +205,13 @@ class UserDetailsView(AdminUserMixin, DetailView):
     template_name = 'admin_panel/users/details.html'
 
     def get_object(self, queryset=None):
-        return User.objects.filter(id=self.kwargs['pk']
-                                   ).prefetch_related(
+        user = User.objects.filter(id=self.kwargs['pk']
+                            ).prefetch_related(
             'address', 'store', 'blogs', 'orders'
-        ).first()
+        )
+        if user.count() != 1:
+            raise Http404()
+        return user.first()
 
 
 class UserVerifyView(AdminUserMixin, RedirectView):

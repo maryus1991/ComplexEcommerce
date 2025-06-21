@@ -109,5 +109,8 @@ urlpatterns = [
     path('product/brands/active-deactivate/<int:pk>', views.BlogCategoryActiveAndDeactivate.as_view(), name='product-brand-active-deactivate'),
     path('product/brands/delete/<int:pk>', views.BlogCategoryDelete.as_view(), name='product-brand-delete'),
 
+    # orders
+    path('order/', views.OrderListView.as_view(), name='orders-list'),
+    path('order/<int:pk>', views.OrderDetailView.as_view(), name='orders-detail'),
 
 ]
