@@ -59,6 +59,7 @@ class Product(models.Model):
     height = models.PositiveBigIntegerField(default=0)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=False)
+    admin_verified = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.name}-{self.id}-{self.count}'

@@ -301,13 +301,13 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['product'] = self.get_object()
+        context['category_form'] = AddCategoryForm()
+        context['brand_form'] = AddBrandForm()
         return context
 
     def form_valid(self, form):
         store = self.request.user.store
-        tags = form.cleaned_data['tags'].split('**')
-        features = form.cleaned_data['features'].split('**')
-        specs = form.cleaned_data['specs'].split('**')
+
         gallery = form.cleaned_data['gallery']
         product = Product.objects.filter(pk=self.kwargs.get('pk'), store=store).update(
             name=form.cleaned_data['name'],
@@ -320,7 +320,6 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
             weight=form.cleaned_data['weight'],
             brand=form.cleaned_data['brand'],
             category=form.cleaned_data['category'],
-
         )
 
         product = self.get_object()
@@ -328,8 +327,11 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
         for img in gallery:
             ProductGallery.objects.create(product=product, image=img).save()
 
-        if specs:
+        tags = form.cleaned_data['tags'].split('**')
+        features = form.cleaned_data['features'].split('**')
+        specs = form.cleaned_data['specs'].split('**')
 
+        if specs:
             ProductSpecifications.objects.filter(product=product).all().delete()
 
             for spec in specs:
@@ -367,7 +369,7 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
         messages.success(self.request,
                          'تغییرات شما با موفقیت ثبت شد')
         product.save()
-        return super().form_valid(form)
+        return redirect('store:list-product')
 
 
 class StoreEditProductRemoveImg(UserStoreStaffMixin, RedirectView):
@@ -417,7 +419,7 @@ class StoreDeleteProductView(StoreAdminUserStaff, View):
         product = get_object_or_404(Product, id=product_id, store=self.request.user.store)
         messages.warning(self.request,
                          'با حذف محصول تمام اطلاعات زیر مجموعه ان پاک خواهد شد بهتر است محصول را غیر فعال کنید تا از حذف شدن اطلاعات جلوگیری کنید')
-        return render(request, 'store/delete_product_conform.html', {'product': product})
+        return render(request, 'store/product/delete_product_conform.html', {'product': product})
 
     def post(self, request, *args, **kwargs):
         product_id = self.kwargs.get('pk')

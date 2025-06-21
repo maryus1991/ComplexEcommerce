@@ -77,481 +77,386 @@
 
         <div class="row">
 
-            <div class="col-md-12">
-                <div class="row d-flex align-items-stretch" style=" padding-bottom: 10px">
-                    <!-- مهم: اینجا row و flex -->
-
-                    <!-- فرم دسته‌بندی -->
-                    <div class="col-md-6 d-flex">
-                        <div class="box box-primary flex-fill collapsed-box"> <!-- flex-fill برای پر کردن ارتفاع -->
-                            <div class="box-header with-border">
-                                <h3 class="box-title">اضافه کردن دسته بندی</h3>
-                                <div class="pull-right box-tools">
-                                    <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
-                                            data-toggle="tooltip" title="" data-original-title="Collapse">
-                                        <i class="fa fa-plus"></i></button>
-
-                                </div>
-                            </div>
-                            <form role="form" method="POST" action="{% url 'store:add-category' %}"
-                                  enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <div class="box-body">
-                                    <div class="form-group">
-                                        <label for="id_name">نام: </label>
-                                        {{ category_form.name }}
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="id_parent">دسته بندی مادر: </label>
-                                        {{ category_form.parent }}
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="id_image">لوگو</label>
-                                        {{ category_form.image }}
-                                    </div>
-                                    <div class="form-check">
-                                        {{ category_form.is_active }}
-                                        <label class="form-check-label" for="id_is_active">فعال کردن دسته بندی</label>
-                                    </div>
-                                </div>
-                                <div class="box-footer">
-                                    <button type="submit" class="btn btn-primary">ارسال</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- فرم برند -->
-                    <div class="col-md-6 d-flex" style="">
-                        <div class="box box-primary flex-fill collapsed-box">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">اضافه کردن برند</h3>
-                                <div class="pull-right box-tools">
-                                    <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
-                                            data-toggle="tooltip" title="" data-original-title="Collapse">
-                                        <i class="fa fa-plus"></i></button>
-
-                                </div>
-                            </div>
-                            <form role="form" method="POST" action="{% url 'store:add-brands' %}"
-                                  enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <div class="box-body">
-                                    <div class="form-group">
-                                        <label for="id_name_2">نام: </label>
-                                        {{ brand_form.name }}
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="id_image_2">لوگو</label>
-                                        {{ brand_form.image }}
-                                    </div>
-                                    <div class="form-check">
-                                        {{ brand_form.is_active }}
-                                        <label class="form-check-label" for="id_is_active_2">فعال کردن برند</label>
-                                    </div>
-                                </div>
-                                <div class="box-footer" style="margin-top: 70px;">
-                                    <button type="submit" class="btn btn-primary">ارسال</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="box box-info">
-                    <div class="box-header">
-                        <h3 class="box-title">
-                            اضافه کردن محصول
-                        </h3>
-                        <!-- tools box -->
-                        <div class="pull-right box-tools">
-                            <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
-                                    data-toggle="tooltip" title="" data-original-title="Collapse">
-                                <i class="fa fa-minus"></i></button>
-
-                        </div>
-                        <!-- /. tools -->
-                    </div>
-
-                    <!-- /.box-header -->
-                    <div class="box-body pad">
-                        <form enctype="multipart/form-data" method="post" action="">
-                            {% csrf_token %}
-                            <div class="col-md-12 form-group  " style="border: None !important;">
-
-
-                                <div class="col-md-4 border-0">
-
-                                    <div class="input-group input-group">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-warning btn-flat">
-                                    عنوان محصول:
-
-                                          </span>
-                                        </span>
-                                        {{ form.name }}
-
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-
-                                    <div class="input-group input-group">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-flat" style="background-color: #932ab6; color: white;">
-                                              قیمت :
-
-                                          </span>
-                                        </span>
-                                        {{ form.price }}
-
-                                    </div>
-                                </div>
-                                <div class="col-md-3 ">
-
-                                    <div class="input-group input-group">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-info btn-flat">
-                                              عکس اصلی
-
-                                          </span>
-                                        </span>
-                                        {{ form.picture }}
-                                    </div>
-
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="input-group input-group">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-success btn-flat">
-                                              گالری محصول
-                                          </span>
-                                        </span>
-                                        {{ form.gallery }}
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="col-md-12 form-group">
-                                <div class="">
-                                    <div class="col-md-3">
-                                        <div class="input-group input-group" dir="rtl">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-flat" style="background-color: #ed59f4; color: white;">
-                                            دسته بندی:
-
-                                          </span>
-                                        </span>
-                                            {{ form.category }}
-
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3" dir="rtl">
-                                        <div class="input-group input-group">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-flat" style="background-color: #0000ff; color: white;">
-                                              برند :
-
-                                          </span>
-                                        </span>
-                                            {{ form.brand }}
-
-                                        </div>
-
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                            <span class="input-group-addon">
-                                                 تخفیف :
-                                              {{ form.have_discount }}
-                                            </span>
-                                            {{ form.discount }}
-                                        </div>
-
-
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="col-md-12 form-group">
-                                <div class="">
-                                    <div class="col-md-6">
-                                        <div class="input-group input-group">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-flat" style="background-color: #f56954; color: white;">
-                                              تعداد :
-
-                                          </span>
-                                        </span>
-                                            {{ form.count }}
-
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="input-group input-group">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-flat" style="background-color: #726204; color: white;">
-                                              وزن (گرم) :
-
-                                          </span>
-                                        </span>
-                                            {{ form.weight }}
-
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="col-md-12 form-group">
-                                <div class="">
-                                    <div class="col-md-4">
-                                        <div class="input-group input-group">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-flat" style="background-color: #f56954; color: white;">
-                                              ارتفاع (سانتی متر) :
-
-
-                                          </span>
-                                        </span>
-                                            {{ form.length }}
-
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="input-group input-group">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-flat" style="background-color: #726204; color: white;">
-                                              طول (سانتی متر) :
-
-                                          </span>
-                                        </span>
-
-                                            {{ form.width }}
-
-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="input-group input-group">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-flat" style="background-color: #726204; color: white;">
-                                               عرض (سانتی متر) :
-
-
-                                          </span>
-                                        </span>
-                                            {{ form.height }}
-
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <script>
-                                function tag_feature_remove(element) {
-                                    element.remove();
-                                }
-                            </script>
-
-
-                            <div class="form-group col-md-12">
-                                <div class="col-md-3">
-                                    <div class="input-group input-group-sm">
-                                        {{ form.features }}
-
-                                        <span class="input-group-btn">
-                                          <button type="button" onclick="serFeatures()" class="btn btn-info btn-flat">
-                                              ثبت
-                                          </button>
-                                        </span>
-                                    </div>
-                                    <p>
-                                        برای حذف ایتم ها روی ان کلیک کنید
-                                    </p>
-                                </div>
-
-                                <div class="col-span-9" id="tags-features">
-                                    {% if product %}
-
-                                        {% for feature in product.features.all %}
-                                            <input data-toggle='modal' onclick="tag_feature_remove(this)"
-                                                   class='btn btn-default form-group features-input-x'
-                                                   data-target='#modal-default' value='{{ feature.title }}'>
-                                        {% endfor %}
-
-                                    {% endif %}
-
-                                </div>
-                                <script>
-                                    var counter = 0
-
-                                    function serFeatures() {
-                                        elem = document.getElementById("tags-features");
-                                        elem2 = document.getElementById("id_features");
-
-                                        elem.innerHTML += " <input data-toggle='modal' onclick='tag_feature_remove(this)' class='btn btn-default form-group features-input-x' data-target='#modal-default' value='" + elem2.value + " '>";
-                                        elem2.value = ''
-                                        counter++;
-                                    }
-                                </script>
-                            </div>
-                            <div class="form-group col-md-12">
-                                <script>
-                                    var counter = 0
-
-                                    function setSpecs() {
-                                        elem = document.getElementById("tags-specs");
-                                        elem2 = document.getElementById("id_specs");
-
-                                        elem.innerHTML += " <input data-toggle='modal' onclick='tag_feature_remove(this)' class='btn btn-default form-group specs-input-x' data-target='#modal-default' value='" + elem2.value + " '>";
-                                        elem2.value = ''
-                                        counter++;
-                                        console.log(counter)
-                                    }
-                                </script>
-                                <div class="col-md-3">
-                                    <div class="input-group input-group-sm">
-                                        {{ form.specs }}
-
-                                        <span class="input-group-btn">
-                                          <button type="button" onclick="setSpecs()" class="btn btn-info btn-flat">
-                                              ثبت
-                                          </button>
-                                        </span>
-                                    </div>
-
-                                </div>
-
-                                <div class="col-span-9" id="tags-specs">
-                                    {% if product %}
-
-                                        {% for spec in product.specs.all %}
-                                            <input data-toggle='modal' onclick="tag_feature_remove(this)"
-                                                   class='btn btn-default form-group specs-input-x'
-                                                   data-target='#modal-default' value='{{ spec.name }}'>
-                                        {% endfor %}
-
-                                    {% endif %}
-
-                                </div>
-
-                            </div>
-
-                            <div class="form-group col-md-12" style="">
-
-                                <div class="col-md-3">
-                                    <div class="input-group input-group-sm">
-                                        {{ form.tags }}
-                                        <span class="input-group-btn">
-                                            <button type="button" onclick="setTags()" class="btn btn-info btn-flat"
-                                                    id="add-tag-btn">
-                                                ثبت
-                                            </button>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div id="tags-container" class="col-md-9">
-                                    {% if product %}
-                                        {% for tag in product.tags.all %}
-                                            <input data-toggle='modal' onclick='tag_feature_remove(this)'
-                                                   class='btn btn-default form-group features-input-x'
-                                                   data-target='#modal-default' value='{{ tag.name }}'>
-                                        {% endfor %}
-
-                                    {% endif %}
-                                </div>
-
-                                <script>
-                                    var counter = 0
-
-                                    function setTags() {
-                                        elem = document.getElementById("tags-container");
-                                        elem2 = document.getElementById("id_tags");
-
-                                        elem.innerHTML += " <input onclick='tag_feature_remove(this)' data-toggle='modal' class='btn btn-default form-group tags-input-x' data-target='#modal-default' value='" + elem2.value + " '>";
-                                        elem2.value = ''
-                                        counter++;
-                                    }
-                                </script>
-                            </div>
-                            <div class="col-md-12 items-center">
-                                <div class="col-md-2">
-
-                                </div>
-                                <div class="col-md-9">
-                                    {{ form.media }}
-                                    {{ form.description }}
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <br>
-                                <br>
-                                <br>
-                                <button type="submit" onclick="submitForm()" class="btn btn-success btn-block">ثبت
-                                </button>
-                            </div>
-                            <script>
-                                function submitForm() {
-                                    let tags = document.getElementsByClassName('tags-input-x')
-                                    let features = document.getElementsByClassName('features-input-x')
-                                    let specs = document.getElementsByClassName('specs-input-x')
-                                    let tagsContainer = document.getElementById('id_tags')
-                                    let featuresContainer = document.getElementById('id_features')
-                                    let specsContainer = document.getElementById('id_specs')
-                                    for (items of features) {
-                                        featuresContainer.value += items.value + "**"
-                                    }
-                                    for (items of tags) {
-                                        tagsContainer.value += items.value + "**";
-                                    }
-                                    for (items of specs) {
-                                        specsContainer.value += items.value + "**";
-                                    }
-
-                                }
-                            </script>
-                        </form>
-                        {% if product %}
-                            <div class="col-md-12">
-                                <h6>برای عوض کردن عکس اصلی کافیه عکس جدید را اپلود کنید و عکس اصلی حذف خواهد شد و عکس
-                                    جدید جایگزین ان می شود</h6>
-                                <h6>و برای عوض کردن عکس های گالری انهارو حذف کنید و دوباره اپلود میشود و <span
-                                        class="btn btn-default " style="background-color: red; color: white"> با کلیک روی عکس های گالری محصول حذف می شوند </span>
-                                </h6>
-                                <div class="col-md-3">
-                                    <h6>
-                                        عکس اصلی محصول :
-                                    </h6>
-                                    <img src="{{ product.picture.url }}" alt="" class="img-thumbnail img-responsive "
-                                         height="250px" width="250px">
-                                </div>
-                                <div class="col-md-9">
-                                    <h6>
-                                        گالری محصول :
-                                    </h6>
-
-                                    {% for img in product.gallery.all %}
-
-                                        <a href="{% url 'store:remove-img-edit-product' pk=product.id img_id=img.id %}">
-                                            <img src="{{ img.image.url }}" alt=""
-                                                 class=""
-                                                 height="150px" width="150px"></a>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endif %}
-
+<div class="col-md-12">
+    <!-- بخش دسته‌بندی و برند -->
+    <div class="row d-flex align-items-stretch" style="padding-bottom: 10px">
+        <!-- فرم دسته‌بندی -->
+        <div class="col-md-6 d-flex">
+            <div class="box box-primary flex-fill collapsed-box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">اضافه کردن دسته بندی</h3>
+                    <div class="pull-right box-tools">
+                        <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fa fa-plus"></i>
+                        </button>
                     </div>
                 </div>
-
+                <form role="form" method="POST" action="{% url 'store:add-category' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="id_name">نام:</label>
+                            {{ category_form.name }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_parent">دسته بندی مادر:</label>
+                            {{ category_form.parent }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_image">لوگو</label>
+                            {{ category_form.image }}
+                        </div>
+                        <div class="form-check">
+                            {{ category_form.is_active }}
+                            <label class="form-check-label" for="id_is_active">فعال کردن دسته بندی</label>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">ارسال</button>
+                    </div>
+                </form>
             </div>
         </div>
+
+        <!-- فرم برند -->
+        <div class="col-md-6 d-flex">
+            <div class="box box-primary flex-fill collapsed-box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">اضافه کردن برند</h3>
+                    <div class="pull-right box-tools">
+                        <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <form role="form" method="POST" action="{% url 'store:add-brands' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="id_name_2">نام:</label>
+                            {{ brand_form.name }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_image_2">لوگو</label>
+                            {{ brand_form.image }}
+                        </div>
+                        <div class="form-check">
+                            {{ brand_form.is_active }}
+                            <label class="form-check-label" for="id_is_active_2">فعال کردن برند</label>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">ارسال</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- فرم محصول -->
+    <div class="box box-info">
+        <div class="box-header">
+            <h3 class="box-title">اضافه کردن محصول</h3>
+            <div class="pull-right box-tools">
+                <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="box-body pad">
+            <form enctype="multipart/form-data" method="post" action="">
+                {% csrf_token %}
+                
+                <!-- ردیف اول فرم محصول -->
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat">عنوان محصول:</span>
+                            </span>
+                            {{ form.name }}
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #932ab6; color: white;">قیمت:</span>
+                            </span>
+                            {{ form.price }}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-info btn-flat">عکس اصلی</span>
+                            </span>
+                            {{ form.picture }}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-success btn-flat">گالری محصول</span>
+                            </span>
+                            {{ form.gallery }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ردیف دوم فرم محصول -->
+                <div class="row form-group">
+                    <div class="col-md-3">
+                        <div class="input-group" dir="rtl">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #ed59f4; color: white;">دسته بندی:</span>
+                            </span>
+                            {{ form.category }}
+                        </div>
+                    </div>
+                    <div class="col-md-3" dir="rtl">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #0000ff; color: white;">برند:</span>
+                            </span>
+                            {{ form.brand }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                تخفیف: {{ form.have_discount }}
+                            </span>
+                            {{ form.discount }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ردیف سوم فرم محصول -->
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #f56954; color: white;">تعداد:</span>
+                            </span>
+                            {{ form.count }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #726204; color: white;">وزن (گرم):</span>
+                            </span>
+                            {{ form.weight }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ردیف چهارم فرم محصول -->
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #f56954; color: white;">ارتفاع (سانتی متر):</span>
+                            </span>
+                            {{ form.length }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #726204; color: white;">طول (سانتی متر):</span>
+                            </span>
+                            {{ form.width }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #726204; color: white;">عرض (سانتی متر):</span>
+                            </span>
+                            {{ form.height }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ویژگی‌های محصول -->
+                <div class="row form-group">
+                    <div class="col-md-3">
+                        <div class="input-group input-group-sm">
+                            {{ form.features }}
+                            <span class="input-group-btn">
+                                <button type="button" onclick="addFeature()" class="btn btn-info btn-flat">ثبت</button>
+                            </span>
+                        </div>
+                        <p>برای حذف ایتم‌ها روی آن کلیک کنید</p>
+                    </div>
+                    <div class="col-md-9" id="features-container">
+                        {% if product %}
+                            {% for feature in product.features.all %}
+                                <input type="button" onclick="removeTag(this)" class="btn btn-default form-group feature-tag" value="{{ feature.title }}">
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- مشخصات فنی محصول -->
+                <div class="row form-group">
+                    <div class="col-md-3">
+                        <div class="input-group input-group-sm">
+                            {{ form.specs }}
+                            <span class="input-group-btn">
+                                <button type="button" onclick="addSpec()" class="btn btn-info btn-flat">ثبت</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-9" id="specs-container">
+                        {% if product %}
+                            {% for spec in product.specs.all %}
+                                <input type="button" onclick="removeTag(this)" class="btn btn-default form-group spec-tag" value="{{ spec.name }}">
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- تگ‌های محصول -->
+                <div class="row form-group">
+                    <div class="col-md-3">
+                        <div class="input-group input-group-sm">
+                            {{ form.tags }}
+                            <span class="input-group-btn">
+                                <button type="button" onclick="addTag()" class="btn btn-info btn-flat">ثبت</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-9" id="tags-container">
+                        {% if product %}
+                            {% for tag in product.tags.all %}
+                                <input type="button" onclick="removeTag(this)" class="btn btn-default form-group tag" value="{{ tag.name }}">
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- توضیحات محصول -->
+                <div class="row">
+                    <div class="col-md-12">
+                        {{ form.media }}
+                        {{ form.description }}
+                    </div>
+                </div>
+
+                <!-- دکمه ثبت -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <br>
+                        <button type="submit" onclick="prepareFormData()" class="btn btn-success btn-block">ثبت</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- نمایش عکس‌های محصول (اگر وجود داشته باشد) -->
+            {% if product %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <h6>برای عوض کردن عکس اصلی کافیه عکس جدید را اپلود کنید و عکس اصلی حذف خواهد شد و عکس جدید جایگزین ان می شود</h6>
+                        <h6>و برای عوض کردن عکس های گالری انهارو حذف کنید و دوباره اپلود میشود و 
+                            <span class="" style="background-color: red; color: white">با کلیک روی عکس های گالری محصول حذف می شوند</span>
+                        </h6>
+                        <div class="col-md-3">
+                            <h6>عکس اصلی محصول:</h6>
+                            <img src="{{ product.picture.url }}" alt="" class="img-thumbnail img-responsive" style="height: 250px; width: 250px;">
+                        </div>
+                        <div class="col-md-9">
+                            <h6>گالری محصول:</h6>
+                            {% for img in product.gallery.all %}
+                                <a href="{% url 'store:remove-img-edit-product' pk=product.id img_id=img.id %}">
+                                    <img src="{{ img.image.url }}" alt="" style="height: 150px; width: 150px; margin: 5px;">
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // تابع عمومی برای حذف تگ‌ها
+    function removeTag(element) {
+        element.remove();
+    }
+
+    // افزودن ویژگی
+    function addFeature() {
+        const input = document.getElementById("id_features");
+        const container = document.getElementById("features-container");
+        
+        if (input.value.trim() !== "") {
+            const newTag = document.createElement("input");
+            newTag.type = "button";
+            newTag.className = "btn btn-default form-group feature-tag";
+            newTag.value = input.value;
+            newTag.onclick = function() { removeTag(this); };
+            
+            container.appendChild(newTag);
+            input.value = "";
+        }
+    }
+
+    // افزودن مشخصه فنی
+    function addSpec() {
+        const input = document.getElementById("id_specs");
+        const container = document.getElementById("specs-container");
+        
+        if (input.value.trim() !== "") {
+            const newTag = document.createElement("input");
+            newTag.type = "button";
+            newTag.className = "btn btn-default form-group spec-tag";
+            newTag.value = input.value;
+            newTag.onclick = function() { removeTag(this); };
+            
+            container.appendChild(newTag);
+            input.value = "";
+        }
+    }
+
+    // افزودن تگ
+    function addTag() {
+        const input = document.getElementById("id_tags");
+        const container = document.getElementById("tags-container");
+        
+        if (input.value.trim() !== "") {
+            const newTag = document.createElement("input");
+            newTag.type = "button";
+            newTag.className = "btn btn-default form-group tag";
+            newTag.value = input.value;
+            newTag.onclick = function() { removeTag(this); };
+            
+            container.appendChild(newTag);
+            input.value = "";
+        }
+    }
+
+    // آماده‌سازی داده‌های فرم قبل از ارسال
+    function prepareFormData() {
+        // ویژگی‌ها
+        const features = document.getElementsByClassName('feature-tag');
+        const featuresInput = document.getElementById('id_features');
+        featuresInput.value = Array.from(features).map(tag => tag.value).join('**');
+
+        // تگ‌ها
+        const tags = document.getElementsByClassName('tag');
+        const tagsInput = document.getElementById('id_tags');
+        tagsInput.value = Array.from(tags).map(tag => tag.value).join('**');
+
+        // مشخصات فنی
+        const specs = document.getElementsByClassName('spec-tag');
+        const specsInput = document.getElementById('id_specs');
+        specsInput.value = Array.from(specs).map(tag => tag.value).join('**');
+    }
+</script>        </div>
     </section>
 
 

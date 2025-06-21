@@ -38,6 +38,7 @@ class ProductListView(ListView):
             is_active=True,
             store__is_active=True,
             store__is_verified=True,
+            admin_verified=True
         ).prefetch_related('features'
                            ).prefetch_related('tags'
                                               ).prefetch_related('specs')

@@ -331,6 +331,22 @@
                     </svg>
                     <a href="/"> صفحه اصلی</a>
                 </li>
+                                {% if user.is_superuser %}
+                    <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600">
+                        <svg class="w-6 h-6 ">
+                            <use href="#arrow-left-start-on-rectangle"></use>
+                        </svg>
+                        <a href="{% url 'admin_panel:main' %}">صفحه مدیریت سایت</a>
+                    </li>
+                {% endif %}
+                {% if user.is_staff and user.store is not None %}
+                    <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600">
+                        <svg class="w-6 h-6 ">
+                            <use href="#arrow-left-start-on-rectangle"></use>
+                        </svg>
+                        <a href="{% url 'store:home' %}">صفحه مدیریت فروشگاه</a>
+                    </li>
+                {% endif %}
                 <li class="text-red-500 hover:bg-red-500/20">
                     <svg class="w-5 h-5 ">
                         <use href="#arrow-left-start-on-rectangle"></use>

@@ -16,7 +16,6 @@ class SliderListView(AdminUserMixin, ListView):
     template_name = 'admin_panel/sliders/list.html'
 
 
-
 class SliderCreateView(AdminUserMixin, CreateView):
     """
     for creating a slider
@@ -54,19 +53,6 @@ class SliderUpdateView(AdminUserMixin, UpdateView):
         return super().form_invalid(form)
 
 
-class SliderDeleteView(AdminUserMixin, RedirectView):
-    """
-    for delete slider
-    """
-
-    def get_redirect_url(self, *args, **kwargs):
-        slider_id = kwargs.get('pk')
-        slider_object = get_object_or_404(Slider, pk=slider_id)
-        slider_object.delete()
-        messages.info(self.request, 'اسلایدر مورد نظر حذف شد')
-
-        return reverse_lazy('admin_panel:sliders-list')
-
 class SliderActiveAndDeactivateView(AdminUserMixin, RedirectView):
     """
     for active or deactivate slider
@@ -89,6 +75,20 @@ class SliderActiveAndDeactivateView(AdminUserMixin, RedirectView):
                 self.request,
                 'اسلایدر مورد نظر فعال شد'
             )
+
+        return reverse_lazy('admin_panel:sliders-list')
+
+
+class SliderDeleteView(AdminUserMixin, RedirectView):
+    """
+    for delete slider
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+        slider_id = kwargs.get('pk')
+        slider_object = get_object_or_404(Slider, pk=slider_id)
+        slider_object.delete()
+        messages.info(self.request, 'اسلایدر مورد نظر حذف شد')
 
         return reverse_lazy('admin_panel:sliders-list')
 

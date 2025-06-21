@@ -43,7 +43,7 @@
                         </div>
                     </div>
 
-                    <div class="box-body" style="display: block;">
+                    <div class="box-body" style="display: None;">
                         <form class="form-horizontal" method="GET" enctype="multipart/form-data">
                             <div class="panel panel-primary">
 
@@ -338,6 +338,12 @@
                                                     colspan="1"
                                                     aria-label="امتیاز: activate to sort column ascending">
                                                     برند
+                                                </th>                                                
+                                                <th class="sorting" tabindex="0" aria-controls="example2"
+                                                    rowspan="1"
+                                                    colspan="1"
+                                                    aria-label="امتیاز: activate to sort column ascending">
+                                                    تاییده ادمین
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="example2"
                                                     rowspan="1"
@@ -389,6 +395,18 @@
                                                     </td>
                                                     <td>{{ product.category.name }}</td>
                                                     <td>{{ product.brand.name }}</td>
+                                                    <td>
+                                                        {% if product.admin_verified %}
+                                                            <span class="label label-success">
+                                                            تاییده شده
+                                                            </span>
+                                                        	{% else %}
+                                                            <span class="label label-danger">
+                                                            تاییده نشده (برای فعالیت با ادمین در تماس باشید)  
+                                                            </span>
+                                                            
+                                                        {% endif %} 
+                                                    </td>
                                                     <td><a class="btn btn-block btn-success"
                                                            href="{% url 'product:detail' product.id %}">
                                                         مشاهده
@@ -463,6 +481,12 @@
                                                     colspan="1"
                                                     aria-label="امتیاز: activate to sort column ascending">
                                                     برند
+                                                </th>                                                
+                                                <th class="sorting" tabindex="0" aria-controls="example2"
+                                                    rowspan="1"
+                                                    colspan="1"
+                                                    aria-label="امتیاز: activate to sort column ascending">
+                                                    تاییده ادمین
                                                 </th>
                                                 <th class="sorting" tabindex="0" aria-controls="example2"
                                                     rowspan="1"
