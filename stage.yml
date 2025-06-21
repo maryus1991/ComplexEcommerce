@@ -27,7 +27,7 @@ services:
       - .envs
 
     expose:
-      - "8000"
+      - "32852"
 
     depends_on:
       - postgres

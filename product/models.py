@@ -30,7 +30,7 @@ class ProductBrand(models.Model):
 
 class ProductCategory(models.Model):
 
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='child')
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='child')
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to=photo_path_upload_to, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)

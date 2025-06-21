@@ -89,25 +89,26 @@ urlpatterns = [
     path('users/delete/<int:pk>', views.UserDeleteView.as_view(), name='user-delete'),
 
     # product
-    path('product/', views.BlogCategoryListView.as_view(), name='product-list'),
-    path('product/create/', views.BlogCategoryCreate.as_view(), name='product-create'),
-    path('product/update/<int:pk>', views.BlogCategoryUpdate.as_view(), name='product-update'),
-    path('product/active-deactivate/<int:pk>', views.BlogCategoryActiveAndDeactivate.as_view(), name='product-active-deactivate'),
-    path('product/delete/<int:pk>', views.BlogCategoryDelete.as_view(), name='product-delete'),
+    path('product/', views.ProductListView.as_view(), name='product-list'),
+    path('product/create/', views.ProductCreateView.as_view(), name='product-create'),
+    path('product/update/<int:pk>', views.ProductUpdateView.as_view(), name='product-update'),
+    path('product/active-deactivate/<int:pk>', views.ProductActiveAndDeactivateView.as_view(), name='product-active-deactivate'),
+    path('product/verify/<int:pk>', views.ProductAdminVerifiedView.as_view(), name='product-verify'),
+    path('product/delete/<int:pk>', views.ProductDeleteView.as_view(), name='product-delete'),
 
     # product category
-    path('product/categories/', views.BlogCategoryListView.as_view(), name='product-category-list'),
-    path('product/categories/create/', views.BlogCategoryCreate.as_view(), name='product-category-create'),
-    path('product/categories/update/<int:pk>', views.BlogCategoryUpdate.as_view(), name='product-category-update'),
-    path('product/categories/active-deactivate/<int:pk>', views.BlogCategoryActiveAndDeactivate.as_view(),  name='product-category-active-deactivate'),
-    path('product/categories/delete/<int:pk>', views.BlogCategoryDelete.as_view(), name='product-category-delete'),
+    path('product/categories/', views.ProductCategoryListView.as_view(), name='product-category-list'),
+    path('product/categories/create/', views.ProductCategoryCreateView.as_view(), name='product-category-create'),
+    path('product/categories/update/<int:pk>', views.ProductCategoryUpdateView.as_view(), name='product-category-update'),
+    path('product/categories/active-deactivate/<int:pk>', views.ProductCategoryActiveAndDeactivateView.as_view(),  name='product-category-active-deactivate'),
+    path('product/categories/delete/<int:pk>', views.ProductCategoryDeleteView.as_view(), name='product-category-delete'),
 
     # product brand
-    path('product/brands/', views.BlogCategoryListView.as_view(), name='product-brand-list'),
-    path('product/brands/create/', views.BlogCategoryCreate.as_view(), name='product-brand-create'),
-    path('product/brands/update/<int:pk>', views.BlogCategoryUpdate.as_view(), name='product-brand-update'),
-    path('product/brands/active-deactivate/<int:pk>', views.BlogCategoryActiveAndDeactivate.as_view(), name='product-brand-active-deactivate'),
-    path('product/brands/delete/<int:pk>', views.BlogCategoryDelete.as_view(), name='product-brand-delete'),
+    path('product/brands/', views.ProductBrandListView.as_view(), name='product-brand-list'),
+    path('product/brands/create/', views.ProductBrandCreateView.as_view(), name='product-brand-create'),
+    path('product/brands/update/<int:pk>', views.ProductBrandUpdateView.as_view(), name='product-brand-update'),
+    path('product/brands/active-deactivate/<int:pk>', views.ProductBrandActiveAndDeactivateView.as_view(), name='product-brand-active-deactivate'),
+    path('product/brands/delete/<int:pk>', views.ProductBrandDeleteView.as_view(), name='product-brand-delete'),
 
     # orders
     path('order/', views.OrderListView.as_view(), name='orders-list'),

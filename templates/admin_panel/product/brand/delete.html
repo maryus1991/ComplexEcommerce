@@ -1,19 +1,19 @@
 {% extends 'Base/AdminBase.html' %}
 
 {% block title %}
-    حذف  کردن پست
+    حذف کردن کردن برند
 {% endblock %}
 
 {% block breadcrumb %}
+    <li class="active">مدیریت</li>
     <li class="active"> پست ها</li>
-    <li class="active"> حذف  کردن پست</li>
+    <li class="active"> حذف کردن پست</li>
 {% endblock %}
 
 {% block body %}
     {% if form.errors %}
         <div class="col-md-12 bg-red" style="margin-bottom: 20px; margin-top: 50px; border-radius: 10px">
             {{ form.errors }}
-
         </div>
 
     {% endif %}
@@ -31,35 +31,20 @@
                         <form enctype="multipart/form-data" method="post" action="">
                             {% csrf_token %}
                             <h1>
-                                پست : {{ item.title }}
+                                برند : {{ item.name }}
                             </h1>
                             <h1 style="color: white; background-color: darkred;">
-                                ایا مایل هستید که این فروشگاه حذف شود ؟
+                                ایا مایل هستید که این برند حذف شود ؟
                                 <br>
-                                در صورت تمایل لطفا نام فرشگاه را وارد کنید
+                                در صورت تمایل لطفا عبارت delete را وارد کنید
                                 <br>
-                                 {{ item.name }}
                                 <br>
-                                با حذف فروشگاه لطفا ادمین فروشگاه را قبل از حذف مطلع کنید
-                                <br>
-                                توجه با حذف این فروشگاه تمامی موارد زیر حذف خواهند شد:
-                                {% for product in item.products.all %}
-                                	<p> محصول :  {{ product.name }}</p>
-                                {% endfor %}
-                                {% for user_p in item.users.all %}
-                                	<p> کاربر :  {{ user_p.PhoneNumber }}</p>
-                                {% endfor %}                                
-                                {% for post in item.blogs.all %}
-                                	<p> پست :  {{ post.title }}</p>
-                                {% endfor %}
-
                             </h1>
-
                             <div class="col-md-12 form-group">
                                 <div class="">
                                     <div class="col-md-12">
                                         <div class="input-group input-group">
-                                            <input type="text"  placeholder="نام فروشگاه" name="conform" class="form-control"
+                                            <input type="text" name="conform" class="form-control"
                                                     required="">
                                             <span class="input-group-btn">
                                           <button type="submit" class="btn btn-flat btn-block text-lg"

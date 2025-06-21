@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.views.generic import ListView, UpdateView, CreateView, RedirectView, View
 from django.shortcuts import get_object_or_404, redirect, reverse, render
 from stores.forms import AddProductForm, AddBrandForm ,AddCategoryForm
@@ -96,9 +97,13 @@ class ProductDeleteView(AdminUserMixin, View):
 class ProductCategoryListView(AdminUserMixin, ListView):
     """for listing product categories"""
     model = ProductCategory
-    ProductCategory = 'items'
-    paginate_by = 25
     template_name = 'admin_panel/product/category/list.html'
+    ordering = '-id'
+    paginate_by = 25
+    context_object_name = 'items'
+
+    def get_queryset(self):
+        return self.model.objects.prefetch_related('products', 'parent', 'child').order_by(self.ordering)
 
 class ProductCategoryCreateView(AdminUserMixin, CreateView):
     """
@@ -109,6 +114,14 @@ class ProductCategoryCreateView(AdminUserMixin, CreateView):
     template_name = 'admin_panel/product/category/create.html'
     success_url = reverse_lazy('admin_panel:product-category-list')
 
+    def form_valid(self, form):
+        messages.success(self.request, 'ایتم شما با موفقیت ساخته شد')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+        return super().form_invalid(form)
+
 class ProductCategoryUpdateView(AdminUserMixin, UpdateView):
     """
     for updating a category for products
@@ -118,6 +131,14 @@ class ProductCategoryUpdateView(AdminUserMixin, UpdateView):
     template_name = 'admin_panel/product/category/create.html'
     success_url = reverse_lazy('admin_panel:product-category-list')
     context_object_name = 'item'
+
+    def form_valid(self, form):
+        messages.success(self.request, 'ایتم شما با موفقیت بروزرسانی شد')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+        return super().form_invalid(form)
 
 class ProductCategoryActiveAndDeactivateView(AdminUserMixin, RedirectView):
     """
@@ -146,9 +167,24 @@ class ProductCategoryActiveAndDeactivateView(AdminUserMixin, RedirectView):
 
 class ProductCategoryDeleteView(AdminUserMixin, View):
     """
-    for delete slider
+    for delete category
     """
-    pass
+    def get(self, request, *args, **kwargs):
+        obj = get_object_or_404(ProductCategory, pk=kwargs.get('pk'))
+        messages.warning(request, 'بهتر است به جای حذف کردن دسته را غیر فعال کنید')
+        return render(request, 'admin_panel/product/category/delete.html', {'item':obj})
+
+    def post(self, request, *args ,**kwargs):
+        obj = get_object_or_404(ProductCategory, pk=kwargs.get('pk'))
+        conform = request.POST.get('conform')
+
+        if conform == 'delete':
+            obj.delete()
+            messages.info(request, 'ایتم مورد نظر حذف شد')
+        else:
+            messages.warning(request, 'در وارد کردن عبارت دقت فرمایید')
+
+        return redirect('admin_panel:product-category-list')
 
 # brand
 
@@ -158,6 +194,10 @@ class ProductBrandListView(AdminUserMixin, ListView):
     context_object_name = 'items'
     paginate_by = 25
     template_name = 'admin_panel/product/brand/list.html'
+    ordering = '-id'
+
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related('products')
 
 class ProductBrandCreateView(AdminUserMixin, CreateView):
     """
@@ -187,7 +227,7 @@ class ProductBrandUpdateView(AdminUserMixin, UpdateView):
     context_object_name = 'item'
 
     def form_valid(self, form):
-        messages.success(self.request, 'برند با موفقت ساخته شد')
+        messages.success(self.request, 'برند با موفقت بروز رسانی شد')
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -221,8 +261,22 @@ class ProductBrandActiveAndDeactivateView(AdminUserMixin, RedirectView):
 
 class ProductBrandDeleteView(AdminUserMixin, View):
     """
-    for delete slider
+    for delete brand
     """
+    def get(self, request, *args, **kwargs):
+        obj = get_object_or_404(ProductBrand, pk=kwargs.get('pk'))
+        messages.warning(request, 'بهتر است به جای حذف کردن برند را غیر فعال کنید')
+        return render(request, 'admin_panel/product/brand/delete.html', {'item':obj})
 
-    pass
+    def post(self, request, *args ,**kwargs):
+        obj = get_object_or_404(ProductBrand, pk=kwargs.get('pk'))
+        conform = request.POST.get('conform')
+
+        if conform == 'delete':
+            obj.delete()
+            messages.info(request, 'ایتم مورد نظر حذف شد')
+        else:
+            messages.warning(request, 'در وارد کردن عبارت دقت فرمایید')
+
+        return redirect('admin_panel:product-brand-list')
 
