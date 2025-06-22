@@ -1,8 +1,9 @@
 {% extends 'Base/AdminBase.html' %}
 {% load jalali_tags %}
+{% load products_tags %}
 
 {% block title %}
-    فروشگاها
+    محصولات
 
 {% endblock %}
 
@@ -10,7 +11,7 @@
     <li class="active">
         صفحه مدیریت
     </li>
-    <li class="active">فروشگاها</li>
+    <li class="active">محصولات</li>
 {% endblock %}
 
 
@@ -132,9 +133,9 @@
 {% block body %}
     <div class="panel box box-primary panel-default" style="margin-top: 20px;">
         <div class="panel-heading clearfix">
-            <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست فروشگاها </h3>
-            <a href="{% url 'admin_panel:store-create' %}" class="pull-left btn btn-success">ساخت فروشگاه
-                جدید</a>
+            <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست محصولات </h3>
+            <a href="{% url 'admin_panel:product-create' %}" class="pull-left btn btn-success">
+                ساخت محصول جدید</a>
         </div>
 
         <div class="table-responsive">
@@ -142,11 +143,15 @@
                 <thead>
                 <tr class="bg-primary">
                     <th class="text-center" width="5%">#</th>
-                    <th width="25%">نام</th>
-                    <th class="text-center" width="10%">شماره</th>
-                    <th class="text-center" width="10%">وضعیت</th>
-                    <th class="text-center" width="10%">وضعیت اطلاعات</th>
-                    <th colspan="5" class="text-center" width="35%">عملیات</th>
+                    <th class="text-center" width="15%">نام</th>
+                    <th class="text-center" width="10%">فروشگاه</th>
+                    <th class="text-center" width="10%">قیمت نهایی</th>
+                    <th class="text-center" width="5%">دسته</th>
+                    <th class="text-center" width="5%">برند</th>
+                    <th class="text-center" width="5%">تخفیف</th>
+                    <th class="text-center" width="5%">وضعیت</th>
+                    <th class="text-center" width="5%">تاییده ادمین</th>
+                    <th colspan="5" class="text-center" width="20%">عملیات</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -155,14 +160,34 @@
                         <td class="text-center">{{ item.id }}
                         </td>
 
-                        <td>
+                        <td class="text-center">
                             <strong>{{ item.name }}</strong>
                         </td>
-                        <td dir="ltr">
-                            <strong>{{ item.phone }}</strong>
+                        <td class="text-center">
+                            <strong>{{ item.store.name }}</strong>
+                        </td>
+                        <td class="text-center">
+                            <strong>{{ item.calc_discount|tdc }}</strong>
+                        </td>
+                        <td class="text-center">
+                            <strong>{{ item.category.name }}</strong>
+                        </td>
+                        <td class="text-center">
+                            <strong>{{ item.brand.name }}</strong>
+                        </td>
+                        <td class="text-center">
+                            {% if item.have_discount %}
+                                <span class="label label-success">
+                                    %{{ item.discount }}
+                                    </span>
+                            {% else %}
+                                <span class="label label-default">
+                                    ندارد
+                                    </span>
+                            {% endif %}
                         </td>
 
-                        <td>
+                        <td class="text-center">
                             <strong>
                                 {% if item.is_active %}
                                     <span class="label label-success">
@@ -175,34 +200,34 @@
                                 {% endif %}
                             </strong>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <strong>
-                                {% if item.is_verified %}
+                                {% if item.admin_verified %}
                                     <span class="label label-success">
-                                    تایید شده
+                                        تایید شده
                                     </span>
                                 {% else %}
                                     <span class="label label-danger">
-تایید نشده
+                                        تایید نشده
                                     </span>
                                 {% endif %}
                             </strong>
                         </td>
 
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:store-detail' item.id %}" class="btn btn-sm btn-success"
+                            <a href="{% url 'product:detail' item.id %}" class="btn btn-sm btn-success"
                                data-toggle="tooltip" title="مشاهده">
                                 <i class="fa fa-eye"></i>
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:store-update' item.id %}" class="btn btn-sm btn-info"
+                            <a href="{% url 'admin_panel:product-update' item.id %}" class="btn btn-sm btn-info"
                                data-toggle="tooltip" title="ویرایش">
                                 <i class="fa fa-edit"></i>
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:store-active-deactivate' item.id %}"
+                            <a href="{% url 'admin_panel:product-active-deactivate' item.id %}"
                                class="btn btn-sm btn-warning"
                                data-toggle="tooltip"
                                title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
@@ -210,7 +235,7 @@
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:store-verify' item.id %}"
+                            <a href="{% url 'admin_panel:product-verify' item.id %}"
                                class="btn btn-sm btn-info"
                                data-toggle="tooltip"
                                title="{% if item.is_active %}تایید نکردن اطلاعات{% else %}تایید کردن اطلاعات{% endif %}">
@@ -218,7 +243,7 @@
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:store-delete' item.id %}" class="btn btn-sm btn-danger"
+                            <a href="{% url 'admin_panel:product-delete' item.id %}" class="btn btn-sm btn-danger"
                                data-toggle="tooltip" title="حذف">
                                 <i class="fa fa-trash"></i>
                             </a>

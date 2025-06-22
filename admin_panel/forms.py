@@ -13,12 +13,179 @@ from sitesetting.models import (
     QuestionAndAnswer,
     ContactUs
 )
-
+from stores.forms import MultiImageField, MultiUploadMetaInput
 from stores.models import StoreApps, Store
 from blog.models import Blog, BlogCategory
 from django.contrib.auth import get_user_model
-
+from product.models import ProductBrand, ProductCategory, Product
 User = get_user_model()
+
+
+class AddProductForm(forms.ModelForm):
+    description = RichTextUploadingFormField()
+    store = forms.ModelChoiceField(
+        queryset=Store.objects.all(),
+        required=True,
+        empty_label='فروشگاه مربوطه را انتخاب کنید',
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+                'placeholder': 'فروشگاه',
+                'dir':'rtl'
+
+            }
+        )
+    )
+    category = forms.ModelChoiceField(
+        queryset=ProductCategory.objects.filter(is_active=True).all(), required=True,
+        empty_label='دسته بندی مربوطه را انتخاب کنید',
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+                'placeholder': 'درسته بندی'
+
+            }
+        )
+    )
+    brand = forms.ModelChoiceField(
+        queryset=ProductBrand.objects.filter(is_active=True).all(), required=True,
+        empty_label='برند مربوطه را انتخاب کنید',
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control select2 select2-hidden-accessible"',
+                'style': "width: 100%;",
+                'tabindex ': "-1",
+                'aria - hidden ': "true",
+                'placeholder': 'برند'
+
+            }
+        )
+    )
+
+    picture = forms.ImageField(
+        required=True,
+        widget=forms.FileInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'تصویر اصلی'
+
+            }
+        ),
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'heic'])
+        ]
+
+    )
+
+    gallery = MultiImageField(
+        required=True,
+        max_num=10,
+        min_num=0,
+        widget=MultiUploadMetaInput(
+            attrs={
+                'class': 'form-control',
+
+            }
+        ),
+        validators=[
+            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'heic'])
+        ]
+
+    )
+
+    have_discount = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(
+            attrs={
+
+                'type': "checkbox",
+
+            }
+        )
+    )
+
+    features = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'ویژگی های محصول را اضافه کنید ... ',
+                'id': 'id_features'
+            }
+        )
+    )
+    tags = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'تگ های محصول را اضافه کنید ... ',
+                'id': 'id_tags'
+            }
+        )
+    )
+    specs = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'مشخصات محصول را اضافه کنید ... ',
+                'id': 'id_specs'
+            }
+        )
+    )
+
+    class Meta:
+        model = Product
+        fields = ('name', 'price', 'description', 'store',
+                  'category', 'have_discount', 'discount',
+                  'picture', 'brand', 'count',
+                  'weight', 'tags', 'features', 'gallery',
+                  'length', 'width', 'height', 'specs'
+                  )
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'عنوان'
+            }),
+            'price': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'قیمت'
+            }),
+            'length': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'ارتفاع'
+            }),
+            'width': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'طول'
+            }),
+            'height': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'عرض'
+            }),
+
+            'discount': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'تخفیف',
+                'value': 0
+
+            }, ),
+            'count': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'تعداد'
+            }),
+            'weight': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'وزن (گرم)'
+            }),
+        }
 
 
 class AddUserModelForm(forms.ModelForm):
@@ -104,7 +271,6 @@ class AddUserModelForm(forms.ModelForm):
             'is_staff':forms.CheckboxInput(),
             'legal_person':forms.CheckboxInput(),
         }
-
 
 
 class SiteSettingModelForm(forms.ModelForm):

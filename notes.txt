@@ -21,6 +21,7 @@
 درست کردن زcheck editore
 اضافه کردن مگا منو
 
+اصلاح قسمت داش بورد
 
 ## responsive
 # store

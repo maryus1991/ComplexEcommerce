@@ -13,16 +13,13 @@ urlpatterns = [
     path("product/", include("product.urls")),
     path("order/", include("orders.urls")),
     path("blog/", include("blog.urls")),
-    path(f"{get_random_string(100)}-store/", include("stores.urls")),
-    # path("store/", include("stores.urls")),
-    path(f"{get_random_string(500)}-admin-panel/", include("admin_panel.urls")),
-    # path("admin-panel/", include('admin_panel.urls')),
-    # path("admin/", admin.site.urls),
+    # path(f"{get_random_string(100)}-store/", include("stores.urls")),
+    path("store/", include("stores.urls")),
+    # path(f"{get_random_string(500)}-admin-panel/", include("admin_panel.urls")),
+    path("admin-panel/", include('admin_panel.urls')),
     path("admin/", admin.site.urls),
-
     path("ckeditor/", include("ckeditor_uploader.urls")),
     path("", include("sitesetting.urls")),
-    # path("14545014.txt", e_namad, name='e-namad'),
 ]
 
 handler404 = 'sitesetting.views.custom_404_page'

@@ -861,13 +861,11 @@ class AddProductForm(forms.ModelForm):
         widget=MultiUploadMetaInput(
             attrs={
                 'class': 'form-control',
-
             }
         ),
         validators=[
             FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'heic'])
         ]
-
     )
 
     have_discount = forms.BooleanField(

@@ -91,6 +91,7 @@ urlpatterns = [
     # product
     path('product/', views.ProductListView.as_view(), name='product-list'),
     path('product/create/', views.ProductCreateView.as_view(), name='product-create'),
+    path('product/<int:pk>/remove-image-from-gallery/<int:img_id>', views.StoreEditProductRemoveImg.as_view(), name='product-remove-image'),
     path('product/update/<int:pk>', views.ProductUpdateView.as_view(), name='product-update'),
     path('product/active-deactivate/<int:pk>', views.ProductActiveAndDeactivateView.as_view(), name='product-active-deactivate'),
     path('product/verify/<int:pk>', views.ProductAdminVerifiedView.as_view(), name='product-verify'),

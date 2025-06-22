@@ -215,45 +215,66 @@ class StoreAddProduct(UserStoreStaffMixin, FormView):
 
     def form_valid(self, form):
         store = self.request.user.store
-        cleaned = form.cleaned_data
-
+        gallery = form.cleaned_data['gallery']
         product = Product.objects.create(
             store=store,
-            name=cleaned['name'],
-            description=cleaned['description'],
-            price=cleaned['price'],
-            have_discount=cleaned['have_discount'],
-            discount=cleaned['discount'],
-            picture=cleaned['picture'],
-            count=cleaned['count'],
-            weight=cleaned['weight'],
-            brand=cleaned['brand'],
-            category=cleaned['category'],
+            name=form.cleaned_data['name'],
+            description=form.cleaned_data['description'],
+            price=form.cleaned_data['price'],
+            have_discount=form.cleaned_data['have_discount'],
+            discount=form.cleaned_data['discount'],
+            picture=form.cleaned_data['picture'],
+            count=form.cleaned_data['count'],
+            weight=form.cleaned_data['weight'],
+            brand=form.cleaned_data['brand'],
+            category=form.cleaned_data['category'],
+
         )
+        tags = form.cleaned_data['tags'].split('**')
+        features = form.cleaned_data['features'].split('**')
+        specs = form.cleaned_data['specs'].split('**')
 
-        # ایجاد گالری تصاویر
-        for img in cleaned.get('gallery', []):
-            ProductGallery.objects.create(product=product, image=img)
+        for img in gallery:
+            ProductGallery.objects.create(product=product, image=img).save()
 
-        # تابع کمکی برای ایجاد ویژگی‌ها، مشخصات و تگ‌ها
-        def handle_text_items(field_name, model, attr_name, display_name, filter_field='product'):
-            raw_items = cleaned.get(field_name, '')
-            items = [item.strip() for item in raw_items.split('**') if item.strip()]
-            model.objects.filter(**{filter_field: product}).delete()
+        if specs:
+            ProductSpecifications.objects.filter(product=product).all().delete()
 
-            for item in items:
-                if item.isalnum():
-                    model.objects.create(**{filter_field: product, attr_name: item})
+            for spec in specs:
+                if spec.isalnum and spec != ' ' and spec != '' and spec is not None:
+                    ProductSpecifications.objects.create(product=product, name=spec)
                 else:
-                    messages.warning(self.request,
-                                     f'{item} در بخش {display_name} تایید نشد، لطفاً فقط از اعداد و حروف استفاده کنید')
+                    if spec != ' ' and spec != '' and spec is not None:
+                        messages.warning(self.request,
+                                         f'{spec} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
 
-        # استفاده از تابع کمکی
-        handle_text_items('specs', ProductSpecifications, 'name', 'مشخصات')
-        handle_text_items('features', ProductFeature, 'title', 'ویژگی‌ها')
-        handle_text_items('tags', ProductTag, 'name', 'تگ', filter_field='Product')
+        if features:
+            ProductFeature.objects.filter(product=product).all().delete()
 
-        messages.success(self.request, 'محصول شما با موفقیت ذخیره شد')
+            for feature in features:
+                if feature.isalnum and feature != ' ' and feature != '' and feature is not None:
+                    ProductFeature.objects.create(product=product, title=feature)
+                else:
+                    if feature != ' ' and feature != '' and feature is not None:
+                        messages.warning(self.request,
+                                         f'{feature} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
+        if tags:
+            ProductTag.objects.filter(Product=product).all().delete()
+
+            for tag in tags:
+                if tag.isalnum and tag != ' ' and tag != '' and tag is not None:
+                    ProductTag.objects.create(Product=product, name=tag)
+                else:
+                    if tag != ' ' and tag != '' and tag is not None:
+                        messages.warning(self.request,
+                                         f'{tag} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
+
+        messages.success(self.request,
+                         'محصول شما با موفقیت ذخیره شد')
+        product.save()
         return redirect('store:list-product')
 
     def get_context_data(self, **kwargs):
@@ -289,44 +310,68 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
 
     def form_valid(self, form):
         store = self.request.user.store
+
+        gallery = form.cleaned_data['gallery']
+        product = Product.objects.filter(pk=self.kwargs.get('pk'), store=store).update(
+            name=form.cleaned_data['name'],
+            description=form.cleaned_data['description'],
+            price=form.cleaned_data['price'],
+            have_discount=form.cleaned_data['have_discount'],
+            discount=form.cleaned_data['discount'],
+            picture=form.cleaned_data['picture'],
+            count=form.cleaned_data['count'],
+            weight=form.cleaned_data['weight'],
+            brand=form.cleaned_data['brand'],
+            category=form.cleaned_data['category'],
+        )
+
         product = self.get_object()
 
-        # اطمینان از اینکه محصول متعلق به فروشنده فعلی است
-        if product.store != store:
-            messages.error(self.request, 'شما اجازه ویرایش این محصول را ندارید.')
-            return redirect('store:list-product')
+        for img in gallery:
+            ProductGallery.objects.create(product=product, image=img).save()
 
-        cleaned = form.cleaned_data
+        tags = form.cleaned_data['tags'].split('**')
+        features = form.cleaned_data['features'].split('**')
+        specs = form.cleaned_data['specs'].split('**')
 
-        # به‌روزرسانی مشخصات محصول
-        for field in ['name', 'description', 'price', 'have_discount', 'discount',
-                      'picture', 'count', 'weight', 'brand', 'category']:
-            setattr(product, field, cleaned[field])
-        product.save()
+        if specs:
+            ProductSpecifications.objects.filter(product=product).all().delete()
 
-        # افزودن گالری تصاویر جدید
-        for img in cleaned.get('gallery', []):
-            ProductGallery.objects.create(product=product, image=img)
-
-        # تابع کمکی برای پردازش فیلدهای متنی مانند specs، features، tags
-        def handle_text_items(field_name, model, attr_name, display_name, filter_field='product'):
-            raw_items = cleaned.get(field_name, '')
-            items = [item.strip() for item in raw_items.split('**') if item.strip()]
-            model.objects.filter(**{filter_field: product}).delete()
-
-            for item in items:
-                if item.isalnum():
-                    model.objects.create(**{filter_field: product, attr_name: item})
+            for spec in specs:
+                if spec.isalnum and spec != ' ' and spec != '' and spec is not None:
+                    ProductSpecifications.objects.create(product=product, name=spec)
                 else:
-                    messages.warning(self.request,
-                                     f'{item} در بخش {display_name} تایید نشد، لطفاً فقط از حروف و اعداد استفاده کنید.')
+                    if spec != ' ' and spec != '' and spec is not None:
+                        messages.warning(self.request,
+                                         f'{spec} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
 
-        # حذف قبلی و افزودن جدید برای ویژگی‌ها، مشخصات، تگ‌ها
-        handle_text_items('specs', ProductSpecifications, 'name', 'مشخصات')
-        handle_text_items('features', ProductFeature, 'title', 'ویژگی‌ها')
-        handle_text_items('tags', ProductTag, 'name', 'تگ‌ها', filter_field='Product')
+        if features:
+            ProductFeature.objects.filter(product=product).all().delete()
 
-        messages.success(self.request, 'تغییرات شما با موفقیت ثبت شد')
+            for feature in features:
+                if feature.isalnum and feature != ' ' and feature != '' and feature is not None:
+                    ProductFeature.objects.create(product=product, title=feature)
+                else:
+                    if feature != ' ' and feature != '' and feature is not None:
+                        messages.warning(self.request,
+                                         f'{feature} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
+        if tags:
+            ProductTag.objects.filter(Product=product).all().delete()
+
+            for tag in tags:
+                if tag.isalnum and tag != ' ' and tag != '' and tag is not None:
+                    ProductTag.objects.create(Product=product, name=tag)
+                else:
+                    if tag != ' ' and tag != '' and tag is not None:
+                        messages.warning(self.request,
+                                         f'{tag} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
+
+        messages.success(self.request,
+                         'تغییرات با موفقیت ثبت شد')
+        product.save()
         return redirect('store:list-product')
 
 

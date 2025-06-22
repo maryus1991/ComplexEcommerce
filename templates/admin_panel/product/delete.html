@@ -1,12 +1,13 @@
 {% extends 'Base/AdminBase.html' %}
 
 {% block title %}
-    حذف  کردن پست
+    حذف  کردن محصول
 {% endblock %}
 
 {% block breadcrumb %}
-    <li class="active"> پست ها</li>
-    <li class="active"> حذف  کردن پست</li>
+    <li class="active">مدیریت</li>
+    <li class="active">محصولات</li>
+    <li class="active"> حذف  کردن محصول</li>
 {% endblock %}
 
 {% block body %}
@@ -31,27 +32,14 @@
                         <form enctype="multipart/form-data" method="post" action="">
                             {% csrf_token %}
                             <h1>
-                                پست : {{ item.title }}
+                                محصول : {{ item.name }}
                             </h1>
                             <h1 style="color: white; background-color: darkred;">
-                                ایا مایل هستید که این فروشگاه حذف شود ؟
+                                ایا مایل هستید که این محصول حذف شود ؟
                                 <br>
-                                در صورت تمایل لطفا نام فرشگاه را وارد کنید
+                                در صورت تمایل برای حذف عبارت delete را وارد کنید
                                 <br>
-                                 {{ item.name }}
-                                <br>
-                                با حذف فروشگاه لطفا ادمین فروشگاه را قبل از حذف مطلع کنید
-                                <br>
-                                توجه با حذف این فروشگاه تمامی موارد زیر حذف خواهند شد:
-                                {% for product in item.products.all %}
-                                	<p> محصول :  {{ product.name }}</p>
-                                {% endfor %}
-                                {% for user_p in item.users.all %}
-                                	<p> کاربر :  {{ user_p.PhoneNumber }}</p>
-                                {% endfor %}                                
-                                {% for post in item.blogs.all %}
-                                	<p> پست :  {{ post.title }}</p>
-                                {% endfor %}
+
 
                             </h1>
 

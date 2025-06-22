@@ -1,11 +1,20 @@
 from django.contrib import messages
 from django.views.generic import ListView, UpdateView, CreateView, RedirectView, View
 from django.shortcuts import get_object_or_404, redirect, reverse, render
-from stores.forms import AddProductForm, AddBrandForm ,AddCategoryForm
-from product.models import Product, ProductCategory, ProductBrand
+from stores.forms import AddBrandForm ,AddCategoryForm
+from admin_panel.forms import AddProductForm
 from django.urls import reverse_lazy
-
 from user.mixins.logins import AdminUserMixin
+
+from product.models import (
+    Product,
+    ProductCategory,
+    ProductBrand,
+    ProductGallery,
+    ProductSpecifications,
+    ProductFeature,
+    ProductTag
+)
 
 # product
 
@@ -15,6 +24,10 @@ class ProductListView(AdminUserMixin, ListView):
     context_object_name = 'items'
     paginate_by = 35
     template_name = 'admin_panel/product/list.html'
+    ordering = ['-id']
+
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related('category', 'brand', 'store')
 
 class ProductCreateView(AdminUserMixin, CreateView):
     """
@@ -25,6 +38,76 @@ class ProductCreateView(AdminUserMixin, CreateView):
     template_name = 'admin_panel/product/create.html'
     success_url = reverse_lazy('admin_panel:product-list')
 
+    def form_valid(self, form):
+        gallery = form.cleaned_data['gallery']
+        product = Product.objects.create(
+            store=form.cleaned_data['store'],
+            name=form.cleaned_data['name'],
+            description=form.cleaned_data['description'],
+            price=form.cleaned_data['price'],
+            have_discount=form.cleaned_data['have_discount'],
+            discount=form.cleaned_data['discount'],
+            picture=form.cleaned_data['picture'],
+            count=form.cleaned_data['count'],
+            weight=form.cleaned_data['weight'],
+            brand=form.cleaned_data['brand'],
+            category=form.cleaned_data['category'],
+        )
+        tags = form.cleaned_data['tags'].split('**')
+        features = form.cleaned_data['features'].split('**')
+        specs = form.cleaned_data['specs'].split('**')
+
+        for img in gallery:
+            ProductGallery.objects.create(product=product, image=img).save()
+
+        if specs:
+            ProductSpecifications.objects.filter(product=product).all().delete()
+
+            for spec in specs:
+                if spec.isalnum and spec != ' ' and spec != '' and spec is not None:
+                    ProductSpecifications.objects.create(product=product, name=spec)
+                else:
+                    if spec != ' ' and spec != '' and spec is not None:
+                        messages.warning(self.request,
+                                         f'{spec} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
+
+        if features:
+            ProductFeature.objects.filter(product=product).all().delete()
+
+            for feature in features:
+                if feature.isalnum and feature != ' ' and feature != '' and feature is not None:
+                    ProductFeature.objects.create(product=product, title=feature)
+                else:
+                    if feature != ' ' and feature != '' and feature is not None:
+                        messages.warning(self.request,
+                                         f'{feature} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
+        if tags:
+            ProductTag.objects.filter(Product=product).all().delete()
+
+            for tag in tags:
+                if tag.isalnum and tag != ' ' and tag != '' and tag is not None:
+                    ProductTag.objects.create(Product=product, name=tag)
+                else:
+                    if tag != ' ' and tag != '' and tag is not None:
+                        messages.warning(self.request,
+                                         f'{tag} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
+
+        messages.success(self.request,
+                         'محصول شما با موفقیت شاخته شد')
+        product.save()
+        return redirect(self.success_url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['category_form'] = AddCategoryForm()
+        context['brand_form'] = AddBrandForm()
+
+        return context
+
 class ProductUpdateView(AdminUserMixin, UpdateView):
     """
     for updating a product
@@ -33,7 +116,86 @@ class ProductUpdateView(AdminUserMixin, UpdateView):
     form_class = AddProductForm
     template_name = 'admin_panel/product/create.html'
     success_url = reverse_lazy('admin_panel:product-list')
-    context_object_name = 'item'
+    context_object_name = 'product'
+
+    def get_queryset(self):
+        queryset = super().get_queryset().prefetch_related(
+            'features', 'tags', 'specs', 'gallery', 'store')
+        return queryset
+
+    def form_valid(self, form):
+
+        gallery = form.cleaned_data['gallery']
+        product = Product.objects.filter(pk=self.kwargs.get('pk')).update(
+            name=form.cleaned_data['name'],
+            store=form.cleaned_data['store'],
+            description=form.cleaned_data['description'],
+            price=form.cleaned_data['price'],
+            have_discount=form.cleaned_data['have_discount'],
+            discount=form.cleaned_data['discount'],
+            picture=form.cleaned_data['picture'],
+            count=form.cleaned_data['count'],
+            weight=form.cleaned_data['weight'],
+            brand=form.cleaned_data['brand'],
+            category=form.cleaned_data['category'],
+        )
+
+        product = self.get_object()
+
+        for img in gallery:
+            ProductGallery.objects.create(product=product, image=img).save()
+
+        tags = form.cleaned_data['tags'].split('**')
+        features = form.cleaned_data['features'].split('**')
+        specs = form.cleaned_data['specs'].split('**')
+
+        if specs:
+            ProductSpecifications.objects.filter(product=product).all().delete()
+
+            for spec in specs:
+                if spec.isalnum and spec != ' ' and spec != '' and spec is not None:
+                    ProductSpecifications.objects.create(product=product, name=spec)
+                else:
+                    if spec != ' ' and spec != '' and spec is not None:
+                        messages.warning(self.request,
+                                         f'{spec} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
+
+        if features:
+            ProductFeature.objects.filter(product=product).all().delete()
+
+            for feature in features:
+                if feature.isalnum and feature != ' ' and feature != '' and feature is not None:
+                    ProductFeature.objects.create(product=product, title=feature)
+                else:
+                    if feature != ' ' and feature != '' and feature is not None:
+                        messages.warning(self.request,
+                                         f'{feature} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
+        if tags:
+            ProductTag.objects.filter(Product=product).all().delete()
+
+            for tag in tags:
+                if tag.isalnum and tag != ' ' and tag != '' and tag is not None:
+                    ProductTag.objects.create(Product=product, name=tag)
+                else:
+                    if tag != ' ' and tag != '' and tag is not None:
+                        messages.warning(self.request,
+                                         f'{tag} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید'
+                                         )
+
+        messages.success(self.request,
+                         'تغییرات با موفقیت ثبت شد')
+        product.save()
+        return redirect(self.success_url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['category_form'] = AddCategoryForm()
+        context['brand_form'] = AddBrandForm()
+
+        return context
 
 class ProductActiveAndDeactivateView(AdminUserMixin, RedirectView):
     """
@@ -46,7 +208,7 @@ class ProductActiveAndDeactivateView(AdminUserMixin, RedirectView):
         if product.is_active:
             product.is_active = False
             product.save()
-            messages.success(
+            messages.warning(
                 self.request,
                 'ایتم مورد نظر غیر فعال شد'
             )
@@ -71,7 +233,7 @@ class ProductAdminVerifiedView(AdminUserMixin, RedirectView):
         if product.admin_verified:
             product.admin_verified = False
             product.save()
-            messages.success(
+            messages.warning(
                 self.request,
                 'ایتم مورد نظر مورد تایید ادمین قرار نگرفت'
             )
@@ -89,8 +251,37 @@ class ProductDeleteView(AdminUserMixin, View):
     """
     for delete product
     """
-    pass
+    def get(self, *args, **kwargs):
+        obj = get_object_or_404(Product, pk=kwargs.get('pk'))
+        messages.warning(self.request, 'بهتر است به جای حذف محصول ان را غیر فعال کنید')
+        return render(self.request, 'admin_panel/product/delete.html', {'item':obj})
 
+    def post(self, *args, **kwargs):
+        obj = get_object_or_404(Product, pk=kwargs.get('pk'))
+        conform = self.request.POST.get('conform')
+
+        if conform == 'delete':
+            obj.delete()
+            messages.info(self.request, 'محصول حذف شد')
+        else:
+            messages.warning(self.request, 'در وارد کردن عبارت دقت فرمایید')
+
+        return redirect('admin_panel:product-list')
+
+class StoreEditProductRemoveImg(AdminUserMixin, RedirectView):
+    """
+    for remove img in editing product
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+        product_id = kwargs.get('pk')
+        img_id = kwargs.get('img_id')
+        product = get_object_or_404(Product, id=product_id)
+        img = get_object_or_404(ProductGallery, id=img_id, product=product)
+        img.delete()
+        messages.success(self.request,
+                         'عکس مورد نظر حذف شد')
+        return self.request.META.get('HTTP_REFERER', '/')
 
 # category
 
