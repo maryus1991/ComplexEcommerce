@@ -18,7 +18,95 @@ from stores.models import StoreApps, Store
 from blog.models import Blog, BlogCategory
 from django.contrib.auth import get_user_model
 from product.models import ProductBrand, ProductCategory, Product
+from orders.models import Discount
+
+from jalali_date.fields import JalaliDateField
+from jalali_date.widgets import AdminJalaliDateWidget
+
 User = get_user_model()
+
+
+class AddDiscountForm(forms.ModelForm):
+    end_date_discount = JalaliDateField(
+        required=False,
+        label='تا تاریخ'
+        , widget=AdminJalaliDateWidget(
+            attrs={
+                'class': 'form-control',
+                'dir': 'rtl',
+                'placeholder': 'تا تاریخ (محدودیت زمانی استفاده)'
+            }
+        )
+    )
+
+    user = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        required=False,
+        widget=forms.SelectMultiple(
+            attrs={
+                'class': 'form-control select2',
+                'style': 'width: 100%;',
+                'tabindex': '-1',
+                'aria-hidden': 'true',
+                'dir': 'rtl'
+            }
+        )
+    )
+    product = forms.ModelMultipleChoiceField(
+        queryset=Product.objects.all(),
+        required=False,
+        widget=forms.SelectMultiple(
+            attrs={
+                'class': 'form-control select2',
+                'style': 'width: 100%;',
+                'tabindex': '-1',
+                'aria-hidden': 'true',
+                'dir': 'rtl'
+            }
+        )
+    )
+    store = forms.ModelMultipleChoiceField(
+        queryset=Store.objects.all(),
+        required=False,
+        widget=forms.SelectMultiple(
+            attrs={
+                'class': 'form-control select2',
+                'style': 'width: 100%;',
+                'tabindex': '-1',
+                'aria-hidden': 'true',
+                'dir': 'rtl'
+            }
+        )
+    )
+
+    class Meta:
+        model = Discount
+        exclude = ('order',)
+
+        widgets = {
+            'count': forms.NumberInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+            'percentage_discount': forms.CheckboxInput(),
+            'percent': forms.NumberInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+            'price': forms.NumberInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+            'name': forms.TextInput(
+                attrs={
+                    'class': 'form-control'
+                }
+            ),
+            'is_active': forms.CheckboxInput(),
+        }
 
 
 class AddProductForm(forms.ModelForm):
@@ -34,7 +122,7 @@ class AddProductForm(forms.ModelForm):
                 'tabindex ': "-1",
                 'aria - hidden ': "true",
                 'placeholder': 'فروشگاه',
-                'dir':'rtl'
+                'dir': 'rtl'
 
             }
         )
@@ -191,7 +279,7 @@ class AddProductForm(forms.ModelForm):
 class AddUserModelForm(forms.ModelForm):
     PhoneNumber = PhoneNumberField(
         widget=forms.TextInput(attrs={
-           'class': 'form-control',
+            'class': 'form-control',
         }),
         validators=[validate_phonenumber],
     )
@@ -204,7 +292,7 @@ class AddUserModelForm(forms.ModelForm):
                 'style': "width: 100%;",
                 'tabindex ': "-1",
                 'aria - hidden ': "true",
-                'dir':'rtl'
+                'dir': 'rtl'
             }
         ), empty_label='فروشگاه را انتخاب کنید (می تواند خالی باشد و انتخاب نشود)'
     )
@@ -225,10 +313,11 @@ class AddUserModelForm(forms.ModelForm):
             }
         )
     )
+
     class Meta:
         model = User
         fields = ['first_name', 'last_name',
-                  'PhoneNumber', 'store','legal_person',
+                  'PhoneNumber', 'store', 'legal_person',
                   'legal_person_economic_number', 'is_active',
                   'legal_person_registration_number', 'is_superuser',
                   'legal_person_phone', 'is_verified', 'is_store_admin', 'is_staff']
@@ -236,40 +325,40 @@ class AddUserModelForm(forms.ModelForm):
         widgets = {
             'password': forms.PasswordInput(
                 attrs={
-                    'class':'form-control'
+                    'class': 'form-control'
                 }
             ),
             'first_name': forms.TextInput(
                 attrs={
-                    'class':'form-control'
+                    'class': 'form-control'
                 }
             ),
             'last_name': forms.TextInput(
                 attrs={
-                    'class':'form-control'
+                    'class': 'form-control'
                 }
             ),
             'legal_person_economic_number': forms.TextInput(
                 attrs={
-                    'class':'form-control'
+                    'class': 'form-control'
                 }
             ),
             'legal_person_registration_number': forms.TextInput(
                 attrs={
-                    'class':'form-control'
+                    'class': 'form-control'
                 }
             ),
             'legal_person_phone': forms.TextInput(
                 attrs={
-                    'class':'form-control'
+                    'class': 'form-control'
                 }
             ),
-            'is_active':forms.CheckboxInput(),
-            'is_superuser':forms.CheckboxInput(),
-            'is_verified':forms.CheckboxInput(),
-            'is_store_admin':forms.CheckboxInput(),
-            'is_staff':forms.CheckboxInput(),
-            'legal_person':forms.CheckboxInput(),
+            'is_active': forms.CheckboxInput(),
+            'is_superuser': forms.CheckboxInput(),
+            'is_verified': forms.CheckboxInput(),
+            'is_store_admin': forms.CheckboxInput(),
+            'is_staff': forms.CheckboxInput(),
+            'legal_person': forms.CheckboxInput(),
         }
 
 

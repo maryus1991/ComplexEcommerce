@@ -115,4 +115,11 @@ urlpatterns = [
     path('order/', views.OrderListView.as_view(), name='orders-list'),
     path('order/<int:pk>', views.OrderDetailView.as_view(), name='orders-detail'),
 
+    # discount
+    path('discount/', views.DiscountListView.as_view(), name='discount-list'),
+    path('discount/create/', views.DiscountCreateView.as_view(), name='discount-create'),
+    path('discount/update/<int:pk>', views.DiscountUpdateView.as_view(), name='discount-update'),
+    path('discount/active-deactivate/<int:pk>', views.DiscountActiveAndDeActivate.as_view(), name='discount-active-deactivate'),
+    path('discount/delete/<int:pk>', views.DiscountDeleteView.as_view(), name='discount-delete'),
+
 ]
