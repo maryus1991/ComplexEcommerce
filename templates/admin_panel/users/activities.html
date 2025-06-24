@@ -54,7 +54,7 @@
                             <tbody>
                             {% for log in activities %}
                                 <tr>
-                                    <td class="text-center" dir="ltr">{{ log.timestamp|to_jalali:"%Y/%M/%d - %H:%m" }}</td>
+                                    <td class="text-center" dir="ltr">{{ log.timestamp|to_jalali:"%Y/%m/%d - %H:%M" }}</td>
                                     <td class="text-center">
                                         {% if log.action == 1 %}
                                             <span class="label label-success">

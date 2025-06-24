@@ -35,6 +35,20 @@
         <div class="panel panel-primary">
             <div class="panel-heading text-center">
                 <h3 class="panel-title">اطلاعات سفارش شماره {{ order.id }}</h3>
+                <div class="pull-left">
+                    <a href="{% url 'admin_panel:user-detail' order.user.pk %}"
+                       class="btn btn-sm btn-success"
+                       data-toggle="tooltip"
+                       title="مشاهده خریدار">
+                        مشاهده خریدار
+                    </a>
+                    <a href="{% url 'admin_panel:store-detail' order.store.id %}"
+                       class="btn btn-sm btn-warning"
+                       data-toggle="tooltip"
+                       title="مشاهده فروشگاه">
+                        مشاهده فروشگاه
+                    </a>
+                </div>
             </div>
             <div class="panel-body">
 

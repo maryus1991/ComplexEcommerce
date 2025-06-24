@@ -35,6 +35,7 @@ class DiscountUpdateView(AdminUserMixin, UpdateView):
     model = Discount
     template_name = 'admin_panel/discount/create.html'
     success_url = reverse_lazy('admin_panel:discount-list')
+    context_object_name = 'item'
 
     def form_valid(self, form):
         messages.success(self.request, 'کد تخفیف شما بروزرسانی شد')

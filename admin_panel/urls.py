@@ -68,6 +68,9 @@ urlpatterns = [
     path('tickets/conversation/<int:pk>', views.TicketConversationDetailView.as_view(), name='ticket-conversation'),
     path('tickets/receivd/', views.TicketReceivedListView.as_view(), name='ticket-received-list'),
     path('tickets/send/', views.TicketSendListView.as_view(), name='ticket-send-list'),
+    path('tickets/delete/<int:pk>', views.DeleteTicketView.as_view(), name='ticket-delete'),
+    path('tickets/message/delete/<int:pk>', views.DeleteMessageView.as_view(), name='ticket-delete-message'),
+    path('tickets/close/<int:pk>', views.CloseTicketView.as_view(), name='ticket-close'),
 
     # store
     path('stores/', views.StoreListView.as_view(), name='store-list'),

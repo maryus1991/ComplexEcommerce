@@ -19,6 +19,35 @@
         <div class="panel panel-primary ">
             <div class="panel-heading text-center">
                 <h3 class="panel-title">جزییات {{ item.name }}</h3>
+            {% if item %}
+                <div class="pull-left">
+                <a href="{% url 'admin_panel:store-detail' item.id %}" class="btn btn-sm btn-success"
+                   data-toggle="tooltip" title="مشاهده">
+                    <i class="fa fa-eye"></i>
+                </a>
+                <a href="{% url 'admin_panel:store-update' item.id %}" class="btn btn-sm btn-info"
+                   data-toggle="tooltip" title="ویرایش">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <a href="{% url 'admin_panel:store-active-deactivate' item.id %}"
+                   class="btn btn-sm btn-warning"
+                   data-toggle="tooltip"
+                   title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                    <i class="fa fa-power-off"></i>
+                </a>
+                <a href="{% url 'admin_panel:store-verify' item.id %}"
+                   class="btn btn-sm btn-info"
+                   data-toggle="tooltip"
+                   title="{% if item.is_active %}تایید نکردن اطلاعات{% else %}تایید کردن اطلاعات{% endif %}">
+                    <i class="fa fa-key"></i>
+                </a>
+                <a href="{% url 'admin_panel:store-delete' item.id %}" class="btn btn-sm btn-danger"
+                   data-toggle="tooltip" title="حذف">
+                    <i class="fa fa-trash"></i>
+                </a>
+                </div>
+            {% endif %}
+                
             </div>
             <div class="panel-body">
 
@@ -27,8 +56,8 @@
                     <tbody>
                     <tr>
                         <td><strong>نام:</strong> <span>{{ item.name }}</span></td>
-                        <td><strong>شماره :</strong> {{ item.phone }}</td>
-                        <td><strong>شماره ثابت :</strong> {{ item.phone2 }}</td>
+                        <td><strong>شماره :</strong> <span dir="ltr">{{ item.phone }}</span></td>
+                        <td><strong>شماره ثابت :</strong> <span dir="ltr">{{ item.phone2 }}</span></td>
                         <td><strong>وضعیت:</strong>
                             {% if item.is_active %}
 
@@ -244,7 +273,7 @@
                                 </td>
 
                                 <td class="text-center">
-                                    <a href="{{ item.get_absolute_url }}"
+                                    <a href="{% url 'admin_panel:product-update' item.id %}"
                                        class="btn btn-sm btn-success"
                                        data-toggle="tooltip" title="مشاهده">
                                         <i class="fa fa-eye"></i>
@@ -385,7 +414,7 @@
                                     <strong>{{ item.second_date|to_jalali:' %H/%M - %Y/%m/%d ' }}</strong>
                                 </td>
                                 <td class="text-center">
-                                    <a href=""
+                                    <a href="{% url 'admin_panel:orders-detail' item.id %}"
                                        class="btn btn-sm btn-success"
                                        data-toggle="tooltip" title="مشاهده">
                                         <i class="fa fa-eye"></i>

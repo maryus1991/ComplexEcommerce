@@ -103,6 +103,33 @@
                             <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
                                     data-toggle="tooltip" title="" data-original-title="Collapse">
                                 <i class="fa fa-minus"></i></button>
+                            {% if banner %}
+                            	<td class="text-center">
+                            <a href="/" class="btn btn-sm btn-success"
+                               data-toggle="tooltip" title="مشاهده">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:banners-update' banner.id %}" class="btn btn-sm btn-info"
+                               data-toggle="tooltip" title="ویرایش">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:banners-active-deactivate' banner.id %}" class="btn btn-sm btn-warning"
+                               data-toggle="tooltip"
+                               title="{% if banner.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                <i class="fa fa-power-off"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:banners-delete' banner.id %}" class="btn btn-sm btn-danger"
+                               data-toggle="tooltip" title="حذف">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                            {% endif %} 
 
                         </div>
                         <!-- /. tools -->
@@ -201,10 +228,13 @@
                             </div>
 
                         </form>
+                        {% if banner %}
+                        	
                                                 عکس اپلود شده <br>   
                         برای عوض کردن ان عکس جدید را اپلود کنید
                         <img height="100px" width="200px" src="{{ banner.image.url }}" alt="">
 
+                        {% endif %} 
                     </div>
                 </div>
 

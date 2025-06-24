@@ -59,7 +59,7 @@
                                     <th>ارسال شده به</th>
                                     <th>تاریخ</th>
                                     <th>وضعیت</th>
-                                    <th>مشاهده</th>
+                                    <th colspan="3">مشاهده</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -88,6 +88,21 @@
                                             <a href="{% url 'admin_panel:ticket-conversation' ticket.id %}"
                                                class="btn btn-sm btn-success">
                                                 <i class="fa fa-eye"></i> مشاهده
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {% if not ticket.close_ticket %}
+                                                <a href="{% url 'admin_panel:ticket-close' ticket.id %}"
+                                                   class="btn btn-sm btn-warning">
+                                                    <i class="fa fa-trash"></i> بسته
+                                                </a>
+                                            {% endif %}
+
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'admin_panel:ticket-delete' ticket.id %}"
+                                               class="btn btn-sm btn-danger">
+                                                <i class="fa fa-trash"></i> حذف
                                             </a>
                                         </td>
                                     </tr>

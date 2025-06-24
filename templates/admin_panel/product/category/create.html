@@ -30,6 +30,37 @@
     <div class="box box-primary" style="margin-top:40px">
         <div class="box-header with-border">
             <h3 class="box-title">اضافه کردن دسته</h3>
+        {% if item %}
+        	<div class="pull-left">
+                                    <td class="text-center">
+                            <a href="{{ item.get_absolute_url }}" class="btn btn-sm btn-success"
+                               data-toggle="tooltip" title="مشاهده">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:product-category-update' item.id %}" class="btn btn-sm btn-info"
+                               data-toggle="tooltip" title="ویرایش">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:product-category-active-deactivate' item.id %}"
+                               class="btn btn-sm btn-warning"
+                               data-toggle="tooltip"
+                               title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                <i class="fa fa-power-off"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:product-category-delete' item.id %}" class="btn btn-sm btn-danger"
+                               data-toggle="tooltip" title="حذف">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+            </div>
+        {% endif %} 
+        
         </div>
         <!-- /.box-header -->
         <!-- form start -->

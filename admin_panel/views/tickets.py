@@ -140,3 +140,54 @@ class TicketReceivedListView(AdminUserMixin, ListView):
     def get_queryset(self):
         return Ticket.objects.filter(store__isnull=True).all().order_by('-id').order_by('close_ticket')
 
+class CloseTicketView(AdminUserMixin, RedirectView):
+    """for closing ticket"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        obj = get_object_or_404(Ticket, pk=kwargs.get('pk'))
+
+        if obj.close_ticket :
+            messages.warning(
+                self.request,
+                f'تیکیت شما شده است '
+            )
+
+            return self.request.META.get('HTTP_REFERER')
+
+        obj.close_ticket = True
+        obj.closed_at = now()
+        obj.save()
+        messages.success(
+            self.request,
+            f' تیکت بسته شد '
+        )
+
+        return self.request.META.get('HTTP_REFERER')
+
+class DeleteTicketView(AdminUserMixin, RedirectView):
+    """for delete Ticket"""
+    def get_redirect_url(self, *args, **kwargs):
+        obj = get_object_or_404(Ticket, pk=kwargs.get('pk'))
+        if obj.close_ticket :
+            obj.delete()
+            messages.warning(
+                self.request,
+                'تیکت حذف شد'
+            )
+        else:
+            messages.error(
+                self.request,
+                'برای حذف تیکت انرا بسته کنید'
+            )
+        return redirect('admin_panel:ticket-received-list')
+
+class DeleteMessageView(AdminUserMixin, RedirectView):
+    """for delete Message"""
+    def get_redirect_url(self, *args, **kwargs):
+        obj = get_object_or_404(TicketConversation, pk=kwargs.get('pk'))
+        obj.delete()
+        messages.success(
+            self.request,
+            'پیام حذف شد'
+        )
+        return self.request.META.get('HTTP_REFERER')

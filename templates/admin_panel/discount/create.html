@@ -86,10 +86,34 @@
             <div class="box-header">
                 <h3 class="box-title">اضافه کردن کد تخفیف </h3>
                 <div class="pull-right box-tools">
-                    <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip"
-                            title="Collapse">
-                        <i class="fa fa-minus"></i>
-                    </button>
+
+                    {% if item %}
+
+                        <tabel class="pull-left">
+
+                            <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
+                                    data-toggle="tooltip"
+                                    title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:discount-active-deactivate' item.id %}"
+                                   class="btn btn-sm btn-warning"
+                                   data-toggle="tooltip"
+                                   title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                    <i class="fa fa-power-off"></i>
+                                </a>
+                            </td>
+
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:discount-delete' item.id %}" class="btn btn-sm btn-danger"
+                                   data-toggle="tooltip" title="حذف">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tabel>
+                    {% endif %}
+
                 </div>
             </div>
 
@@ -194,9 +218,9 @@
                         </div>
                     </div>
 
-                    <p style="margin-top: 10px; margin-bottom: 10px; background-color: orange; color: white;" >
-                        اگر هر یک از فیلد های انتخاب  محصول , فروشگاه یا کاربر   را خالی بزار این معنا هست که از ان محدودیت
-                         استفاده نکردید و همه انها را انتخاب کردید
+                    <p style="margin-top: 10px; margin-bottom: 10px; background-color: orange; color: white;">
+                        اگر هر یک از فیلد های انتخاب محصول , فروشگاه یا کاربر را خالی بزار این معنا هست که از ان محدودیت
+                        استفاده نکردید و همه انها را انتخاب کردید
                     </p>
 
                     <!-- دکمه ثبت -->

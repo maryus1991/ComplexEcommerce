@@ -29,6 +29,7 @@
                     <th width="25%">عنوان</th>
                     <th class="text-center" width="10%">ایمیل</th>
                     <th class="text-center" width="10%">شماره</th>
+                    <th class="text-center" width="10%"></th>
                     <th colspan="2" class="text-center" width="35%"></th>
                 </tr>
                 </thead>
@@ -49,11 +50,17 @@
                         <td dir="ltr">
                             <strong>{{ item.phone }}</strong>
                         </td>
-
+<td class="text-center">
+                                                        <a href="{% url 'admin_panel:contact-delete' item.id %}" class="btn btn-sm btn-danger"
+                               data-toggle="tooltip" title="حذف">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
                         <td class="text-center">
                             {{ item.message }}
-                        </td>
-
+                        </td>                        
+                        
+                        
                     </tr>
                 
                 </tbody>

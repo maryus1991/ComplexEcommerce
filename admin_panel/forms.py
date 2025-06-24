@@ -48,7 +48,6 @@ class AddDiscountForm(forms.ModelForm):
                 'style': 'width: 100%;',
                 'tabindex': '-1',
                 'aria-hidden': 'true',
-                'dir': 'rtl'
             }
         )
     )

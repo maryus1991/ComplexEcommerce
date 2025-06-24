@@ -35,7 +35,7 @@
 
     <link rel="stylesheet" href=/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
-  
+
     <style>.cke {
         visibility: hidden;
     }</style>
@@ -63,9 +63,9 @@
     <li class="active">
         صفحه مدیریت
     </li>
-    <li class="active">سوال جواب 
+    <li class="active">سوال جواب
     </li>
-    <li class="active">    بروز رسانی یا ساخت سوال جواب  جدید
+    <li class="active"> بروز رسانی یا ساخت سوال جواب جدید
 
     </li>
 {% endblock %}
@@ -95,14 +95,34 @@
                 <div class="box box-info">
                     <div class="box-header">
                         <h3 class="box-title">
-                             بروز رسانی یا ساخت سوال جواب  جدید
+                            بروز رسانی یا ساخت سوال جواب جدید
 
                         </h3>
                         <!-- tools box -->
                         <div class="pull-right box-tools">
-                            <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
+
+                            {% if item %}
+                                <div class="pull-left">
+                                                            <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
                                     data-toggle="tooltip" title="" data-original-title="Collapse">
                                 <i class="fa fa-minus"></i></button>
+                                    <a href="{% url 'site:Q&A' %}" class="btn btn-sm btn-success"
+                                       data-toggle="tooltip" title="مشاهده">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'admin_panel:Q&A-active-deactivate' item.id %}"
+                                       class="btn btn-sm btn-warning"
+                                       data-toggle="tooltip"
+                                       title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                        <i class="fa fa-power-off"></i>
+                                    </a>
+                                    <a href="{% url 'admin_panel:Q&A-delete' item.id %}" class="btn btn-sm btn-danger"
+                                       data-toggle="tooltip" title="حذف">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </div>
+
+                            {% endif %}
 
                         </div>
                         <!-- /. tools -->

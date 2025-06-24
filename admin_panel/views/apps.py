@@ -43,6 +43,7 @@ class AppsUpdateView(AdminUserMixin, UpdateView):
     form_class = UsedAppModelForm
     template_name = 'admin_panel/apps/create.html'
     success_url = reverse_lazy('admin_panel:apps-list')
+    context_object_name = 'item'
 
     def form_valid(self, form):
         messages.success(self.request, 'برنامه  مورد نظر با موفقت افزوده شد شد')

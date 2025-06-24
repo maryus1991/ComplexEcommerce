@@ -10,297 +10,331 @@
 {% endblock %}
 
 {% block body %}
- <div class="box-primary" style="margin-top:40px">
-    <div class="box-header with-border">
-        <h3 class="box-title">بروز رسانی اطلاعات فروشگاه یا اضافه کردن فروشگاه</h3>
-    </div>
-    
-    <form role="form" method='POST' action='' class="box" enctype='multipart/form-data'>
-        {% csrf_token %}
-        
-        <!-- ردیف اول -->
-        <div class="box-body form-group flex col-md-12">
-            <div class="col-md-4">
-                <div class="input-group input-group-sm">
+    <div class="box-primary" style="margin-top:40px">
+        <div class="box-header with-border">
+            <h3 class="box-title">بروز رسانی اطلاعات فروشگاه یا اضافه کردن فروشگاه</h3>
+            {% if item %}
+                <div class="pull-left">
+                <a href="{% url 'admin_panel:store-detail' item.id %}" class="btn btn-sm btn-success"
+                   data-toggle="tooltip" title="مشاهده">
+                    <i class="fa fa-eye"></i>
+                </a>
+                <a href="{% url 'admin_panel:store-update' item.id %}" class="btn btn-sm btn-info"
+                   data-toggle="tooltip" title="ویرایش">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <a href="{% url 'admin_panel:store-active-deactivate' item.id %}"
+                   class="btn btn-sm btn-warning"
+                   data-toggle="tooltip"
+                   title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                    <i class="fa fa-power-off"></i>
+                </a>
+                <a href="{% url 'admin_panel:store-verify' item.id %}"
+                   class="btn btn-sm btn-info"
+                   data-toggle="tooltip"
+                   title="{% if item.is_active %}تایید نکردن اطلاعات{% else %}تایید کردن اطلاعات{% endif %}">
+                    <i class="fa fa-key"></i>
+                </a>
+                <a href="{% url 'admin_panel:store-delete' item.id %}" class="btn btn-sm btn-danger"
+                   data-toggle="tooltip" title="حذف">
+                    <i class="fa fa-trash"></i>
+                </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <form role="form" method='POST' action='' class="box" enctype='multipart/form-data'>
+            {% csrf_token %}
+
+            <!-- ردیف اول -->
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-info btn-flat">نام فروشکاه</button>
                     </span>
-                    {{ form.name }}
+                        {{ form.name }}
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-4">
-                <div class="input-group input-group-sm">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-info btn-flat">شماه همراه</button>
                     </span>
-                    {{ form.phone }}
+                        {{ form.phone }}
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-4">
-                <div class="input-group input-group-sm">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-info btn-flat">تلفن ثابت</button>
                     </span>
-                    {{ form.phone2 }}
+                        {{ form.phone2 }}
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ردیف دوم -->
-        <div class="box-body form-group flex col-md-12">
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+            <!-- ردیف دوم -->
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-warning btn-flat">لوگو</button>
                     </span>
-                    {{ form.logo }}
+                        {{ form.logo }}
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-warning btn-flat">مالیات اضافی</button>
                     </span>
-                    {{ form.additional_tax }}
+                        {{ form.additional_tax }}
+                    </div>
                 </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="input-group input-group-sm">
+
+                <div class="col-md-3">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-warning btn-flat">هزینه اضافی</button>
                     </span>
-                    {{ form.additional_price }}
+                        {{ form.additional_price }}
+                    </div>
                 </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="input-group input-group-sm">
+
+                <div class="col-md-3">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-warning btn-flat">عکس معرفی</button>
                     </span>
-                    {{ form.about_image }}
+                        {{ form.about_image }}
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-block btn-flat">وضعیت فعال بودن: {{ form.is_active }}</button>
+                        <button type="button"
+                                class="btn btn-block btn-flat">وضعیت فعال بودن: {{ form.is_active }}</button>
                     </span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ردیف سوم -->
-        <div class="box-body form-group flex col-md-12">
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+            <!-- ردیف سوم -->
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-block btn-flat">صدور فاکتور رسمی: {{ form.have_official_invoice }}</button>
+                        <button type="button"
+                                class="btn btn-block btn-flat">صدور فاکتور رسمی: {{ form.have_official_invoice }}</button>
                     </span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-3">
-                <div class="input-group input-group-sm">
+                <div class="col-md-3">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-flat">درصد برای صدور فاکتور رسمی</button>
                     </span>
-                    {{ form.official_invoice_price }}
+                        {{ form.official_invoice_price }}
+                    </div>
                 </div>
-            </div>
-            
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-flat">شماره اقتصادی</button>
                     </span>
-                    {{ form.economic_number }}
+                        {{ form.economic_number }}
+                    </div>
                 </div>
-            </div>
-            
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-flat">شماره ثبت</button>
                     </span>
-                    {{ form.registration_number }}
+                        {{ form.registration_number }}
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-3">
-                <div class="input-group input-group-sm">
+                <div class="col-md-3">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-warning btn-flat">نامبر برای فاکتور رسمی</button>
                     </span>
-                    {{ form.official_invoice_phone_number }}
-                </div>
-            </div>
-        </div>
-
-        <!-- ردیف چهارم -->
-        <div class="box-body form-group flex col-md-12">
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-block btn-flat">داشتن پست پیشاز: {{ form.have_post_delivery }}</button>
-                    </span>
+                        {{ form.official_invoice_phone_number }}
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+            <!-- ردیف چهارم -->
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-block btn-flat">داشتن پست تیپاکس: {{ form.have_tipax_delivery }}</button>
+                        <button type="button"
+                                class="btn btn-block btn-flat">داشتن پست پیشاز: {{ form.have_post_delivery }}</button>
                     </span>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-block btn-flat">داشتن پست درون شهری: {{ form.have_in_same_city_delivery }}</button>
-                    </span>
-                </div>
-            </div>
-            
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-block btn-flat">داشتن تحویل فیزیکی: {{ form.have_physical_delivery }}</button>
-                    </span>
-                </div>
-            </div>
 
-            <div class="col-md-4">
-                <div class="input-group input-group-sm">
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">داشتن پست تیپاکس: {{ form.have_tipax_delivery }}</button>
+                    </span>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">داشتن پست درون شهری: {{ form.have_in_same_city_delivery }}</button>
+                    </span>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">داشتن تحویل فیزیکی: {{ form.have_physical_delivery }}</button>
+                    </span>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-flat">هزینه پست درون شهری (تومان)</button>
                     </span>
-                    {{ form.in_same_city_delivery_price }}
+                        {{ form.in_same_city_delivery_price }}
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ردیف پنجم -->
-        <div class="box-body form-group flex col-md-12">
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+            <!-- ردیف پنجم -->
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-flat">استان</button>
                     </span>
-                    {{ form.province }}
+                        {{ form.province }}
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-flat">شهر</button>
                     </span>
-                    {{ form.orgin_city }}
+                        {{ form.orgin_city }}
+                    </div>
                 </div>
-            </div>
-            
-            <div class="col-md-3">
-                <div class="input-group input-group-sm">
+
+                <div class="col-md-3">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-flat">کد پستی</button>
                     </span>
-                    {{ form.zip_code }}
+                        {{ form.zip_code }}
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-5">
-                <div class="input-group input-group-sm">
+                <div class="col-md-5">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-warning btn-flat">ادرس فروشگاه</button>
                     </span>
-                    {{ form.address }}
+                        {{ form.address }}
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ردیف ششم -->
-        <div class="box-body flex col-md-12">
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+            <!-- ردیف ششم -->
+            <div class="box-body flex col-md-12">
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-success btn-flat">ای دی واتساپ</button>
                     </span>
-                    {{ form.whats_app_ID }}
+                        {{ form.whats_app_ID }}
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-success btn-flat">لینک واتساپ</button>
                     </span>
-                    {{ form.whats_app_link }}
+                        {{ form.whats_app_link }}
+                    </div>
                 </div>
-            </div>
-            
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-success btn-flat">ای دی تلگرام</button>
                     </span>
-                    {{ form.telegram_app_ID }}
+                        {{ form.telegram_app_ID }}
+                    </div>
                 </div>
-            </div>
-            
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-success btn-flat">لینک تلگرام</button>
                     </span>
-                    {{ form.telegram_app_Link }}
+                        {{ form.telegram_app_Link }}
+                    </div>
                 </div>
-            </div>
-            
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-success btn-flat">ای دی اینستاگرام</button>
                     </span>
-                    {{ form.instagram_app_ID }}
+                        {{ form.instagram_app_ID }}
+                    </div>
                 </div>
-            </div>
-            
-            <div class="col-md-2">
-                <div class="input-group input-group-sm">
+
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-success btn-flat">لینک اینستاگرام</button>
                     </span>
-                    {{ form.instagram_app_Link }}
+                        {{ form.instagram_app_Link }}
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- توضیحات -->
-        <div class="col-md-12">
-            {{ form.description }}
-            {{ form.media }}
-        </div>
- 
-        {% if item is not None and item.about_image and item.logo  %}
-            عکس مورد استفاده :
-            <img width="100px" height="100px" src="{{ item.about_image.url }}" alt="">
-            <br>
-            لوگو:
-            <img width="100px" height="100px" src="{{ item.logo.url }}" alt="">
-        {% endif %}
-        <!-- دکمه ثبت -->
-        <div class="box-footer">
-            <button type="submit" class="btn btn-info btn-sm btn-block">ثبت</button>
-        </div>
-    </form>
-</div>
+            <!-- توضیحات -->
+            <div class="col-md-12">
+                {{ form.description }}
+                {{ form.media }}
+            </div>
+
+            {% if item is not None and item.about_image and item.logo %}
+                عکس مورد استفاده :
+                <img width="100px" height="100px" src="{{ item.about_image.url }}" alt="">
+                <br>
+                لوگو:
+                <img width="100px" height="100px" src="{{ item.logo.url }}" alt="">
+            {% endif %}
+            <!-- دکمه ثبت -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-info btn-sm btn-block">ثبت</button>
+            </div>
+        </form>
+    </div>
 
 {% endblock %}
 

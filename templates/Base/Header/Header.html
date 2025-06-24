@@ -82,7 +82,7 @@
                         </li>
                     {% endif %}
                 {% endif %}
-                {% if user.is_superuser and user.is_verified and user.is_staff %}
+                {% if user.is_superuser and user.is_verified and user.is_active %}
                     <li class="nav-item ">
                         <a href="{% url 'admin_panel:main' %}">مدیریت سایت</a>
                     </li>
@@ -174,6 +174,26 @@
                             </svg>
                             اطلاعات کاربری
                         </a>
+                        {% if request.user.is_authenticated and request.user.is_verified %}
+                            {% if request.user.is_staff and request.user.store is not None %}
+
+                                <a href="{% url 'store:home' %}"
+                                   class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
+                                    <svg class="h-5 w-5">
+                                        <use href="#cog"></use>
+                                    </svg>
+                                    مدیریت فروشگاه</a>
+                            {% endif %}
+                        {% endif %}
+                        {% if user.is_superuser and user.is_verified and user.is_active %}
+
+                            <a href="{% url 'admin_panel:main' %}"
+                               class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
+                                <svg class="h-5 w-5">
+                                    <use href="#cog"></use>
+                                </svg>
+                                مدیریت سایت</a>
+                        {% endif %}
                         <!--BORDER  -->
                         <span class="border-t dark:border-gray-100/20 border-gray-100-gray-100"></span>
                         <a href="{% url 'user:logout' %}"
@@ -381,11 +401,31 @@
             </ul>
         {% endwith %}
         <!-- BORDER -->
-        <span class="flex w-full border-t dark:border-white/10 border-gray-200 my-8"></span>
+        <span class="flex w-full border-t dark:border-white/10 border-gray-200 my-2"></span>
         <!-- ACTION BTNS -->
         <div
                 class="flex items-start flex-col gap-y-5 child:flex child:items-center child:gap-x-2 child:font-DanaMedium">
             {% if request.user.is_authenticated %}
+                {% if request.user.is_authenticated and request.user.is_verified %}
+                    {% if request.user.is_staff and request.user.store is not None %}
+
+                        <a href="{% url 'store:home' %}"
+                           >
+                            <svg class="h-5 w-5">
+                                <use href="#cog"></use>
+                            </svg>
+                            مدیریت فروشگاه</a>
+                    {% endif %}
+                {% endif %}
+                {% if user.is_superuser and user.is_verified and user.is_active %}
+
+                    <a href="{% url 'admin_panel:main' %}"
+                       >
+                        <svg class="h-5 w-5">
+                            <use href="#cog"></use>
+                        </svg>
+                        مدیریت سایت</a>
+                {% endif %}
                 <a href="{% url 'dashboard:dashboard' %}">
 
                     <svg class="w-5 h-5">

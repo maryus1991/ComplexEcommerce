@@ -64,7 +64,7 @@
     </li>
     <li class="active"> لینک سریع
     </li>
-    <li class="active">    بروز رسانی یا ساخت لینک سریع جدید
+    <li class="active"> بروز رسانی یا ساخت لینک سریع جدید
 
     </li>
 {% endblock %}
@@ -94,7 +94,7 @@
                 <div class="box box-info">
                     <div class="box-header">
                         <h3 class="box-title">
-                             بروز رسانی یا ساخت لینک سریع جدید
+                            بروز رسانی یا ساخت لینک سریع جدید
 
                         </h3>
                         <!-- tools box -->
@@ -102,6 +102,20 @@
                             <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
                                     data-toggle="tooltip" title="" data-original-title="Collapse">
                                 <i class="fa fa-minus"></i></button>
+                            <a href="{{ item.get_absolute_url }}" class="btn btn-sm btn-success"
+                               data-toggle="tooltip" title="مشاهده">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                            <a href="{% url 'admin_panel:apps-active-deactivate' item.id %}"
+                               class="btn btn-sm btn-warning"
+                               data-toggle="tooltip"
+                               title="{% if item.admin_verified %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                <i class="fa fa-power-off"></i>
+                            </a>
+                            <a href="{% url 'admin_panel:apps-delete' item.id %}" class="btn btn-sm btn-danger"
+                               data-toggle="tooltip" title="حذف">
+                                <i class="fa fa-trash"></i>
+                            </a>
 
                         </div>
                         <!-- /. tools -->
@@ -148,7 +162,7 @@
 
                                           </span>
                                         </span>
-                                            {{ form.store}}
+                                            {{ form.store }}
 
                                         </div>
 

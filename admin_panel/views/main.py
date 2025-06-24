@@ -41,7 +41,7 @@ class FastLinksUpdateView(AdminUserMixin, UpdateView):
     form_class = FastLinksModelForm
     model = FastLinks
     template_name = 'admin_panel/fastlinks/create.html'
-    context_object_name = 'items'
+    context_object_name = 'item'
     success_url = reverse_lazy('admin_panel:fast-links-list')
 
     def form_valid(self, form):
@@ -114,7 +114,7 @@ class QuestionAndAnswerUpdateView(AdminUserMixin, UpdateView):
     form_class = QuestionAndAnswerModelForm
     model = QuestionAndAnswer
     template_name = 'admin_panel/Q&A/create.html'
-    context_object_name = 'items'
+    context_object_name = 'item'
     success_url = reverse_lazy('admin_panel:Q&A-list')
 
     def form_valid(self, form):
