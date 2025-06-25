@@ -43,7 +43,7 @@ class StoreCreateView(AdminUserMixin, CreateView):
                                'برای فعال شدن صدور فاکتور رسمی باید همه فیلد های مربوط به فاکتور رسمی پر شود')
                 return redirect(self.request.META.get('HTTP_REFERER'))
 
-        if self.request.user.store.orgin_city != data.get('orgin_city'):
+        if True:
             validate_city_result = validate_city(data.get('orgin_city'))
 
             if validate_city_result is None:
@@ -104,7 +104,7 @@ class StoreUpdateView(AdminUserMixin, UpdateView):
                                'برای فعال شدن صدور فاکتور رسمی باید همه فیلد های مربوط به فاکتور رسمی پر شود')
                 return redirect(self.request.META.get('HTTP_REFERER'))
 
-        if self.request.user.store.orgin_city != data.get('orgin_city'):
+        if self.get_object().orgin_city != data.get('orgin_city'):
             validate_city_result = validate_city(data.get('orgin_city'))
 
             if validate_city_result is None:
