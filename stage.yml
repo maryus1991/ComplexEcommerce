@@ -17,7 +17,7 @@ services:
     container_name : app
     restart: always
     build: .
-    command: gunicorn config.wsgi --bind  0.0.0.0:32852
+    command: gunicorn config.wsgi --bind  0.0.0.0:32852 --timeout 120 
     volumes:
       - ./:/app
       - static_volume:/app/static

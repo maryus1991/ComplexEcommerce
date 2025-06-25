@@ -25,7 +25,6 @@ from config.settings import (
 from django.utils.timezone import now
 
 from stores.models import Store
-
 from dashboard.models import UserAddress
 from utils.tipax_price_calc import calculate_price
 
@@ -401,6 +400,7 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
         store_id = kwargs.get('store_id')
         user = self.request.user
         delivery_id = kwargs.get('did')
+        site = SiteSetting.objects.first()
 
         order = get_object_or_404(Order, pk=pk,
                                   is_active=True,
@@ -409,27 +409,48 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
                                   user=user,
                                   store_id=store_id)
 
-        if delivery_id == 1:  # delivery with post
-            order.vip_post = True
-            order.tipax_post_delivery = False
-            order.in_city_delivery = False
-            order.physical_delivery = False
-            order.delivery_price = order.calculate_post_price()
+        if delivery_id == 1 and site.active_post_delivery:  # delivery with post
+            if price >= 1 :
+                order.vip_post = True
+                order.tipax_post_delivery = False
+                order.in_city_delivery = False
+                order.physical_delivery = False
+                price = order.calculate_post_price()
 
-        elif delivery_id == 2:  # delivery with tipax
-            order.tipax_post_delivery = True
-            order.vip_post = False
-            order.in_city_delivery = False
-            order.physical_delivery = False
-            order.delivery_price = order.calculate_tipax_price()
+                order.delivery_price = price
+                order.save()
 
-        elif delivery_id == 3:  # delivery in same city
+            else:
+                messages.warning(
+                self.request,'در ارتباط با سرور جهت محسابه قیمت به مشکل برخوردیم لطفا راه ارسال دریگری را انتخاب نمایید یا گزینه تحویل حضوری را انتخاب نمایید و به فروشگاه صاحب محصول تیکیت بفرستید')
+                return reverse('orders:payment-conform', kwargs={'pk': pk})
+
+
+        elif delivery_id == 2 and site.active_tipax_delivery:  # delivery with tipax
+
+            price = order.calculate_tipax_price()
+            if price >= 1 :
+                order.tipax_post_delivery = True
+                order.vip_post = False
+                order.in_city_delivery = False
+                order.physical_delivery = False
+                order.delivery_price = price
+                order.save()
+
+            else:
+                messages.warning(
+                self.request,'در ارتباط با سرور جهت محسابه قیمت به مشکل برخوردیم لطفا راه ارسال دریگری را انتخاب نمایید یا گزینه تحویل حضوری را انتخاب نمایید و به فروشگاه صاحب محصول تیکیت بفرستید')
+                return reverse('orders:payment-conform', kwargs={'pk': pk})
+
+
+        elif delivery_id == 3 and site.active_in_same_city_delivery:  # delivery in same city
             if order.store.orgin_city_id == order.address.city_code:
                 order.in_city_delivery = True
                 order.tipax_post_delivery = False
                 order.vip_post = False
                 order.physical_delivery = False
                 order.delivery_price = order.store.in_same_city_delivery_price
+                order.save()
 
             else:
                 messages.error(
@@ -439,13 +460,15 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
                 return reverse('orders:payment-conform', kwargs={'pk': pk})
 
 
-        elif delivery_id == 4:  # physical delivery
+        elif delivery_id == 4 and site.active_physical_delivery:  # physical delivery
 
             order.physical_delivery = True
             order.in_city_delivery = False
             order.tipax_post_delivery = False
             order.vip_post = False
             order.delivery_price = 0
+            order.save()
+
 
         else:
             messages.error(
@@ -454,7 +477,6 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
             )
             return reverse('orders:payment-conform', kwargs={'pk': pk})
 
-        order.save()
 
         messages.success(
             self.request,

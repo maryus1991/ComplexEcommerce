@@ -2,7 +2,6 @@ import requests, os, sys, json
 import django
 from pathlib import Path
 
-
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 
@@ -10,17 +9,13 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 from django.conf import settings
 
-
-
 from config import settings
-
 
 # tipax apis url
 
 TIPAX_LOGIN = 'https://omtestapi.tipax.ir/api/OM/v3/Account/token'  # post
 TIPAX_GET_LIST_CITIES = 'https://omtestapi.tipax.ir/api/OM/v3/Cities'  # get
 TIPAX_CALC_PRICE = 'https://omtestapi.tipax.ir/api/OM/v3/Pricing'  # post
-
 
 access_token = None
 
@@ -109,11 +104,11 @@ def calculate_price(
         distribution_type=10,
         service_id=3,  # service type of sending
 ):
-
     try:
         if access_token is None:
-            print('used')
             login()
+            print('used')
+            print(access_token)
 
         headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer {}'.format(access_token)}
 
@@ -144,9 +139,15 @@ def calculate_price(
             ]
 
         }
-        print(data)
-        response = requests.post(TIPAX_CALC_PRICE, data=json.dumps(data), headers=headers, )
-
+        print(json.dumps(data))
+        response = requests.post(
+            TIPAX_CALC_PRICE,
+            data=json.dumps(data),
+            headers=headers,
+            stream=True,
+            timeout=20
+        )
+        print(response.json())
         if response.status_code == 200:
             return int(response.json()[0]['regularRate']['finalPrice']) / 10
         elif response.status_code == 401:
