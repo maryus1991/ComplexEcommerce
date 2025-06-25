@@ -548,14 +548,17 @@ class ConformPayment(LoginRequiredMixin, View):
                 'merchant_id': MERCHANT_ID,
                 'amount': int(result * 10),
                 'callback_url': callback_url,
-                'description': order.additional_descriptions[
-                               0:500] if order.additional_descriptions is not None else 'کاربر توضیجاتی وارد نکرده ',
+                'description':
+                    f'''شماره فا کتور : {self.order.id}
+                    {self.order.store.name}-{self.order.store.phone} فروشگاه و شماره ان :
+                    کاربر :{self.order.user.PhoneNumber}
+                    ''',
+
                 'metadata': {
                     'mobile': str(request.user.PhoneNumber),
                     'order_id': str(order.id),
                 },
             }
-
             data = json.dumps(data)
             headers = {'content-type': 'application/json', 'content-length': str(len(data))}
 
@@ -627,7 +630,7 @@ class VerifyPayment(LoginRequiredMixin, View):
                 order.ZarinPal_fee = fee
                 order.is_paid = True
                 order.second_date = now()
-                order.sending = True
+
                 order.mines_order_detail_count_from_products_count()
                 order.save()
 

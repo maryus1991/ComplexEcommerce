@@ -431,7 +431,7 @@
                     {% endif %}
 
                     <div class="grid grid-cols-12 child:col-span-12 gap-4 child:w-full child:flex child:items-center child:gap-x-2 child:rounded-lg child:shadow child:p-2 mb-5 child:duration-300child:transition-all dark:child:text-white child:text-sm">
-                        {% if site.active_post_delivery and order.store.have_post_delivery %}
+                        {% if site.active_post_delivery and order.store.have_post_delivery and order.address.city_code != order.store.orgin_city_id %}
 
                             <a type="button"
                                href="{% url 'orders:choose-type-of-delivery' store_id=order.store.id pk=order.id did=1 %}"
@@ -441,7 +441,7 @@
                                 پست پیشتاز : {{ order.calculate_post_price|tdc }} تومان
                             </a>
                         {% endif %}
-                        {% if site.active_tipax_delivery and order.store.have_tipax_delivery %}
+                        {% if site.active_tipax_delivery and order.store.have_tipax_delivery and order.address.city_code != order.store.orgin_city_id %}
 
                             <a type="button"
                                href="{% url 'orders:choose-type-of-delivery' store_id=order.store.id pk=order.id did=2 %}"
