@@ -74,6 +74,8 @@ import jdatetime
 from stores.validators import is_valid_message
 from utils.tipax_price_calc import validate_city
 
+from utils.send_otp import send_message
+
 User = get_user_model()
 
 # orders
@@ -86,6 +88,7 @@ class StoreOrdersView(UserStoreStaffMixin, ListView):
     model = Order
     template_name = 'store/orders/orders-list.html'
     context_object_name = 'orders'
+    ordering = '-id'
 
     def get_queryset(self):
         # دریافت کوئری‌ست پایه
@@ -474,5 +477,41 @@ class AddOfficialInvoiceView(UserStoreStaffMixin, View):
             order.save()
 
         messages.success(request, 'فاکتور رسمی با موفقیت برای کاربر ارسال شد')
+        send_message(
+            str(order.user.PhoneNumber).replace(' ', ''),
+            f'''
+                فاکتور رسمی شما اپلود شد با مراجعه به قسمت حساب کاربری سفارشات  و بعد با انتخاب سفارش مورد نظر ان را دانلود نمایید
+        '''
+        )
         return redirect(request.META.get('HTTP_REFERER'))
 
+
+class ChangeStatusToDeliveredToUser(UserStoreStaffMixin, RedirectView):
+    """for set sending id and change status to DeliveredToUser"""
+
+    def get_redirect_url(self, *args, **kwargs):
+
+        order = get_object_or_404(Order, pk=self.kwargs['pk'], store=self.request.user.store)
+
+        order.delivered_to_user = True
+        send_id = self.request.GET.get('sending_id')
+        if send_id != '' and send_id is not None and not send_id.isspace() :
+            order.sending_id = self.request.GET.get('sending_id')
+            order.save()
+            messages.success(
+                self.request,'تغییرات ثبت شد'
+            )
+            send_message(
+                str(order.user.PhoneNumber).replace(' ',''),
+                f'''
+                محموله شما ارسال شد 
+                code: {order.sending_id}
+                '''
+            )
+
+        else:
+            messages.warning(
+                self.request, 'در وارد کردن کد ارسال دقت کنید'
+            )
+
+        return self.request.META.get('HTTP_REFERER')

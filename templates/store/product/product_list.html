@@ -338,7 +338,7 @@
                                                     colspan="1"
                                                     aria-label="امتیاز: activate to sort column ascending">
                                                     برند
-                                                </th>                                                
+                                                </th>
                                                 <th class="sorting" tabindex="0" aria-controls="example2"
                                                     rowspan="1"
                                                     colspan="1"
@@ -400,35 +400,43 @@
                                                             <span class="label label-success">
                                                             تاییده شده
                                                             </span>
-                                                        	{% else %}
+                                                        {% else %}
                                                             <span class="label label-danger">
-                                                            تاییده نشده (برای فعالیت با ادمین در تماس باشید)  
+                                                            تاییده نشده  
                                                             </span>
-                                                            
-                                                        {% endif %} 
+
+                                                        {% endif %}
                                                     </td>
-                                                    <td><a class="btn btn-block btn-success"
+                                                    <td>
+                                                        <a class="btn btn-block btn-success"
                                                            href="{% url 'product:detail' product.id %}">
-                                                        مشاهده
-                                                    </a></td>
-                                                    <td><a href="{% url 'store:edit-product' product.id %}"
+                                                            مشاهده
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{% url 'store:edit-product' product.id %}"
                                                            class="btn btn-block btn-warning">
-                                                        بروزرسانی
-                                                    </a></td>
-                                                    <td><a class="btn btn-block"
+                                                            بروزرسانی
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a class="btn btn-block"
                                                            style="background: rebeccapurple; color: white"
                                                            href="{% url 'store:active-deactivate-product' product.id %}">
-                                                        {% if product.is_active %}
-                                                            غیر فعال کردن
-                                                        {% else %}
-                                                            فعال کردن
-                                                        {% endif %}
-                                                    </a></td>
-                                                    <td><a class="btn btn-block"
+                                                            {% if product.is_active %}
+                                                                غیر فعال کردن
+                                                            {% else %}
+                                                                فعال کردن
+                                                            {% endif %}
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a class="btn btn-block"
                                                            style="background: red; color: white"
                                                            href="{% url 'store:remove-product' product.pk %}">
-                                                        حذف کردن
-                                                    </a></td>
+                                                            حذف کردن
+                                                        </a>
+                                                    </td>
                                                 </tr>
 
                                             {% endfor %}
@@ -481,7 +489,7 @@
                                                     colspan="1"
                                                     aria-label="امتیاز: activate to sort column ascending">
                                                     برند
-                                                </th>                                                
+                                                </th>
                                                 <th class="sorting" tabindex="0" aria-controls="example2"
                                                     rowspan="1"
                                                     colspan="1"
@@ -570,10 +578,10 @@
                     </div>
                     <!-- /.box -->
                 </div>
-                </div>
-                <!-- /.col -->
             </div>
-            <!-- /.row -->
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
     </section>
 {% endblock %}
 

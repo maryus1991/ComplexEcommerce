@@ -28,6 +28,7 @@ from stores.models import Store
 from dashboard.models import UserAddress
 from utils.tipax_price_calc import calculate_price
 
+from utils.send_otp import send_message
 
 def get_zarinpal_error_code_return_perian_message(code):
     import ZARINPAL_ERRORS
@@ -651,10 +652,18 @@ class VerifyPayment(LoginRequiredMixin, View):
                 order.payment_id = payment_id
                 order.ZarinPal_fee = fee
                 order.is_paid = True
+                order.sending = True
                 order.second_date = now()
 
                 order.mines_order_detail_count_from_products_count()
                 order.save()
+                send_message(
+                    str(order.user.PhoneNumber).replace(' ', ''),
+                    """
+                    از اینکه ما رو انتخاب کردید متشکریم 
+                    سفارش شما در وضعیت ارسال قرار گرفت
+                    """
+                )
 
                 StoreSoldOrders.objects.create(
                     order=order,

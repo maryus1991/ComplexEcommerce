@@ -224,6 +224,11 @@
                             {% if not blog.is_active %}
                                 <span class="label label-default pull-left">پیش نویس</span>
                             {% endif %}
+                                
+                                {% if not blog.admin_verified %}
+                                <span class="label label-danger pull-left">غیر فعال شده توسط ادمین</span>
+
+                            {% endif %}
                         </td>
                         <td>
                             <span class="label label-info">{{ blog.category.name }}</span>

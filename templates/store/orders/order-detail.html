@@ -163,6 +163,21 @@
                             {% endif %}
                         </td>
                     </tr>
+                    {% if order.sending  %}
+                        <tr>
+                            <td colspan="2">
+                                <form action="{% url 'store:orders-sending' order.id %}" method="GET"
+                                      class="form-inline ">
+                                    <input type="text" placeholder="کد پیگیری" class="form-control " name="sending_id">
+                                    <button style="width: 20%" class="btn btn-sm btn-success " type="submit">
+                                        ثبت
+                                    </button>
+                                </form>
+                            </td>
+                        <td colspan="2"></td>
+                        </tr>
+                    {% endif %}
+
                     <tr>
                         <td colspan="4"><strong>توضیحات:</strong> {{ order.additional_descriptions }}</td>
 
@@ -176,7 +191,7 @@
                 <p class="well">
                     {% if order.address %}
                         {{ order.address.name }} {{ order.address.last_name }} - {{ order.address.province }} -
-                        {{ order.address.city }} - {{ order.address.address }} - 
+                        {{ order.address.city }} - {{ order.address.address }} -
                         <span dir="ltr">{{ order.address.zipcode }} - {{ order.address.phone }}</span> -
                         {{ order.address.additional_decryption }}
                     {% else %}
