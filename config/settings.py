@@ -47,6 +47,11 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.amvajsarmad.com',
 ]
 
+
+# dbbackup config
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': BASE_DIR / 'admin_panel/backups/'}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -67,6 +72,7 @@ INSTALLED_APPS = [
     'django_user_agents',
     'multiupload',
     'auditlog',
+    'dbbackup',
 
     # installed apps
     'user',

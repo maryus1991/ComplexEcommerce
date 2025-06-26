@@ -22,6 +22,7 @@ services:
       - ./:/app
       - static_volume:/app/static
       - media_volume:/app/media
+      - /admin_panel/backups:/app/admin_panel/backups/
 
     env_file:
       - .envs

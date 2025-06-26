@@ -125,4 +125,7 @@ urlpatterns = [
     path('discount/active-deactivate/<int:pk>', views.DiscountActiveAndDeActivate.as_view(), name='discount-active-deactivate'),
     path('discount/delete/<int:pk>', views.DiscountDeleteView.as_view(), name='discount-delete'),
 
+    # backup
+    path('backup/', views.OneClickBackup.as_view(), name='backup'),
+
 ]

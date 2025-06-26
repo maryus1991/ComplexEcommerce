@@ -211,35 +211,35 @@ desired effect
                                 <li>
                                     <!-- inner menu: contains the actual data -->
                                     <ul class="menu">
-                                    {% if  user.tickets.exists %}
-                                    
-                                        {% for item in user.tickets|ticket_obj_request %}
-                                            <li class="">
-                                                <a href="{% url 'store:conversation-ticket' item.id %}"
-                                                   class="clearfix">
-                                                    <p class="pull-right">
-                                                        {{ item.user.get_full_name }}
-                                                        <br>
-                                                        <small class="text-muted"><i
-                                                                class="fa fa-clock-o"></i> {{ item.message.last.date|to_jalali:'%H:%m - %Y/%M/%d ' }}
-                                                        </small>
-                                                    </p>
-                                                    {# You could add a snippet of the last message here for more context #}
-                                                    {# <p class="text-muted pull-right">{{ item.message.last.content|truncatechars:50 }}</p> #}
-                                                </a>
-                                            </li>
-                                            {% if not forloop.last %}
-                                                <li role="separator" class="divider"></li>
-                                                {# Adds a separator between items #}
-                                            {% endif %}
-                                        {% empty %}
-                                            <li class="text-center" style="padding: 10px;">
-                                                <p class="text-muted">هنوز پیامی دریافت نکردید</p>
-                                            </li>
-                                        {% endfor %}
-                                    {% endif %}
-                                        </ul>
-                                        
+                                        {% if  user.tickets.exists %}
+
+                                            {% for item in user.tickets|ticket_obj_request %}
+                                                <li class="">
+                                                    <a href="{% url 'store:conversation-ticket' item.id %}"
+                                                       class="clearfix">
+                                                        <p class="pull-right">
+                                                            {{ item.user.get_full_name }}
+                                                            <br>
+                                                            <small class="text-muted"><i
+                                                                    class="fa fa-clock-o"></i> {{ item.message.last.date|to_jalali:'%H:%m - %Y/%M/%d ' }}
+                                                            </small>
+                                                        </p>
+                                                        {# You could add a snippet of the last message here for more context #}
+                                                        {# <p class="text-muted pull-right">{{ item.message.last.content|truncatechars:50 }}</p> #}
+                                                    </a>
+                                                </li>
+                                                {% if not forloop.last %}
+                                                    <li role="separator" class="divider"></li>
+                                                    {# Adds a separator between items #}
+                                                {% endif %}
+                                            {% empty %}
+                                                <li class="text-center" style="padding: 10px;">
+                                                    <p class="text-muted">هنوز پیامی دریافت نکردید</p>
+                                                </li>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </ul>
+
                                 </li>
                                 <li class="footer">
                                     <a href="{% url 'store:list-sended-ticket' %}">نمایش همه</a>
@@ -496,7 +496,10 @@ desired effect
 
                 {% elif user.is_superuser %}
 
-
+                    <li class="link-activator btn btn-danger " style="width: 100%"><a
+                            href="{% url 'admin_panel:backup' %}"><i class="fa fa-link"></i>
+                        <span>دانلود بکاپ</span></a>
+                    </li>
                     <li class="treeview">
                         <a><i class="fa fa-link"></i>
                             <span>محصولات</span>
@@ -601,7 +604,7 @@ desired effect
                     <li class="link-activator"><a href="{% url 'admin_panel:user-list' %}"><i
                             class="fa fa-link"></i> <span>
                             کاربران
-                    </span></a>                    
+                    </span></a>
                     <li class="link-activator"><a href="{% url 'admin_panel:discount-list' %}"><i
                             class="fa fa-link"></i> <span>
                             کد تخفیف ها
@@ -639,6 +642,7 @@ desired effect
                     {% endif %}
                     <li class="link-activator"><a href="/"><i class="fa fa-link"></i> <span>صفحه اصلی سایت</span></a>
                     </li>
+
 
                 {% endif %}
 

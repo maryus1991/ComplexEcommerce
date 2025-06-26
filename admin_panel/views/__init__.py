@@ -11,3 +11,4 @@ from .tickets import *
 from .users import *
 from .discount import *
 from .orders import *
+from .backup import *
