@@ -30,31 +30,29 @@
 {% endblock %}
 
 {% block body %}
-    <section class="content" style="margin-top: 30px">
-        <div class="">
-            <div class="col-md-12 d-flex">
-                <div class="box box-primary flex-fill ">
-                    <div class="box-header with-border panel-heading">
-                        <h3 class="box-title panel-title text-center">فرم جستجوی پیشرفته محصول</h3>
-                        <div class="pull-right box-tools">
-                            <button type="button" class="btn btn-info" data-widget="collapse">
-                                <i class="fa fa-minus"></i>
-                            </button>
-                        </div>
+<section class="content" style="margin-top: 30px">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border panel-heading">
+                    <h3 class="box-title panel-title text-center">فرم جستجوی پیشرفته محصول</h3>
+                    <div class="pull-right box-tools">
+                        <button type="button" class="btn btn-info btn-sm" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
                     </div>
+                </div>
 
-                    <div class="box-body" style="display: None;">
-                        <form class="form-horizontal" method="GET" enctype="multipart/form-data">
-                            <div class="panel panel-primary">
-
-
-                                <div class="panel-body">
-
-                                    {% csrf_token %}
-
-                                    <!-- نام محصول -->
-                                    <div class=" ">
-                                        <div class="col-md-6">
+                <div class="box-body" style="display: none;">
+                    <form class="form-horizontal" method="GET" enctype="multipart/form-data">
+                        <div class="panel panel-primary">
+                            <div class="panel-body">
+                                {% csrf_token %}
+                                
+                                <!-- ردیف اول -->
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
                                             <div class="input-group">
                                                 <span class="input-group-btn">
                                                     <span class="btn btn-warning btn-flat">{{ search_form.name.label }}</span>
@@ -62,528 +60,391 @@
                                                 {{ search_form.name }}
                                             </div>
                                         </div>
-
-                                        <div class="col-md-3">
+                                    </div>
+                                    
+                                    <div class="col-sm-6 col-md-3">
+                                        <div class="form-group">
                                             <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #f56954; color: white;">{{ search_form.have_discount.label }}</span>
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.have_discount.label }}
+                                                </span>
                                                 {{ search_form.have_discount }}
-
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3 ">
-                                            <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #f56954; color: white;"> {{ search_form.is_active.label }}</span>
-                                                {{ search_form.is_active }}
-
-
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- قیمت: ابتدا و انتها -->
-
-
-                                    <div class="clearfix"></div>
-                                    <br>
-
-                                    <!-- تخفیف -->
-                                    <div>
-
-                                        <div class="col-md-6">
+                                    
+                                    <div class="col-sm-6 col-md-3">
+                                        <div class="form-group">
                                             <div class="input-group">
-                                    <span class="input-group-addon btn btn-flat"
-                                          style="background-color: #f56954; color: white;">{{ search_form.discount_min.label }}</span>
-
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.is_active.label }}
+                                                </span>
+                                                {{ search_form.is_active }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ردیف دوم - تخفیف -->
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.discount_min.label }}
+                                                </span>
                                                 {{ search_form.discount_min }}
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                    </div>
+                                    
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
                                             <div class="input-group">
-                                                                        <span class="input-group-addon btn btn-flat"
-                                                                              style="background-color: #f56954; color: white;">{{ search_form.discount_max.label }}</span>
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.discount_max.label }}
+                                                </span>
                                                 {{ search_form.discount_max }}
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="clearfix"></div>
-                                    <br>
-
-                                    <!-- دسته‌بندی و برند -->
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #ed59f4; color: white;">{{ search_form.category.label }}</span>
-                                            {{ search_form.category }}
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #0000ff; color: white;">{{ search_form.brand.label }}</span>
-                                            {{ search_form.brand }}
-                                        </div>
-                                    </div>
-
-                                    <div class="clearfix"></div>
-                                    <br>
-
-                                    <!-- تعداد: ابتدا و انتها -->
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #f56954; color: white;">{{ search_form.count_min.label }}</span>
-                                            {{ search_form.count_min }}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #f56954; color: white;">{{ search_form.count_max.label }}</span>
-                                            {{ search_form.count_max }}
-                                        </div>
-                                    </div>
-
-
-                                    <div class="clearfix"></div>
-                                    <br>
-
-                                    <!-- وزن: ابتدا و انتها -->
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #726204; color: white;">{{ search_form.weight_min.label }}</span>
-                                            {{ search_form.weight_min }}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #726204; color: white;">{{ search_form.weight_max.label }}</span>
-                                            {{ search_form.weight_max }}
-                                        </div>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                    <br>
-
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                            <span class="btn btn-info input-group-addon  btn-flat">{{ search_form.price_min.label }}</span>
-                                            {{ search_form.price_min }}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="input-group">
-                                            <span class="input-group-addon btn btn-success btn-flat">{{ search_form.price_max.label }}</span>
-                                            {{ search_form.price_max }}
-                                        </div>
-                                    </div>
-
-                                    <div class="clearfix"></div>
-                                    <br>
-
-                                    <!-- ابعاد: ارتفاع، طول، عرض -->
-                                    <div class="col-md-4">
-                                        <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #f56954; color: white;">{{ search_form.height_min.label }}</span>
-                                            {{ search_form.height_min }}
-                                        </div>
-                                        <br>
-                                        <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #f56954; color: white;">{{ search_form.height_max.label }}</span>
-                                            {{ search_form.height_max }}
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #726204; color: white;">{{ search_form.length_min.label }}</span>
-                                            {{ search_form.length_min }}
-                                        </div>
-                                        <br>
-                                        <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #726204; color: white;">{{ search_form.length_max.label }}</span>
-                                            {{ search_form.length_max }}
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #726204; color: white;">{{ search_form.width_min.label }}</span>
-                                            {{ search_form.width_min }}
-                                        </div>
-                                        <br>
-                                        <div class="input-group">
-                                <span class="input-group-addon btn btn-flat"
-                                      style="background-color: #726204; color: white;">{{ search_form.width_max.label }}</span>
-                                            {{ search_form.width_max }}
-                                        </div>
-                                    </div>
-
-                                    <div class="clearfix"></div>
-                                    <br>
-                                    <div class="col-md-4">
-                                        <div class="input-group">
-                            <span class="input-group-btn">
-                                <span class="btn btn-warning btn-flat">{{ search_form.feature.label }}</span>
-                            </span>
-                                            {{ search_form.feature }}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="input-group">
-                            <span class="input-group-btn">
-                                <span class="btn btn-warning btn-flat">{{ search_form.tag.label }}</span>
-                            </span>
-                                            {{ search_form.tag }}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="input-group">
-                            <span class="input-group-btn">
-                                <span class="btn btn-warning btn-flat">{{ search_form.ordering.label }}</span>
-                            </span>
-                                            {{ search_form.ordering }}
-                                        </div>
-                                    </div>
-
                                 </div>
-
-                                <div class="panel-footer text-center">
-                                    <button type="submit" class="btn btn-success btn-lg">
-                                        جستجوی محصول
-                                    </button>
-                                    <button type="reset" class="btn btn-warning btn-lg">
-                                        حذف
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="box">
-                        <div class="box-header">
-                            <h3 class="box-title">محصولات فروشگاه {{ user.store.name }} </h3>
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body">
-                            <div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                                
+                                <!-- ردیف سوم - دسته‌بندی و برند -->
                                 <div class="row">
-                                    <div class="col-sm-6"></div>
-                                    <div class="col-sm-6"></div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <table id="example2" class="table table-bordered table-hover dataTable"
-                                               role="grid"
-                                               aria-describedby="example2_info">
-                                            <thead>
-                                            <tr role="row">
-                                                <th class="sorting_asc" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1" aria-sort="ascending"
-                                                    aria-label="نام محصول: activate to sort column descending">نام
-                                                    محصول
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="قیمت: activate to sort column ascending">
-                                                    تعداد کامنت ها
-
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="قیمت: activate to sort column ascending">
-                                                    موجودی کالا
-
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="قیمت: activate to sort column ascending">
-                                                    بازدید ها
-
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="سیستم عامل: activate to sort column ascending">
-                                                    قیمت
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="ورژن: activate to sort column ascending">
-                                                    دسته
-                                                    بندی
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="امتیاز: activate to sort column ascending">
-                                                    برند
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="امتیاز: activate to sort column ascending">
-                                                    تاییده ادمین
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="امتیاز: activate to sort column ascending">
-                                                    مشاهده صفحه محصول
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="امتیاز: activate to sort column ascending">
-                                                    بروزرسانی محصول
-                                                </th>
-
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="امتیاز: activate to sort column ascending">
-                                                    فعال کردن یا نکردن محصول
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="امتیاز: activate to sort column ascending">
-                                                    حذف کردن محصول
-                                                </th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for product in products %}
-
-
-                                                <tr role="row" class="odd">
-                                                    <td>{{ product.name }}</td>
-                                                    <td>{{ product.comments.count }}</td>
-                                                    <td>{{ product.count }}</td>
-                                                    <td></td>
-                                                    <td>
-                                                        {% if product.have_discount %}
-                                                            دارای تخفیف:
-                                                            {{ product.price|clac_discount:product.discount }}
-                                                            -
-                                                            <del style="color:red">
-                                                                {{ product.price|tdc }}
-                                                            </del>
-                                                        {% else %}
-                                                            {{ product.price|tdc }}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>{{ product.category.name }}</td>
-                                                    <td>{{ product.brand.name }}</td>
-                                                    <td>
-                                                        {% if product.admin_verified %}
-                                                            <span class="label label-success">
-                                                            تاییده شده
-                                                            </span>
-                                                        {% else %}
-                                                            <span class="label label-danger">
-                                                            تاییده نشده  
-                                                            </span>
-
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        <a class="btn btn-block btn-success"
-                                                           href="{% url 'product:detail' product.id %}">
-                                                            مشاهده
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <a href="{% url 'store:edit-product' product.id %}"
-                                                           class="btn btn-block btn-warning">
-                                                            بروزرسانی
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <a class="btn btn-block"
-                                                           style="background: rebeccapurple; color: white"
-                                                           href="{% url 'store:active-deactivate-product' product.id %}">
-                                                            {% if product.is_active %}
-                                                                غیر فعال کردن
-                                                            {% else %}
-                                                                فعال کردن
-                                                            {% endif %}
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <a class="btn btn-block"
-                                                           style="background: red; color: white"
-                                                           href="{% url 'store:remove-product' product.pk %}">
-                                                            حذف کردن
-                                                        </a>
-                                                    </td>
-                                                </tr>
-
-                                            {% endfor %}
-                                            </tbody>
-                                            <tfoot>
-                                            <tr>
-                                            <tr role="row">
-                                                <th class="sorting_asc" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1" aria-sort="ascending"
-                                                    aria-label="نام محصول: activate to sort column descending">نام
-                                                    محصول
-                                                </th>
-
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="سیستم عامل: activate to sort column ascending">
-                                                    تعداد کامنت ها
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="قیمت: activate to sort column ascending">
-                                                    موجودی کالا
-
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="قیمت: activate to sort column ascending">
-                                                    بازدید ها
-
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="قیمت: activate to sort column ascending">
-                                                    قیمت
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="ورژن: activate to sort column ascending">
-                                                    دسته
-                                                    بندی
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="امتیاز: activate to sort column ascending">
-                                                    برند
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="امتیاز: activate to sort column ascending">
-                                                    تاییده ادمین
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="امتیاز: activate to sort column ascending">
-                                                    مشاهده صفحه محصول
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="امتیاز: activate to sort column ascending">
-                                                    بروزرسانی محصول
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="امتیاز: activate to sort column ascending">
-                                                    فعال کردن یا نکردن محصول
-                                                </th>
-                                                <th class="sorting" tabindex="0" aria-controls="example2"
-                                                    rowspan="1"
-                                                    colspan="1"
-                                                    aria-label="امتیاز: activate to sort column ascending">
-                                                    حذف کردن محصول
-                                                </th>
-                                            </tr>
-
-                                            </tfoot>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-5">
-                                        <div class="dataTables_info" id="example2_info" role="status"
-                                             aria-live="polite">
-                                            تعداد محصولات : {{ products.count }}
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #ed59f4; color: white;">
+                                                    {{ search_form.category.label }}
+                                                </span>
+                                                {{ search_form.category }}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-7">
-                                        <div class="dataTables_paginate paging_simple_numbers"
-                                             id="example2_paginate">
-                                            <ul class="pagination">
-                                                {% if page_obj.has_previous %}
-
-                                                    <li class="paginate_button previous" id="example2_previous">
-                                                        <a href="?page={{ page_obj.previous_page_number }}"
-                                                           aria-controls="example2" data-dt-idx="0"
-                                                           tabindex="0">Previous</a>
-                                                    </li>
-
-                                                {% endif %}
-
-                                                {% for page_number in page_obj.paginator.page_range %}
-
-                                                    <li class="paginate_button {% if page_number == page_obj.number %} active {% endif %}">
-                                                        <a href="?page={{ page_number }}"
-                                                           aria-controls="{{ page_number }}"
-                                                           data-dt-idx="{{ page_number }}"
-                                                           tabindex="0">{{ page_number }}</a>
-                                                    </li>
-                                                {% endfor %}
-
-
-                                                {% if page_obj.has_next %}
-
-                                                    <li class="paginate_button next" id="example2_next">
-                                                        <a href="?page={{ page_obj.next_page_number }}"
-                                                           aria-controls="example2"
-                                                           tabindex="0">Next</a>
-                                                    </li>
-
-                                                {% endif %}
-
-                                            </ul>
+                                    
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #0000ff; color: white;">
+                                                    {{ search_form.brand.label }}
+                                                </span>
+                                                {{ search_form.brand }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ردیف چهارم - تعداد -->
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.count_min.label }}
+                                                </span>
+                                                {{ search_form.count_min }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.count_max.label }}
+                                                </span>
+                                                {{ search_form.count_max }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ردیف پنجم - وزن -->
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #726204; color: white;">
+                                                    {{ search_form.weight_min.label }}
+                                                </span>
+                                                {{ search_form.weight_min }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #726204; color: white;">
+                                                    {{ search_form.weight_max.label }}
+                                                </span>
+                                                {{ search_form.weight_max }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ردیف ششم - قیمت -->
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="btn btn-info input-group-addon btn-flat">
+                                                    {{ search_form.price_min.label }}
+                                                </span>
+                                                {{ search_form.price_min }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-success btn-flat">
+                                                    {{ search_form.price_max.label }}
+                                                </span>
+                                                {{ search_form.price_max }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ردیف هفتم - ابعاد -->
+                                <div class="row">
+                                    <div class="col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.height_min.label }}
+                                                </span>
+                                                {{ search_form.height_min }}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.height_max.label }}
+                                                </span>
+                                                {{ search_form.height_max }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #726204; color: white;">
+                                                    {{ search_form.length_min.label }}
+                                                </span>
+                                                {{ search_form.length_min }}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #726204; color: white;">
+                                                    {{ search_form.length_max.label }}
+                                                </span>
+                                                {{ search_form.length_max }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #726204; color: white;">
+                                                    {{ search_form.width_min.label }}
+                                                </span>
+                                                {{ search_form.width_min }}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #726204; color: white;">
+                                                    {{ search_form.width_max.label }}
+                                                </span>
+                                                {{ search_form.width_max }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ردیف هشتم - ویژگی‌ها -->
+                                <div class="row">
+                                    <div class="col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-warning btn-flat">{{ search_form.feature.label }}</span>
+                                                </span>
+                                                {{ search_form.feature }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-warning btn-flat">{{ search_form.tag.label }}</span>
+                                                </span>
+                                                {{ search_form.tag }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-warning btn-flat">{{ search_form.ordering.label }}</span>
+                                                </span>
+                                                {{ search_form.ordering }}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div class="panel-footer text-center">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    جستجوی محصول
+                                </button>
+                                <button type="reset" class="btn btn-warning btn-lg">
+                                    حذف
+                                </button>
+                            </div>
                         </div>
-                        <!-- /.box-body -->
-                    </div>
-                    <!-- /.box -->
+                    </form>
                 </div>
             </div>
-            <!-- /.col -->
         </div>
-        <!-- /.row -->
-    </section>
-{% endblock %}
+    </div>
+
+    <!-- جدول محصولات -->
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">محصولات فروشگاه {{ user.store.name }}</h3>
+                </div>
+                
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>نام محصول</th>
+                                    <th>تعداد کامنت ها</th>
+                                    <th>موجودی کالا</th>
+                                    <th>بازدید ها</th>
+                                    <th>قیمت</th>
+                                    <th>دسته بندی</th>
+                                    <th>برند</th>
+                                    <th>تاییده ادمین</th>
+                                    <th>مشاهده صفحه محصول</th>
+                                    <th>بروزرسانی محصول</th>
+                                    <th>فعال/غیرفعال</th>
+                                    <th>حذف کردن محصول</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in products %}
+                                <tr>
+                                    <td>{{ product.name }}</td>
+                                    <td>{{ product.comments.count }}</td>
+                                    <td>{{ product.count }}</td>
+                                    <td></td>
+                                    <td>
+                                        {% if product.have_discount %}
+                                            دارای تخفیف:
+                                            {{ product.price|clac_discount:product.discount }}
+                                            -
+                                            <del style="color:red">
+                                                {{ product.price|tdc }}
+                                            </del>
+                                        {% else %}
+                                            {{ product.price|tdc }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ product.category.name }}</td>
+                                    <td>{{ product.brand.name }}</td>
+                                    <td>
+                                        {% if product.admin_verified %}
+                                            <span class="label label-success">تاییده شده</span>
+                                        {% else %}
+                                            <span class="label label-danger">تاییده نشده</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-block btn-success btn-sm" href="{% url 'product:detail' product.id %}">
+                                            مشاهده
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'store:edit-product' product.id %}" class="btn btn-block btn-warning btn-sm">
+                                            بروزرسانی
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-block btn-sm" style="background: rebeccapurple; color: white" 
+                                           href="{% url 'store:active-deactivate-product' product.id %}">
+                                            {% if product.is_active %}
+                                                غیر فعال کردن
+                                            {% else %}
+                                                فعال کردن
+                                            {% endif %}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-block btn-sm" style="background: red; color: white" 
+                                           href="{% url 'store:remove-product' product.pk %}">
+                                            حذف کردن
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- صفحه‌بندی -->
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <div class="dataTables_info">
+                                تعداد محصولات : {{ products.count }}
+                            </div>
+                        </div>
+                        <div class="col-sm-7">
+                            <div class="dataTables_paginate paging_simple_numbers">
+                                <ul class="pagination">
+                                    {% if page_obj.has_previous %}
+                                        <li class="paginate_button previous">
+                                            <a href="?page={{ page_obj.previous_page_number }}">قبلی</a>
+                                        </li>
+                                    {% endif %}
+                                    
+                                    {% for page_number in page_obj.paginator.page_range %}
+                                        <li class="paginate_button {% if page_number == page_obj.number %}active{% endif %}">
+                                            <a href="?page={{ page_number }}">{{ page_number }}</a>
+                                        </li>
+                                    {% endfor %}
+                                    
+                                    {% if page_obj.has_next %}
+                                        <li class="paginate_button next">
+                                            <a href="?page={{ page_obj.next_page_number }}">بعدی</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>{% endblock %}
 
 {% block footer_reference %}
     <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>

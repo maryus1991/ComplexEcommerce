@@ -5,7 +5,8 @@ from django.contrib import messages
 from django.utils.timezone import now
 from dashboard.models import Ticket, TicketConversation
 from user.mixins.logins import AdminUserMixin
-
+from utils.send_otp import send_message
+from sitesetting.models import SiteSetting
 from stores.forms import StoreSendTicketForm
 
 
@@ -67,6 +68,12 @@ class TicketConversationDetailView(AdminUserMixin, View):
                 message.save()
 
         else:
+
+            if SiteSetting.objects.first().send_message_response_to_ticket:
+                send_message(
+                    str(item.user.PhoneNumber).replace(' ', ''),
+                    "به تیکت شما پاسخ داده شد با مراجعه به قسمت تیکت ها در حساب کاربری خود ان را مشاهده کنید"
+                )
 
             for message in item.message.filter(is_read_by_server=False).all():
                 message.is_read_by_server = True

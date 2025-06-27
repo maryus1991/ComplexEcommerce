@@ -178,6 +178,10 @@ class StoreBlogUpdateView(UserStoreStaffMixin, UpdateView):
                          'پست شما با موفقیت بروزرسانی شد لطفا برای انتشار ان پست را فعال کنید')
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category_form'] = AddStoreBlogCategoryForm()
+        return context
 
 class StoreBlogDeleteView(StoreAdminUserStaff, View):
     """

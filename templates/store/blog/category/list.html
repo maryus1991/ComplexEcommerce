@@ -1,7 +1,7 @@
 {% extends 'Base/AdminBase.html' %}
 
 {% block title %}
-     دسته بندی ها
+    دسته بندی ها
 {% endblock %}
 
 {% block breadcrumb %}
@@ -10,106 +10,196 @@
 {% endblock %}
 
 {% block body %}
-<div class="box box-primary" style="margin-top: 30px">
-    <div class="box-header with-border">
-        <h3 class="box-title"><i class="fa fa-list"></i> لیست دسته بندی ها</h3>
+    <div class="box box-primary" style="margin-top: 30px">
+        <!-- Box Header with Title and Filters -->
+        <div class="box-header with-border clearfix">
 
-        <div class="box-tools">
-            <form method="get" class="form-inline">
-                <div class="input-group input-group-sm" style="width: 200px; margin-right: 10px;">
-                    <input type="text" name="search" class="form-control" placeholder="جستجو بر اساس نام..." value="{{ request.GET.search }}">
-                    <div class="input-group-btn">
-                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+
+
+                <h3 class="box-title pull-right" style="margin: 5px 0;">
+                    <i class="fa fa-list"></i> لیست دسته بندی ها
+                </h3>
+                <form method="get" class="form-inline pull-left">
+                    <!-- Search Box -->
+                    <div class="input-group input-group-sm" style="width: 180px; margin-left: 5px;">
+                        <input type="text" name="search" class="form-control"
+                               placeholder="جستجو..." value="{{ request.GET.search }}">
+                        <div class="input-group-btn">
+                            <button type="submit" class="btn btn-default">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group" style="margin-right: 10px;">
-                    <select name="status" class="form-control input-sm">
-                        <option value="">همه وضعیت‌ها</option>
-                        <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>فعال</option>
-                        <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>غیرفعال</option>
-                    </select>
-                </div>
+                    <!-- Status Filter -->
+                    <div class="form-group" style="margin-left: 5px;">
+                        <select name="status" class="form-control input-sm">
+                            <option value="">همه وضعیت‌ها</option>
+                            <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>فعال
+                            </option>
+                            <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>
+                                غیرفعال
+                            </option>
+                        </select>
+                    </div>
 
+                    <!-- Posts Count Filter -->
+                    <div class="form-group" style="margin-left: 5px;">
+                        <select name="posts" class="form-control input-sm">
+                            <option value="">تعداد پست ها</option>
+                            <option value="most_posts" {% if request.GET.posts == 'most_posts' %}selected{% endif %}>
+                                بیشترین
+                            </option>
+                            <option value="least_posts" {% if request.GET.posts == 'least_posts' %}selected{% endif %}>
+                                کمترین
+                            </option>
+                        </select>
+                    </div>
 
-                <div class="form-group" style="margin-right: 10px;">
-                    <select name="posts" class="form-control input-sm">
-                        <option value="">تعداد پست ها</option>
-                        <option value="most_posts" {% if request.GET.posts == 'most_posts' %}selected{% endif %}>بیشترین پست ها</option>
-                        <option value="least_posts" {% if request.GET.posts == 'least_posts' %}selected{% endif %}>کمترین پست ها</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-filter"></i> فیلتر</button>
-                {% if request.GET.search or request.GET.status or request.GET.views %}
-                    <a href="?" class="btn btn-sm btn-default" style="margin-right: 5px;">
-                        <i class="fa fa-times"></i> حذف فیلترها
-                    </a>
-                {% endif %}
-            </form>
-        </div>
-    </div>
-    <!-- /.box-header -->
-    <div class="box-body">
-        <div class="table-responsive">
-            <table class="table table-hover table-bordered">
-                <thead>
-                    <tr class="bg-light-blue">
-                        <th style="width: 50px;">#</th>
-                        <th>نام دسته</th>
-                        <th style="width: 120px;">تعداد پست ها</th>
-                        <th style="width: 100px;">وضعیت</th>
-                        <th style="width: 150px;">مشاهده محصولات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for category in categories %}
-                    <tr>
-                        <td>{{ category.id }}</td>
-                        <td><strong>{{ category.name }}</strong></td>
-                        <td><span class="badge bg-blue">{{ category.blogs.count }}</span></td>
-                        <td>
-                            {% if category.is_active %}
-                                <span class="label label-success">فعال</span>
-                            {% else %}
-                                <span class="label label-danger">غیرفعال</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <a class="btn btn-sm btn-info btn-block" href="{% url 'blog:list' %}?category={{ category.id }}">
-                                <i class="fa fa-eye"></i> مشاهده
+                    <!-- Action Buttons -->
+                    <div class="form-group" style="margin-left: 5px;">
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            <i class="fa fa-filter"></i> فیلتر
+                        </button>
+                        {% if request.GET.search or request.GET.status or request.GET.posts %}
+                            <a href="?" class="btn btn-sm btn-default">
+                                <i class="fa fa-times"></i> حذف
                             </a>
-                        </td>
+                        {% endif %}
+                    </div>
+                </form>
+
+        </div>
+        <!-- Category Table -->
+        <div class="box-body" >
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered">
+                    <thead>
+                    <tr class="bg-light-blue">
+                        <th style="width: 10%;">#</th>
+                        <th>نام دسته</th>
+                        <th style="width: 15%;">تعداد پست ها</th>
+                        <th style="width: 15%;">وضعیت</th>
+                        <th style="width: 20%;">عملیات</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td>{{ category.id }}</td>
+                            <td>
+                                <strong>{{ category.name }}</strong>
+                                {% if not category.is_active %}
+                                    <span class="text-muted">(غیرفعال)</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-blue">{{ category.blogs.count }}</span>
+                            </td>
+                            <td>
+                                {% if category.is_active %}
+                                    <span class="label label-success">فعال</span>
+                                {% else %}
+                                    <span class="label label-danger">غیرفعال</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a class="btn btn-sm btn-info btn-block"
+                                   href="{% url 'blog:list' %}?category={{ category.id }}">
+                                    <i class="fa fa-eye"></i> مشاهده
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">هیچ دسته‌بندی یافت نشد</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-    <!-- /.box-body -->
-    <div class="box-footer clearfix">
-        <ul class="pagination pagination-sm no-margin pull-left">
-            {% if page_obj.has_previous %}
-                <li><a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.views %}&views={{ request.GET.views }}{% endif %}">« صفحه قبل</a></li>
-            {% endif %}
 
-            {% for page_number in page_obj.paginator.page_range %}
-                {% if page_number == page_obj.number %}
-                    <li class="active"><span>{{ page_number }}</span></li>
-                {% else %}
-                    <li><a href="?page={{ page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.views %}&views={{ request.GET.views }}{% endif %}">{{ page_number }}</a></li>
+
+        <!-- Pagination Footer -->
+        <div class="box-footer clearfix">
+            <div class="pull-right" style="margin: 5px 0;">
+            <span class="text-muted">
+                نمایش {{ page_obj.start_index }} تا {{ page_obj.end_index }} از {{ page_obj.paginator.count }}
+            </span>
+            </div>
+            <br>
+            <br>
+            <ul class="pagination pagination-sm no-margin">
+                {% if page_obj.has_previous %}
+                    <li>
+                        <a href="?page=
+                                {{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            « قبلی
+                        </a>
+                    </li>
                 {% endif %}
-            {% endfor %}
 
-            {% if page_obj.has_next %}
-                <li><a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.views %}&views={{ request.GET.views }}{% endif %}">صفحه بعد »</a></li>
-            {% endif %}
-        </ul>
-        <div class="pull-right" style="margin-top: 5px;">
-            <span class="text-muted">نمایش {{ page_obj.start_index }} تا {{ page_obj.end_index }} از {{ page_obj.paginator.count }} مورد</span>
+                {% for page_number in page_obj.paginator.page_range %}
+                    {% if page_number == page_obj.number %}
+                        <li class="active"><span>{{ page_number }}</span></li>
+                    {% else %}
+                        <li>
+                            <a href="?page=
+                                    {{ page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                {{ page_number }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li>
+                        <a href="?page=
+                                {{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            بعدی »
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
         </div>
     </div>
-</div>
+
+    <style>
+        @media (max-width: 768px) {
+            .box-header .box-tools {
+                float: none !important;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .box-header .form-group {
+                margin: 5px 0 !important;
+                width: 100%;
+            }
+
+            .box-header .input-group {
+                width: 100% !important;
+            }
+
+            .box-header .btn {
+                margin: 2px 0;
+                width: 100%;
+            }
+
+            .box-footer .pagination {
+                float: none !important;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+
+            .box-footer .pull-right {
+                float: none !important;
+                text-align: center;
+                width: 100%;
+            }
+        }
+    </style>
 {% endblock %}
 
 

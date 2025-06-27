@@ -69,75 +69,141 @@
             {% endif %} 
 
             </div>
-            <div class="panel-body">
+<div class="panel-body">
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <tbody>
+                <!-- Row 1 -->
+                <tr>
+                    <td ><strong>نام:</strong> {{ item.get_full_name|default:'وارد نشده' }}</td>
+                    <td  dir="ltr"><strong>شماره:</strong> {{ item.PhoneNumber }}</td>
+                    <td >
+                        <strong>وضعیت:</strong>
+                        {% if item.is_active %}
+                            <span class="label label-success">فعال</span>
+                        {% else %}
+                            <span class="label label-danger">غیرفعال</span>
+                        {% endif %}
+                    </td>
+                    <td >
+                        <strong>وضعیت اطلاعات:</strong>
+                        {% if item.is_verified %}
+                            <span class="label label-success">تایید شده</span>
+                        {% else %}
+                            <span class="label label-danger">تایید نشده</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                
+                <!-- Row 2 -->
+                <tr>
+                    <td ><strong>فروشگاه:</strong> {{ item.store.name|default:'-' }}</td>
+                    <td >
+                        <strong>وضعیت کارمندی:</strong>
+                        {% if item.is_staff %}
+                            <span class="label label-success">کارمند می باشد</span>
+                        {% else %}
+                            <span class="label label-default">کارمند نمی باشد</span>
+                        {% endif %}
+                    </td>
+                    <td >
+                        <strong>وضعیت ادمین فروشگاه:</strong>
+                        {% if item.is_store_admin %}
+                            <span class="label label-success">ادمین فروشگاه می باشد</span>
+                        {% else %}
+                            <span class="label label-default">ادمین فروشگاه نمی باشد</span>
+                        {% endif %}
+                    </td>
+                    <td >
+                        <strong>وضعیت مدیر سایت:</strong>
+                        {% if item.is_superuser %}
+                            <span class="label label-success">ادمین سایت می باشد</span>
+                        {% else %}
+                            <span class="label label-default">ادمین سایت نمی باشد</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                
+                <!-- Row 3 -->
+                <tr>
+                    <td >
+                        <strong>وضعیت حقوقی/حقیقی:</strong>
+                        {% if item.legal_person %}
+                            <span class="label label-success">حقوقی</span>
+                        {% else %}
+                            <span class="label label-default">حقیقی</span>
+                        {% endif %}
+                    </td>
+                    <td ><strong>شماره اقتصادی:</strong> {{ item.legal_person_economic_number|default:'-' }}</td>
+                    <td ><strong>شماره ثبت:</strong> {{ item.legal_person_registration_number|default:'-' }}</td>
+                    <td ><strong>شماره یا نامبر:</strong> {{ item.legal_person_phone|default:'-' }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-                <!-- جدول اطلاعات کلی سفارش -->
-                <table class="table table-bordered table-striped">
-                    <tbody>
-                    <tr>
-                        <td><strong> نام:</strong> <span>{{ item.get_full_name|default:' وارد نشده' }}</></td>
-                        <td><strong> شماره :</strong> <span dir="ltr">{{ item.PhoneNumber }}</span></td>
-                        <td><strong>وضعیت:</strong>
-                            {% if item.is_active %}
-                                <span class="text-success">فعال</span>
-                            {% else %}
-                                <span class="text-danger">غیر فعال</span>
-                            {% endif %}
-                        </td>
-                        <td><strong>وضعیت اطلاعات:</strong>
-                            {% if item.is_verified %}
-                                <span class="text-success">تایید شده</span>
-                            {% else %}
-                                <span class="text-danger">تایید نشده</span>
-                            {% endif %}
-                        </td>
-                    <tr>
-                        <td><strong> فروشگاه :</strong> <span>{{ item.store.name|default:'-' }}</span></td>
-
-                        <td><strong>وضعیت کارمندی:</strong>
-                            {% if item.is_staff %}
-                                <span class="text-success">کارمند می باشد</span>
-                            {% else %}
-                                <span class="text-default">کارمند نمی باشد</span>
-                            {% endif %}
-                        </td>
-                        <td><strong>وضعیت ادمین فروشگاه:</strong>
-                            {% if item.is_store_admin %}
-                                <span class="text-success">ادمین فروشگاه می باشد</span>
-                            {% else %}
-                                <span class="text-default">ادمین فروشگاه نمی باشد</span>
-                            {% endif %}
-                        </td>
-                        <td><strong>وضعیت مدیر سایت:</strong>
-                            {% if item.is_superuser %}
-                                <span class="text-success">ادمین سایت می باشد</span>
-                            {% else %}
-                                <span class="text-default">ادمین سایت نمی باشد</span>
-                            {% endif %}
-                        </td>
-
-                    </tr>
-                    <tr>
-
-                        <td><strong>وضعیت حقوقی / حقیقی:</strong>
-                            {% if item.legal_person %}
-                                <span class="text-success">حقوقی</span>
-                            {% else %}
-                                <span class="text-default">حقیقی</span>
-                            {% endif %}
-                        </td>
-                        <td><strong> شماره اقتصادی :</strong> {{ item.legal_person_economic_number|default:'-' }}</td>
-                        <td><strong> شماره ثبت :</strong> {{ item.legal_person_registration_number|default:'-' }}</td>
-                        <td><strong> شماره یا نامبر :</strong> {{ item.legal_person_phone|default:'-' }}</td>
-
-                    </tr>
-
-
-                    </tbody>
-                </table>
-
-            </div>
-            <div class="panel box box-primary panel-default" style="margin-top: 20px;">
+<style>
+@media (max-width: 767px) {
+    /* Force table to not be like tables anymore */
+    .table-responsive table, 
+    .table-responsive thead, 
+    .table-responsive tbody, 
+    .table-responsive th, 
+    .table-responsive td, 
+    .table-responsive tr { 
+        display: block; 
+        width: 100%;
+    }
+    
+    /* Hide table headers (but not display: none;, for accessibility) */
+    .table-responsive thead tr { 
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    .table-responsive tr {
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+    }
+    
+    .table-responsive td { 
+        /* Behave like a "row" */
+        border: none;
+        border-bottom: 1px solid #eee; 
+        position: relative;
+        padding-left: 50%; 
+        text-align: right;
+        min-height: 30px;
+    }
+    
+    .table-responsive td:before { 
+        /* Now like a table header */
+        position: absolute;
+        left: 10px;
+        width: 45%; 
+        padding-right: 10px; 
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        content: attr(data-title);
+    }
+    
+    /* Special cases for empty cells */
+    .table-responsive td:empty {
+        padding: 0;
+    }
+    .table-responsive td:empty:before {
+        display: none;
+    }
+    
+    .label {
+        display: inline-block;
+        margin-top: 3px;
+    }
+}
+</style>            <div class="panel box box-primary panel-default" style="margin-top: 20px;">
                 <div class="panel-heading clearfix">
                     <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست ادرس های کاربر </h3>
                 </div>

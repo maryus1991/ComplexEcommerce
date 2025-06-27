@@ -14,10 +14,10 @@
     <div class="box-header with-border">
         <h3 class="box-title">بروز رسانی اطلاعات فروشگاه یا اضافه کردن فروشگاه</h3>
     </div>
-    
+
     <form role="form" method='POST' action='' class="box" enctype='multipart/form-data'>
         {% csrf_token %}
-        
+
         <!-- ردیف اول -->
         <div class="box-body form-group flex col-md-12">
             <div class="col-md-4">
@@ -67,7 +67,7 @@
                     {{ form.additional_tax }}
                 </div>
             </div>
-            
+
             <div class="col-md-3">
                 <div class="input-group input-group-sm">
                     <span class="input-group-btn">
@@ -76,7 +76,7 @@
                     {{ form.additional_price }}
                 </div>
             </div>
-            
+
             <div class="col-md-3">
                 <div class="input-group input-group-sm">
                     <span class="input-group-btn">
@@ -113,7 +113,7 @@
                     {{ form.official_invoice_price }}
                 </div>
             </div>
-            
+
             <div class="col-md-2">
                 <div class="input-group input-group-sm">
                     <span class="input-group-btn">
@@ -122,7 +122,7 @@
                     {{ form.economic_number }}
                 </div>
             </div>
-            
+
             <div class="col-md-2">
                 <div class="input-group input-group-sm">
                     <span class="input-group-btn">
@@ -159,7 +159,7 @@
                     </span>
                 </div>
             </div>
-            
+
             <div class="col-md-2">
                 <div class="input-group input-group-sm">
                     <span class="input-group-btn">
@@ -167,7 +167,7 @@
                     </span>
                 </div>
             </div>
-            
+
             <div class="col-md-2">
                 <div class="input-group input-group-sm">
                     <span class="input-group-btn">
@@ -205,7 +205,7 @@
                     {{ form.orgin_city }}
                 </div>
             </div>
-            
+
             <div class="col-md-3">
                 <div class="input-group input-group-sm">
                     <span class="input-group-btn">
@@ -244,7 +244,7 @@
                     {{ form.whats_app_link }}
                 </div>
             </div>
-            
+
             <div class="col-md-2">
                 <div class="input-group input-group-sm">
                     <span class="input-group-btn">
@@ -253,7 +253,7 @@
                     {{ form.telegram_app_ID }}
                 </div>
             </div>
-            
+
             <div class="col-md-2">
                 <div class="input-group input-group-sm">
                     <span class="input-group-btn">
@@ -262,7 +262,7 @@
                     {{ form.telegram_app_Link }}
                 </div>
             </div>
-            
+
             <div class="col-md-2">
                 <div class="input-group input-group-sm">
                     <span class="input-group-btn">
@@ -271,7 +271,7 @@
                     {{ form.instagram_app_ID }}
                 </div>
             </div>
-            
+
             <div class="col-md-2">
                 <div class="input-group input-group-sm">
                     <span class="input-group-btn">
@@ -282,12 +282,14 @@
             </div>
         </div>
 
-        <!-- توضیحات -->
-        <div class="col-md-12">
-            {{ form.description }}
-            {{ form.media }}
+                <!-- Description -->
+        <div class="form-group">
+            <div class="col-xs-12">
+                {{ form.description }}
+                {{ form.media }}
+            </div>
         </div>
- 
+
         {% if item is not None %}
             عکس مورد استفاده :
             <img width="100px" height="100px" src="{{ item.about_image.url }}" alt="">

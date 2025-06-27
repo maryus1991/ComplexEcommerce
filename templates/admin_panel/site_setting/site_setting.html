@@ -333,7 +333,8 @@
                                     <div class="col-md-3 no-padding">
                                         <div class="input-group input-group" dir="rtl">
                                         <span style="background-color: #ed59f4; color: white;"
-                                              class="input-group-addon">
+                                             {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                        >
                                           <span>
 
                                             {{ form.active_post_delivery.label }}
@@ -348,7 +349,7 @@
                                     <div class="col-md-3 no-padding" dir="rtl">
                                         <div class="input-group">
 
-                                          <span class="input-group-addon"
+                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                 style="background-color: #3DA0DB; color: white;">
 
                                             {{ form.active_tipax_delivery.label }}
@@ -364,7 +365,7 @@
 
                                     <div class="col-md-3 no-padding">
                                         <div class="input-group">
-                                            <span class="input-group-addon"
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                   style="background-color: #00ad9c; color: white;">
 
                                             {{ form.active_in_same_city_delivery.label }}:
@@ -377,7 +378,7 @@
                                     </div>
                                     <div class="col-md-3 no-padding">
                                         <div class="input-group">
-                                            <span class="input-group-addon"
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                   style="background-color: #726204; color: white;">
                                                  {{ form.active_physical_delivery.label }} :
 
@@ -394,34 +395,28 @@
                             <div class="col-md-12 form-group ">
                                 <div class="">
 
-                                    <div class="col-md-3 no-padding">
+                                    <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span class="input-group-addon"
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                   style="background-color: #22c55e; color: white;">
                                                  {{ form.active_receive_official_invoice.label }}:
                                             {{ form.active_receive_official_invoice }}
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="col-md-3 no-padding">
+
+                                    <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span class="input-group-addon"
-                                                  style="background-color: #22c55e; color: white;">
-                                                 {{ form.is_active.label }}:
-                                            {{ form.is_active }}
-                                            </span>
-                                        </div>
-                                    </div>                                    <div class="col-md-3 no-padding">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                   style="background-color: #22c55e; color: white;">
                                                  {{ form.active_slider_in_main_page.label }}:
                                             {{ form.active_slider_in_main_page }}
                                             </span>
                                         </div>
-                                    </div>                                    <div class="col-md-3 no-padding">
+                                    </div>
+                                    <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span class="input-group-addon"
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                   style="background-color: #22c55e; color: white;">
                                                  {{ form.active_banner_in_main_page.label }}:
                                             {{ form.active_banner_in_main_page }}
@@ -435,7 +430,7 @@
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group input-group" dir="rtl">
                                         <span style="background-color: #ed59f4; color: white;"
-                                              class="input-group-addon">
+                                              {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}>
                                           <span>
 
                                             {{ form.active_categories_in_main_page.label }}
@@ -450,7 +445,7 @@
                                     <div class="col-md-4 no-padding" dir="rtl">
                                         <div class="input-group">
 
-                                          <span class="input-group-addon"
+                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                 style="background-color: #3DA0DB; color: white;">
 
                                             {{ form.active_newset_peoduct_in_main_page.label }}
@@ -466,11 +461,11 @@
 
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span class="input-group-addon"
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                   style="background-color: #00ad9c; color: white;">
 
                                             {{ form.active_most_soled_product_in_main_page.label }}:
-                                            {{ form.active_most_soled_product_in_main_page}}
+                                            {{ form.active_most_soled_product_in_main_page }}
 
                                             </span>
                                         </div>
@@ -479,16 +474,15 @@
                                     </div>
 
 
-
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-12 form-group ">
                                 <div class="">
 
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span class="input-group-addon"
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                   style="background-color: #726204; color: white;">
                                                  {{ form.active_most_read_posts_in_main_page.label }} :
 
@@ -497,25 +491,175 @@
                                         </div>
 
 
-                                    </div>                                    <div class="col-md-4 no-padding">
+                                    </div>
+                                    <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span class="input-group-addon"
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                   style="background-color: #726204; color: white;">
                                                  {{ form.active_most_discount_in_main_page.label }} :
 
                                             {{ form.active_most_discount_in_main_page }}
                                             </span>
                                         </div>
+                                    </div>
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                  style="background-color: #726204; color: white;">
+                                                 {{ form.force_user_to_verify_with_message.label }} :
+
+                                            {{ form.force_user_to_verify_with_message }}
+                                            </span>
+                                        </div>
+                                    </div>
 
 
                                 </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                              {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}>
+                                          <span>
 
+                                            {{ form.store_users_staff_logins.label }}
+
+                                            {{ form.store_users_staff_logins }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 no-padding" dir="rtl">
+                                        <div class="input-group">
+
+                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                style="background-color: #3DA0DB; color: white;">
+
+                                            {{ form.legal_users_login.label }}
+
+                                            {{ form.legal_users_login }}
+
+                                        </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                  style="background-color: #00ad9c; color: white;">
+
+                                            {{ form.active_store_page.label }}:
+                                            {{ form.active_store_page }}
+
+                                            </span>
+                                        </div>
+
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                  style="background-color: #726204; color: white;">
+                                                 {{ form.active_zarinpal_payment.label }} :
+
+                                            {{ form.active_zarinpal_payment }}
+                                            </span>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                  style="background-color: #726204; color: white;">
+                                                 {{ form.send_message_response_to_ticket.label }} :
+
+                                            {{ form.send_message_response_to_ticket }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                  style="background-color: #726204; color: white;">
+                                                 {{ form.send_message_successful_payment.label }} :
+
+                                            {{ form.send_message_successful_payment }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                              {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}>
+                                          <span>
+
+                                            {{ form.send_message_official_invoice_upload.label }}
+
+                                            {{ form.send_message_official_invoice_upload }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 no-padding" dir="rtl">
+                                        <div class="input-group">
+
+                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                style="background-color: #3DA0DB; color: white;">
+
+                                            {{ form.send_message_when_set_sending_id.label }}
+
+                                            {{ form.send_message_when_set_sending_id }}
+
+                                        </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                  style="background-color: #00ad9c; color: white;">
+
+                                            {{ form.is_active.label }}:
+                                            {{ form.is_active }}
+
+                                            </span>
+                                        </div>
+
+
+                                    </div>
 
 
                                 </div>
                             </div>
                             
-                            
+
+
                             <br>
                             <br>
                             {{ form.long_description }}

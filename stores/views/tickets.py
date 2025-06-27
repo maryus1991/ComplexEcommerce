@@ -74,7 +74,8 @@ import jdatetime
 
 from stores.validators import is_valid_message
 from utils.tipax_price_calc import validate_city
-
+from utils.send_otp import send_message
+from sitesetting.models import SiteSetting
 User = get_user_model()
 
 
@@ -507,6 +508,15 @@ class StoreResponseToUsersTicketView(UserStoreStaffMixin, View):
             message=message,
             admin_message=True
         )
+
+
+        if SiteSetting.objects.first().send_message_response_to_ticket:
+
+            send_message(
+                str(obj.user.PhoneNumber).replace(' ', ''),
+                'به تیکیت شما پاسخ داده شد با مراجعه به قسمت کاربری ان را مشاهده کنید'
+            )
+
         messages.success(request, 'پیام شما با موفقیت ارسال شد')
 
         return redirect(self.request.META.get('HTTP_REFERER', '/'))

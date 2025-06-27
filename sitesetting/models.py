@@ -30,17 +30,15 @@ class SiteSetting(models.Model):
 
     about_image = models.ImageField(upload_to="site/about_image/", null=True, verbose_name='عکس معرفی', blank=True)
 
-    is_active = models.BooleanField(default=True, verbose_name='فعال کردن سایت')
 
     # delivery options for all website
     active_post_delivery = models.BooleanField(default=True, verbose_name='فعال کردن  ارسال با پست برای فروشگاها')
     active_tipax_delivery = models.BooleanField(default=True, verbose_name='فعال کردن ارسال با تپاکس برای فروشگاها')
     active_in_same_city_delivery = models.BooleanField(default=True, verbose_name='فعال کردن ارسال درون شهری برای فروشگاها')
     active_physical_delivery = models.BooleanField(default=True, verbose_name='فعال کردن تحویل فیزیکی برای فروشگاها')
-
     active_receive_official_invoice = models.BooleanField(default=True, verbose_name='فعال کردن دریافت فاکتور رسمی')
 
-
+    # main page setting
     active_slider_in_main_page = models.BooleanField(default=True, verbose_name='فعال کردن سلایدر ها در صفحه اصلی')
     active_banner_in_main_page = models.BooleanField(default=True, verbose_name='فعال کردن بنر ها در صفحه اصلی')
     active_categories_in_main_page = models.BooleanField(default=True, verbose_name='فعال کردن محبوب ترین دسته ها در صفحه اصلی')
@@ -48,6 +46,22 @@ class SiteSetting(models.Model):
     active_most_soled_product_in_main_page = models.BooleanField(default=True, verbose_name='فعال کردن محصولات پر فروش  در صفحه اصلی')
     active_most_discount_in_main_page = models.BooleanField(default=True, verbose_name='فعال کردن بیشترین تخفیف ها در صفحه اصلی')
     active_most_read_posts_in_main_page = models.BooleanField(default=True, verbose_name='فعال کردن مطالب خواندنی در صفحه اصلی')
+
+    # user login setting
+    force_user_to_verify_with_message = models.BooleanField(default=True, verbose_name='اجبار کاربران برای تایید حساب با ارسال پیامک')
+    store_users_staff_logins = models.BooleanField(default=True, verbose_name='ورود کارمندان فروشگاها')
+    legal_users_login  = models.BooleanField(default=True, verbose_name='ورود افراد رسمی')
+    is_active = models.BooleanField(default=True, verbose_name='فعال کردن ورود به سایت و فعال کردن تنظیمات سایت فعلی')
+    active_store_page = models.BooleanField(default=True, verbose_name='فعال کردن قسمت فروشگاه')
+
+    # payment setting
+    active_zarinpal_payment = models.BooleanField(default=True, verbose_name='فعال کردن درگاه پرداخت زرین پال')
+
+    # send message
+    send_message_response_to_ticket = models.BooleanField(default=False, verbose_name='ارسال پیامک زمان پاسخ به تیکت')
+    send_message_successful_payment = models.BooleanField(default=False, verbose_name='ارسال پیام هنگام پرداخت موفق')
+    send_message_official_invoice_upload = models.BooleanField(default=True, verbose_name='ارسال پیام هنگام اپلود فاکتور رسمی')
+    send_message_when_set_sending_id = models.BooleanField(default=True, verbose_name='ارسال پیام هنگام قرار دادن کد پیگیری ارسال')
 
     def __str__(self):
         return self.title

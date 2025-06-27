@@ -26,6 +26,21 @@ from jalali_date.widgets import AdminJalaliDateWidget
 User = get_user_model()
 
 
+# class MessagingUserForm(forms.Form):
+#     user = forms.ModelMultipleChoiceField(
+#         queryset=User.objects.all(),
+#         required=False,
+#         widget=forms.SelectMultiple(
+#             attrs={
+#                 'class': 'form-control select2',
+#                 'style': 'width: 100%;',
+#                 'tabindex': '-1',
+#                 'aria-hidden': 'true',
+#             }
+#         )
+#     )
+
+
 class AddDiscountForm(forms.ModelForm):
     end_date_discount = JalaliDateField(
         required=False,
@@ -481,6 +496,15 @@ class SiteSettingModelForm(forms.ModelForm):
             'active_most_soled_product_in_main_page': forms.CheckboxInput(),
             'active_most_discount_in_main_page': forms.CheckboxInput(),
             'active_most_read_posts_in_main_page': forms.CheckboxInput(),
+            'force_user_to_verify_with_message': forms.CheckboxInput(),
+            'store_users_staff_logins': forms.CheckboxInput(),
+            'legal_users_login': forms.CheckboxInput(),
+            'active_store_page': forms.CheckboxInput(),
+            'active_zarinpal_payment': forms.CheckboxInput(),
+            'send_message_response_to_ticket': forms.CheckboxInput(),
+            'send_message_successful_payment': forms.CheckboxInput(),
+            'send_message_official_invoice_upload': forms.CheckboxInput(),
+            'send_message_when_set_sending_id': forms.CheckboxInput(),
         }
 
 

@@ -69,7 +69,7 @@ class UserTicketsClientForm(forms.Form):
     store = forms.ModelChoiceField(
         queryset=Store.objects.all(),
         help_text='فروشگاه را انتخاب کنید',
-
+        required=False,
         widget=forms.Select(
             attrs={
             'class': ' col-span-3 py-2.5 w-full text text-white-500 px-1.5 py-1.5 dark:bg-zinc-700 border-0 border-b-2 border-green-500 appearance-none  dark:border-green-700 focus:outline-none focus:ring-0 focus:border-green-200 peer',
@@ -102,7 +102,7 @@ class UserTicketsClientFormMobile(forms.Form):
     store = forms.ModelChoiceField(
         queryset=Store.objects.all(),
         help_text='فروشگاه را انتخاب کنید',
-
+        required=False,
         widget=forms.Select(
             attrs={
             'class': ' col-span-3 py-2.5 w-full text text-white-500 px-1.5 py-1.5 dark:bg-zinc-700 border-0 border-b-2 border-green-500 appearance-none  dark:border-green-700 focus:outline-none focus:ring-0 focus:border-green-200 peer',

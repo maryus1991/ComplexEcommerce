@@ -96,38 +96,40 @@
 
                         </h3>
                         <!-- tools box -->
-                        <div class="pull-right box-tools">
+                        <div class="pull-left ">
                             <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
                                     data-toggle="tooltip" title="" data-original-title="Collapse">
                                 <i class="fa fa-minus"></i></button>
                             {% if item %}
-                            	<td class="text-center">
-                            <a href="{{ item.get_absolute_url }}" class="btn btn-sm btn-success"
-                               data-toggle="tooltip" title="مشاهده">
-                                <i class="fa fa-eye"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:blog-category-update' item.id %}" class="btn btn-sm btn-info"
-                               data-toggle="tooltip" title="ویرایش">
-                                <i class="fa fa-edit"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:blog-category-active-deactivate' item.id %}"
-                               class="btn btn-sm btn-warning"
-                               data-toggle="tooltip"
-                               title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
-                                <i class="fa fa-power-off"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:blog-category-delete' item.id %}" class="btn btn-sm btn-danger"
-                               data-toggle="tooltip" title="حذف">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </td>
-                            {% endif %} 
+                                <td class="text-center">
+                                    <a href="{{ item.get_absolute_url }}" class="btn btn-sm btn-success"
+                                       data-toggle="tooltip" title="مشاهده">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{% url 'admin_panel:blog-category-update' item.id %}"
+                                       class="btn btn-sm btn-info"
+                                       data-toggle="tooltip" title="ویرایش">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{% url 'admin_panel:blog-category-active-deactivate' item.id %}"
+                                       class="btn btn-sm btn-warning"
+                                       data-toggle="tooltip"
+                                       title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                        <i class="fa fa-power-off"></i>
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{% url 'admin_panel:blog-category-delete' item.id %}"
+                                       class="btn btn-sm btn-danger"
+                                       data-toggle="tooltip" title="حذف">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </td>
+                            {% endif %}
 
                         </div>
                         <!-- /. tools -->
@@ -154,7 +156,7 @@
                                     </div>
 
                                     <div class="col-md-6" dir="rtl">
-<div class="input-group input-group" dir="rtl">
+                                        <div class="input-group input-group" dir="rtl">
                                         <span class="input-group-btn">
                                           <span class="btn btn-success">
                                             {{ form.image.label }}
@@ -173,15 +175,16 @@
                             <div class="col-md-12 form-group">
                                 <div class="">
                                     <div class="col-md-8">
-                                                                                <div class="input-group input-group">
+                                        <div {% if not request.user_agent.is_mobile %} class="input-group" {% endif %}>
                                         <span class="input-group-btn">
                                           <span class="btn btn-success">
                                             دسته مادر
 
                                           </span>
                                         </span>
+                                            <span dir="rtl">
                                             {{ form.parent }}
-
+</span>
                                         </div>
 
                                     </div>

@@ -49,106 +49,117 @@
             {% endif %}
                 
             </div>
-            <div class="panel-body">
+<div class="panel-body">
 
-                <!-- جدول اطلاعات کلی سفارش -->
-                <table class="table table-bordered table-striped ">
-                    <tbody>
-                    <tr>
-                        <td><strong>نام:</strong> <span>{{ item.name }}</span></td>
-                        <td><strong>شماره :</strong> <span dir="ltr">{{ item.phone }}</span></td>
-                        <td><strong>شماره ثابت :</strong> <span dir="ltr">{{ item.phone2 }}</span></td>
-                        <td><strong>وضعیت:</strong>
-                            {% if item.is_active %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <tbody>
+            <tr>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>نام:</strong> <span>{{ item.name }}</span></td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>شماره :</strong> <span dir="ltr">{{ item.phone }}</span></td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>شماره ثابت :</strong> <span dir="ltr">{{ item.phone2 }}</span></td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>وضعیت:</strong>
+                    {% if item.is_active %}
+                        <span class="text-success">فعال</span>
+                    {% else %}
+                        <span class="text-danger">غیر فعال</span>
+                    {% endif %}
+                </td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>وضعیت اطلاعات:</strong>
+                    {% if item.is_verified %}
+                        <span class="text-success">تایید شده</span>
+                    {% else %}
+                        <span class="text-danger">تایید نشده</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>لینک واتساپ:</strong>{{ item.whats_app_link }}</td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>ایدی واتساپ:</strong>{{ item.whats_app_ID }}</td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>ایدی تلگرام:</strong>{{ item.telegram_app_ID }}</td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>لینک تلگرام:</strong>{{ item.telegram_app_Link }}</td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>ایدی اینستاگرام:</strong>{{ item.instagram_app_ID }}</td>
+            </tr>
+            <tr>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>لینک اینستاگرام:</strong>{{ item.instagram_app_Link }}</td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>استان:</strong>{{ item.province }}</td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>شهر:</strong>{{ item.orgin_city }}</td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>کد پستی:</strong>{{ item.zip_code }}</td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>کد شهر :</strong>{{ item.orgin_city_id }}</td>
+            </tr>
+            <tr>
+                <td colspan="5" class="col-xs-12"><strong>ادرس :</strong>{{ item.address }}</td>
+            </tr>
+            <tr>
+                <td class="col-md-3 col-sm-6 col-xs-12">
+                    {% if item.have_official_invoice %}
+                        <span class="label label-success"> صادر کننده فاکتور رسمی </span>
+                    {% else %}
+                        <span class="label label-default"> صادر کننده فاکتور رسمی نمی باشد </span>
+                    {% endif %}
+                </td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>درصد برای صدور فاکتور رسمی:</strong>{{ item.official_invoice_price|default:'-' }}</td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>شماره اقتصادی:</strong>{{ item.economic_number|default:'-' }}</td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>شماره ثبت :</strong>{{ item.registration_number|default:'-' }}</td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>نامبر:</strong>{{ item.official_invoice_phone_number|default:'-' }}</td>
+            </tr>
+            <tr>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>وضعیت ارسال با پست:</strong>
+                    {% if item.have_post_delivery %}
+                        <span class="label label-success">فعال</span>
+                    {% else %}
+                        <span class="label label-danger">غیر فعال</span>
+                    {% endif %}
+                </td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>وضعیت ارسال با تیپاکس:</strong>
+                    {% if item.have_tipax_delivery %}
+                        <span class="label label-success">فعال</span>
+                    {% else %}
+                        <span class="label label-danger">غیر فعال</span>
+                    {% endif %}
+                </td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>وضعیت ارسال درون شهری:</strong>
+                    {% if item.have_in_same_city_delivery %}
+                        <span class="label label-success">فعال</span>
+                    {% else %}
+                        <span class="label label-danger">غیر فعال</span>
+                    {% endif %}
+                </td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>وضعیت تحویل حضوری:</strong>
+                    {% if item.have_physical_delivery %}
+                        <span class="label label-success">فعال</span>
+                    {% else %}
+                        <span class="label label-danger">غیر فعال</span>
+                    {% endif %}
+                </td>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>هزینه پست درون شهری:</strong>{{ item.in_same_city_delivery_price|tdc }}</td>
+            </tr>
+            <tr>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>هزینه اضافی :</strong>{{ item.additional_price|tdc }}</td>
+                <td colspan="2" class="col-md-6 col-sm-12 col-xs-12"><strong>مالیات اضافی :</strong>{{ item.additional_tax }}</td>
+                <td colspan="2" class="col-md-6 col-sm-12 col-xs-12"><strong>تاریخ ساخت
+                    :</strong>{{ item.created_at|to_jalali:' %H/%M - %Y/%m/%d ' }}</td>
+            </tr>
+            <tr>
+                <td colspan="5" class="col-xs-12">
+                    {{ item.description|safe }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="col-md-5 col-sm-6 col-xs-12">
+                    <img src="{{ item.logo.url }}" height="200px" alt="200px" class="img-responsive">
+                </td>
+                <td colspan="3" class="col-md-7 col-sm-6 col-xs-12">
+                    <img src="{{ item.about_image.url }}" height="200px" width="200px" alt="" class="img-responsive">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-                                <span class="text-success">فعال</span>
-                            {% else %}
-                                <span class="text-danger">غیر فعال</span>
-                            {% endif %}
-                        </td>
-                        <td><strong>وضعیت اطلاعات:</strong>
-                            {% if item.is_verified %}
+    <hr>
 
-                                <span class="text-success">تایید شده</span>
-                            {% else %}
-                                <span class="text-danger">تایید نشده</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>لینک واتساپ:</strong>{{ item.whats_app_link }}</td>
-                        <td><strong>ایدی واتساپ:</strong>{{ item.whats_app_ID }}</td>
-                        <td><strong>ایدی تلگرام:</strong>{{ item.telegram_app_ID }}</td>
-                        <td><strong>لینک تلگرام:</strong>{{ item.telegram_app_Link }}</td>
-                        <td><strong>ایدی اینستاگرام:</strong>{{ item.instagram_app_ID }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>لینک اینستاگرام:</strong>{{ item.instagram_app_Link }}</td>
-                        <td><strong>استان:</strong>{{ item.province }}</td>
-                        <td><strong>شهر:</strong>{{ item.orgin_city }}</td>
-                        <td><strong>کد پستی:</strong>{{ item.zip_code }}</td>
-                        <td><strong>کد شهر :</strong>{{ item.orgin_city_id }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><strong>ادرس :</strong>{{ item.address }}</td>
-                    </tr>
-                    <tr>
-                        <td>{% if item.have_official_invoice %}
-                            <span class="label label-success"> صادر کننده فاکتور رسمی </span> {% else %}
-                            <span class="label label-default"> صادر کننده فاکتور رسمی نمی باشد </span>   {% endif %}
-                        </td>
-                        <td><strong>درصد برای صدور فاکتور رسمی:</strong>{{ item.official_invoice_price|default:'-' }}
-                        </td>
-                        <td><strong>شماره اقتصادی:</strong>{{ item.economic_number|default:'-' }}</td>
-                        <td><strong>شماره ثبت :</strong>{{ item.registration_number|default:'-' }}</td>
-                        <td><strong>نامبر:</strong>{{ item.official_invoice_phone_number|default:'-' }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>وضعیت ارسال با پست:</strong>{% if item.have_post_delivery %}
-                            <span class="label label-success">فعال</span> {% else %}
-                            <span class="label label-danger">غیر فعال</span>   {% endif %}</td>
-                        <td><strong>وضعیت ارسال با تیپاکس:</strong>{% if item.have_tipax_delivery %}
-                            <span class="label label-success">فعال</span> {% else %}
-                            <span class="label label-danger">غیر فعال</span>   {% endif %}</td>
-                        <td><strong>وضعیت ارسال درون شهری:</strong>{% if item.have_in_same_city_delivery %}
-                            <span class="label label-success">فعال</span> {% else %}
-                            <span class="label label-danger">غیر فعال</span>   {% endif %}</td>
-                        <td><strong>وضعیت تحویل حضوری:</strong>{% if item.have_physical_delivery %}
-                            <span class="label label-success">فعال</span> {% else %}
-                            <span class="label label-danger">غیر فعال</span>   {% endif %}</td>
-                        <td><strong>هزینه پست درون شهری:</strong>{{ item.in_same_city_delivery_price|tdc }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>هزینه اضافی :</strong>{{ item.additional_price|tdc }}</td>
-                        <td colspan="2"><strong>مالیات اضافی :</strong>{{ item.additional_tax }}</td>
-                        <td colspan="2"><strong>تاریخ ساخت
-                            :</strong>{{ item.created_at|to_jalali:' %H/%M - %Y/%m/%d ' }}</td>
-
-                    </tr>
-
-                    <tr>
-                        <td colspan="5">
-                            {{ item.description|safe }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <img src="{{ item.logo.url }}" height="200" alt="">
-                        </td>
-                        <td colspan="3">
-                            <img src="{{ item.about_image.url }}" height="200" alt="">
-                        </td>
-                    </tr>
-
-                    </tbody>
-                </table>
-
-
-                <!-- جدول محصولات -->
-                <hr>
-
-            </div>
-            <div class="panel box box-primary panel-default" style="margin-top: 20px;">
+</div>            <div class="panel box box-primary panel-default" style="margin-top: 20px;">
                 <div class="panel-heading clearfix">
                     <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست کاربران فروشگاه </h3>
                 </div>

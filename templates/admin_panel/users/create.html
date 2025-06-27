@@ -88,11 +88,13 @@
 
 
             <div class="col-md-5">
-                <div class="input-group input-group-sm">
+                <div class=" input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-info btn-flat">فروشگاه</button>
                     </span>
+                    <span {% if not request.user_agent.is_mobile %} class="input-group" {% endif %}>
                     {{ form.store }}
+                        </span>
                 </div>
             </div>
         </div>

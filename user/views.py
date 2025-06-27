@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import logout, authenticate, get_user_model, login
 from django.contrib import messages
 from django.utils import timezone
-from django.http import  HttpResponse
+from django.http import HttpResponse
 
 from utils.send_otp import send_message
 from user.mixins.logins import CustomLoginRequiredMixin
@@ -21,7 +21,7 @@ from .forms import (LoginForm,
                     EditUserInformationForm,
                     LegalPersonForm)
 from .forms import ActiveAccountForm as ChangeNumberForm
-
+from sitesetting.models import SiteSetting
 
 
 class LoginView(View):
@@ -31,19 +31,32 @@ class LoginView(View):
     template_name = 'auth/login.html'
 
     def dispatch(self, request, *args, **kwargs):
+        self.site =  SiteSetting.objects.first()
+        site =self.site
+
+        if not site.is_active:
+            messages.warning(
+                request,
+                'ورود به سایت غیر فعال می باشد'
+            )
+            return redirect('/')
+
         if request.user.is_authenticated and request.user.is_verified:
             messages.info(request, 'شما قبلا وارد شده اید')
             return redirect('dashboard:dashboard')
 
-        if request.user.is_authenticated and request.user.is_active and not request.user.is_verified:
-            messages.info(request, 'لطفا حساب خود را تایید کنید یک کد به شما ارسال شد لطفا انرا وارد کنید تا حساب شما تایید شود')
-            return redirect('user:otp')
+        if request.user.is_authenticated and request.user.is_active:
+
+            if not request.user.is_verified:
+                messages.info(request,
+                              'لطفا حساب خود را تایید کنید یک کد به شما ارسال شد لطفا انرا وارد کنید تا حساب شما تایید شود')
+                return redirect('user:otp')
 
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
         context = {
-         'login_form': LoginForm()
+            'login_form': LoginForm()
         }
         return render(request, self.template_name, context)
 
@@ -62,8 +75,17 @@ class LoginView(View):
                     if user.check_password(password):
                         if user.is_active and user.is_verified and _user:
                             if user == _user:
+                                site = self.site
 
-                                login(request, user)
+                                if site.is_active:
+                                    login(request, user)
+
+                                elif not site.is_active:
+                                    messages.warning(
+                                        request,
+                                        'ورود به سایت غیر فعال می باشد'
+                                    )
+                                    return redirect('/')
 
                                 messages.success(
                                     request, 'خوش امدید'
@@ -71,20 +93,21 @@ class LoginView(View):
                                 return redirect('dashboard:dashboard')
                             else:
                                 messages.error(
-                                    request,'مشکلی پیش امده است لطفا با پشتیبانی تماس حاصل فرمایید'
+                                    request, 'مشکلی پیش امده است لطفا با پشتیبانی تماس حاصل فرمایید'
                                 )
                         else:
                             messages.error(
-                                request,'کابر شما فعال نیست لطفا با پشتیبانی تماس بگیرید یا از قسمت فعال کردن حساب کاربری به فعال کردن حساب خود اقدام نمایید'
+                                request,
+                                'کابر شما فعال نیست لطفا با پشتیبانی تماس بگیرید یا از قسمت فعال کردن حساب کاربری به فعال کردن حساب خود اقدام نمایید'
                             )
 
                     else:
                         messages.error(
-                            request,'کابری با این مشخصات پیدا نشد'
+                            request, 'کابری با این مشخصات پیدا نشد'
                         )
                 else:
                     messages.error(
-                        request,'کاربر پیدا نشد'
+                        request, 'کاربر پیدا نشد'
                     )
             else:
                 messages.error(
@@ -96,14 +119,15 @@ class LoginView(View):
                 form.errors
             )
 
-
         return redirect(reverse('user:login'))
+
 
 class LogoutView(LoginRequiredMixin, View):
     def get(self, request):
         logout(request)
         messages.success(request, 'با موفقیت از سایت خارج شدید')
         return redirect('user:login')
+
 
 class RegisterView(View):
     """
@@ -119,7 +143,7 @@ class RegisterView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
-        if request.user.is_authenticated :
+        if request.user.is_authenticated:
             logout(request)
         return render(request, self.template_name, {'form': self.form_class})
 
@@ -138,15 +162,19 @@ class RegisterView(View):
                     password=password,
                 )
 
-
                 user = User.objects.get(PhoneNumber=phone_number)
 
                 messages.success(
                     request,
                     'کاربر با موفیت ساخته شد'
                 )
+                site = SiteSetting.objects.first()
 
-                login(request, user)
+                if not site.force_user_to_verify_with_message:
+                    user.is_verified = True
+                    user.message_verified = False
+                    user.save()
+                    return redirect('dashboard:dashboard')
 
                 return redirect('user:otp')
 
@@ -164,13 +192,37 @@ class RegisterView(View):
             )
             return redirect('user:register')
 
+
 class OTP(LoginRequiredMixin, View):
     template_name = 'auth/confirmation-form.html'
     model = User
     form = OTPForm
 
     def dispatch(self, request, *args, **kwargs):
+        site = SiteSetting.objects.first()
+
+        if site.force_user_to_verify_with_message and request.user.is_authenticated:
+
+            user = request.user
+            user.is_verified = True
+            user.message_verified = False
+            user.save()
+
+            if request.user.is_authenticated:
+                logout(request)
+
+            return redirect('dashboard:dashboard')
+
         if request.user.is_authenticated and request.user.is_verified:
+
+            if not site.is_active:
+                logout(request)
+                messages.warning(
+                    request,
+                    'ورود به سایت غیر فعال می باشد'
+                )
+                return redirect('/')
+
             messages.info(
                 request,
                 'حساب شما قبلا فعال شده است'
@@ -189,15 +241,14 @@ class OTP(LoginRequiredMixin, View):
 
         time = request.user.otp_expiry_date - timezone.now()
 
-
         return render(request, self.template_name,
-                      {'form': self.form, 'time': time.seconds })
+                      {'form': self.form, 'time': time.seconds})
 
     def post(self, request):
         form = OTPForm(request.POST or None)
         if form.is_valid():
             user = request.user
-            code = f'{form.cleaned_data.get("first_digit")}{form.cleaned_data.get("second_digit")}{form.cleaned_data.get("third_digit")}{form.cleaned_data.get("forth_digit")}' # noqa
+            code = f'{form.cleaned_data.get("first_digit")}{form.cleaned_data.get("second_digit")}{form.cleaned_data.get("third_digit")}{form.cleaned_data.get("forth_digit")}'  # noqa
             if len(code) == 4 and code.isdigit():
                 code = int(code)
                 if 1000 < code < 9999:
@@ -216,30 +267,29 @@ class OTP(LoginRequiredMixin, View):
                             'مدت کد تمام شده لطفا درخواست ارسال کد مجدد کد بدهید'
                         )
 
-
         messages.error(
             request,
             'کد وارد شده اشتباه هست'
         )
         return redirect('user:otp')
 
+
 class ForgotPassword(View):
     """
     Forgot password page
     """
+
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and request.user.is_verified:
             messages.info(request, 'شما قبلا لاگین شده اید لطفا خارج بشید از سایت و دوباره وارد سایت بشید')
             return redirect('dashboard:dashboard')
         return super().dispatch(request, *args, **kwargs)
 
-
-
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated :
+        if request.user.is_authenticated:
             logout(request)
         return render(request, 'auth/forgot-password.html', {
-            'form':RegistrationForm()
+            'form': RegistrationForm()
         })
 
     def post(self, request, *args, **kwargs):
@@ -271,7 +321,7 @@ class ForgotPassword(View):
                     return redirect('user:otp')
                 else:
                     messages.error(
-                        request,'رمز عبور شما با رمز عبور جدید شما یک سان هست لطفا وارد سایت شوید'
+                        request, 'رمز عبور شما با رمز عبور جدید شما یک سان هست لطفا وارد سایت شوید'
                     )
 
             else:
@@ -281,12 +331,12 @@ class ForgotPassword(View):
                 return redirect('user:register')
         else:
             messages.error(
-                request,'لطفا اطلاعات خواسته شده را به درستی وارد کنید'
+                request, 'لطفا اطلاعات خواسته شده را به درستی وارد کنید'
             )
         return redirect('user:login')
 
-class ActiveAccount(View):
 
+class ActiveAccount(View):
     """
 
     for active account
@@ -305,7 +355,7 @@ class ActiveAccount(View):
 
     def get(self, request):
         context = {
-         'login_form': ActiveAccountForm()
+            'login_form': ActiveAccountForm()
         }
         return render(request, 'auth/active_account.html', context)
 
@@ -327,7 +377,7 @@ class ActiveAccount(View):
 
                     return redirect('user:otp')
 
-                if user.is_active is False :
+                if user.is_active is False:
                     messages.error(
                         request,
                         'حساب شما بسته شده است لطفا با مسئول مربوطه تماس فرمایید'
@@ -343,6 +393,7 @@ class ActiveAccount(View):
             messages.error(request, 'لطفا اطلاعات معتبری وارد کنبد')
 
         return redirect('user:login')
+
 
 class EditUserInformation(CustomLoginRequiredMixin, View):
     """
@@ -381,6 +432,7 @@ class EditUserInformation(CustomLoginRequiredMixin, View):
             )
         return redirect('dashboard:account')
 
+
 class ChangePassword(CustomLoginRequiredMixin, View):
     """
     change password
@@ -413,6 +465,7 @@ class ChangePassword(CustomLoginRequiredMixin, View):
                 form.errors
             )
         return redirect('dashboard:account')
+
 
 class ChangeNumber(CustomLoginRequiredMixin, View):
     """
@@ -452,11 +505,12 @@ class ChangeNumber(CustomLoginRequiredMixin, View):
             )
         return redirect('dashboard:account')
 
-class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
 
+class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
     """
     for change legal person information
     """
+
     def post(self, request, *args, **kwargs):
         form = LegalPersonForm(request.POST or None)
         if form.is_valid():
@@ -465,7 +519,6 @@ class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
             legal_person_phone = form.cleaned_data.get('legal_person_phone')
 
             if not legal_person_economic_number.isdigit() or not legal_person_registration_number.isdigit():
-
                 messages.error(
                     request,
                     'لطفا در وارد کردن اطلاعات دقت فرمایید'
@@ -481,7 +534,7 @@ class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
             user.save()
 
             messages.success(
-                request,'اطلاعات شما با موفقیت ثبت شد'
+                request, 'اطلاعات شما با موفقیت ثبت شد'
             )
 
 
@@ -493,6 +546,7 @@ class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
 
         return redirect('dashboard:account')
 
+
 class LegalPersonHelpText(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
@@ -501,6 +555,7 @@ class LegalPersonHelpText(RedirectView):
             'برای ورود افراد حقیقی اول با ورود با شماره یا نامبر و تایید ان با وارد کردن پیامک ارسالی به ان شماره و سپس باید وارد قسمت پروفایل کاربری شده و در بخش اطلاعات حساب باید شماره اقتصادی و بقیه اطلاعلات را وارد کنید و بعد از این فرایند شما می توانید فاکتور رسمی دریافت کنید  '
         )
         return self.request.META.get('HTTP_REFERER')
+
 
 def e_namad(request):
     base_dir = settings.BASE_DIR

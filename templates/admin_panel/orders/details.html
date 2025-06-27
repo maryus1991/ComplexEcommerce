@@ -31,40 +31,40 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container" style="margin-top: 70px;">
-        <div class="panel panel-primary">
-            <div class="panel-heading text-center">
-                <h3 class="panel-title">اطلاعات سفارش شماره {{ order.id }}</h3>
-                <div class="pull-left">
-                    <a href="{% url 'admin_panel:user-detail' order.user.pk %}"
-                       class="btn btn-sm btn-success"
-                       data-toggle="tooltip"
-                       title="مشاهده خریدار">
-                        مشاهده خریدار
-                    </a>
-                    <a href="{% url 'admin_panel:store-detail' order.store.id %}"
-                       class="btn btn-sm btn-warning"
-                       data-toggle="tooltip"
-                       title="مشاهده فروشگاه">
-                        مشاهده فروشگاه
-                    </a>
-                </div>
+<div class="container" style="margin-top: 70px;">
+    <div class="panel panel-primary">
+        <div class="panel-heading text-center">
+            <h3 class="panel-title">اطلاعات سفارش شماره {{ order.id }}</h3>
+            <div class="pull-left">
+                <a href="{% url 'admin_panel:user-detail' order.user.pk %}"
+                   class="btn btn-sm btn-success"
+                   data-toggle="tooltip"
+                   title="مشاهده خریدار">
+                    مشاهده خریدار
+                </a>
+                <a href="{% url 'admin_panel:store-detail' order.store.id %}"
+                   class="btn btn-sm btn-warning"
+                   data-toggle="tooltip"
+                   title="مشاهده فروشگاه">
+                    مشاهده فروشگاه
+                </a>
             </div>
-            <div class="panel-body">
+            <div class="clearfix"></div> </div>
+        <div class="panel-body">
 
-                <!-- جدول اطلاعات کلی سفارش -->
+            <div class="table-responsive">
                 <table class="table table-bordered table-striped">
                     <tbody>
                     <tr>
-                        <td><strong>کاربر:</strong> <span dir="ltr">{{ order.user.PhoneNumber }}</span></td>
-                        <td><strong>نام فروشگاه:</strong> {{ order.store.name }}</td>
-                        <td><strong>قیمت کل محصولات:</strong> <span
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>کاربر:</strong> <span dir="ltr">{{ order.user.PhoneNumber }}</span></td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>نام فروشگاه:</strong> {{ order.store.name }}</td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>قیمت کل محصولات:</strong> <span
                                 class="text-success">{{ order.calculate_total_price|tdc }}</span></td>
-                        <td><strong>هزینه ارسال:</strong> <span
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>هزینه ارسال:</strong> <span
                                 class="text-danger">{{ order.delivery_price|tdc }}</span></td>
                     </tr>
                     <tr>
-                        <td><strong>نحوه ارسال:</strong>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>نحوه ارسال:</strong>
                             <span class="label label-warning">
                                 {% if order.vip_post %} ارسال با پست
                                 {% elif order.tipax_post_delivery %} ارسال با تیپاکس
@@ -73,7 +73,7 @@
                                 {% endif %}
                             </span>
                         </td>
-                        <td><strong>وضعیت ارسال:</strong>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>وضعیت ارسال:</strong>
                             <span class="label label-info">
                                 {% if order.sending and order.delivered_to_user %} تحویل شده به کاربر
                                 {% elif order.sending and not order.delivered_to_user %} درحال ارسال
@@ -81,15 +81,15 @@
                                 {% endif %}
                             </span>
                         </td>
-                        <td><strong>کد پیگیری:</strong> <span dir="ltr">{{ order.sending_id }}</span></td>
-                        <td><strong>کارت پرداخت‌کننده:</strong> {{ order.cart }}</td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>کد پیگیری:</strong> <span dir="ltr">{{ order.sending_id }}</span></td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>کارت پرداخت‌کننده:</strong> {{ order.cart }}</td>
                     </tr>
                     <tr>
-                        <td><strong>کد پیگیری پرداخت:</strong> {{ order.payment_id }}</td>
-                        <td><strong>تاریخ ثبت:</strong> {{ order.date|to_jalali:' %H/%M - %Y/%m/%d ' }}</td>
-                        <td><strong>تاریخ وضعیت نهایی:</strong> {{ order.second_date|to_jalali:' %H/%M - %Y/%m/%d ' }}
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>کد پیگیری پرداخت:</strong> {{ order.payment_id }}</td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>تاریخ ثبت:</strong> {{ order.date|to_jalali:' %H/%M - %Y/%m/%d ' }}</td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>تاریخ وضعیت نهایی:</strong> {{ order.second_date|to_jalali:' %H/%M - %Y/%m/%d ' }}
                         </td>
-                        <td><strong>وضعیت پرداخت:</strong>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>وضعیت پرداخت:</strong>
                             {% if order.is_paid %}
                                 <span class="label label-success">پرداخت شده</span>
                             {% elif order.canceled %}
@@ -100,31 +100,31 @@
                         </td>
                     </tr>
                     <tr>
-                        <td><strong>تنوع محصولات:</strong> {{ order.details.count }}</td>
-                        <td><strong>تخفیف:</strong> {{ order.discount_code_price|tdc }}</td>
-                        <td><strong>کد تخفیف:</strong> {{ order.discount.name }}</td>
-                        <td><strong>قیمت نهایی سفارش:</strong> {{ order.get_payment_price|tdc }}</td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>تنوع محصولات:</strong> {{ order.details.count }}</td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>تخفیف:</strong> {{ order.discount_code_price|tdc }}</td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>کد تخفیف:</strong> {{ order.discount.name }}</td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>قیمت نهایی سفارش:</strong> {{ order.get_payment_price|tdc }}</td>
                     </tr>
                     <tr>
-                        <td><strong>وزن کل:</strong> {{ order.total_weight }}</td>
-                        <td><strong>ارتفاع کل:</strong> {{ order.total_length }}</td>
-                        <td><strong>طول کل:</strong> {{ order.total_width }}</td>
-                        <td><strong>عرض کل:</strong> {{ order.total_height }}</td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>وزن کل:</strong> {{ order.total_weight }}</td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>ارتفاع کل:</strong> {{ order.total_length }}</td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>طول کل:</strong> {{ order.total_width }}</td>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>عرض کل:</strong> {{ order.total_height }}</td>
                     </tr>
                     <tr>
-                        <td><strong>فاکتور:</strong>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>فاکتور:</strong>
                             <span class="label label-default">
                                 {% if order.official_invoice %} رسمی {% else %} غیررسمی {% endif %}
                             </span>
                         </td>
-                        <td><strong>تحویل فاکتور:</strong>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>تحویل فاکتور:</strong>
                             {% if order.official_invoice_conformed_given_to_user %}
                                 <span class="label label-success">تحویل داده شده</span>
                             {% else %}
                                 <span class="label label-danger">تحویل نشده</span>
                             {% endif %}
                         </td>
-                        <td>
+                        <td class="col-md-6 col-sm-12 col-xs-12" colspan="2">
                             {% if order.official_invoice and order.official_invoice_pdf is not None %}
                                 <a href="{{ order.official_invoice_pdf.url }}" class="btn btn-success btn-block">
                                     مشاهده فاکتور رسمی
@@ -149,29 +149,28 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="4"><strong>توضیحات:</strong> {{ order.additional_descriptions }}</td>
-
+                        <td colspan="4" class="col-xs-12"><strong>توضیحات:</strong> {{ order.additional_descriptions }}</td>
                     </tr>
                     </tbody>
                 </table>
+            </div>
 
-                <!-- آدرس ارسال -->
-                <hr>
-                <h4><i class="fa fa-map-marker"></i> آدرس ارسال:</h4>
-                <p class="well">
-                    {% if order.address %}
-                        {{ order.address.name }} {{ order.address.last_name }} - {{ order.address.province }} -
-                        {{ order.address.city }} - {{ order.address.address }} -
-                        <span dir="ltr">{{ order.address.zipcode }} - {{ order.address.phone }}</span> -
-                        {{ order.address.additional_decryption }}
-                    {% else %}
-                        <span class="text-danger">ثبت نشده</span>
-                    {% endif %}
-                </p>
+            <hr>
+            <h4><i class="fa fa-map-marker"></i> آدرس ارسال:</h4>
+            <p class="well">
+                {% if order.address %}
+                    {{ order.address.name }} {{ order.address.last_name }} - {{ order.address.province }} -
+                    {{ order.address.city }} - {{ order.address.address }} -
+                    <span dir="ltr">{{ order.address.zipcode }} - {{ order.address.phone }}</span> -
+                    {{ order.address.additional_decryption }}
+                {% else %}
+                    <span class="text-danger">ثبت نشده</span>
+                {% endif %}
+            </p>
 
-                <!-- جدول محصولات -->
-                <hr>
-                <h4><i class="fa fa-shopping-cart"></i> محصولات سفارش داده شده:</h4>
+            <hr>
+            <h4><i class="fa fa-shopping-cart"></i> محصولات سفارش داده شده:</h4>
+            <div class="table-responsive">
                 <table class="table table-hover table-bordered table-striped">
                     <thead>
                     <tr class="info">
@@ -198,11 +197,11 @@
                     {% endfor %}
                     </tbody>
                 </table>
-
             </div>
+
         </div>
     </div>
-
+</div>
 {% endblock %}
 
 {% block footer_reference %}

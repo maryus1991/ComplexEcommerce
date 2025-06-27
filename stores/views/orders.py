@@ -75,7 +75,7 @@ from stores.validators import is_valid_message
 from utils.tipax_price_calc import validate_city
 
 from utils.send_otp import send_message
-
+from sitesetting.models import SiteSetting
 User = get_user_model()
 
 # orders
@@ -477,12 +477,15 @@ class AddOfficialInvoiceView(UserStoreStaffMixin, View):
             order.save()
 
         messages.success(request, 'فاکتور رسمی با موفقیت برای کاربر ارسال شد')
-        send_message(
-            str(order.user.PhoneNumber).replace(' ', ''),
-            f'''
-                فاکتور رسمی شما اپلود شد با مراجعه به قسمت حساب کاربری سفارشات  و بعد با انتخاب سفارش مورد نظر ان را دانلود نمایید
-        '''
-        )
+
+        if SiteSetting.objects.first().send_message_official_invoice_upload:
+            send_message(
+                str(order.user.PhoneNumber).replace(' ', ''),
+                f'''
+                    فاکتور رسمی شما اپلود شد با مراجعه به قسمت حساب کاربری سفارشات  و بعد با انتخاب سفارش مورد نظر ان را دانلود نمایید
+            '''
+            )
+
         return redirect(request.META.get('HTTP_REFERER'))
 
 
@@ -501,13 +504,14 @@ class ChangeStatusToDeliveredToUser(UserStoreStaffMixin, RedirectView):
             messages.success(
                 self.request,'تغییرات ثبت شد'
             )
-            send_message(
-                str(order.user.PhoneNumber).replace(' ',''),
-                f'''
-                محموله شما ارسال شد 
-                code: {order.sending_id}
-                '''
-            )
+
+            if SiteSetting.objects.first().send_message_when_set_sending_id:
+                send_message(
+                    str(order.user.PhoneNumber).replace(' ',''),
+                    f'''محموله شما ارسال شد 
+                    code:{order.sending_id}
+                    '''
+                )
 
         else:
             messages.warning(

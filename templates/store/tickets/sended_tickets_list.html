@@ -71,83 +71,90 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="box box-primary">
-                <div class="box-header with-border">
-                    <h3 class="box-title"><i class="fa fa-ticket"></i> لیست تیکت‌ها ارسالی</h3>
-                    <div class="box-tools pull-left">
-                        <ul class="pagination pagination-sm no-margin">
-                            {% if page_obj.has_previous %}
-                                <li><a href="?page={{ page_obj.previous_page_number }}"><i
-                                        class="fa fa-angle-right"></i></a></li>
-                            {% endif %}
-                            {% for page_number in page_obj.paginator.page_range %}
-                                <li class="{% if page_number == page_obj.number %}active{% endif %}">
-                                    <a href="?page={{ page_number }}">{{ page_number }}</a>
-                                </li>
-                            {% endfor %}
-                            {% if page_obj.has_next %}
-                                <li><a href="?page={{ page_obj.next_page_number }}"><i class="fa fa-angle-left"></i></a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </div>
-                </div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-header with-border clearfix">
+                <h3 class="box-title pull-right"><i class="fa fa-ticket"></i> لیست تیکت‌های ارسالی</h3>
 
-                <div class="box-body no-padding">
+                <div class="box-tools pull-left">
+                    <ul class="pagination pagination-sm no-margin">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}"><i class="fa fa-angle-right"></i></a></li>
+                        {% endif %}
+                        {% for page_number in page_obj.paginator.page_range %}
+                            <li class="{% if page_number == page_obj.number %}active{% endif %}">
+                                <a href="?page={{ page_number }}">{{ page_number }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}"><i class="fa fa-angle-left"></i></a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="box-body no-padding">
+                <div class="table-responsive">
                     <table class="table table-bordered table-hover table-striped text-center">
                         <thead>
-                        <tr class="bg-primary">
-                            <th>#</th>
-                            <th>عنوان</th>
-                            <th>ارسال شده به</th>
-                            <th>زمان ارسال</th>
-                            <th>وضعیت</th>
-                            <th>مشاهده</th>
-                        </tr>
+                            <tr class="bg-primary">
+                                <th class="col-xs-1">#</th>
+                                <th class="col-xs-3">عنوان</th>
+                                <th class="col-xs-2">ارسال شده به</th>
+                                <th class="col-xs-2">زمان ارسال</th>
+                                <th class="col-xs-2">وضعیت</th>
+                                <th class="col-xs-2">مشاهده</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {% for ticket in tickets %}
-                            <tr>
-                                <td>{{ ticket.id }}</td>
-                                <td>{{ ticket.subject }}</td>
-                                <td>
-                                    {% if ticket.store %}
-                                        <span class="label label-info">{{ ticket.store.name }}</span>
-                                    {% else %}
-                                        <span class="label label-default"> ادمین سایت</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <i class="fa fa-clock-o text-muted"></i>
-                                    {{ ticket.date|to_jalali:'  %H:%M - %Y/%m/%d ' }}
-                                </td>
-                                <td>
-                                    {% if ticket.close_ticket %}
-                                        <span class="label label-success"><i class="fa fa-check"></i> بسته</span>
-                                    {% else %}
-                                        <span class="label label-warning"><i class="fa fa-envelope-open"></i> باز</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <a href="{% url 'store:conversation-ticket' ticket.id %}"
-                                       class="btn btn btn-success">
-                                        <i class="fa fa-eye"></i> مشاهده
-                                    </a>
-                                </td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="6">هیچ تیکتی یافت نشد.</td>
-                            </tr>
-                        {% endfor %}
+                            {% for ticket in tickets %}
+                                <tr>
+                                    <td>{{ ticket.id }}</td>
+                                    <td>{{ ticket.subject|truncatechars:25 }}</td>
+                                    <td>
+                                        {% if ticket.store %}
+                                            <span class="label label-info">{{ ticket.store.name}}</span>
+                                        {% else %}
+                                            <span class="label label-default">ادمین سایت</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small>
+                                            <i class="fa fa-clock-o text-muted"></i>
+                                            {{ ticket.date|to_jalali:'%H:%M - %Y/%m/%d' }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        {% if ticket.close_ticket %}
+                                            <span class="label label-success">
+                                                <i class="fa fa-check"></i> بسته
+                                            </span>
+                                        {% else %}
+                                            <span class="label label-warning">
+                                                <i class="fa fa-envelope-open"></i> باز
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'store:conversation-ticket' ticket.id %}"
+                                           class="btn btn-success btn-xs">
+                                            <i class="fa fa-eye"></i> مشاهده
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6">هیچ تیکتی یافت نشد.</td>
+                                </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
-
         </div>
-    </section>
+    </div>
+</div>    </section>
 {% endblock %}
 
 

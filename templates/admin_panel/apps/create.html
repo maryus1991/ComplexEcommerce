@@ -98,7 +98,9 @@
 
                         </h3>
                         <!-- tools box -->
-                        <div class="pull-right box-tools">
+                    {% if item %}
+                    	
+                        <div class="pull-left">
                             <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
                                     data-toggle="tooltip" title="" data-original-title="Collapse">
                                 <i class="fa fa-minus"></i></button>
@@ -118,6 +120,7 @@
                             </a>
 
                         </div>
+                    {% endif %} 
                         <!-- /. tools -->
                     </div>
 

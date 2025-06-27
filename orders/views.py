@@ -499,6 +499,10 @@ class ConformPayment(LoginRequiredMixin, View):
         self.site = SiteSetting.objects.first()
         self.result = self.order.get_payment_price()
 
+        self.site = SiteSetting.objects.first()
+
+
+
         if self.order.is_paid:
             messages.warning(request, 'این سفارش پرداخت شده است')
             return redirect(reverse('dashboard:order_detail', kwargs={'pk': self.pk}))
@@ -535,6 +539,13 @@ class ConformPayment(LoginRequiredMixin, View):
         return render(request, 'order/payment.html', context)
 
     def post(self, request, *args, **kwargs):
+
+        if not self.site.active_zarinpal_payment :
+            messages.warning(
+                request,
+                'درگاه پرداخت از طرف ادمین سایت غیر فعال شده است'
+            )
+            return redirect('/')
 
         pk = self.pk
         order = self.order
@@ -620,6 +631,7 @@ class VerifyPayment(LoginRequiredMixin, View):
                                        canceled=False)
         self.result = self.order.get_payment_price()
 
+
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -657,13 +669,14 @@ class VerifyPayment(LoginRequiredMixin, View):
 
                 order.mines_order_detail_count_from_products_count()
                 order.save()
-                send_message(
-                    str(order.user.PhoneNumber).replace(' ', ''),
-                    """
-                    از اینکه ما رو انتخاب کردید متشکریم 
-                    سفارش شما در وضعیت ارسال قرار گرفت
-                    """
-                )
+                if self.site.send_message_successful_payment:
+                    send_message(
+                        str(order.user.PhoneNumber).replace(' ', ''),
+                     """
+                        از اینکه ما رو انتخاب کردید متشکریم 
+                        سفارش شما در وضعیت ارسال قرار گرفت
+                        """
+                    )
 
                 StoreSoldOrders.objects.create(
                     order=order,

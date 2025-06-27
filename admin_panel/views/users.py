@@ -11,6 +11,17 @@ from django.contrib.contenttypes.models import ContentType
 User = get_user_model()
 
 
+# class UserSendManyMessage(AdminUserMixin, View):
+#     """for message the user"""
+#
+#
+#     def get(self, request):
+#         users = User.objects.all()
+#
+#
+#         return render(request, '')
+
+
 class UserListView(AdminUserMixin, ListView):
     """for listing Users"""
     model = User
@@ -277,6 +288,7 @@ class UserDeleteView(AdminUserMixin, View):
         else:
             messages.info(request, 'در وارد کردن شماره کاربر دقت کنید')
             return redirect(request.META.get('HTTP_REFERER'))
+
 
 class UserActivitiesView(AdminUserMixin, ListView):
     """
