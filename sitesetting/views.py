@@ -33,9 +33,6 @@ def robots_txt(request):
         '/user/',
         '/dashboard/',
         '/order/',
-        'store/',
-        'admin/',
-        'admin-panel/',
         '/ckeditor/'
     ]
 
