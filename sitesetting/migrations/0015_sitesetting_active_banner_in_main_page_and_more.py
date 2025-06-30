@@ -6,43 +6,57 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sitesetting', '0014_alter_sitesetting_email'),
+        ("sitesetting", "0014_alter_sitesetting_email"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='sitesetting',
-            name='active_banner_in_main_page',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن بنر ها در صفحه اصلی'),
+            model_name="sitesetting",
+            name="active_banner_in_main_page",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال کردن بنر ها در صفحه اصلی"
+            ),
         ),
         migrations.AddField(
-            model_name='sitesetting',
-            name='active_categories_in_main_page',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن محبوب ترین دسته ها در صفحه اصلی'),
+            model_name="sitesetting",
+            name="active_categories_in_main_page",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال کردن محبوب ترین دسته ها در صفحه اصلی"
+            ),
         ),
         migrations.AddField(
-            model_name='sitesetting',
-            name='active_most_discount_in_main_page',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن بیشترین تخفیف ها در صفحه اصلی'),
+            model_name="sitesetting",
+            name="active_most_discount_in_main_page",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال کردن بیشترین تخفیف ها در صفحه اصلی"
+            ),
         ),
         migrations.AddField(
-            model_name='sitesetting',
-            name='active_most_read_posts_in_main_page',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن مطالب خواندنی در صفحه اصلی'),
+            model_name="sitesetting",
+            name="active_most_read_posts_in_main_page",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال کردن مطالب خواندنی در صفحه اصلی"
+            ),
         ),
         migrations.AddField(
-            model_name='sitesetting',
-            name='active_most_soled_product_in_main_page',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن محصولات پر فروش  در صفحه اصلی'),
+            model_name="sitesetting",
+            name="active_most_soled_product_in_main_page",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال کردن محصولات پر فروش  در صفحه اصلی"
+            ),
         ),
         migrations.AddField(
-            model_name='sitesetting',
-            name='active_newset_peoduct_in_main_page',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن جدیدترین محصولات در صفحه اصلی'),
+            model_name="sitesetting",
+            name="active_newset_peoduct_in_main_page",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال کردن جدیدترین محصولات در صفحه اصلی"
+            ),
         ),
         migrations.AddField(
-            model_name='sitesetting',
-            name='active_slider_in_main_page',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن سلایدر ها در صفحه اصلی'),
+            model_name="sitesetting",
+            name="active_slider_in_main_page",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال کردن سلایدر ها در صفحه اصلی"
+            ),
         ),
     ]

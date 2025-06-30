@@ -7,18 +7,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0004_blogcategory_parent'),
+        ("blog", "0004_blogcategory_parent"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='blog',
-            name='is_active',
+            model_name="blog",
+            name="is_active",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='blogview',
-            name='blog',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='views', to='blog.blog'),
+            model_name="blogview",
+            name="blog",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="views",
+                to="blog.blog",
+            ),
         ),
     ]

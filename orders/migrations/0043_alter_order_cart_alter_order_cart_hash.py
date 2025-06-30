@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0042_deliveryprices_date'),
+        ("orders", "0042_deliveryprices_date"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='order',
-            name='cart',
+            model_name="order",
+            name="cart",
             field=models.CharField(blank=True, max_length=120, null=True),
         ),
         migrations.AlterField(
-            model_name='order',
-            name='cart_hash',
+            model_name="order",
+            name="cart_hash",
             field=models.CharField(blank=True, max_length=120, null=True),
         ),
     ]

@@ -19,8 +19,9 @@ User = get_user_model()
 
 # Create your models here.
 
+
 def pdf_path_upload_to(instance, filename):
-    return f'files/official_invoice/pdf/{get_random_string(100)}.pdf'
+    return f"files/official_invoice/pdf/{get_random_string(100)}.pdf"
 
 
 class DeliveryPrices(models.Model):
@@ -35,9 +36,11 @@ class DeliveryPrices(models.Model):
 
 
 class Order(models.Model):
-    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='orders')
-    address = models.ForeignKey(UserAddress, null=True, on_delete=models.CASCADE, related_name='orders')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="orders")
+    address = models.ForeignKey(
+        UserAddress, null=True, on_delete=models.CASCADE, related_name="orders"
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
 
     vip_post = models.BooleanField(default=False)
     tipax_post_delivery = models.BooleanField(default=False)
@@ -64,8 +67,13 @@ class Order(models.Model):
     # discount code
     use_discount_code = models.BooleanField(default=False)
     discount_code_price = models.PositiveBigIntegerField(default=0)
-    discount = models.OneToOneField('Discount', null=True, blank=True,
-                                    on_delete=models.CASCADE, related_name='discount')
+    discount = models.OneToOneField(
+        "Discount",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="discount",
+    )
 
     total_price = models.PositiveBigIntegerField(default=0)
     total_weight = models.PositiveBigIntegerField(default=0)
@@ -75,7 +83,9 @@ class Order(models.Model):
 
     official_invoice = models.BooleanField(default=False)
     official_invoice_conformed_given_to_user = models.BooleanField(default=False)
-    official_invoice_pdf = models.FileField(upload_to=pdf_path_upload_to, null=True, blank=True)
+    official_invoice_pdf = models.FileField(
+        upload_to=pdf_path_upload_to, null=True, blank=True
+    )
 
     is_paid = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -94,7 +104,7 @@ class Order(models.Model):
             return price.first().price
         else:
             price = calculate_price_tipax(self)
-            if price is not None :
+            if price is not None:
                 DeliveryPrices.objects.create(
                     is_tipax=True,
                     origin_city_id=self.store.orgin_city_id,
@@ -228,21 +238,31 @@ class Order(models.Model):
 
         total_amount_of_items = self.calculate_total_price()
 
-        total_payment_price = total_amount_of_items + self.delivery_price - self.get_total_discount_amount()
+        total_payment_price = (
+            total_amount_of_items + self.delivery_price - self.get_total_discount_amount()
+        )
 
         # store
 
-        if self.official_invoice and self.store.have_official_invoice and site.active_receive_official_invoice:
-            total_payment_price += (total_amount_of_items * (self.store.official_invoice_price / 100))
+        if (
+            self.official_invoice and
+                self.store.have_official_invoice and
+                site.active_receive_official_invoice
+        ):
+            total_payment_price += total_amount_of_items * (
+                self.store.official_invoice_price / 100
+            )
 
         if self.store.additional_price:
             total_payment_price += self.store.additional_price
 
         if self.store.additional_tax:
-            total_payment_price += (total_amount_of_items * (self.store.additional_tax / 100))
+            total_payment_price += total_amount_of_items * (
+                self.store.additional_tax / 100
+            )
 
         # site
-        total_payment_price += (total_amount_of_items * (site.tax / 100))
+        total_payment_price += total_amount_of_items * (site.tax / 100)
 
         self.total_price = total_payment_price
         self.save()
@@ -251,7 +271,7 @@ class Order(models.Model):
     def check_count_of_products(self):
         return all(
             item.count <= item.product.count
-            for item in self.details.select_related('product')
+            for item in self.details.select_related("product")
         )
 
     def mines_order_detail_count_from_products_count(self):
@@ -260,12 +280,14 @@ class Order(models.Model):
             item.product.save()
 
     def __str__(self):
-        return f'{self.user.PhoneNumber} - {self.store.name} - {self.id}'
+        return f"{self.user.PhoneNumber} - {self.store.name} - {self.id}"
 
 
 class OrderDetail(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='details')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='orders')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="details")
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="orders"
+    )
 
     date = models.DateTimeField(auto_now_add=True)
     price = models.PositiveBigIntegerField(default=0)
@@ -296,32 +318,41 @@ class OrderDetail(models.Model):
         return product_real_price - product_discount
 
     def __str__(self):
-        return f'{self.order.id} - {self.id}'
+        return f"{self.order.id} - {self.id}"
 
 
 class Discount(models.Model):
-    user = models.ManyToManyField(User, related_name='discounts', blank=True)
-    product = models.ManyToManyField(Product, related_name='discounts', blank=True)
-    store = models.ManyToManyField(Store, blank=True, related_name='discounts')
-    order = models.ManyToManyField(Order, related_name='discounts',  blank=True)
-
+    user = models.ManyToManyField(User, related_name="discounts", blank=True)
+    product = models.ManyToManyField(Product, related_name="discounts", blank=True)
+    store = models.ManyToManyField(Store, blank=True, related_name="discounts")
+    order = models.ManyToManyField(Order, related_name="discounts", blank=True)
+    min_price = models.PositiveBigIntegerField(null=True, blank=True)
     end_date_discount = models.DateTimeField(null=True, blank=True)
     count = models.PositiveBigIntegerField(default=0)
     percentage_discount = models.BooleanField(default=False)
     percent = models.PositiveBigIntegerField(null=True, blank=True)
     price = models.PositiveBigIntegerField(null=True, blank=True)
-    name = models.CharField(max_length=100, null=True, blank=True, unique=True, db_index=True)
+    name = models.CharField(
+        max_length=100, null=True, blank=True, unique=True, db_index=True
+    )
 
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'{self.name} - {self.id}'
+        return f"{self.name} - {self.id}"
 
 
 class StoreSoldOrders(models.Model):
-    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='store_sold_orders')
-    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='store_sold_orders')
+    order = models.OneToOneField(
+        Order, on_delete=models.CASCADE, related_name="store_sold_orders"
+    )
+    store = models.ForeignKey(
+        Store, on_delete=models.CASCADE, related_name="store_sold_orders"
+    )
     price = models.PositiveBigIntegerField(default=0)
+    is_returned_by_admin = models.BooleanField(default=False)
+    open_date = models.DateTimeField(auto_now_add=True)
+    paid_by_admin_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f'{self.price} <-> {self.store.name}'
+        return f"{self.price} <-> {self.store.name} <-> {self.is_returned_by_admin}"

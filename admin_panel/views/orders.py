@@ -1,25 +1,47 @@
 from django.views.generic import ListView, DetailView, View
-from django.shortcuts import get_object_or_404, redirect, render , reverse
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.urls import reverse_lazy
-from orders.models import Order
+from orders.models import Order, StoreSoldOrders
 from user.mixins.logins import AdminUserMixin
+
 
 class OrderListView(AdminUserMixin, ListView):
     """for listing the orders"""
+
     model = Order
-    context_object_name = 'items'
-    template_name = 'admin_panel/orders/list.html'
-    ordering = '-id'
+    context_object_name = "items"
+    template_name = "admin_panel/orders/list.html"
+    ordering = "-id"
     paginate_by = 25
+
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related('store', 'address', 'user')
+
+
+class OrderSoldListView(AdminUserMixin, ListView):
+    """for listing the orders"""
+
+    model = StoreSoldOrders
+    context_object_name = "items"
+    template_name = "admin_panel/orders/sold-list.html"
+    ordering = "-id"
+    paginate_by = 100
+
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("store", 'order')
+
 
 class OrderDetailView(AdminUserMixin, DetailView):
     """for listing the orders"""
+
     model = Order
-    context_object_name = 'order'
-    template_name = 'admin_panel/orders/details.html'
+    context_object_name = "order"
+    template_name = "admin_panel/orders/details.html"
 
     def get_object(self):
-        order = Order.objects.filter(pk=self.kwargs['pk']
-             ).prefetch_related(
-    'address', 'user', 'store').first()
+        order = (
+            Order.objects.filter(pk=self.kwargs["pk"])
+            .prefetch_related("address", "user", "store")
+            .first()
+        )
         return order

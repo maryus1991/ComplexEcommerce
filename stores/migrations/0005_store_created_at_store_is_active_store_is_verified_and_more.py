@@ -8,55 +8,61 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stores', '0004_store_instagram_app_id_store_instagram_app_link_and_more'),
+        ("stores", "0004_store_instagram_app_id_store_instagram_app_link_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='store',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="store",
+            name="created_at",
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='store',
-            name='is_active',
+            model_name="store",
+            name="is_active",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='store',
-            name='is_verified',
+            model_name="store",
+            name="is_verified",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='store',
-            name='logo',
-            field=models.ImageField(blank=True, null=True, upload_to=''),
+            model_name="store",
+            name="logo",
+            field=models.ImageField(blank=True, null=True, upload_to=""),
         ),
         migrations.AddField(
-            model_name='store',
-            name='merchant_id',
+            model_name="store",
+            name="merchant_id",
             field=models.BigIntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='store',
-            name='orgin_city_id',
+            model_name="store",
+            name="orgin_city_id",
             field=models.BigIntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='store',
-            name='phone2',
-            field=phonenumber_field.modelfields.PhoneNumberField(default='09373061991', max_length=128, region=None),
+            model_name="store",
+            name="phone2",
+            field=phonenumber_field.modelfields.PhoneNumberField(
+                default="09373061991", max_length=128, region=None
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='store',
-            name='updated_at',
+            model_name="store",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AlterField(
-            model_name='store',
-            name='phone',
-            field=phonenumber_field.modelfields.PhoneNumberField(max_length=128, region=None),
+            model_name="store",
+            name="phone",
+            field=phonenumber_field.modelfields.PhoneNumberField(
+                max_length=128, region=None
+            ),
         ),
     ]

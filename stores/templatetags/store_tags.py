@@ -30,12 +30,19 @@ def ticket_obj_request(query):
 
 @register.filter
 def orders_count(query):
-    return query.filter(is_paid=True, is_active=True, canceled=False,
-                        second_date=now() - timedelta(days=1)
-        ).count()
+    return query.filter(
+        is_paid=True,
+        is_active=True,
+        canceled=False,
+        second_date=now() - timedelta(days=1),
+    ).count()
+
 
 @register.filter
 def orders_obj(query):
-    return query.filter(is_paid=True, is_active=True, canceled=False,
-                        second_date=now() - timedelta(days=1)
-        ).all()
+    return query.filter(
+        is_paid=True,
+        is_active=True,
+        canceled=False,
+        second_date=now() - timedelta(days=1),
+    ).all()

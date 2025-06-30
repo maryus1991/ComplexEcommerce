@@ -7,18 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stores', '0006_alter_store_phone_alter_store_phone2'),
+        ("stores", "0006_alter_store_phone_alter_store_phone2"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='store',
-            name='about_image',
-            field=models.ImageField(blank=True, null=True, upload_to=''),
+            model_name="store",
+            name="about_image",
+            field=models.ImageField(blank=True, null=True, upload_to=""),
         ),
         migrations.AddField(
-            model_name='store',
-            name='description',
-            field=ckeditor_uploader.fields.RichTextUploadingField(blank=True, null=True),
+            model_name="store",
+            name="description",
+            field=ckeditor_uploader.fields.RichTextUploadingField(
+                blank=True, null=True
+            ),
         ),
     ]

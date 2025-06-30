@@ -8,78 +8,82 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sitesetting', '0010_alter_banners_name_alter_banners_name2_and_more'),
+        ("sitesetting", "0010_alter_banners_name_alter_banners_name2_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sitesetting',
-            name='about_image',
-            field=models.ImageField(null=True, upload_to='site/about_image/'),
+            model_name="sitesetting",
+            name="about_image",
+            field=models.ImageField(null=True, upload_to="site/about_image/"),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='address',
-            field=models.CharField(default='0', max_length=500),
+            model_name="sitesetting",
+            name="address",
+            field=models.CharField(default="0", max_length=500),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='copy_right_text',
-            field=models.CharField(default='0', max_length=250),
+            model_name="sitesetting",
+            name="copy_right_text",
+            field=models.CharField(default="0", max_length=250),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='email',
-            field=models.EmailField(default='test@test.test', max_length=254),
+            model_name="sitesetting",
+            name="email",
+            field=models.EmailField(default="test@test.test", max_length=254),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='instagram_ID',
-            field=models.CharField(default='0', max_length=100),
+            model_name="sitesetting",
+            name="instagram_ID",
+            field=models.CharField(default="0", max_length=100),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='instagram_link',
-            field=models.URLField(default='0'),
+            model_name="sitesetting",
+            name="instagram_link",
+            field=models.URLField(default="0"),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='logo',
-            field=models.ImageField(null=True, upload_to='site/logo/'),
+            model_name="sitesetting",
+            name="logo",
+            field=models.ImageField(null=True, upload_to="site/logo/"),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='long_description',
-            field=ckeditor_uploader.fields.RichTextUploadingField(default='0'),
+            model_name="sitesetting",
+            name="long_description",
+            field=ckeditor_uploader.fields.RichTextUploadingField(default="0"),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='phone',
-            field=phonenumber_field.modelfields.PhoneNumberField(default='0111111111', max_length=128, region=None),
+            model_name="sitesetting",
+            name="phone",
+            field=phonenumber_field.modelfields.PhoneNumberField(
+                default="0111111111", max_length=128, region=None
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='phone2',
-            field=phonenumber_field.modelfields.PhoneNumberField(default='0111111111', max_length=128, region=None),
+            model_name="sitesetting",
+            name="phone2",
+            field=phonenumber_field.modelfields.PhoneNumberField(
+                default="0111111111", max_length=128, region=None
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='short_description',
-            field=models.TextField(default='0'),
+            model_name="sitesetting",
+            name="short_description",
+            field=models.TextField(default="0"),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='telegram_ID',
-            field=models.CharField(default='0', max_length=100),
+            model_name="sitesetting",
+            name="telegram_ID",
+            field=models.CharField(default="0", max_length=100),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='telegram_link',
-            field=models.URLField(default='0'),
+            model_name="sitesetting",
+            name="telegram_link",
+            field=models.URLField(default="0"),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='title',
-            field=models.CharField(default='0', max_length=100),
+            model_name="sitesetting",
+            name="title",
+            field=models.CharField(default="0", max_length=100),
         ),
     ]

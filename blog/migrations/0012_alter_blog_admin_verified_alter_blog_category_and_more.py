@@ -9,80 +9,109 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0011_blog_admin_verified'),
-        ('stores', '0021_storeapps_admin_verified_alter_storeapps_file_and_more'),
+        ("blog", "0011_blog_admin_verified"),
+        ("stores", "0021_storeapps_admin_verified_alter_storeapps_file_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='blog',
-            name='admin_verified',
-            field=models.BooleanField(default=True, verbose_name='فعال / غیر فعال توسط ادمین'),
+            model_name="blog",
+            name="admin_verified",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال / غیر فعال توسط ادمین"
+            ),
         ),
         migrations.AlterField(
-            model_name='blog',
-            name='category',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='blogs', to='blog.blogcategory', verbose_name='دسته'),
+            model_name="blog",
+            name="category",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="blogs",
+                to="blog.blogcategory",
+                verbose_name="دسته",
+            ),
         ),
         migrations.AlterField(
-            model_name='blog',
-            name='content',
-            field=ckeditor_uploader.fields.RichTextUploadingField(verbose_name='متن یا بدنه'),
+            model_name="blog",
+            name="content",
+            field=ckeditor_uploader.fields.RichTextUploadingField(
+                verbose_name="متن یا بدنه"
+            ),
         ),
         migrations.AlterField(
-            model_name='blog',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='زمان ساخت'),
+            model_name="blog",
+            name="created_at",
+            field=models.DateTimeField(auto_now_add=True, verbose_name="زمان ساخت"),
         ),
         migrations.AlterField(
-            model_name='blog',
-            name='image',
-            field=models.ImageField(null=True, upload_to='blogs/', verbose_name='عکس'),
+            model_name="blog",
+            name="image",
+            field=models.ImageField(null=True, upload_to="blogs/", verbose_name="عکس"),
         ),
         migrations.AlterField(
-            model_name='blog',
-            name='is_active',
-            field=models.BooleanField(default=False, verbose_name='فعال / غیر فعال برای انتشار توسط فروشگاه'),
+            model_name="blog",
+            name="is_active",
+            field=models.BooleanField(
+                default=False, verbose_name="فعال / غیر فعال برای انتشار توسط فروشگاه"
+            ),
         ),
         migrations.AlterField(
-            model_name='blog',
-            name='store',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blogs', to='stores.store', verbose_name='فروشگاه منتشر کننده'),
+            model_name="blog",
+            name="store",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="blogs",
+                to="stores.store",
+                verbose_name="فروشگاه منتشر کننده",
+            ),
         ),
         migrations.AlterField(
-            model_name='blog',
-            name='title',
-            field=models.CharField(max_length=100, verbose_name='عنوان'),
+            model_name="blog",
+            name="title",
+            field=models.CharField(max_length=100, verbose_name="عنوان"),
         ),
         migrations.AlterField(
-            model_name='blog',
-            name='updated_at',
-            field=models.DateTimeField(auto_now=True, verbose_name='زمان انتشار'),
+            model_name="blog",
+            name="updated_at",
+            field=models.DateTimeField(auto_now=True, verbose_name="زمان انتشار"),
         ),
         migrations.AlterField(
-            model_name='blog',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blogs', to=settings.AUTH_USER_MODEL, verbose_name='نویسنده'),
+            model_name="blog",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="blogs",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="نویسنده",
+            ),
         ),
         migrations.AlterField(
-            model_name='blogcategory',
-            name='image',
-            field=models.ImageField(upload_to='blog_categories/', verbose_name='عکس'),
+            model_name="blogcategory",
+            name="image",
+            field=models.ImageField(upload_to="blog_categories/", verbose_name="عکس"),
         ),
         migrations.AlterField(
-            model_name='blogcategory',
-            name='is_active',
-            field=models.BooleanField(default=True, verbose_name='فعال / غیر فعال'),
+            model_name="blogcategory",
+            name="is_active",
+            field=models.BooleanField(default=True, verbose_name="فعال / غیر فعال"),
         ),
         migrations.AlterField(
-            model_name='blogcategory',
-            name='name',
-            field=models.CharField(max_length=100, verbose_name='نام'),
+            model_name="blogcategory",
+            name="name",
+            field=models.CharField(max_length=100, verbose_name="نام"),
         ),
         migrations.AlterField(
-            model_name='blogcategory',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='children', to='blog.blogcategory', verbose_name='دسته مادر'),
+            model_name="blogcategory",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="children",
+                to="blog.blogcategory",
+                verbose_name="دسته مادر",
+            ),
         ),
     ]

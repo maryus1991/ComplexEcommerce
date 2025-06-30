@@ -185,9 +185,15 @@
                         <td class="text-center">
                             <strong>
                                 {% if item.is_verified %}
+                                    {% if item.message_verified %}
                                     <span class="label label-success">
-                                    تایید شده
+                                    تایید شده با پیامک
                                     </span>
+                                        {% else %}
+                                    <span class="label label-warning">
+                                    تایید شده بدون پیامک
+                                    </span>
+                                    {% endif %}
                                 {% else %}
                                     <span class="label label-danger">
                                     تایید نشده

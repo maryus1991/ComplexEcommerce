@@ -7,18 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0036_order_discount'),
+        ("orders", "0036_order_discount"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='official_invoice_conformed_given_to_user',
+            model_name="order",
+            name="official_invoice_conformed_given_to_user",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='order',
-            name='official_invoice_pdf',
-            field=models.FileField(blank=True, null=True, upload_to=orders.models.pdf_path_upload_to),
+            model_name="order",
+            name="official_invoice_pdf",
+            field=models.FileField(
+                blank=True, null=True, upload_to=orders.models.pdf_path_upload_to
+            ),
         ),
     ]

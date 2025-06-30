@@ -1,43 +1,40 @@
-import requests, os, sys, json
-import django
+import requests
+import os
+import sys
+import json
 from pathlib import Path
+from config import settings
+
 
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-
-from django.conf import settings
-
-from config import settings
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 # tipax apis url
 
-TIPAX_LOGIN = 'https://omtestapi.tipax.ir/api/OM/v3/Account/token'  # post
-TIPAX_GET_LIST_CITIES = 'https://omtestapi.tipax.ir/api/OM/v3/Cities'  # get
-TIPAX_CALC_PRICE = 'https://omtestapi.tipax.ir/api/OM/v3/Pricing'  # post
+TIPAX_LOGIN = "https://omtestapi.tipax.ir/api/OM/v3/Account/token"  # post
+TIPAX_GET_LIST_CITIES = "https://omtestapi.tipax.ir/api/OM/v3/Cities"  # get
+TIPAX_CALC_PRICE = "https://omtestapi.tipax.ir/api/OM/v3/Pricing"  # post
 
 access_token = None
 
 
 def login():
     data = {
-        'username': settings.TIPAX_USERNAME,
-        'password': settings.TIPAX_PASSWORD,
-        'apiKey': settings.TIPAX_API_KEY,
+        "username": settings.TIPAX_USERNAME,
+        "password": settings.TIPAX_PASSWORD,
+        "apiKey": settings.TIPAX_API_KEY,
     }
 
-    headers = {'Content-Type': 'application/json'}
+    headers = {"Content-Type": "application/json"}
 
     try:
         # Convert data to JSON string for the request
         json_data = json.dumps(data)
 
         response = requests.post(
-            TIPAX_LOGIN,
-            data=json_data,
-            headers=headers,
-            timeout=10
+            TIPAX_LOGIN, data=json_data, headers=headers, timeout=10
         )
 
         # Check if response is successful
@@ -46,7 +43,7 @@ def login():
         # Try to parse JSON only if there's content
         if response.content:
             global access_token
-            access_token = response.json()['accessToken']
+            access_token = response.json()["accessToken"]
             return access_token
 
         else:
@@ -61,15 +58,21 @@ def login():
 
 
 def send_request_for_city(city):
-    headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer {}'.format(access_token)}
-    response = requests.get(TIPAX_GET_LIST_CITIES + f'?title={city}', headers=headers, )
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer {}".format(access_token),
+    }
+    response = requests.get(
+        TIPAX_GET_LIST_CITIES + f"?title={city}",
+        headers=headers,
+    )
 
     if response.status_code == 200:
         if type(response.json()) == list:
-            if len(city.split(' ')) == 1:
+            if len(city.split(" ")) == 1:
                 if len(response.json()) > 1:
                     for item in response.json():
-                        if item['title'] == city:
+                        if item["title"] == city:
                             return [item]
             return response.json()
 
@@ -82,7 +85,7 @@ def send_request_for_city(city):
 
 def validate_city(city: str):
     if access_token is None:
-        print('used')
+        print("used")
         login()
 
     response = send_request_for_city(city)
@@ -93,39 +96,50 @@ def validate_city(city: str):
 
 
 def calculate_price(
-        order_obj,
-        store_origin_id=0,
-        user_destination_id=0,
-        packing_id=0,  # for packing type
-        package_content_id=1,  # for content of the box
-        pack_type=20,  # type of the content of the box
-        payment_type=80,  # the type of the payment
-        pick_package_type=20,
-        distribution_type=10,
-        service_id=3,  # service type of sending
+    order_obj,
+    store_origin_id=0,
+    user_destination_id=0,
+    packing_id=0,  # for packing type
+    package_content_id=1,  # for content of the box
+    pack_type=20,  # type of the content of the box
+    payment_type=80,  # the type of the payment
+    pick_package_type=20,
+    distribution_type=10,
+    service_id=3,  # service type of sending
 ):
     try:
         if access_token is None:
             login()
-            print('used')
+            print("used")
             print(access_token)
 
-        headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer {}'.format(access_token)}
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer {}".format(access_token),
+        }
 
         data = {
             "packageInputs": [
                 {
-                    "origin": {
-                        "cityId": int(order_obj.store.orgin_city_id)
-                    },
-                    "destination": {
-                        "cityId": int(order_obj.address.city_code)
-                    },
+                    "origin": {"cityId": int(order_obj.store.orgin_city_id)},
+                    "destination": {"cityId": int(order_obj.address.city_code)},
                     "weight": order_obj.get_total_weight() / 1000,
                     "packageValue": order_obj.total_price,
-                    "length": order_obj.get_total_length() if order_obj.get_total_length() > 0 else 1,
-                    "width": order_obj.get_total_width() if order_obj.get_total_width() > 0 else 1,
-                    "height": order_obj.get_total_height() if order_obj.get_total_height() > 0 else 1,
+                    "length": (
+                        order_obj.get_total_length()
+                        if order_obj.get_total_length() > 0
+                        else 1
+                    ),
+                    "width": (
+                        order_obj.get_total_width()
+                        if order_obj.get_total_width() > 0
+                        else 1
+                    ),
+                    "height": (
+                        order_obj.get_total_height()
+                        if order_obj.get_total_height() > 0
+                        else 1
+                    ),
                     "packingId": packing_id,
                     "packageContentId": package_content_id,
                     "parcelBookId": order_obj.id,
@@ -137,7 +151,6 @@ def calculate_price(
                     "serviceId": service_id,
                 }
             ]
-
         }
         print(json.dumps(data))
         response = requests.post(
@@ -145,11 +158,11 @@ def calculate_price(
             data=json.dumps(data),
             headers=headers,
             stream=True,
-            timeout=20
+            timeout=20,
         )
         print(response.json())
         if response.status_code == 200:
-            return int(response.json()[0]['regularRate']['finalPrice']) / 10
+            return int(response.json()[0]["regularRate"]["finalPrice"]) / 10
         elif response.status_code == 401:
             login()
             return calculate_price(
@@ -162,11 +175,13 @@ def calculate_price(
                 payment_type,
                 pick_package_type,
                 distribution_type,
-                service_id)
+                service_id,
+            )
         else:
             return None
     except Exception as e:
         return None
+
 
 #
 # import requests

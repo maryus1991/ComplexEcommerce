@@ -5,22 +5,23 @@ register = template.Library()
 
 @register.filter
 def tdc(value: int):
-    if value is not None and value and value != '' :
-        return '{:,}'.format(int(value))
+    if value is not None and value and value != "":
+        return "{:,}".format(int(value))
     else:
         return 0
-
 
 
 @register.filter
 def clac_discount(price: int, discount: int):
     discount_price = price * (discount / 100)
-    return '{:,}'.format(int(price - discount_price) )
+    return "{:,}".format(int(price - discount_price))
+
 
 @register.filter
 def clac_tax(price: int, discount: int):
     discount_price = int(price * (discount / 100))
-    return '{:,}'.format(discount_price)
+    return "{:,}".format(discount_price)
+
 
 @register.filter
 def clac_tax_no_format(price: int, discount: int):
@@ -28,41 +29,45 @@ def clac_tax_no_format(price: int, discount: int):
     return discount_price
 
 
-
 @register.filter
 def sum(x, y):
-    return '{:,}'.format(int(x) + int(y))
+    return "{:,}".format(int(x) + int(y))
+
 
 @register.filter
 def mines(x, y):
     if x > y:
-        return '{:,}'.format(int(x) - int(y))
+        return "{:,}".format(int(x) - int(y))
     else:
-        return '{:,}'.format(int(y) - int(x))
+        return "{:,}".format(int(y) - int(x))
 
 
 @register.filter
 def tdcR(value: int):
-    if value is not None and value and value != '' :
-        return '{:,}'.format(int(value) * 10)
+    if value is not None and value and value != "":
+        return "{:,}".format(int(value) * 10)
     else:
         return 0
+
 
 @register.filter
 def clac_tax_no_format_R(price: int, discount: int):
     discount_price = int(price * (discount / 100)) * 10
     return discount_price
 
+
 @register.filter
 def sumR(x, y):
-    return '{:,}'.format((int(x) + int(y)) * 10)
+    return "{:,}".format((int(x) + int(y)) * 10)
+
 
 @register.filter
 def minesR(x, y):
     if x > y:
-        return '{:,}'.format((int(x) - int(y)) * 10)
+        return "{:,}".format((int(x) - int(y)) * 10)
     else:
-        return '{:,}'.format((int(y) - int(x)) * 10)
+        return "{:,}".format((int(y) - int(x)) * 10)
+
 
 @register.filter
 def order_by(orm, sort):

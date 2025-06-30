@@ -6,18 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0040_rename_zarinpal_order_zarinpal_fee'),
+        ("orders", "0040_rename_zarinpal_order_zarinpal_fee"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='DeliveryPrices',
+            name="DeliveryPrices",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_tipax', models.BooleanField(default=True)),
-                ('price', models.PositiveBigIntegerField()),
-                ('origin_city_id', models.PositiveIntegerField()),
-                ('destination_city_id', models.PositiveIntegerField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("is_tipax", models.BooleanField(default=True)),
+                ("price", models.PositiveBigIntegerField()),
+                ("origin_city_id", models.PositiveIntegerField()),
+                ("destination_city_id", models.PositiveIntegerField()),
             ],
         ),
     ]

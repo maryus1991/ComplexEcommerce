@@ -6,28 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0022_order_additional_descriptions'),
+        ("orders", "0022_order_additional_descriptions"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='total_height',
+            model_name="order",
+            name="total_height",
             field=models.PositiveBigIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='order',
-            name='total_length',
+            model_name="order",
+            name="total_length",
             field=models.PositiveBigIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='order',
-            name='total_weight',
+            model_name="order",
+            name="total_weight",
             field=models.PositiveBigIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='order',
-            name='total_width',
+            model_name="order",
+            name="total_width",
             field=models.PositiveBigIntegerField(default=0),
         ),
     ]

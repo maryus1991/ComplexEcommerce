@@ -7,13 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0035_rename_dicount_code_price_order_discount_code_price'),
+        ("orders", "0035_rename_dicount_code_price_order_discount_code_price"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='discount',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='discount', to='orders.discount'),
+            model_name="order",
+            name="discount",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="discount",
+                to="orders.discount",
+            ),
         ),
     ]

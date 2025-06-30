@@ -204,193 +204,232 @@
     <section
             class="flex flex-col lg:flex-row items-start gap-4 child:rounded-lg child:bg-white child:dark:bg-zinc-700 child:shadow child:p-4">
         <!-- IMAGE & INFO BOX Container -->
-        <div class="w-full lg:w-3/4 flex flex-col gap-y-8 ">
+        <div class="w-full lg:w-3/4 space-y-8">
             <!-- IMAGE & INFO BOX -->
             <div class="flex flex-col lg:flex-row gap-5">
-                <!-- SLIDER & ACTION BTN  -->
-                <div class="flex  lg:w-96 flex-col gap-y-4">
+                <!-- SLIDER & ACTION BTN -->
+                <div class="flex lg:w-96 flex-col space-y-4">
                     <!-- ACTION BTN -->
-                    <div class="flex items-center gap-x-3 mr-2">
+                    <div class="flex items-center gap-3 mr-2">
                         <div class="tooltip">
                             <script>
                                 function copyText() {
-
-                                    /* Copy text into clipboard */
-                                    navigator.clipboard.writeText
-                                    (window.location.href);
-
+                                    navigator.clipboard.writeText(window.location.href);
                                     document.getElementById("copy_text_message").innerText = 'ادرس مورد نظر کپی شد';
                                 }
                             </script>
                             <a class="share-btn-copy-123" onclick="copyText()">
-                                <button class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20">
+                                <button class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
                                     <svg class="w-5 h-5">
                                         <use href="#share"></use>
                                     </svg>
                                 </button>
-
                                 <div id="copy_text_message"
-                                     class="tooltiptext duration-300 transition-all text-xs bg-zinc-700 dark:bg-zinc-500 text-white dark:to-zinc-700 after:border-t-zinc-700 after:dark:border-t-zinc-500">
+                                     class="tooltiptext transition-all text-xs bg-zinc-700 dark:bg-zinc-500 text-white after:border-t-zinc-700 after:dark:border-t-zinc-500">
                                     اشتراک گذاری
                                 </div>
                             </a>
                         </div>
 
                         {% if is_favorite_product %}
-                            <div class="tooltip ">
+                            <div class="tooltip">
                                 <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}">
-                                    <button class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20">
+                                    <button class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
                                         <svg class="w-5 h-5">
                                             <use href="#close"></use>
                                         </svg>
                                     </button>
                                 </a>
-                                <div class="tooltiptext duration-300 transition-all text-xs bg-zinc-700 dark:bg-zinc-500 text-white dark:to-zinc-700 after:border-t-zinc-700 after:dark:border-t-zinc-500">
+                                <div class="tooltiptext transition-all text-xs bg-zinc-700 dark:bg-zinc-500 text-white after:border-t-zinc-700 after:dark:border-t-zinc-500">
                                     حذف از لیست محصولات مورد علاقه
                                 </div>
                             </div>
                         {% else %}
-                            <div class="tooltip ">
+                            <div class="tooltip">
                                 <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}">
-                                    <button class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20">
+                                    <button class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
                                         <svg class="w-5 h-5">
                                             <use href="#heart"></use>
                                         </svg>
                                     </button>
                                 </a>
-                                <div class="tooltiptext duration-300 transition-all text-xs bg-zinc-700 dark:bg-zinc-500 text-white dark:to-zinc-700 after:border-t-zinc-700 after:dark:border-t-zinc-500">
+                                <div class="tooltiptext transition-all text-xs bg-zinc-700 dark:bg-zinc-500 text-white after:border-t-zinc-700 after:dark:border-t-zinc-500">
                                     افزودن به علاقمندی
                                 </div>
                             </div>
                         {% endif %}
-
-
                     </div>
+
                     <!-- SLIDER -->
-                    <div class="swiper mt-2 w-full porduct-details-slider rounded-lg swiper-initialized swiper-horizontal swiper-rtl swiper-backface-hidden">
-                        <div class="swiper-wrapper" id="swiper-wrapper-82a1f04f418e299d" aria-live="polite">
-                            <div class="swiper-slide" style="width: 366px; margin-left: 20px;"
-                                 role="group" aria-label="1 / {{ product.gallery.count|sum:1 }}">
+                    <div class="swiper mt-2 w-full product-details-slider rounded-lg overflow-hidden shadow-md">
+                        <div class="swiper-wrapper">
+                            <div class="swiper-slide">
                                 <img src="{{ product.picture.url }}"
-                                     class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit" alt="">
+                                     class="rounded-lg w-full h-auto object-cover aspect-square"
+                                     alt="{{ product.name }}">
                             </div>
                             {% for img in product.gallery.all %}
-                                <div class="swiper-slide" style="width: 366px; margin-left: 20px;"
-                                     role="group"
-                                     aria-label="{{ forloop.counter|sum:1 }} / {{ product.gallery.count|sum:1 }}">
+                                <div class="swiper-slide">
                                     <img src="{{ img.image.url }}"
-                                         class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit" alt="">
+                                         class="rounded-lg w-full h-auto object-cover aspect-square"
+                                         alt="{{ product.name }}">
                                 </div>
                             {% endfor %}
-
                         </div>
-                        <div class="swiper-pagination swiper-pagination-bullets swiper-pagination-horizontal"><span
-                                class="swiper-pagination-bullet swiper-pagination-bullet-active"
-                                aria-current="true"></span><span class="swiper-pagination-bullet"></span><span
-                                class="swiper-pagination-bullet"></span><span
-                                class="swiper-pagination-bullet"></span>
-                        </div>
-                        <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+                        <div class="swiper-pagination"></div>
                     </div>
-                    <div class="flex items-start justify-start gap-x-10">
 
+                    <!-- SOCIAL LINKS -->
+                    <div class="flex items-center gap-4">
                         {% if product.store.whats_app_link and product.store.whats_app_ID %}
-                            <a href="{{ product.store.whats_app_link }}" class="flex items-center gap-x-2">
-
-                                <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-6 h-6" alt="instagram"/>
+                            <a href="{{ product.store.whats_app_link }}" class="hover:opacity-80 transition-opacity">
+                                <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-6 h-6" alt="WhatsApp"/>
                             </a>
                         {% endif %}
 
                         {% if product.store.instagram_app_Link and product.store.instagram_app_ID %}
-                            <a href="{{ product.store.instagram_app_Link }}" class="flex items-center gap-x-2">
-
-                                <img src="/static/Images/svg/instagram.png" class="w-6 h-6" alt="instagram"/>
+                            <a href="{{ product.store.instagram_app_Link }}"
+                               class="hover:opacity-80 transition-opacity">
+                                <img src="/static/Images/svg/instagram.png" class="w-6 h-6" alt="Instagram"/>
                             </a>
                         {% endif %}
 
                         {% if product.store.telegram_app_Link and product.store.telegram_app_ID %}
-                            <a href="{{ product.store.telegram_app_Link }}" class="flex items-center gap-x-2">
-
-                                <img src="/static/Images/svg/telegram.png" class="w-6 h-6" alt="instagram"/>
+                            <a href="{{ product.store.telegram_app_Link }}" class="hover:opacity-80 transition-opacity">
+                                <img src="/static/Images/svg/telegram.png" class="w-6 h-6" alt="Telegram"/>
                             </a>
                         {% endif %}
-
                     </div>
                 </div>
-                <!-- INFO (TITLE , NAME , ...) -->
-                <div class="flex flex-col gap-y-4 w-full">
-                    <!-- NAME -->
-                    <div class="flex items-start justify-between border-b border-b-gray-200 py-2">
-                        <div class="flex flex-col gap-y-1">
 
-                            <p class="text-sm text-gray-400">{{ product.brand.name }} - {{ product.name }} </p>
-                            <h3 class="text-2xl font-MorabbaMedium">{{ product.store.name }}</h3>
-                        </div>
-
+                <!-- PRODUCT INFO -->
+                <div class="flex-1 space-y-4">
+                    <!-- NAME & BRAND -->
+                    <div class="flex flex-col border-b border-gray-200 dark:border-white/20 pb-2">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ product.brand.name }}
+                            - {{ product.name }}</p>
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white">{{ product.store.name }}</h3>
                     </div>
-                    <div class="flex gap-x-1 text-gray-400 ">
+
+                    <!-- CATEGORY -->
+                    <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
                         <svg class="w-5 h-5">
                             <use href="#list-bullet"></use>
                         </svg>
-                        <p>دسته‌بندی : {{ product.category.name }}</p>
+                        <p>دسته‌بندی: {{ product.category.name }}</p>
                     </div>
+
+                    <!-- FEATURES -->
                     {% if product.features.exists %}
-
-
-                        <p class="mt-2 font-DanaMedium">ویژگی های محصول :</p>
-                        <div class="grid grid-cols-12 gap-4 child:col-span-12 xl:child:col-span-6 child:dark:bg-zinc-800 child:bg-gray-100 child:h-12 child:rounded-lg child:text-sm child:flex child:items-center child:justify-center">
-                            {% for feature in product.features.all %}
-
-                                {% if feature.title != '' %}
-                                    <div>
-                                        <p class="text-zinc-600 dark:text-gray-400">
-                                            {{ feature.title }}
-                                        </p>
-                                    </div>
-                                {% endif %}
-
-                            {% endfor %}
+                        <div class="space-y-2">
+                            <p class="font-medium text-gray-800 dark:text-white">ویژگی های محصول:</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {% for feature in product.features.all %}
+                                    {% if feature.title != '' %}
+                                        <div class="bg-gray-100 dark:bg-zinc-800 rounded-lg p-3 flex items-center">
+                                            <p class="text-gray-600 dark:text-gray-300">{{ feature.title }}</p>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
                         </div>
                     {% endif %}
                 </div>
             </div>
 
+            <!-- SPECIFICATIONS -->
             {% if product.specs.exists %}
-                <p class="mt-2 font-DanaMedium">مشخصات محصول :</p>
-                <div class="lg:mr-2 grid  child:col-span-6 xl:child:col-span-3 gap-x-1 gap-y-2 lg:gap-4 child:border child:text-gray-400 child:dark:border-white/20 child:border-gray-200 child:rounded-lg child:h-12  child:p-2 child:flex child:items-center child:gap-x-1 lg:child:gap-x-2 child:text-sm lg:text-base">
-                    {% for spec in product.specs.all %}
-                        {% if spec.name != ' ' and spec.name != '' and spec.name is not None %}
-
-                            <span>
-                                    <p>{{ spec.name }}</p>
-                                </span>
-                        {% endif %}
-
-                    {% endfor %}
+                <div class="space-y-2">
+                    <p class="font-medium text-gray-800 dark:text-white">مشخصات محصول:</p>
+                    <div class=" gap-3">
+                        {% for spec in product.specs.all %}
+                            {% if spec.name != ' ' and spec.name != '' and spec.name is not None %}
+                                <div class="border my-2 border-gray-200 dark:border-white/20 rounded-lg p-3 flex items-center">
+                                    <p class="text-gray-600 dark:text-gray-400">{{ spec.name }}</p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
             {% endif %}
-            <div class="lg:mr-2">
-                <h2 class="font-MorabbaMedium text-2xl pb-1 mb-2 ">معرفی محصول
-                </h2>
-                <p class="leading-10 text-gray-600 dark:text-gray-300">
-                    {{ product.description|safe }}
-                </p>
+
+            <!-- DESCRIPTION -->
+            <div class="w-full space-y-8">
+                <!-- ... سایر بخش های قبلی ... -->
+
+                <!-- DESCRIPTION WITH READ MORE BUTTON -->
+                <div class="space-y-4">
+                    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">معرفی محصول</h2>
+                    <div class="relative">
+                        <div id="product-description"
+                             class="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 overflow-hidden transition-all duration-300"
+                             style="max-height: 75px;">
+                            {{ product.description|safe }}
+                        </div>
+                        <div id="description-fade"
+                             class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent dark:from-zinc-900 pointer-events-none transition-opacity duration-300"></div>
+                    </div>
+                    <div class="flex justify-center">
+                        <button id="read-more-btn"
+                                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium flex items-center gap-2 transition-colors">
+                            <span id="read-more-text">نمایش بیشتر</span>
+                            <svg id="read-more-icon" class="w-4 h-4 transform transition-transform duration-300"
+                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ... سایر بخش های قبلی ... -->
             </div>
+
+            <script>
+                const description = document.getElementById('product-description');
+                const readMoreBtn = document.getElementById('read-more-btn');
+                const readMoreText = document.getElementById('read-more-text');
+                const readMoreIcon = document.getElementById('read-more-icon');
+                const fadeElement = document.getElementById('description-fade');
+
+                let isExpanded = false;
+
+                // Initial check for content height
+                if (description.scrollHeight <= 75) {
+                    readMoreBtn.parentElement.style.display = 'none';
+                    fadeElement.style.display = 'none';
+                    description.style.maxHeight = 'none';
+                }
+
+                readMoreBtn.addEventListener('click', () => {
+                    isExpanded = !isExpanded;
+
+                    if (isExpanded) {
+                        description.style.maxHeight = description.scrollHeight + 'px';
+                        readMoreText.textContent = 'نمایش کمتر';
+                        fadeElement.style.opacity = '0';
+                        readMoreIcon.style.transform = 'rotate(180deg)';
+                    } else {
+                        description.style.maxHeight = '75px';
+                        readMoreText.textContent = 'نمایش بیشتر';
+                        fadeElement.style.opacity = '1';
+                        readMoreIcon.style.transform = 'rotate(0deg)';
+                    }
+                });
+            </script>
+            <!-- TAGS -->
             {% if product.tags.exists %}
-                <div class="col-span-12 flex flex-wrap gap-2 ">
+                <div class="flex flex-wrap gap-2">
                     {% for tag in product.tags.all %}
                         {% if tag.name != '' %}
-                            <span class="inline-flex items-center justify-between dark:bg-zinc-800 dark:text-gray-400 bg-gray-100 rounded-lg font-DanaMedium text-sm px-3 py-1">
-                                <p>{{ tag.name }}</p>
-                            </span>
-                            
+                            <span class="inline-flex items-center bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 rounded-lg font-medium text-sm px-3 py-1">
+            {{ tag.name }}
+          </span>
                         {% endif %}
-
                     {% endfor %}
                 </div>
             {% endif %}
-        </div>
-        <!-- PRICE & ADD TO CART BOX -->
+        </div>        <!-- PRICE & ADD TO CART BOX -->
         <div class="w-full lg:w-1/4 lg:sticky top-5 flex flex-col gap-y-6">
             <!-- PRICE -->
             <div class="flex items-center gap-x-1">
@@ -467,13 +506,13 @@
                     موجودی این محصول تمام شده است
 
                 </button>
-{#                <a class="flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2"#}
-{#                   href="{% url 'product:notif_me' product.id %}">#}
-{#                    <svg class="w-5 h-5">#}
-{#                        <use href="#shopping-bag"></use>#}
-{#                    </svg>#}
-{#                    موجود شد خبرم کن#}
-{#                </a>#}
+                {#                <a class="flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2"#}
+                {#                   href="{% url 'product:notif_me' product.id %}">#}
+                {#                    <svg class="w-5 h-5">#}
+                {#                        <use href="#shopping-bag"></use>#}
+                {#                    </svg>#}
+                {#                    موجود شد خبرم کن#}
+                {#                </a>#}
 
             {% endif %}
             {% if user.is_authenticated %}

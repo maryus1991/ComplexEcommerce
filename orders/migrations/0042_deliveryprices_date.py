@@ -7,13 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0041_deliveryprices'),
+        ("orders", "0041_deliveryprices"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='deliveryprices',
-            name='date',
+            model_name="deliveryprices",
+            name="date",
             field=models.DateField(default=django.utils.timezone.now),
             preserve_default=False,
         ),

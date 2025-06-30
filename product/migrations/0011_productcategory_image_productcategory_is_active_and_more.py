@@ -8,28 +8,40 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0010_productbrand_image_productbrand_is_active'),
+        ("product", "0010_productbrand_image_productbrand_is_active"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='productcategory',
-            name='image',
-            field=models.ImageField(null=True, upload_to=product.models.photo_path_upload_to),
+            model_name="productcategory",
+            name="image",
+            field=models.ImageField(
+                null=True, upload_to=product.models.photo_path_upload_to
+            ),
         ),
         migrations.AddField(
-            model_name='productcategory',
-            name='is_active',
+            model_name="productcategory",
+            name="is_active",
             field=models.BooleanField(default=True),
         ),
         migrations.AlterField(
-            model_name='product',
-            name='brand',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='products', to='product.productbrand'),
+            model_name="product",
+            name="brand",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="products",
+                to="product.productbrand",
+            ),
         ),
         migrations.AlterField(
-            model_name='product',
-            name='category',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='products', to='product.productcategory'),
+            model_name="product",
+            name="category",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="products",
+                to="product.productcategory",
+            ),
         ),
     ]

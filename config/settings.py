@@ -33,7 +33,7 @@ if path.isfile(local_env_file):
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.getenv("DJANGO_DEBUG", default='0')))
+DEBUG = bool(int(os.getenv("DJANGO_DEBUG", default="0")))
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="*").split(",")
 
@@ -43,14 +43,14 @@ SESSION_COOKIE_SECURE = True  # ارسال کوکی session فقط از طریق
 CSRF_COOKIE_HTTPONLY = True  # جلوگیری از دسترسی JavaScript به کوکی C
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://amvajsarmad.com',
-    'https://*.amvajsarmad.com',
+    "https://amvajsarmad.com",
+    "https://*.amvajsarmad.com",
 ]
 
 
 # dbbackup config
-DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {'location': BASE_DIR / 'admin_panel/backups/'}
+DBBACKUP_STORAGE = "django.core.files.storage.FileSystemStorage"
+DBBACKUP_STORAGE_OPTIONS = {"location": BASE_DIR / "admin_panel/backups/"}
 
 # Application definition
 
@@ -61,39 +61,36 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.admin",
-    'django.contrib.sitemaps',
-
+    "django.contrib.sitemaps",
     # third party apps
-    'phonenumber_field',
-    'ckeditor',
-    'ckeditor_uploader',
-    'jalali_date',
-    'django_render_partial',
-    'django_user_agents',
-    'multiupload',
-    'auditlog',
-    'dbbackup',
-
+    "phonenumber_field",
+    "ckeditor",
+    "ckeditor_uploader",
+    "jalali_date",
+    "django_render_partial",
+    "django_user_agents",
+    "multiupload",
+    "auditlog",
+    "dbbackup",
     # installed apps
-    'user',
-    'product',
-    'sitesetting',
-    'dashboard',
-    'stores',
-    'orders',
-    'blog',
-    'admin_panel',
-
+    "user",
+    "product",
+    "sitesetting",
+    "dashboard",
+    "stores",
+    "orders",
+    "blog",
+    "admin_panel",
 ]
 
 # auditlog config
 
 AUDITLOG_INCLUDE_TRACKING_MODELS = [
-    'auth.User',
+    "auth.User",
 ]
 AUDITLOG_DISABLE_ON_RAW_SAVE = False
 
-USER_AGENTS_CACHE = 'default'
+USER_AGENTS_CACHE = "default"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -103,8 +100,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'django_user_agents.middleware.UserAgentMiddleware',
-    'auditlog.middleware.AuditlogMiddleware',
+    "django_user_agents.middleware.UserAgentMiddleware",
+    "auditlog.middleware.AuditlogMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -112,15 +109,14 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates']
-        ,
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "utils.context_processors.ckeditor_config"
+                "utils.context_processors.ckeditor_config",
             ],
         },
     },
@@ -143,9 +139,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 # }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / "db.sqlite3",
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -202,25 +198,25 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 OTP_EXPIRATION = timedelta(seconds=120)
 
 AUTH_USER_MODEL = "user.User"
-LOGIN_URL = 'user:login'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = "user:login"
+LOGIN_REDIRECT_URL = "/"
 
 # check editor config
 CKEDITOR_UPLOAD_PATH = "check_editor/uploads/"
 
 CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'advance',
-        'width': 750,
-        'height': 200,
-        'skin': 'moono',
+    "default": {
+        "toolbar": "advance",
+        "width": 750,
+        "height": 200,
+        "skin": "moono",
     },
-    'mobile': {
-        'toolbar': 'Basic',
-        'height': 200,
-        'width': '300px',
-        'autoGrow_minHeight': 200,
-        'autoGrow_maxHeight': 400,
+    "mobile": {
+        "toolbar": "Basic",
+        "height": 200,
+        "width": "300px",
+        "autoGrow_minHeight": 200,
+        "autoGrow_maxHeight": 400,
     },
 }
 
@@ -229,40 +225,42 @@ CKEDITOR_CONFIGS = {
 # jalali date config
 JALALI_DATE_DEFAULTS = {
     # if change it to true then all dates of the list_display will convert to the Jalali.
-    'LIST_DISPLAY_AUTO_CONVERT': True,
-    'Strftime': {
-        'date': '%y/%m/%d',
-        'datetime': '%y/%m/%-d%H:%M:%S',
+    "LIST_DISPLAY_AUTO_CONVERT": True,
+    "Strftime": {
+        "date": "%y/%m/%d",
+        "datetime": "%y/%m/%-d%H:%M:%S",
     },
-    'Static': {
-        'js': [
-            'admin/js/django_jalali.min.js',
+    "Static": {
+        "js": [
+            "admin/js/django_jalali.min.js",
         ],
-        'css': {
-            'all': [
-                'admin/css/django_jalali.min.css',
+        "css": {
+            "all": [
+                "admin/css/django_jalali.min.css",
             ]
-        }
+        },
     },
 }
 
 # phone number config
-PHONENUMBER_DEFAULT_FORMAT = 'NATIONAL'
-PHONENUMBER_DEFAULT_REGION = 'IR'
+PHONENUMBER_DEFAULT_FORMAT = "NATIONAL"
+PHONENUMBER_DEFAULT_REGION = "IR"
 
 # melipayamak_panel config
 
-melipayamak_username = os.getenv('melipayamak_panel_username')
-melipayamak_password = os.getenv('melipayamak_panel_password')
-melipayamak_from_number = os.getenv('melipayamak_panel_from_number')
+melipayamak_username = os.getenv("melipayamak_panel_username")
+melipayamak_password = os.getenv("melipayamak_panel_password")
+melipayamak_from_number = os.getenv("melipayamak_panel_from_number")
 
 # zrinpal payment
-MERCHANT_ID = os.getenv('MERCHANT_ID')
-ZARINPAL_SEND_DATA_URL = os.getenv('ZARINPAL_SEND_DATA_URL')
-ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE = os.getenv('ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE')
-ZARINPAL_VERIFY_PAYMENT = os.getenv('ZARINPAL_VERIFY_PAYMENT')
+MERCHANT_ID = os.getenv("MERCHANT_ID")
+ZARINPAL_SEND_DATA_URL = os.getenv("ZARINPAL_SEND_DATA_URL")
+ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE = os.getenv(
+    "ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE"
+)
+ZARINPAL_VERIFY_PAYMENT = os.getenv("ZARINPAL_VERIFY_PAYMENT")
 
 # tipax config
-TIPAX_USERNAME = os.getenv('TIPAX_USERNAME')
-TIPAX_PASSWORD = os.getenv('TIPAX_PASSWORD')
-TIPAX_API_KEY = os.getenv('TIPAX_API_KEY')
+TIPAX_USERNAME = os.getenv("TIPAX_USERNAME")
+TIPAX_PASSWORD = os.getenv("TIPAX_PASSWORD")
+TIPAX_API_KEY = os.getenv("TIPAX_API_KEY")

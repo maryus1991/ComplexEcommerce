@@ -9,168 +9,220 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sitesetting', '0011_alter_sitesetting_about_image_and_more'),
+        ("sitesetting", "0011_alter_sitesetting_about_image_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='banners',
-            name='image',
-            field=models.ImageField(upload_to=sitesetting.models.photo_path_upload_to, verbose_name='عکس'),
+            model_name="banners",
+            name="image",
+            field=models.ImageField(
+                upload_to=sitesetting.models.photo_path_upload_to, verbose_name="عکس"
+            ),
         ),
         migrations.AlterField(
-            model_name='banners',
-            name='is_active',
-            field=models.BooleanField(default=True, verbose_name='فعال یا فعال نبودن'),
+            model_name="banners",
+            name="is_active",
+            field=models.BooleanField(default=True, verbose_name="فعال یا فعال نبودن"),
         ),
         migrations.AlterField(
-            model_name='banners',
-            name='link',
-            field=models.URLField(verbose_name='لینک'),
+            model_name="banners",
+            name="link",
+            field=models.URLField(verbose_name="لینک"),
         ),
         migrations.AlterField(
-            model_name='banners',
-            name='name',
-            field=models.CharField(blank=True, max_length=100, null=True, verbose_name='عنوان اول'),
+            model_name="banners",
+            name="name",
+            field=models.CharField(
+                blank=True, max_length=100, null=True, verbose_name="عنوان اول"
+            ),
         ),
         migrations.AlterField(
-            model_name='banners',
-            name='name2',
-            field=models.CharField(blank=True, max_length=100, null=True, verbose_name='عنوان دوم'),
+            model_name="banners",
+            name="name2",
+            field=models.CharField(
+                blank=True, max_length=100, null=True, verbose_name="عنوان دوم"
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='about_image',
-            field=models.ImageField(null=True, upload_to='site/about_image/', verbose_name='عکس معرفی'),
+            model_name="sitesetting",
+            name="about_image",
+            field=models.ImageField(
+                null=True, upload_to="site/about_image/", verbose_name="عکس معرفی"
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='active_in_same_city_delivery',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن ارسال درون شهری برای فروشگاها'),
+            model_name="sitesetting",
+            name="active_in_same_city_delivery",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال کردن ارسال درون شهری برای فروشگاها"
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='active_physical_delivery',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن تحویل فیزیکی برای فروشگاها'),
+            model_name="sitesetting",
+            name="active_physical_delivery",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال کردن تحویل فیزیکی برای فروشگاها"
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='active_post_delivery',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن  ارسال با پست برای فروشگاها'),
+            model_name="sitesetting",
+            name="active_post_delivery",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال کردن  ارسال با پست برای فروشگاها"
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='active_receive_official_invoice',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن دریافت فاکتور رسمی'),
+            model_name="sitesetting",
+            name="active_receive_official_invoice",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال کردن دریافت فاکتور رسمی"
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='active_tipax_delivery',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن ارسال با تپاکس برای فروشگاها'),
+            model_name="sitesetting",
+            name="active_tipax_delivery",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال کردن ارسال با تپاکس برای فروشگاها"
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='address',
-            field=models.CharField(default='0', max_length=500, verbose_name='ادرس'),
+            model_name="sitesetting",
+            name="address",
+            field=models.CharField(default="0", max_length=500, verbose_name="ادرس"),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='copy_right_text',
-            field=models.CharField(default='0', max_length=250, verbose_name='متن کپی رایت سایت'),
+            model_name="sitesetting",
+            name="copy_right_text",
+            field=models.CharField(
+                default="0", max_length=250, verbose_name="متن کپی رایت سایت"
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='email',
-            field=models.EmailField(default='test@test.test', max_length=254, verbose_name='ایمی'),
+            model_name="sitesetting",
+            name="email",
+            field=models.EmailField(
+                default="test@test.test", max_length=254, verbose_name="ایمی"
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='instagram_ID',
-            field=models.CharField(default='0', max_length=100, verbose_name='ایدی ایسنتاگرام'),
+            model_name="sitesetting",
+            name="instagram_ID",
+            field=models.CharField(
+                default="0", max_length=100, verbose_name="ایدی ایسنتاگرام"
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='instagram_link',
-            field=models.URLField(default='0', verbose_name='لینک حساب ایسنتاگرام'),
+            model_name="sitesetting",
+            name="instagram_link",
+            field=models.URLField(default="0", verbose_name="لینک حساب ایسنتاگرام"),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='is_active',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن سایت'),
+            model_name="sitesetting",
+            name="is_active",
+            field=models.BooleanField(default=True, verbose_name="فعال کردن سایت"),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='logo',
-            field=models.ImageField(null=True, upload_to='site/logo/', verbose_name='لوگو'),
+            model_name="sitesetting",
+            name="logo",
+            field=models.ImageField(
+                null=True, upload_to="site/logo/", verbose_name="لوگو"
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='long_description',
-            field=ckeditor_uploader.fields.RichTextUploadingField(default='0', verbose_name='توضیحات طولانی'),
+            model_name="sitesetting",
+            name="long_description",
+            field=ckeditor_uploader.fields.RichTextUploadingField(
+                default="0", verbose_name="توضیحات طولانی"
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='phone',
-            field=phonenumber_field.modelfields.PhoneNumberField(default='0111111111', max_length=128, region=None, verbose_name='شماره اول'),
+            model_name="sitesetting",
+            name="phone",
+            field=phonenumber_field.modelfields.PhoneNumberField(
+                default="0111111111",
+                max_length=128,
+                region=None,
+                verbose_name="شماره اول",
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='phone2',
-            field=phonenumber_field.modelfields.PhoneNumberField(default='0111111111', max_length=128, region=None, verbose_name='شماره دوم'),
+            model_name="sitesetting",
+            name="phone2",
+            field=phonenumber_field.modelfields.PhoneNumberField(
+                default="0111111111",
+                max_length=128,
+                region=None,
+                verbose_name="شماره دوم",
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='short_description',
-            field=models.TextField(default='0', verbose_name='توضیحات کوتاه'),
+            model_name="sitesetting",
+            name="short_description",
+            field=models.TextField(default="0", verbose_name="توضیحات کوتاه"),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='tax',
-            field=models.FloatField(default=1, verbose_name='مالیات زیر ساخت'),
+            model_name="sitesetting",
+            name="tax",
+            field=models.FloatField(default=1, verbose_name="مالیات زیر ساخت"),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='telegram_ID',
-            field=models.CharField(default='0', max_length=100, verbose_name='ایدی تلگرام'),
+            model_name="sitesetting",
+            name="telegram_ID",
+            field=models.CharField(
+                default="0", max_length=100, verbose_name="ایدی تلگرام"
+            ),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='telegram_link',
-            field=models.URLField(default='0', verbose_name='لینک تلگرام'),
+            model_name="sitesetting",
+            name="telegram_link",
+            field=models.URLField(default="0", verbose_name="لینک تلگرام"),
         ),
         migrations.AlterField(
-            model_name='sitesetting',
-            name='title',
-            field=models.CharField(default='0', max_length=100, verbose_name='عنوان سایت'),
+            model_name="sitesetting",
+            name="title",
+            field=models.CharField(
+                default="0", max_length=100, verbose_name="عنوان سایت"
+            ),
         ),
         migrations.AlterField(
-            model_name='slider',
-            name='image',
-            field=models.ImageField(upload_to=sitesetting.models.photo_path_upload_to, verbose_name='عکس'),
+            model_name="slider",
+            name="image",
+            field=models.ImageField(
+                upload_to=sitesetting.models.photo_path_upload_to, verbose_name="عکس"
+            ),
         ),
         migrations.AlterField(
-            model_name='slider',
-            name='is_active',
-            field=models.BooleanField(blank=True, default=True, null=True, verbose_name='فعال یا فعال نبودن'),
+            model_name="slider",
+            name="is_active",
+            field=models.BooleanField(
+                blank=True, default=True, null=True, verbose_name="فعال یا فعال نبودن"
+            ),
         ),
         migrations.AlterField(
-            model_name='slider',
-            name='link',
-            field=models.URLField(verbose_name='لینک'),
+            model_name="slider",
+            name="link",
+            field=models.URLField(verbose_name="لینک"),
         ),
         migrations.AlterField(
-            model_name='slider',
-            name='name',
-            field=models.CharField(blank=True, max_length=100, null=True, verbose_name='عنوان اول'),
+            model_name="slider",
+            name="name",
+            field=models.CharField(
+                blank=True, max_length=100, null=True, verbose_name="عنوان اول"
+            ),
         ),
         migrations.AlterField(
-            model_name='slider',
-            name='name2',
-            field=models.CharField(blank=True, max_length=100, null=True, verbose_name='عنوان دوم'),
+            model_name="slider",
+            name="name2",
+            field=models.CharField(
+                blank=True, max_length=100, null=True, verbose_name="عنوان دوم"
+            ),
         ),
         migrations.AlterField(
-            model_name='slider',
-            name='text',
-            field=models.CharField(blank=True, max_length=250, null=True, verbose_name='متن'),
+            model_name="slider",
+            name="text",
+            field=models.CharField(
+                blank=True, max_length=250, null=True, verbose_name="متن"
+            ),
         ),
     ]

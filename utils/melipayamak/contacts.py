@@ -10,16 +10,13 @@ class Contacts:
         self.client = Client(self.PATH)
 
     def get_data(self):
-        return {
-            'username': self.username,
-            'password': self.password
-        }
+        return {"username": self.username, "password": self.password}
 
     def add_group(self, groupName, Descriptions, showToChilds):
         data = {
-            'groupName': groupName,
-            'Descriptions': Descriptions,
-            'showToChilds': showToChilds
+            "groupName": groupName,
+            "Descriptions": Descriptions,
+            "showToChilds": showToChilds,
         }
         result = self.client.service.AddGroup(**self.get_data(), **data)
         return result
@@ -29,21 +26,14 @@ class Contacts:
         return result
 
     def check_mobile_exist(self, mobileNumber):
-        data = {
-            'mobileNumber': mobileNumber
-        }
+        data = {"mobileNumber": mobileNumber}
         result = self.client.service.CheckMobileExistInContact(
-            **self.get_data(), **data)
+            **self.get_data(), **data
+        )
         return result
 
     def get(self, groupId, keyword, _from, count):
-        data = {
-            'groupId': groupId,
-            'keyword': keyword,
-            'from': _from,
-            'count': count
-
-        }
+        data = {"groupId": groupId, "keyword": keyword, "from": _from, "count": count}
         result = self.client.service.GetContacts(**self.get_data(), **data)
         return result
 
@@ -56,15 +46,11 @@ class Contacts:
         return result
 
     def remove(self, mobilenumber):
-        data = {
-            'mobileNumber': mobilenumber
-        }
+        data = {"mobileNumber": mobilenumber}
         result = self.client.service.RemoveContact(**self.get_data(), **data)
         return result
 
     def get_events(self, contactId):
-        data = {
-            'contactId': contactId
-        }
+        data = {"contactId": contactId}
         result = self.client.service.GetContactEvents(**self.get_data(), **data)
         return result

@@ -9,13 +9,9 @@ class ContactsAsync:
     def __init__(self, username, password):
         self.username = username
         self.password = password
-        
 
     def get_data(self):
-        return {
-            'username': self.username,
-            'password': self.password
-        }
+        return {"username": self.username, "password": self.password}
 
     def makeRequest(self, func, data):
         result = []
@@ -28,9 +24,7 @@ class ContactsAsync:
         transport = AsyncTransport(loop, cache=None)
         client = zeep.Client(self.PATH, transport=transport)
 
-        tasks = [
-            getattr(client.service, func)(**data)
-        ]
+        tasks = [getattr(client.service, func)(**data)]
         future = asyncio.gather(*tasks, return_exceptions=True)
 
         future.add_done_callback(handle_future)
@@ -43,53 +37,35 @@ class ContactsAsync:
 
     def add_group(self, groupName, Descriptions, showToChilds):
         data = {
-            'groupName': groupName,
-            'Descriptions': Descriptions,
-            'showToChilds': showToChilds
+            "groupName": groupName,
+            "Descriptions": Descriptions,
+            "showToChilds": showToChilds,
         }
-        return self.makeRequest('AddGroup', {**self.get_data(), **data})
-        
+        return self.makeRequest("AddGroup", {**self.get_data(), **data})
 
     def add(self, options):
-        return self.makeRequest('AddContact', {**self.get_data(), **options})
-        
+        return self.makeRequest("AddContact", {**self.get_data(), **options})
 
     def check_mobile_exist(self, mobileNumber):
-        data = {
-            'mobileNumber': mobileNumber
-        }
-        return self.makeRequest('CheckMobileExistInContact', {**self.get_data(), **data})
-
+        data = {"mobileNumber": mobileNumber}
+        return self.makeRequest(
+            "CheckMobileExistInContact", {**self.get_data(), **data}
+        )
 
     def get(self, groupId, keyword, _from, count):
-        data = {
-            'groupId': groupId,
-            'keyword': keyword,
-            'from': _from,
-            'count': count
-
-        }
-        return self.makeRequest('GetContacts', {**self.get_data(), **data})
-        
+        data = {"groupId": groupId, "keyword": keyword, "from": _from, "count": count}
+        return self.makeRequest("GetContacts", {**self.get_data(), **data})
 
     def get_groups(self):
-        return self.makeRequest('GetGroups', self.get_data())
-
+        return self.makeRequest("GetGroups", self.get_data())
 
     def change(self, options):
-        return self.makeRequest('ChangeContact', {**self.get_data(), **options})
-
+        return self.makeRequest("ChangeContact", {**self.get_data(), **options})
 
     def remove(self, mobilenumber):
-        data = {
-            'mobileNumber': mobilenumber
-        }
-        return self.makeRequest('RemoveContact', {**self.get_data(), **data})
-        
+        data = {"mobileNumber": mobilenumber}
+        return self.makeRequest("RemoveContact", {**self.get_data(), **data})
 
     def get_events(self, contactId):
-        data = {
-            'contactId': contactId
-        }
-        return self.makeRequest('GetContactEvents', {**self.get_data(), **data})
-        
+        data = {"contactId": contactId}
+        return self.makeRequest("GetContactEvents", {**self.get_data(), **data})

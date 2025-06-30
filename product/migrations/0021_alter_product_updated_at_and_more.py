@@ -8,31 +8,58 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0020_alter_product_updated_at_and_more'),
+        ("product", "0020_alter_product_updated_at_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='product',
-            name='updated_at',
-            field=models.DateTimeField(default=datetime.datetime(2025, 6, 18, 8, 55, 16, 509399, tzinfo=datetime.timezone.utc)),
+            model_name="product",
+            name="updated_at",
+            field=models.DateTimeField(
+                default=datetime.datetime(
+                    2025, 6, 18, 8, 55, 16, 509399, tzinfo=datetime.timezone.utc
+                )
+            ),
         ),
         migrations.AlterField(
-            model_name='productbrand',
-            name='updated_at',
-            field=models.DateTimeField(default=datetime.datetime(2025, 6, 18, 8, 55, 16, 508772, tzinfo=datetime.timezone.utc)),
+            model_name="productbrand",
+            name="updated_at",
+            field=models.DateTimeField(
+                default=datetime.datetime(
+                    2025, 6, 18, 8, 55, 16, 508772, tzinfo=datetime.timezone.utc
+                )
+            ),
         ),
         migrations.AlterField(
-            model_name='productcategory',
-            name='updated_at',
-            field=models.DateTimeField(default=datetime.datetime(2025, 6, 18, 8, 55, 16, 509057, tzinfo=datetime.timezone.utc)),
+            model_name="productcategory",
+            name="updated_at",
+            field=models.DateTimeField(
+                default=datetime.datetime(
+                    2025, 6, 18, 8, 55, 16, 509057, tzinfo=datetime.timezone.utc
+                )
+            ),
         ),
         migrations.CreateModel(
-            name='ProductSpecifications',
+            name="ProductSpecifications",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='specs', to='product.product')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="specs",
+                        to="product.product",
+                    ),
+                ),
             ],
         ),
     ]

@@ -7,33 +7,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stores', '0020_alter_store_official_invoice_phone_number'),
+        ("stores", "0020_alter_store_official_invoice_phone_number"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='storeapps',
-            name='admin_verified',
+            model_name="storeapps",
+            name="admin_verified",
             field=models.BooleanField(default=True),
         ),
         migrations.AlterField(
-            model_name='storeapps',
-            name='file',
-            field=models.FileField(upload_to='app/', verbose_name='فایل'),
+            model_name="storeapps",
+            name="file",
+            field=models.FileField(upload_to="app/", verbose_name="فایل"),
         ),
         migrations.AlterField(
-            model_name='storeapps',
-            name='is_active',
-            field=models.BooleanField(default=False, verbose_name='فعال / غیر فعال'),
+            model_name="storeapps",
+            name="is_active",
+            field=models.BooleanField(default=False, verbose_name="فعال / غیر فعال"),
         ),
         migrations.AlterField(
-            model_name='storeapps',
-            name='name',
-            field=models.CharField(max_length=100, verbose_name='نام'),
+            model_name="storeapps",
+            name="name",
+            field=models.CharField(max_length=100, verbose_name="نام"),
         ),
         migrations.AlterField(
-            model_name='storeapps',
-            name='store',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='apps', to='stores.store', verbose_name='فروشگاه'),
+            model_name="storeapps",
+            name="store",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="apps",
+                to="stores.store",
+                verbose_name="فروشگاه",
+            ),
         ),
     ]

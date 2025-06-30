@@ -9,69 +9,96 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0002_initial'),
-        ('stores', '0008_store_orgin_city'),
+        ("blog", "0002_initial"),
+        ("stores", "0008_store_orgin_city"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='blogcategory',
-            name='blog',
+            model_name="blogcategory",
+            name="blog",
         ),
         migrations.RemoveField(
-            model_name='blogcategory',
-            name='parent',
+            model_name="blogcategory",
+            name="parent",
         ),
         migrations.AddField(
-            model_name='blog',
-            name='category',
-            field=models.ForeignKey(default='1', on_delete=django.db.models.deletion.CASCADE, related_name='blogs', to='blog.blogcategory'),
+            model_name="blog",
+            name="category",
+            field=models.ForeignKey(
+                default="1",
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="blogs",
+                to="blog.blogcategory",
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='blog',
-            name='content',
-            field=ckeditor_uploader.fields.RichTextUploadingField(default='1'),
+            model_name="blog",
+            name="content",
+            field=ckeditor_uploader.fields.RichTextUploadingField(default="1"),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='blog',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, default='1389-12-1 12:55'),
+            model_name="blog",
+            name="created_at",
+            field=models.DateTimeField(auto_now_add=True, default="1389-12-1 12:55"),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='blog',
-            name='store',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, related_name='blogs', to='stores.store'),
+            model_name="blog",
+            name="store",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="blogs",
+                to="stores.store",
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='blog',
-            name='updated_at',
+            model_name="blog",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AddField(
-            model_name='blogcategory',
-            name='image',
-            field=models.ImageField(default=1, upload_to='blog_categories/'),
+            model_name="blogcategory",
+            name="image",
+            field=models.ImageField(default=1, upload_to="blog_categories/"),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='blog',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='blogs', to=settings.AUTH_USER_MODEL),
+            model_name="blog",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="blogs",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.CreateModel(
-            name='BlogView',
+            name="BlogView",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ip', models.GenericIPAddressField()),
-                ('blog', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blog.blog')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("ip", models.GenericIPAddressField()),
+                (
+                    "blog",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="blog.blog"
+                    ),
+                ),
             ],
         ),
         migrations.DeleteModel(
-            name='BlogComment',
+            name="BlogComment",
         ),
     ]

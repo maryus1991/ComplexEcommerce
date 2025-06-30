@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0027_discount_count'),
+        ("orders", "0027_discount_count"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='discount',
-            name='order',
-            field=models.ManyToManyField(blank=True, null=True, related_name='discounts', to='orders.order'),
+            model_name="discount",
+            name="order",
+            field=models.ManyToManyField(
+                blank=True, null=True, related_name="discounts", to="orders.order"
+            ),
         ),
     ]

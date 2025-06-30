@@ -7,23 +7,55 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0024_order_official_invoice'),
-        ('product', '0012_product_height_product_length_product_width'),
-        ('stores', '0014_store_have_official_invoice'),
+        ("orders", "0024_order_official_invoice"),
+        ("product", "0012_product_height_product_length_product_width"),
+        ("stores", "0014_store_have_official_invoice"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Discount',
+            name="Discount",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('percentage_discount', models.BooleanField(default=False)),
-                ('percent', models.PositiveBigIntegerField(blank=True, null=True)),
-                ('price', models.PositiveBigIntegerField(blank=True, null=True)),
-                ('product', models.ManyToManyField(blank=True, null=True, related_name='discounts', to='product.product')),
-                ('store', models.ManyToManyField(blank=True, null=True, related_name='discounts', to='stores.store')),
-                ('user', models.ManyToManyField(blank=True, null=True, related_name='discounts', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("percentage_discount", models.BooleanField(default=False)),
+                ("percent", models.PositiveBigIntegerField(blank=True, null=True)),
+                ("price", models.PositiveBigIntegerField(blank=True, null=True)),
+                (
+                    "product",
+                    models.ManyToManyField(
+                        blank=True,
+                        null=True,
+                        related_name="discounts",
+                        to="product.product",
+                    ),
+                ),
+                (
+                    "store",
+                    models.ManyToManyField(
+                        blank=True,
+                        null=True,
+                        related_name="discounts",
+                        to="stores.store",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ManyToManyField(
+                        blank=True,
+                        null=True,
+                        related_name="discounts",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

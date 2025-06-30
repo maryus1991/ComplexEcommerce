@@ -9,13 +9,17 @@ import os
 from wsgiref.util import FileWrapper
 from mimetypes import guess_type
 from django.db.models import Q
-
+from django.shortcuts import Http404
 from orders.models import OrderDetail
 from .forms import ContactForm
-from .models import (FastLinks,
-                     SiteSetting,
-                     QuestionAndAnswer,
-                     Newsletter, Slider, Banners)
+from .models import (
+    FastLinks,
+    SiteSetting,
+    QuestionAndAnswer,
+    Newsletter,
+    Slider,
+    Banners,
+)
 from stores.models import StoreApps
 from user.mixins.logins import CustomLoginRequiredMixin
 
@@ -24,17 +28,11 @@ from user.forms import ActiveAccountForm as NumberForAddToLettersForm
 from product.models import Product, ProductCategory
 from blog.models import Blog
 
-from django.http import HttpResponse
-from django.urls import reverse
+
 
 def robots_txt(request):
     # ساختن آدرس‌های خاص برای دیس‌الو
-    disallows = [
-        '/user/',
-        '/dashboard/',
-        '/order/',
-        '/ckeditor/'
-    ]
+    disallows = ["/user/", "/dashboard/", "/order/", "/ckeditor/"]
 
     lines = ["User-Agent: *"]
 
@@ -46,7 +44,7 @@ def robots_txt(request):
     lines.append("Allow: /")
 
     # لینک کامل sitemap با پروتکل صحیح
-    sitemap_url = request.build_absolute_uri(reverse('sitemap'))
+    sitemap_url = request.build_absolute_uri(reverse("sitemap"))
     print(sitemap_url)
     lines.append(f"Sitemap: {sitemap_url}")
 
@@ -58,21 +56,28 @@ class Main(TemplateView):
     """
     main page
     """
-    template_name = 'index.html'
+
+    template_name = "index.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         products = Product.objects.filter(is_active=True)
 
-        context['Sliders'] = Slider.objects.filter(is_active=True)
-        context['categories'] = ProductCategory.objects.filter(is_active=True).order_by('products__count').all()[0:5]
-        context['products_newst'] = products.order_by('-id').all()
-        context['products_most_selled'] = products.filter().all()
-        context['products_most_discount'] = products.filter(have_discount=True).order_by('-discount').all()
-        context['Banners'] = Banners.objects.filter(is_active=True)
-        context['blogs'] = Blog.objects.filter(is_active=True).all()[0:4]
-        context['site'] = SiteSetting.objects.filter(is_active=True).first()
+        context["Sliders"] = Slider.objects.filter(is_active=True)
+        context["categories"] = (
+            ProductCategory.objects.filter(is_active=True)
+            .order_by("products__count")
+            .all()[0:5]
+        )
+        context["products_newst"] = products.order_by("-id").all()
+        context["products_most_selled"] = products.filter().all()
+        context["products_most_discount"] = (
+            products.filter(have_discount=True).order_by("-discount").all()
+        )
+        context["Banners"] = Banners.objects.filter(is_active=True)
+        context["blogs"] = Blog.objects.filter(is_active=True).all()[0:4]
+        context["site"] = SiteSetting.objects.filter(is_active=True).first()
 
         return context
 
@@ -81,23 +86,25 @@ class QuestionsPageView(TemplateView):
     """
     Q&A page
     """
-    template_name = 'site/questions.html'
+
+    template_name = "site/questions.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['questions'] = QuestionAndAnswer.objects.filter(is_active=True).all()
+        context["questions"] = QuestionAndAnswer.objects.filter(is_active=True).all()
         return context
 
 
 class AboutUs(TemplateView):
     """
-     about us page
+    about us page
     """
-    template_name = 'site/aboute-us.html'
+
+    template_name = "site/aboute-us.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['site'] = SiteSetting.objects.filter(is_active=True).first()
+        context["site"] = SiteSetting.objects.filter(is_active=True).first()
         return context
 
 
@@ -105,15 +112,16 @@ class ContactUs(SuccessMessageMixin, FormView):
     """
     contact us page
     """
-    template_name = 'site/contact-us.html'
+
+    template_name = "site/contact-us.html"
     form_class = ContactForm
-    success_message = 'پیام شما با موفقبت ارسال شد'
-    success_url = reverse_lazy('site:contact-us')
+    success_message = "پیام شما با موفقبت ارسال شد"
+    success_url = reverse_lazy("site:contact-us")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['site'] = SiteSetting.objects.filter(is_active=True).first()
+        context["site"] = SiteSetting.objects.filter(is_active=True).first()
 
         return context
 
@@ -122,7 +130,7 @@ class ContactUs(SuccessMessageMixin, FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, 'لطفا در وارد کردن اطلاعات دقت کنید')
+        messages.error(self.request, "لطفا در وارد کردن اطلاعات دقت کنید")
         return super().form_invalid(form)
 
 
@@ -132,39 +140,41 @@ class AddTONewsLetters(RedirectView):
     """
 
     def get_redirect_url(self, *args, **kwargs):
-        phone = self.request.POST.get('phone_number')
+        phone = self.request.POST.get("phone_number")
         Newsletter.objects.create(phone_number=phone)
-        messages.success(
-            self.request,
-            'شماره شما با موفقیت اضافه شد'
-        )
-        return self.request.META.get('HTTP_REFERER', '/')
+        messages.success(self.request, "شماره شما با موفقیت اضافه شد")
+        return self.request.META.get("HTTP_REFERER", "/")
 
 
 class UsedAppView(ListView):
     """
     for listing the stores apps
     """
+
     model = StoreApps
     paginate_by = 20
-    context_object_name = 'apps'
-    template_name = 'site/apps.html'
+    context_object_name = "apps"
+    template_name = "site/apps.html"
 
     def get_queryset(self):
-        query = super().get_queryset().order_by('-id').filter(
-            is_active=True,
-            store__is_active=True,
-            store__is_verified=True,
-            admin_verified=True
+        query = (
+            super()
+            .get_queryset()
+            .order_by("-id")
+            .filter(
+                is_active=True,
+                store__is_active=True,
+                store__is_verified=True,
+                admin_verified=True,
+            )
         )
 
         # Add search functionality
-        search_query = self.request.GET.get('q')
+        search_query = self.request.GET.get("q")
         print(search_query)
         if search_query:
             query = query.filter(
-                Q(name__contains=search_query) |
-                Q(store__name__contains=search_query)
+                Q(name__contains=search_query) | Q(store__name__contains=search_query)
             )
 
             return query
@@ -181,11 +191,11 @@ class DownloadUsedAppView(CustomLoginRequiredMixin, View):
         # Get the app with all necessary validations
         app = get_object_or_404(
             StoreApps,
-            pk=self.kwargs.get('pk'),
+            pk=self.kwargs.get("pk"),
             is_active=True,
             store__is_active=True,
             store__is_verified=True,
-            admin_verified=True
+            admin_verified=True,
         )
 
         # Serve the file securely
@@ -201,36 +211,48 @@ class DownloadUsedAppView(CustomLoginRequiredMixin, View):
         file_size = os.path.getsize(file_path)
 
         response = HttpResponse(
-            FileWrapper(open(file_path, 'rb')),
-            content_type=guess_type(file_path)[0]
+            FileWrapper(open(file_path, "rb")), content_type=guess_type(file_path)[0]
         )
 
-        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
-        response['Content-Length'] = file_size
-        response['X-Accel-Redirect'] = f'/protected/{os.path.basename(file_path)}'  # For nginx
+        response["Content-Disposition"] = f'attachment; filename="{file_name}"'
+        response["Content-Length"] = file_size
+        response["X-Accel-Redirect"] = (
+            f"/protected/{os.path.basename(file_path)}"  # For nginx
+        )
 
         return response
 
 
 def custom_404_page(request, exception=None):
-    return render(request, 'site/404.html')
+    return render(request, "site/404.html")
 
 
 def header_render_partial(request):
     if request.user.is_authenticated:
-        orders = OrderDetail.objects.filter(order__user=request.user, order__is_paid=False,
-                                            order__is_active=True, order__canceled=False)
+        orders = OrderDetail.objects.filter(
+            order__user=request.user,
+            order__is_paid=False,
+            order__is_active=True,
+            order__canceled=False,
+        )
     else:
         orders = None
 
     site = SiteSetting.objects.filter(is_active=True).first()
 
-    return render(request, 'Base/Header/Header.html', {'orders': orders, 'site': site})
+    return render(request, "Base/Header/Header.html", {"orders": orders, "site": site})
 
 
 def footer_render_partial(request):
     site = SiteSetting.objects.filter(is_active=True).first()
-    links = FastLinks.objects.all().filter(is_active=True).order_by('-id')
-    return render(request, 'Base/Footer/Footer.html',
-                  {'site': site, 'links1': links[0:4], 'links2': links[4:8],
-                   'form': NumberForAddToLettersForm()})
+    links = FastLinks.objects.all().filter(is_active=True).order_by("-id")
+    return render(
+        request,
+        "Base/Footer/Footer.html",
+        {
+            "site": site,
+            "links1": links[0:4],
+            "links2": links[4:8],
+            "form": NumberForAddToLettersForm(),
+        },
+    )

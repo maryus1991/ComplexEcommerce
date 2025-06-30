@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stores', '0011_alter_storeapps_file'),
+        ("stores", "0011_alter_storeapps_file"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='store',
-            name='official_invoice_price',
+            model_name="store",
+            name="official_invoice_price",
             field=models.PositiveIntegerField(blank=True, null=True),
         ),
     ]

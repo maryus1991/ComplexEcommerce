@@ -7,13 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0024_product_admin_verified'),
+        ("product", "0024_product_admin_verified"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='productcategory',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='child', to='product.productcategory'),
+            model_name="productcategory",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="child",
+                to="product.productcategory",
+            ),
         ),
     ]

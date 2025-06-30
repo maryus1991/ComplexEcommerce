@@ -1,10 +1,9 @@
 from django import forms
-
-from django.core.validators import (FileExtensionValidator,
-                                    ValidationError,
-                                    validate_email)
-from django.contrib.auth.password_validation import validate_password
-
+from django.core.validators import (
+    FileExtensionValidator,
+    ValidationError,
+    validate_email,
+)
 from dashboard.models import Ticket, TicketConversation
 from multiupload.fields import MultiUploadMetaInput
 from phonenumber_field.formfields import PhoneNumberField
@@ -15,427 +14,304 @@ from blog.models import Blog, BlogCategory
 from .models import Store, StoreApps
 from .upload_multi_image import MultiImageField
 from user.models import User
-
 from jalali_date.fields import JalaliDateField
 from jalali_date.widgets import AdminJalaliDateWidget
-
-from django import forms
-
 from orders.models import Discount
 
 
 class OrderFilteringForm(forms.Form):
     discount = forms.ModelChoiceField(
         queryset=Discount.objects.filter(is_active=True).all(),
-        label='کد تخفیف استفاده',
+        label="کد تخفیف استفاده",
         required=False,
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2 select2-hidden-accessible"',
-                'style': "width: 100%;",
-                'tabindex ': "-1",
-                'aria - hidden ': "true",
-                'dir': 'rtl'
+                "class": 'form-control select2 select2-hidden-accessible"',
+                "style": "width: 100%;",
+                "tabindex ": "-1",
+                "aria - hidden ": "true",
+                "dir": "rtl",
             }
-        )
+        ),
     )
     brands = forms.ModelChoiceField(
         queryset=ProductBrand.objects.filter(is_active=True).all(),
-        label='جستجو در برند های محصولات ',
+        label="جستجو در برند های محصولات ",
         required=False,
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2 select2-hidden-accessible"',
-                'style': "width: 100%;",
-                'tabindex ': "-1",
-                'aria - hidden ': "true",
-                'dir': 'rtl'
+                "class": 'form-control select2 select2-hidden-accessible"',
+                "style": "width: 100%;",
+                "tabindex ": "-1",
+                "aria - hidden ": "true",
+                "dir": "rtl",
             }
-        )
+        ),
     )
     category = forms.ModelChoiceField(
         queryset=ProductCategory.objects.filter(is_active=True).all(),
-        label='جستجو در دسته بندی محصولات ',
+        label="جستجو در دسته بندی محصولات ",
         required=False,
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2 select2-hidden-accessible"',
-                'style': "width: 100%;",
-                'tabindex ': "-1",
-                'aria - hidden ': "true",
-                'dir': 'rtl'
+                "class": 'form-control select2 select2-hidden-accessible"',
+                "style": "width: 100%;",
+                "tabindex ": "-1",
+                "aria - hidden ": "true",
+                "dir": "rtl",
             }
-        )
+        ),
     )
 
     address_search = forms.CharField(
         required=False,
-        label='ادرس',
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="ادرس",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
     )
     product_search = forms.CharField(
         required=False,
-        label='جستجوی محصول',
+        label="جستجوی محصول",
         widget=forms.TextInput(
             attrs={
-                'class': 'form-control'
-                , 'placeholder': 'نام محصولات رو با - جدا کنید'
+                "class": "form-control",
+                "placeholder": "نام محصولات رو با - جدا کنید",
             }
-        )
+        ),
     )
     product_features_search = forms.CharField(
         required=False,
-        label='جستجوی در ویژگی های محصول',
+        label="جستجوی در ویژگی های محصول",
         widget=forms.TextInput(
-            attrs={
-                'class': 'form-control'
-                , 'placeholder': ' با - جدا کنید'
-            }
-        )
+            attrs={"class": "form-control", "placeholder": " با - جدا کنید"}
+        ),
     )
     product_tags_search = forms.CharField(
         required=False,
-        label='جستجوی در تگ های محصول',
+        label="جستجوی در تگ های محصول",
         widget=forms.TextInput(
-            attrs={
-                'class': 'form-control'
-                , 'placeholder': ' با - جدا کنید'
-            }
-        )
+            attrs={"class": "form-control", "placeholder": " با - جدا کنید"}
+        ),
     )
     user_phone_number = PhoneNumberField(
         required=False,
-        label='شماره',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control',
-                'dir': 'ltr'
-            }
-        )
+        label="شماره",
+        widget=forms.NumberInput(attrs={"class": "form-control", "dir": "ltr"}),
     )
 
     sending_id = forms.CharField(
         required=False,
-        label='کد پیگیری ارسال',
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="کد پیگیری ارسال",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
     )
 
     cart = forms.CharField(
         required=False,
-        label='شماره کارت',
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="شماره کارت",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
     )
     payment_id = forms.CharField(
         required=False,
-        label='کد پیگیری پرداخت',
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="کد پیگیری پرداخت",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
     )
 
     start_date = JalaliDateField(
         required=False,
-        label='از تاریخ '
-        , widget=AdminJalaliDateWidget(
+        label="از تاریخ ",
+        widget=AdminJalaliDateWidget(
             attrs={
-                'class': 'form-control',
-                'dir': 'rtl',
-                'placeholder': ' تاریخ  باز شدن سفارش '
+                "class": "form-control",
+                "dir": "rtl",
+                "placeholder": " تاریخ  باز شدن سفارش ",
             }
-        )
+        ),
     )
     end_date = JalaliDateField(
         required=False,
-        label='تا تاریخ (باز شدن سفارش)'
-        , widget=AdminJalaliDateWidget(
+        label="تا تاریخ (باز شدن سفارش)",
+        widget=AdminJalaliDateWidget(
             attrs={
-                'class': 'form-control',
-                'dir': 'rtl',
-                'placeholder': ' تاریخ  باز شدن سفارش '
+                "class": "form-control",
+                "dir": "rtl",
+                "placeholder": " تاریخ  باز شدن سفارش ",
             }
-        )
+        ),
     )
     start_second_date = JalaliDateField(
         required=False,
-        label='از تاریخ '
-        , widget=AdminJalaliDateWidget(
+        label="از تاریخ ",
+        widget=AdminJalaliDateWidget(
             attrs={
-                'class': 'form-control',
-                'dir': 'rtl',
-                'placeholder': ' تاریخ پرداخت یا کنسل شدن سفارش '
-
+                "class": "form-control",
+                "dir": "rtl",
+                "placeholder": " تاریخ پرداخت یا کنسل شدن سفارش ",
             }
-        )
+        ),
     )
     end_second_date = JalaliDateField(
         required=False,
-        label='تا تاریخ'
-        , widget=AdminJalaliDateWidget(
+        label="تا تاریخ",
+        widget=AdminJalaliDateWidget(
             attrs={
-                'class': 'form-control',
-                'dir': 'rtl',
-                'placeholder': ' تاریخ پرداخت یا کنسل شدن سفارش '
-
+                "class": "form-control",
+                "dir": "rtl",
+                "placeholder": " تاریخ پرداخت یا کنسل شدن سفارش ",
             }
-        )
+        ),
     )
 
     deliver_status = forms.ChoiceField(
-        label='نحوه ارسال',
+        label="نحوه ارسال",
         choices=[
-            ('', 'همه'),
-            ('11', 'پست'),
-            ('12', 'تیپاکس'),
-            ('21', 'ارسال درون شهری'),
-            ('22', 'تحویل حضوری'),
+            ("", "همه"),
+            ("11", "پست"),
+            ("12", "تیپاکس"),
+            ("21", "ارسال درون شهری"),
+            ("22", "تحویل حضوری"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
     payment_status = forms.ChoiceField(
-        label='وضعیت پرداخت',
+        label="وضعیت پرداخت",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'پرداخت شده'),
-            ('12', 'درحال ارسال'),
-            ('21', 'تحویل شده'),
+            ("", "-- انتخاب --"),
+            ("11", "پرداخت شده"),
+            ("12", "درحال ارسال"),
+            ("21", "تحویل شده"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
     official_status = forms.ChoiceField(
-        label='وضعیت کلی',
+        label="وضعیت کلی",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'کنسل شده'),
-            ('12', 'پرداخت شده'),
-            ('21', 'باز'),
+            ("", "-- انتخاب --"),
+            ("11", "کنسل شده"),
+            ("12", "پرداخت شده"),
+            ("21", "باز"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
     invoice_status = forms.ChoiceField(
-        label='وضعیت فاکتور',
+        label="وضعیت فاکتور",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'رسمی'),
-            ('12', 'غیر رسمی'),
-
+            ("", "-- انتخاب --"),
+            ("11", "رسمی"),
+            ("12", "غیر رسمی"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
     invoice_status_ready_pdf = forms.ChoiceField(
-        label='وضعیت فاکتور رسمی',
+        label="وضعیت فاکتور رسمی",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'فاکتور رسمی تحویل داده شده'),
-            ('12', 'فاکتور رسمی تحویل داده نشده'),
-
+            ("", "-- انتخاب --"),
+            ("11", "فاکتور رسمی تحویل داده شده"),
+            ("12", "فاکتور رسمی تحویل داده نشده"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
     use_discount_code = forms.ChoiceField(
-        label='وضعیت تخفیف',
+        label="وضعیت تخفیف",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'با تخفیف'),
-            ('12', 'بدون تخفیف'),
-
+            ("", "-- انتخاب --"),
+            ("11", "با تخفیف"),
+            ("12", "بدون تخفیف"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
     min_total_price = forms.IntegerField(
         required=False,
-        label='کمترین قیمت کل',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="کمترین قیمت کل",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     max_total_price = forms.IntegerField(
         required=False,
-        label='بیشترین قیمت کل',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="بیشترین قیمت کل",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     min_total_weight = forms.IntegerField(
         required=False,
-        label='کمترین وزن',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="کمترین وزن",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     max_total_weight = forms.IntegerField(
         required=False,
-        label='بیشترین وزن',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="بیشترین وزن",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     min_total_length = forms.IntegerField(
         required=False,
-        label='کمترین ارتفاع',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="کمترین ارتفاع",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     max_total_length = forms.IntegerField(
         required=False,
-        label='بیشترین ارتفاع',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="بیشترین ارتفاع",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     min_total_width = forms.IntegerField(
         required=False,
-        label='کمترین طول',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="کمترین طول",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     max_total_width = forms.IntegerField(
         required=False,
-        label='بیشترین طول',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="بیشترین طول",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     min_total_height = forms.IntegerField(
         required=False,
-        label='کمترین عرض',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="کمترین عرض",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     max_total_height = forms.IntegerField(
         required=False,
-        label='بیشترین عرض',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="بیشترین عرض",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     min_discount_code_price = forms.IntegerField(
         required=False,
-        label='کمترین قیمت تخفیف',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="کمترین قیمت تخفیف",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     max_discount_code_price = forms.IntegerField(
         required=False,
-        label='بیشترین قیمت تخفیف',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="بیشترین قیمت تخفیف",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     min_delivery_price = forms.IntegerField(
         required=False,
-        label='کمترین قیمت ارسال',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="کمترین قیمت ارسال",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     max_delivery_price = forms.IntegerField(
         required=False,
-        label='بیشترین قیمت ارسال',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="بیشترین قیمت ارسال",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
     min_count_of_product = forms.IntegerField(
         required=False,
-        label='کمترین تعداد کالای درخواستی',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="کمترین تعداد کالای درخواستی",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
     max_count_of_product = forms.IntegerField(
         required=False,
-        label='بیشترین تعداد کالای درخواستی',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="بیشترین تعداد کالای درخواستی",
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
     )
 
     def clean(self):
         items = self.cleaned_data
-        keys_to_remove = [key for key, value in items.items()
-                          if value is None or value == '']
+        keys_to_remove = [
+            key for key, value in items.items() if value is None or value == ""
+        ]
         for key in keys_to_remove:
             items.pop(key)
         return items
@@ -445,291 +321,257 @@ class TicketFilterForm(forms.Form):
     subject = forms.CharField(
         required=False,
         label="جستوجو",
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-        })
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        ),
     )
 
     store_name = forms.CharField(
         required=False,
         label="نام فروشگاه",
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-        })
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        ),
     )
 
     user_name = forms.CharField(
         required=False,
         label="نام کاربر",
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-        })
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        ),
     )
 
     user_number = PhoneNumberField(
         required=False,
         label="شماره کاربر",
-        widget=forms.NumberInput(attrs={
-            'class': 'form-control',
-            'dir': 'rtl'
-        })
+        widget=forms.NumberInput(attrs={"class": "form-control", "dir": "rtl"}),
     )
 
     start_date = JalaliDateField(
         required=False,
-        label='از تاریخ '
-        , widget=AdminJalaliDateWidget(
-            attrs={
-                'class': 'form-control',
-                'dir': 'rtl'
-            }
-        )
+        label="از تاریخ ",
+        widget=AdminJalaliDateWidget(attrs={"class": "form-control", "dir": "rtl"}),
     )
     end_date = JalaliDateField(
         required=False,
-        label='تا تاریخ'
-        , widget=AdminJalaliDateWidget(
-            attrs={
-                'class': 'form-control',
-                'dir': 'rtl'
-            }
-        )
+        label="تا تاریخ",
+        widget=AdminJalaliDateWidget(attrs={"class": "form-control", "dir": "rtl"}),
     )
 
     ticket_status = forms.ChoiceField(
-        label='وضعیت',
+        label="وضعیت",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'بسته'),
-            ('12', 'باز'),
-            ('21', 'خوانده نشده '),
-            ('22', 'خوانده شده'),
+            ("", "-- انتخاب --"),
+            ("11", "بسته"),
+            ("12", "باز"),
+            ("21", "خوانده نشده "),
+            ("22", "خوانده شده"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
     ticket_status_read_in_responder = forms.ChoiceField(
-        label='وضعیت در دریافت کننده',
+        label="وضعیت در دریافت کننده",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'خوانده شده توسط دریافت کننده'),
-            ('12', 'خوانده نشده توسط دریافت کننده'),
-
+            ("", "-- انتخاب --"),
+            ("11", "خوانده شده توسط دریافت کننده"),
+            ("12", "خوانده نشده توسط دریافت کننده"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
     ordering = forms.ChoiceField(
-        label='ترتیب بندی ',
+        label="ترتیب بندی ",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'جدیدترین '),
-            ('12', 'قدیمی ترین'),
+            ("", "-- انتخاب --"),
+            ("11", "جدیدترین "),
+            ("12", "قدیمی ترین"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
     def clean(self):
         items = self.cleaned_data
-        keys_to_remove = [key for key, value in items.items()
-                          if value is None or value == '']
+        keys_to_remove = [
+            key for key, value in items.items() if value is None or value == ""
+        ]
         for key in keys_to_remove:
             items.pop(key)
         return items
 
 
 class ProductSearchForm(forms.Form):
-    name = forms.CharField(label='جستجوی محصول', required=False,
-                           widget=forms.TextInput(
-                               attrs={
-                                   'class': 'form-control'
-                               }
-                           )
-                           )
-    have_discount = forms.ChoiceField(
-        label='دارای تخفیف',
-        choices=[('', '-- انتخاب --'), ('1', 'بله'), ('0', 'خیر')],
+    name = forms.CharField(
+        label="جستجوی محصول",
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+    )
+    have_discount = forms.ChoiceField(
+        label="دارای تخفیف",
+        choices=[("", "-- انتخاب --"), ("1", "بله"), ("0", "خیر")],
+        required=False,
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
     ordering = forms.ChoiceField(
-        label='ترتیب بندی بر اساس',
+        label="ترتیب بندی بر اساس",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'بیشترین بازدید'),
-            ('12', 'کمترین بازدید'),
-            ('21', 'بیشترین قیمت'),
-            ('22', 'کمترین قیمت'),
-            ('31', 'بیشترین تعداد کامنت'),
-            ('32', 'کمترین  تعداد کامنت'),
-            ('41', 'بیشترین موجودی کالا'),
-            ('42', 'کمترین موجودی کالا'),
+            ("", "-- انتخاب --"),
+            ("11", "بیشترین بازدید"),
+            ("12", "کمترین بازدید"),
+            ("21", "بیشترین قیمت"),
+            ("22", "کمترین قیمت"),
+            ("31", "بیشترین تعداد کامنت"),
+            ("32", "کمترین  تعداد کامنت"),
+            ("41", "بیشترین موجودی کالا"),
+            ("42", "کمترین موجودی کالا"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
     is_active = forms.ChoiceField(
-        label='فعال / غیرفعال',
-        choices=[('', '-- انتخاب --'), ('1', 'فعال'), ('0', 'غیرفعال')],
+        label="فعال / غیرفعال",
+        choices=[("", "-- انتخاب --"), ("1", "فعال"), ("0", "غیرفعال")],
         required=False,
         widget=forms.Select(
             attrs={
-                'class': 'form-control',
+                "class": "form-control",
             }
-        )
+        ),
     )
-    discount_min = forms.IntegerField(label='حداقل تخفیف', required=False,
-                                      widget=forms.NumberInput(
-                                          attrs={
-                                              'class': 'form-control'
-                                          }
-                                      ))
-    discount_max = forms.IntegerField(label='حداکثر تخفیف', required=False,
-                                      widget=forms.NumberInput(
-                                          attrs={
-                                              'class': 'form-control'
-                                          }
-                                      ))
-    category = forms.ModelChoiceField(queryset=ProductCategory.objects.filter(is_active=True).all(),
-                                      label='دسته‌بندی', required=False,
-                                      widget=forms.Select(
-                                          attrs={
-                                              'class': 'form-control select2 select2-hidden-accessible"',
-                                              'style': "width: 100%;",
-                                              'tabindex ': "-1",
-                                              'aria - hidden ': "true",
-                                          }
-                                      )
-                                      )
-    brand = forms.ModelChoiceField(queryset=ProductBrand.objects.filter(is_active=True).all(),
-                                   label='برند', required=False,
-                                   widget=forms.Select(
-                                       attrs={
-                                           'class': 'form-control select2 select2-hidden-accessible"',
-                                           'style': "width: 100%;",
-                                           'tabindex ': "-1",
-                                           'aria - hidden ': "true",
-                                       }
-                                   )
-                                   )
-    count_min = forms.IntegerField(label='حداقل تعداد', required=False,
-                                   widget=forms.NumberInput(
-                                       attrs={
-                                           'class': 'form-control'
-                                       }
-                                   ))
-    count_max = forms.IntegerField(label='حداکثر تعداد', required=False,
-                                   widget=forms.NumberInput(
-                                       attrs={
-                                           'class': 'form-control'
-                                       }
-                                   ))
-    weight_min = forms.IntegerField(label='حداقل وزن', required=False,
-                                    widget=forms.NumberInput(
-                                        attrs={
-                                            'class': 'form-control'
-                                        }
-                                    ))
-    weight_max = forms.IntegerField(label='حداکثر وزن', required=False,
-                                    widget=forms.NumberInput(
-                                        attrs={
-                                            'class': 'form-control'
-                                        }
-                                    ))
-    price_min = forms.IntegerField(label='حداقل قیمت', required=False,
-                                   widget=forms.NumberInput(
-                                       attrs={
-                                           'class': 'form-control'
-                                       }
-                                   ))
-    price_max = forms.IntegerField(label='حداکثر قیمت', required=False,
-                                   widget=forms.NumberInput(
-                                       attrs={
-                                           'class': 'form-control'
-                                       }
-                                   ))
-    height_min = forms.IntegerField(label='حداقل ارتفاع', required=False,
-                                    widget=forms.NumberInput(
-                                        attrs={
-                                            'class': 'form-control'
-                                        }
-                                    ))
-    height_max = forms.IntegerField(label='حداکثر ارتفاع', required=False,
-                                    widget=forms.NumberInput(
-                                        attrs={
-                                            'class': 'form-control'
-                                        }
-                                    ))
-    length_min = forms.IntegerField(label='حداقل طول', required=False,
-                                    widget=forms.NumberInput(
-                                        attrs={
-                                            'class': 'form-control'
-                                        }
-                                    ))
-    length_max = forms.IntegerField(label='حداکثر طول', required=False,
-                                    widget=forms.NumberInput(
-                                        attrs={
-                                            'class': 'form-control'
-                                        }
-                                    ))
-    width_min = forms.IntegerField(label='حداقل عرض', required=False,
-                                   widget=forms.NumberInput(
-                                       attrs={
-                                           'class': 'form-control'
-                                       }
-                                   ))
-    width_max = forms.IntegerField(label='حداکثر عرض', required=False,
-                                   widget=forms.NumberInput(
-                                       attrs={
-                                           'class': 'form-control'
-                                       }
-                                   ))
-    feature = forms.CharField(label='جستجو در ویژگی‌ها', required=False,
-                              widget=forms.TextInput(
-                                  attrs={
-                                      'class': 'form-control',
-                                      'placeholder': 'ایتم های مورد نظر را بنویسید و با - از هم جدا کنید'
-                                  }
-                              )
-                              )
-    tag = forms.CharField(label='جستجو در تگ‌ها', required=False,
-                          widget=forms.TextInput(
-                              attrs={
-                                  'class': 'form-control',
-                                  'placeholder': 'ایتم های مورد نظر را بنویسید و با - از هم جدا کنید'
-                              }
-                          )
-                          )
+    discount_min = forms.IntegerField(
+        label="حداقل تخفیف",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    discount_max = forms.IntegerField(
+        label="حداکثر تخفیف",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    category = forms.ModelChoiceField(
+        queryset=ProductCategory.objects.filter(is_active=True).all(),
+        label="دسته‌بندی",
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": 'form-control select2 select2-hidden-accessible"',
+                "style": "width: 100%;",
+                "tabindex ": "-1",
+                "aria - hidden ": "true",
+            }
+        ),
+    )
+    brand = forms.ModelChoiceField(
+        queryset=ProductBrand.objects.filter(is_active=True).all(),
+        label="برند",
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": 'form-control select2 select2-hidden-accessible"',
+                "style": "width: 100%;",
+                "tabindex ": "-1",
+                "aria - hidden ": "true",
+            }
+        ),
+    )
+    count_min = forms.IntegerField(
+        label="حداقل تعداد",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    count_max = forms.IntegerField(
+        label="حداکثر تعداد",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    weight_min = forms.IntegerField(
+        label="حداقل وزن",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    weight_max = forms.IntegerField(
+        label="حداکثر وزن",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    price_min = forms.IntegerField(
+        label="حداقل قیمت",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    price_max = forms.IntegerField(
+        label="حداکثر قیمت",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    height_min = forms.IntegerField(
+        label="حداقل ارتفاع",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    height_max = forms.IntegerField(
+        label="حداکثر ارتفاع",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    length_min = forms.IntegerField(
+        label="حداقل طول",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    length_max = forms.IntegerField(
+        label="حداکثر طول",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    width_min = forms.IntegerField(
+        label="حداقل عرض",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    width_max = forms.IntegerField(
+        label="حداکثر عرض",
+        required=False,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    feature = forms.CharField(
+        label="جستجو در ویژگی‌ها",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "ایتم های مورد نظر را بنویسید و با - از هم جدا کنید",
+            }
+        ),
+    )
+    tag = forms.CharField(
+        label="جستجو در تگ‌ها",
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "ایتم های مورد نظر را بنویسید و با - از هم جدا کنید",
+            }
+        ),
+    )
 
     def clean(self):
         items = self.cleaned_data
         # Create a list of keys to remove first
-        keys_to_remove = [key for key, value in items.items()
-                          if value is None or value == '']
+        keys_to_remove = [
+            key for key, value in items.items() if value is None or value == ""
+        ]
         # Then remove them
         for key in keys_to_remove:
             items.pop(key)
@@ -738,7 +580,7 @@ class ProductSearchForm(forms.Form):
     def clean_name(self):
         name = self.cleaned_data.get("name")
 
-        if name is not None and name != '':
+        if name is not None and name != "":
             return name
         else:
             return None
@@ -746,64 +588,54 @@ class ProductSearchForm(forms.Form):
 
 class BrandAndCategorySearchForm(forms.Form):
     name = forms.CharField(
-        label='جستجوی',
+        label="جستجوی",
         required=False,
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        widget=forms.TextInput(attrs={"class": "form-control"}),
     )
 
     is_active = forms.ChoiceField(
-        label='فعال / غیرفعال',
-        choices=[
-            ('', '-- انتخاب --'),
-            ('1', 'فعال'),
-            ('0', 'غیرفعال')
-        ],
+        label="فعال / غیرفعال",
+        choices=[("", "-- انتخاب --"), ("1", "فعال"), ("0", "غیرفعال")],
         required=False,
         widget=forms.Select(
             attrs={
-                'class': 'form-control',
-            }
-        )
-    )
-    ordering = forms.ChoiceField(
-        label='ترتیب بندی بر اساس',
-        choices=[
-            ('', '-- انتخاب --'),
-            ('41', 'بیشترین تعداد کالا'),
-            ('42', 'کمترین تعداد کالا'),
-            ('51', 'جدید ترین'),
-            ('52', 'قدیمی ترین'),
-        ],
-        required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
+                "class": "form-control",
             }
         ),
+    )
+    ordering = forms.ChoiceField(
+        label="ترتیب بندی بر اساس",
+        choices=[
+            ("", "-- انتخاب --"),
+            ("41", "بیشترین تعداد کالا"),
+            ("42", "کمترین تعداد کالا"),
+            ("51", "جدید ترین"),
+            ("52", "قدیمی ترین"),
+        ],
+        required=False,
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
     category_parent = forms.ModelChoiceField(
         queryset=ProductCategory.objects.filter(is_active=True).all(),
-        label='دسته‌بندی مادر   ', required=False,
+        label="دسته‌بندی مادر   ",
+        required=False,
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2 select2-hidden-accessible"',
-                'style': "width: 100%;",
-                'tabindex ': "-1",
-                'aria - hidden ': "true",
+                "class": 'form-control select2 select2-hidden-accessible"',
+                "style": "width: 100%;",
+                "tabindex ": "-1",
+                "aria - hidden ": "true",
             }
-        )
+        ),
     )
 
     def clean(self):
         items = self.cleaned_data
         # Create a list of keys to remove first
-        keys_to_remove = [key for key, value in items.items()
-                          if value is None or value == '']
+        keys_to_remove = [
+            key for key, value in items.items() if value is None or value == ""
+        ]
         # Then remove them
         for key in keys_to_remove:
             items.pop(key)
@@ -813,45 +645,44 @@ class BrandAndCategorySearchForm(forms.Form):
 class AddProductForm(forms.ModelForm):
     description = RichTextUploadingFormField()
     category = forms.ModelChoiceField(
-        queryset=ProductCategory.objects.filter(is_active=True).all(), required=True,
-        empty_label='دسته بندی مربوطه را انتخاب کنید',
+        queryset=ProductCategory.objects.filter(is_active=True).all(),
+        required=True,
+        empty_label="دسته بندی مربوطه را انتخاب کنید",
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2 select2-hidden-accessible"',
-                'style': "width: 100%;",
-                'tabindex ': "-1",
-                'aria - hidden ': "true",
-                'placeholder': 'درسته بندی'
-
+                "class": 'form-control select2 select2-hidden-accessible"',
+                "style": "width: 100%;",
+                "tabindex ": "-1",
+                "aria - hidden ": "true",
+                "placeholder": "درسته بندی",
             }
-        ))
+        ),
+    )
     brand = forms.ModelChoiceField(
-        queryset=ProductBrand.objects.filter(is_active=True).all(), required=True,
-        empty_label='برند مربوطه را انتخاب کنید',
+        queryset=ProductBrand.objects.filter(is_active=True).all(),
+        required=True,
+        empty_label="برند مربوطه را انتخاب کنید",
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2 select2-hidden-accessible"',
-                'style': "width: 100%;",
-                'tabindex ': "-1",
-                'aria - hidden ': "true",
-                'placeholder': 'برند'
-
+                "class": 'form-control select2 select2-hidden-accessible"',
+                "style": "width: 100%;",
+                "tabindex ": "-1",
+                "aria - hidden ": "true",
+                "placeholder": "برند",
             }
-        ))
+        ),
+    )
 
     picture = forms.ImageField(
         required=True,
         widget=forms.FileInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'تصویر اصلی'
-
-            }
+            attrs={"class": "form-control", "placeholder": "تصویر اصلی"}
         ),
         validators=[
-            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'heic'])
-        ]
-
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
     )
 
     gallery = MultiImageField(
@@ -860,229 +691,207 @@ class AddProductForm(forms.ModelForm):
         min_num=0,
         widget=MultiUploadMetaInput(
             attrs={
-                'class': 'form-control',
+                "class": "form-control",
             }
         ),
         validators=[
-            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'heic'])
-        ]
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
     )
 
     have_discount = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput(
             attrs={
-
-                'type': "checkbox",
-
+                "type": "checkbox",
             }
-        )
+        ),
     )
 
     features = forms.CharField(
         required=False,
         widget=forms.TextInput(
             attrs={
-                'class': 'form-control',
-                'placeholder': 'ویژگی های محصول را اضافه کنید ... ',
-                'id': 'id_features'
+                "class": "form-control",
+                "placeholder": "ویژگی های محصول را اضافه کنید ... ",
+                "id": "id_features",
             }
-        )
+        ),
     )
     tags = forms.CharField(
         required=False,
         widget=forms.TextInput(
             attrs={
-                'class': 'form-control',
-                'placeholder': 'تگ های محصول را اضافه کنید ... ',
-                'id': 'id_tags'
+                "class": "form-control",
+                "placeholder": "تگ های محصول را اضافه کنید ... ",
+                "id": "id_tags",
             }
-        )
+        ),
     )
     specs = forms.CharField(
         required=False,
         widget=forms.TextInput(
             attrs={
-                'class': 'form-control',
-                'placeholder': 'مشخصات محصول را اضافه کنید ... ',
-                'id': 'id_specs'
+                "class": "form-control",
+                "placeholder": "مشخصات محصول را اضافه کنید ... ",
+                "id": "id_specs",
             }
-        )
+        ),
     )
 
     class Meta:
         model = Product
-        fields = ('name', 'price', 'description',
-                  'category', 'have_discount', 'discount',
-                  'picture', 'brand', 'count',
-                  'weight', 'tags', 'features', 'gallery',
-                  'length', 'width', 'height', 'specs'
-                  )
+        fields = (
+            "name",
+            "price",
+            "description",
+            "category",
+            "have_discount",
+            "discount",
+            "picture",
+            "brand",
+            "count",
+            "weight",
+            "tags",
+            "features",
+            "gallery",
+            "length",
+            "width",
+            "height",
+            "specs",
+        )
         widgets = {
-            'name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'عنوان'
-            }),
-            'price': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'قیمت'
-            }),
-            'length': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'ارتفاع'
-            }),
-            'width': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'طول'
-            }),
-            'height': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'عرض'
-            }),
-
-            'discount': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'تخفیف',
-                'value': 0
-
-            }, ),
-            'count': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'تعداد'
-            }),
-            'weight': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'وزن (گرم)'
-            }),
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "عنوان"}
+            ),
+            "price": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "قیمت"}
+            ),
+            "length": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "ارتفاع"}
+            ),
+            "width": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "طول"}
+            ),
+            "height": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "عرض"}
+            ),
+            "discount": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "تخفیف", "value": 0},
+            ),
+            "count": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "تعداد"}
+            ),
+            "weight": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "وزن (گرم)"}
+            ),
         }
 
 
 class AddBrandForm(forms.ModelForm):
     image = forms.ImageField(
         required=True,
-        widget=forms.FileInput(
-            attrs={
-
-                'placeholder': 'تصویر لوگو'
-
-            }
-        ),
+        widget=forms.FileInput(attrs={"placeholder": "تصویر لوگو"}),
         validators=[
-            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'heic'])
-        ])
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
+    )
 
     class Meta:
         model = ProductBrand
-        fields = ('name', 'image', 'is_active',)
+        fields = (
+            "name",
+            "image",
+            "is_active",
+        )
         widgets = {
-            'name': forms.TextInput(attrs={
-
-                'class': 'form-control',
-            }),
-
-            'is_active': forms.CheckboxInput(
+            "name": forms.TextInput(
                 attrs={
-
-                    'checked': 'checked'
+                    "class": "form-control",
                 }
-            )
-
+            ),
+            "is_active": forms.CheckboxInput(attrs={"checked": "checked"}),
         }
 
 
 class AddCategoryForm(forms.ModelForm):
     parent = forms.ModelChoiceField(
-        queryset=ProductCategory.objects.filter(
-            is_active=True).all(), required=False,
+        queryset=ProductCategory.objects.filter(is_active=True).all(),
+        required=False,
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2 select2-hidden-accessible"',
-                'style': "width: 100%;",
-                'tabindex ': "-1",
-                'aria - hidden ': "true",
-
+                "class": 'form-control select2 select2-hidden-accessible"',
+                "style": "width: 100%;",
+                "tabindex ": "-1",
+                "aria - hidden ": "true",
             }
         ),
-        empty_label='دسته مادر یا دسته بالا دست را انتخاب کنید(این قسمت می تواند خالی باشد یا انتخاب نشود)'
+        empty_label="دسته مادر یا دسته بالا دست را انتخاب کنید(این قسمت می تواند خالی باشد یا انتخاب نشود)",
     )
 
     image = forms.ImageField(
         required=True,
-        widget=forms.FileInput(
-            attrs={
-
-                'placeholder': 'تصویر لوگو'
-
-            }
-        ),
+        widget=forms.FileInput(attrs={"placeholder": "تصویر لوگو"}),
         validators=[
-            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'heic'])
-        ])
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
+    )
 
     class Meta:
         model = ProductCategory
-        fields = ('name', 'is_active', 'image', 'parent')
+        fields = ("name", "is_active", "image", "parent")
         widgets = {
-            'name': forms.TextInput(attrs={
-
-                'class': 'form-control',
-            }),
-
-            'is_active': forms.CheckboxInput(
+            "name": forms.TextInput(
                 attrs={
-
-                    'checked': 'checked'
+                    "class": "form-control",
                 }
-            )
+            ),
+            "is_active": forms.CheckboxInput(attrs={"checked": "checked"}),
         }
 
 
 class AddStoreForm(forms.ModelForm):
     logo = forms.ImageField(
         required=True,
-        widget=forms.FileInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'لوگو'
-
-            }
-        ),
+        widget=forms.FileInput(attrs={"class": "form-control", "placeholder": "لوگو"}),
         validators=[
-            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'heic'])
-        ]
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
     )
     about_image = forms.ImageField(
         required=False,
         widget=forms.FileInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'تصویر معرفی'
-
-            }
+            attrs={"class": "form-control", "placeholder": "تصویر معرفی"}
         ),
         validators=[
-            FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp', 'heic'])
-        ]
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
     )
 
     phone = PhoneNumberField(
         widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'شماره همراه'
-            }
-        ), required=True,
-        validators=[validate_phonenumber]
+            attrs={"class": "form-control", "placeholder": "شماره همراه"}
+        ),
+        required=True,
+        validators=[validate_phonenumber],
     )
 
     phone2 = PhoneNumberField(
         widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'شماره تلفن ثابت'
-            }
-        ), required=True,
-        validators=[validate_phonenumber]
+            attrs={"class": "form-control", "placeholder": "شماره تلفن ثابت"}
+        ),
+        required=True,
+        validators=[validate_phonenumber],
     )
 
     description = RichTextUploadingFormField()
@@ -1090,164 +899,140 @@ class AddStoreForm(forms.ModelForm):
     class Meta:
         model = Store
 
-        fields = ('name', 'phone', 'phone2',
-                  'whats_app_ID', 'whats_app_link',
-                  'telegram_app_ID', 'telegram_app_Link',
-                  'instagram_app_ID', 'instagram_app_Link',
-                  'logo', 'about_image', 'is_active', 'description',
+        fields = (
+            "name",
+            "phone",
+            "phone2",
+            "whats_app_ID",
+            "whats_app_link",
+            "telegram_app_ID",
+            "telegram_app_Link",
+            "instagram_app_ID",
+            "instagram_app_Link",
+            "logo",
+            "about_image",
+            "is_active",
+            "description",
+            "orgin_city",
+            "address",
+            "zip_code",
+            "province",
+            "have_official_invoice",
+            "official_invoice_price",
+            "economic_number",
+            "registration_number",
+            "official_invoice_phone_number",
+            "have_post_delivery",
+            "have_tipax_delivery",
+            "have_in_same_city_delivery",
+            "have_physical_delivery",
+            "in_same_city_delivery_price",
+            "additional_price",
+            "additional_tax",
+            'card',
+            'card_shaba',
+            'card_name',
 
-                  'orgin_city', 'address', 'zip_code', 'province',
-
-                  'have_official_invoice', 'official_invoice_price',
-                  'economic_number', 'registration_number',
-                  'official_invoice_phone_number',
-
-                  'have_post_delivery', 'have_tipax_delivery',
-                  'have_in_same_city_delivery', 'have_physical_delivery',
-                  'in_same_city_delivery_price',
-
-                  'additional_price', 'additional_tax'
-                  )
+        )
 
         widgets = {
-            'name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'نام فروشگاه',
-            }),
-            'whats_app_link': forms.URLInput(
+            "name": forms.TextInput(
                 attrs={
-                    'class': 'form-control',
-                    'placeholder': 'لینک واتساپ',
-                    'type': 'text'
+                    "class": "form-control",
+                    "placeholder": "نام فروشگاه",
                 }
             ),
-            'whats_app_ID': forms.TextInput(
+            "card": forms.TextInput(
                 attrs={
-                    'class': 'form-control',
-                    'placeholder': 'ای دی واتساپ'
+                    "class": "form-control",
+                    "placeholder": "شماره کارت",
                 }
             ),
-            'telegram_app_ID': forms.TextInput(
+            "card_shaba": forms.TextInput(
                 attrs={
-                    'class': 'form-control',
-                    'placeholder': 'ای دی تلگرام'
+                    "class": "form-control",
+                    "placeholder": "شبا کارت",
                 }
             ),
-            'telegram_app_Link': forms.URLInput(
+            "card_name": forms.TextInput(
                 attrs={
-                    'class': 'form-control',
-                    'placeholder': 'لینک تلگرام',
-                    'type': 'text'
+                    "class": "form-control",
+                    "placeholder": "نام دارنده کارت",
                 }
             ),
-            'instagram_app_ID': forms.TextInput(
+            "whats_app_link": forms.URLInput(
                 attrs={
-                    'class': 'form-control',
-                    'placeholder': 'ای دی اینستاگرام'
+                    "class": "form-control",
+                    "placeholder": "لینک واتساپ",
+                    "type": "text",
                 }
             ),
-            'instagram_app_Link': forms.URLInput(
+            "whats_app_ID": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "ای دی واتساپ"}
+            ),
+            "telegram_app_ID": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "ای دی تلگرام"}
+            ),
+            "telegram_app_Link": forms.URLInput(
                 attrs={
-                    'class': 'form-control',
-                    'placeholder': 'لینک اینستاگرام',
-                    'type': 'text'
+                    "class": "form-control",
+                    "placeholder": "لینک تلگرام",
+                    "type": "text",
                 }
             ),
-
-            'address': forms.TextInput(
+            "instagram_app_ID": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "ای دی اینستاگرام"}
+            ),
+            "instagram_app_Link": forms.URLInput(
                 attrs={
-                    'class': 'form-control',
-                    'placeholder': 'ادرس فرشگاه'
+                    "class": "form-control",
+                    "placeholder": "لینک اینستاگرام",
+                    "type": "text",
                 }
             ),
-            'zip_code': forms.TextInput(
+            "address": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "ادرس فرشگاه"}
+            ),
+            "zip_code": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "کد پستی فرشگاه"}
+            ),
+            "province": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "استان فرشگاه"}
+            ),
+            "orgin_city": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": " شهر مبدا"}
+            ),
+            "is_active": forms.CheckboxInput(attrs={}),
+            "have_post_delivery": forms.CheckboxInput(attrs={}),
+            "have_tipax_delivery": forms.CheckboxInput(attrs={}),
+            "have_in_same_city_delivery": forms.CheckboxInput(attrs={}),
+            "have_physical_delivery": forms.CheckboxInput(attrs={}),
+            "have_official_invoice": forms.CheckboxInput(attrs={}),
+            "in_same_city_delivery_price": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "هزینه ارسال درون شهری"}
+            ),
+            "additional_price": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "هزینه اضافی"}
+            ),
+            "additional_tax": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "مالیات اضافی(درصد)"}
+            ),
+            "official_invoice_price": forms.NumberInput(
                 attrs={
-                    'class': 'form-control',
-                    'placeholder': 'کد پستی فرشگاه'
+                    "class": "form-control",
+                    "placeholder": "درصد برای صدور فاکتور رسمی",
                 }
             ),
-            'province': forms.TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': 'استان فرشگاه'
-                }
+            "economic_number": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "شماره اقتصادی"}
             ),
-            'orgin_city': forms.TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': ' شهر مبدا'
-                }
+            "registration_number": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "شماره ثبت"}
             ),
-            'is_active': forms.CheckboxInput(
+            "official_invoice_phone_number": forms.TextInput(
                 attrs={
-
-                }
-            ),
-            'have_post_delivery': forms.CheckboxInput(
-                attrs={
-
-                }
-            ),
-            'have_tipax_delivery': forms.CheckboxInput(
-                attrs={
-
-                }
-            ),
-            'have_in_same_city_delivery': forms.CheckboxInput(
-                attrs={
-
-                }
-            ),
-            'have_physical_delivery': forms.CheckboxInput(
-                attrs={
-
-                }
-            ),
-            'have_official_invoice': forms.CheckboxInput(
-                attrs={
-
-                }
-            ),
-            'in_same_city_delivery_price': forms.NumberInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': 'هزینه ارسال درون شهری'
-                }
-            ),
-            'additional_price': forms.NumberInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': 'هزینه اضافی'
-                }
-            ),
-            'additional_tax': forms.NumberInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': 'مالیات اضافی(درصد)'
-                }
-            ),
-            'official_invoice_price': forms.NumberInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': 'درصد برای صدور فاکتور رسمی'
-                }
-            ),
-            'economic_number': forms.TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': 'شماره اقتصادی'
-                }
-            ),
-            'registration_number': forms.TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': 'شماره ثبت'
-                }
-            ),
-            'official_invoice_phone_number': forms.TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'placeholder': 'شماره تلفن یا نامبر جهت صدور فاکتور رسمی'
+                    "class": "form-control",
+                    "placeholder": "شماره تلفن یا نامبر جهت صدور فاکتور رسمی",
                 }
             ),
         }
@@ -1256,39 +1041,39 @@ class AddStoreForm(forms.ModelForm):
 class StoreSendTicketForm(forms.ModelForm):
     store = forms.ModelChoiceField(
         required=False,
-        queryset=Store.objects.filter(is_active=True,
-                                      is_verified=True).all(),
+        queryset=Store.objects.filter(is_active=True, is_verified=True).all(),
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2 select2-hidden-accessible',
-                'style': "width: 100%",
-                'aria - hidden': "true",
-                'tabindex': "-1",
-                'dir': 'rtl'
+                "class": "form-control select2 select2-hidden-accessible",
+                "style": "width: 100%",
+                "aria - hidden": "true",
+                "tabindex": "-1",
+                "dir": "rtl",
             }
-        ), empty_label='لطفا فروشگاهی که می خوایید تیکت به ان ارسال شود را انتخاب کنید'
+        ),
+        empty_label="لطفا فروشگاهی که می خوایید تیکت به ان ارسال شود را انتخاب کنید",
     )
     message_message = RichTextUploadingFormField(
         widget=forms.Textarea(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'متن تیکت ...'
-            }
-        ), config_name='default'
+            attrs={"class": "form-control", "placeholder": "متن تیکت ..."}
+        ),
+        config_name="default",
     )
 
     class Meta:
         model = Ticket
         fields = (
-            'subject',
-            'store',
-            'message_message',
+            "subject",
+            "store",
+            "message_message",
         )
         widgets = {
-            'subject': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'عنوان را وارد کنید ... '
-            })
+            "subject": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "عنوان را وارد کنید ... ",
+                }
+            )
         }
 
 
@@ -1300,80 +1085,79 @@ class AddStoreUserStaffForm(forms.ModelForm):
     class Meta:
         model = User
         fields = (
-            'email', 'PhoneNumber', 'first_name', 'last_name', 'password', 'is_store_admin'
+            "email",
+            "PhoneNumber",
+            "first_name",
+            "last_name",
+            "password",
+            "is_store_admin",
         )
 
-    is_store_admin = forms.BooleanField(
-        required=False
-    )
+    is_store_admin = forms.BooleanField(required=False)
 
     email = forms.EmailField(
         required=False,
         widget=forms.EmailInput(
             attrs={
-                'class': 'form-control',
-                'placeholder': 'ایمیل ...',
-                'autocomplete': "email"
-
+                "class": "form-control",
+                "placeholder": "ایمیل ...",
+                "autocomplete": "email",
             }
-        )
+        ),
     )
     first_name = forms.CharField(
         required=True,
         widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'نام ...'
-            }
-        )
+            attrs={"class": "form-control", "placeholder": "نام ..."}
+        ),
     )
     last_name = forms.CharField(
         required=True,
         widget=forms.TextInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'نام خانوادگی ...'
-            }
-        )
+            attrs={"class": "form-control", "placeholder": "نام خانوادگی ..."}
+        ),
     )
     PhoneNumber = PhoneNumberField(
         required=True,
-        widget=forms.NumberInput(attrs={
-            'class': 'form-control',
-            'placeholder': "شماره همراه",
-            'autocomplete': "tel",
-            'dir': 'rtl'
-
-        })
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "شماره همراه",
+                "autocomplete": "tel",
+                "dir": "rtl",
+            }
+        ),
     )
 
-    password = forms.CharField(required=False,
-                               widget=forms.PasswordInput(
-                                   attrs={
-                                       'class': 'form-control',
-                                       'placeholder': "رمز عبور",
-                                       'autocomplete': "password"
-                                   }
-                               ))
+    password = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "رمز عبور",
+                "autocomplete": "password",
+            }
+        ),
+    )
 
-    conform_password = forms.CharField(required=False,
-                                       widget=forms.PasswordInput(
-                                           attrs={
-                                               'class': 'form-control',
-                                               'placeholder': "تایید رمز عبور",
-                                           }
-                                       ))
+    conform_password = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "تایید رمز عبور",
+            }
+        ),
+    )
 
     def clean_conform_password(self):
-        conform_password = self.cleaned_data['conform_password']
-        password = self.cleaned_data.get('password')
+        conform_password = self.cleaned_data["conform_password"]
+        password = self.cleaned_data.get("password")
 
         if password and conform_password:
 
             if password != conform_password:
-                raise ValidationError(
-                    'رمز عبور شما به صورت یکسان وارد نشده است'
-                )
+                raise ValidationError("رمز عبور شما به صورت یکسان وارد نشده است")
             else:
                 return conform_password
 
@@ -1381,18 +1165,44 @@ class AddStoreUserStaffForm(forms.ModelForm):
             return conform_password
 
     def clean_password(self):
-        password = self.cleaned_data['password']
-        if password:
-            validate_password(password)
+        password = self.cleaned_data["password"]
+        if len(password) < 8:
+            raise ValidationError("رمز شما باید حداقل 8 کاراکتر باشد")
+
+        if password.isdigit():
+            raise ValidationError(
+                "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
+            )
+
+        if password.isupper():
+            raise ValidationError(
+                "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
+            )
+
+        if password.islower():
+            raise ValidationError(
+                "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
+            )
+
+        if not password.isalnum():
+            raise ValidationError(
+                "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
+            )
+
+        if not password.isascii():
+            raise ValidationError(
+                "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
+            )
+
         return password
 
     def clean_email(self):
-        email = self.cleaned_data['email']
+        email = self.cleaned_data["email"]
         validate_email(email)
         return email
 
     def clean_phone_number(self):
-        PhoneNumber = self.cleaned_data['PhoneNumber']
+        PhoneNumber = self.cleaned_data["PhoneNumber"]
         validate_phonenumber(PhoneNumber)
 
         return PhoneNumber
@@ -1405,19 +1215,15 @@ class AddStoreAppForm(forms.ModelForm):
 
     class Meta:
         model = StoreApps
-        fields = (
-            'is_active', 'name', 'file'
-        )
+        fields = ("is_active", "name", "file")
         widgets = {
-            'is_active': forms.CheckboxInput()
-            , 'name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'نام را وارد کنید'
-            })
-            , 'file': forms.ClearableFileInput(attrs={
-                'class': 'form-control',
-                'placeholder': "برنامه را وارد کنید"
-            })
+            "is_active": forms.CheckboxInput(),
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "نام را وارد کنید"}
+            ),
+            "file": forms.ClearableFileInput(
+                attrs={"class": "form-control", "placeholder": "برنامه را وارد کنید"}
+            ),
         }
 
 
@@ -1425,147 +1231,122 @@ class AddStoreBlogForm(forms.ModelForm):
     """
     for add blogs for stores
     """
+
     image = forms.ImageField(
         required=True,
         widget=forms.FileInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'تصویر '
-
-            }
+            attrs={"class": "form-control", "placeholder": "تصویر "}
         ),
         validators=[
             FileExtensionValidator(
-                allowed_extensions=[
-                    'jpg', 'jpeg', 'png', 'webp', 'heic'
-                ]
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
             )
-        ]
-
+        ],
     )
     category = forms.ModelChoiceField(
         queryset=BlogCategory.objects.all(),
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2 select2-hidden-accessible',
-                'style': "width: 100%;",
-                'tabindex': "-1",
-                'aria - hidden': "true"
-                , 'dir': 'rtl'
+                "class": "form-control select2 select2-hidden-accessible",
+                "style": "width: 100%;",
+                "tabindex": "-1",
+                "aria - hidden": "true",
+                "dir": "rtl",
             }
-        )
-        , empty_label='لطفا دسته بندی انتخاب کنید'
+        ),
+        empty_label="لطفا دسته بندی انتخاب کنید",
     )
     content = RichTextUploadingFormField()
 
     class Meta:
         model = Blog
-        fields = ('title', 'category', 'content', 'image')
+        fields = ("title", "category", "content", "image")
         widgets = {
-            'title': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'عنوان را وارد کنید'
-            })
+            "title": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "عنوان را وارد کنید"}
+            )
         }
 
 
 class StoreBlogFilteringForm(forms.Form):
     user_number = PhoneNumberField(
         required=False,
-        label='شماره کاربر نویسنده پست',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control',
-                'dir': 'ltr'
-            }
-        )
+        label="شماره کاربر نویسنده پست",
+        widget=forms.NumberInput(attrs={"class": "form-control", "dir": "ltr"}),
     )
 
     start_date = JalaliDateField(
         required=False,
-        label='از تاریخ انتشار'
-        , widget=AdminJalaliDateWidget(
+        label="از تاریخ انتشار",
+        widget=AdminJalaliDateWidget(
             attrs={
-                'class': 'form-control',
-                'dir': 'rtl',
+                "class": "form-control",
+                "dir": "rtl",
             }
-        )
+        ),
     )
 
     end_date = JalaliDateField(
         required=False,
-        label='تا تاریخ انتشار'
-        , widget=AdminJalaliDateWidget(
+        label="تا تاریخ انتشار",
+        widget=AdminJalaliDateWidget(
             attrs={
-                'class': 'form-control',
-                'dir': 'rtl',
+                "class": "form-control",
+                "dir": "rtl",
             }
-        )
+        ),
     )
 
     category = forms.ModelChoiceField(
         queryset=BlogCategory.objects.filter(is_active=True).all(),
-        label='دسته بندی مورد استفاده',
+        label="دسته بندی مورد استفاده",
         required=False,
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2 select2-hidden-accessible"',
-                'style': "width: 100%;",
-                'tabindex ': "-1",
-                'aria - hidden ': "true",
-                'dir': 'rtl'
+                "class": 'form-control select2 select2-hidden-accessible"',
+                "style": "width: 100%;",
+                "tabindex ": "-1",
+                "aria - hidden ": "true",
+                "dir": "rtl",
             }
-        )
+        ),
     )
 
     is_active = forms.ChoiceField(
-        label='وضعیت',
+        label="وضعیت",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'فعال'),
-            ('12', 'غیر فعال'),
-
+            ("", "-- انتخاب --"),
+            ("11", "فعال"),
+            ("12", "غیر فعال"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
     ordering = forms.ChoiceField(
-        label='ترتیب بندی',
+        label="ترتیب بندی",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'جدید ترین'),
-            ('12', 'قدیمی ترین'),
-            ('21', 'بیشترین بازدید'),
-            ('22', 'کمترین بازید'),
-
+            ("", "-- انتخاب --"),
+            ("11", "جدید ترین"),
+            ("12", "قدیمی ترین"),
+            ("21", "بیشترین بازدید"),
+            ("22", "کمترین بازید"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
     title = forms.CharField(
         required=False,
-        label='جستجوی در متن',
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="جستجوی در متن",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
     )
 
     def clean(self):
         items = self.cleaned_data
-        keys_to_remove = [key for key, value in items.items()
-                          if value is None or value == '']
+        keys_to_remove = [
+            key for key, value in items.items() if value is None or value == ""
+        ]
         for key in keys_to_remove:
             items.pop(key)
         return items
@@ -1579,174 +1360,136 @@ class AddStoreBlogCategoryForm(forms.ModelForm):
     image = forms.ImageField(
         required=True,
         widget=forms.FileInput(
-            attrs={
-                'class': 'form-control',
-                'placeholder': 'تصویر '
-
-            }
+            attrs={"class": "form-control", "placeholder": "تصویر "}
         ),
         validators=[
             FileExtensionValidator(
-                allowed_extensions=[
-                    'jpg', 'jpeg', 'png', 'webp', 'heic'
-                ]
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
             )
-        ]
-
+        ],
     )
 
     parent = forms.ModelChoiceField(
         queryset=BlogCategory.objects.all(),
         widget=forms.Select(
             attrs={
-                'class': 'form-control select2 select2-hidden-accessible',
-                'style': "width: 100%;",
-                'tabindex': "-1",
-                'aria - hidden': "true"
-                , 'dir': 'rtl'
-
+                "class": "form-control select2 select2-hidden-accessible",
+                "style": "width: 100%;",
+                "tabindex": "-1",
+                "aria - hidden": "true",
+                "dir": "rtl",
             }
         ),
-        empty_label='دسته مادر یا دسته بالا دست را انتخاب کنید(این قسمت می تواند خالی باشد یا انتخاب نشود)',
-
-        required=False
-
+        empty_label="دسته مادر یا دسته بالا دست را انتخاب کنید(این قسمت می تواند خالی باشد یا انتخاب نشود)",
+        required=False,
     )
 
     class Meta:
         model = BlogCategory
-        fields = ('name', 'parent', 'image',)
+        fields = (
+            "name",
+            "parent",
+            "image",
+        )
         widgets = {
-            'name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'نام دسته را وارد کنید'
-            }),
-
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "نام دسته را وارد کنید"}
+            ),
         }
 
 
 class StoreUsersStaffFilteringForm(forms.Form):
     user_PhoneNumber = PhoneNumberField(
         required=False,
-        label='شماره کاربر ',
-        widget=forms.NumberInput(
-            attrs={
-                'class': 'form-control',
-                'dir': 'ltr'
-            }
-        )
+        label="شماره کاربر ",
+        widget=forms.NumberInput(attrs={"class": "form-control", "dir": "ltr"}),
     )
 
     user_email = forms.EmailField(
         required=False,
-        label='ایمیل کاربر  ',
-        widget=forms.EmailInput(
-            attrs={
-                'class': 'form-control',
-                'dir': 'ltr'
-            }
-        )
+        label="ایمیل کاربر  ",
+        widget=forms.EmailInput(attrs={"class": "form-control", "dir": "ltr"}),
     )
 
     user_name = forms.CharField(
         required=False,
-        label='نام',
-        widget=forms.TextInput(
-            attrs={
-                'class': 'form-control'
-            }
-        )
+        label="نام",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
     )
 
     user_is_store_admin = forms.ChoiceField(
-        label='وضعیت ادمین بودن',
+        label="وضعیت ادمین بودن",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'ادمین میباشد'),
-            ('12', 'ادمین نمیباشد'),
-
+            ("", "-- انتخاب --"),
+            ("11", "ادمین میباشد"),
+            ("12", "ادمین نمیباشد"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
     user_verify_account = forms.ChoiceField(
-        label='وضعیت تایید بودن حساب',
+        label="وضعیت تایید بودن حساب",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'تایید شده'),
-            ('12', 'تایید نشده'),
-
+            ("", "-- انتخاب --"),
+            ("11", "تایید شده"),
+            ("12", "تایید نشده"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
     user_is_active = forms.ChoiceField(
-        label='وضعیت فعال بودن حساب',
+        label="وضعیت فعال بودن حساب",
         choices=[
-            ('', '-- انتخاب --'),
-            ('11', 'فعال '),
-            ('12', 'غیر فعال'),
-
+            ("", "-- انتخاب --"),
+            ("11", "فعال "),
+            ("12", "غیر فعال"),
         ],
         required=False,
-        widget=forms.Select(
-            attrs={
-                'class': 'form-control'
-            }
-        ),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
     start_date_joined = JalaliDateField(
         required=False,
-        label='از  (تاریخ ثبت نام)'
-        , widget=AdminJalaliDateWidget(
+        label="از  (تاریخ ثبت نام)",
+        widget=AdminJalaliDateWidget(
             attrs={
-                'class': 'form-control',
-                'dir': 'rtl',
-
+                "class": "form-control",
+                "dir": "rtl",
             }
-        )
+        ),
     )
 
     end_date_joined = JalaliDateField(
         required=False,
-        label='تا  (تاریخ ثبت نام)'
-        , widget=AdminJalaliDateWidget(
+        label="تا  (تاریخ ثبت نام)",
+        widget=AdminJalaliDateWidget(
             attrs={
-                'class': 'form-control',
-                'dir': 'rtl',
+                "class": "form-control",
+                "dir": "rtl",
             }
-        )
+        ),
     )
 
     start_last_login = JalaliDateField(
         required=False,
-        label='از  (تاریخ اخرین ورود به سایت)'
-        , widget=AdminJalaliDateWidget(
+        label="از  (تاریخ اخرین ورود به سایت)",
+        widget=AdminJalaliDateWidget(
             attrs={
-                'class': 'form-control',
-                'dir': 'rtl',
+                "class": "form-control",
+                "dir": "rtl",
             }
-        )
+        ),
     )
 
     end_last_login = JalaliDateField(
         required=False,
-        label='تا  (تاریخ اخرین ورود به سایت)'
-        , widget=AdminJalaliDateWidget(
+        label="تا  (تاریخ اخرین ورود به سایت)",
+        widget=AdminJalaliDateWidget(
             attrs={
-                'class': 'form-control',
-                'dir': 'rtl',
+                "class": "form-control",
+                "dir": "rtl",
             }
-        )
+        ),
     )

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sitesetting', '0006_sitesetting_active_in_same_city_delivery_and_more'),
+        ("sitesetting", "0006_sitesetting_active_in_same_city_delivery_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='sitesetting',
-            name='active_receive_official_invoice',
+            model_name="sitesetting",
+            name="active_receive_official_invoice",
             field=models.BooleanField(default=True),
         ),
     ]

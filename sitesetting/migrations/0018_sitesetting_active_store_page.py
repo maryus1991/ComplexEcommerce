@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sitesetting', '0017_sitesetting_active_zarinpal_payment_and_more'),
+        ("sitesetting", "0017_sitesetting_active_zarinpal_payment_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='sitesetting',
-            name='active_store_page',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن قسمت فروشگاه'),
+            model_name="sitesetting",
+            name="active_store_page",
+            field=models.BooleanField(
+                default=True, verbose_name="فعال کردن قسمت فروشگاه"
+            ),
         ),
     ]

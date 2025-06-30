@@ -7,18 +7,22 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stores', '0005_store_created_at_store_is_active_store_is_verified_and_more'),
+        ("stores", "0005_store_created_at_store_is_active_store_is_verified_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='store',
-            name='phone',
-            field=phonenumber_field.modelfields.PhoneNumberField(blank=True, max_length=128, null=True, region=None),
+            model_name="store",
+            name="phone",
+            field=phonenumber_field.modelfields.PhoneNumberField(
+                blank=True, max_length=128, null=True, region=None
+            ),
         ),
         migrations.AlterField(
-            model_name='store',
-            name='phone2',
-            field=phonenumber_field.modelfields.PhoneNumberField(blank=True, max_length=128, null=True, region=None),
+            model_name="store",
+            name="phone2",
+            field=phonenumber_field.modelfields.PhoneNumberField(
+                blank=True, max_length=128, null=True, region=None
+            ),
         ),
     ]

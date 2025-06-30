@@ -9,26 +9,28 @@ from .views import (
     EditUserInformation,
     ChangeNumber,
     ChangePassword,
-ChangeLegalPersonInformation,LegalPersonHelpText
-
+    ChangeLegalPersonInformation,
+    LegalPersonHelpText,
 )
 
 
-app_name = 'user'
+app_name = "user"
 
 urlpatterns = [
-    path('logout/', LogoutView.as_view(), name='logout'),
-    path('otp/', OTP.as_view(), name='otp'),
-    path('login/', LoginView.as_view(), name='login'),
-    path('register/', RegisterView.as_view(), name='register'),
-    path('reset-password/', ForgotPassword.as_view(), name='reset_password'),
-    path('active-account/', ActiveAccount.as_view(), name='active_account'),
-
+    path("logout/", LogoutView.as_view(), name="logout"),
+    path("otp/", OTP.as_view(), name="otp"),
+    path("login/", LoginView.as_view(), name="login"),
+    path("register/", RegisterView.as_view(), name="register"),
+    path("reset-password/", ForgotPassword.as_view(), name="reset_password"),
+    path("active-account/", ActiveAccount.as_view(), name="active_account"),
     # user setting in dashboard
-    path('change-number/', ChangeNumber.as_view(), name='change-number'),
-    path('change-password/', ChangePassword.as_view(), name='change-password'),
-    path('edit-information/', EditUserInformation.as_view(), name='edit-information'),
-    path('edit-legal-person-information/', ChangeLegalPersonInformation.as_view(), name='edit-legal-person-information'),
-    path('help-legal-person/', LegalPersonHelpText.as_view(), name='help-legal-person'),
-
+    path("change-number/", ChangeNumber.as_view(), name="change-number"),
+    path("change-password/", ChangePassword.as_view(), name="change-password"),
+    path("edit-information/", EditUserInformation.as_view(), name="edit-information"),
+    path(
+        "edit-legal-person-information/",
+        ChangeLegalPersonInformation.as_view(),
+        name="edit-legal-person-information",
+    ),
+    path("help-legal-person/", LegalPersonHelpText.as_view(), name="help-legal-person"),
 ]

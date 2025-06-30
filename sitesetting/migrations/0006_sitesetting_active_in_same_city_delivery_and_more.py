@@ -6,28 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sitesetting', '0005_rename_integrate_id_sitesetting_instagram_id_and_more'),
+        ("sitesetting", "0005_rename_integrate_id_sitesetting_instagram_id_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='sitesetting',
-            name='active_in_same_city_delivery',
+            model_name="sitesetting",
+            name="active_in_same_city_delivery",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='sitesetting',
-            name='active_physical_delivery',
+            model_name="sitesetting",
+            name="active_physical_delivery",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='sitesetting',
-            name='active_post_delivery',
+            model_name="sitesetting",
+            name="active_post_delivery",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='sitesetting',
-            name='active_tipax_delivery',
+            model_name="sitesetting",
+            name="active_tipax_delivery",
             field=models.BooleanField(default=True),
         ),
     ]

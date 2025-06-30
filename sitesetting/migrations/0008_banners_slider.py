@@ -7,32 +7,58 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sitesetting', '0007_sitesetting_active_receive_official_invoice'),
+        ("sitesetting", "0007_sitesetting_active_receive_official_invoice"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Banners',
+            name="Banners",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(upload_to=sitesetting.models.photo_path_upload_to)),
-                ('name', models.CharField(max_length=100)),
-                ('name2', models.CharField(max_length=100)),
-                ('link', models.URLField()),
-                ('is_active', models.BooleanField(default=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "image",
+                    models.ImageField(
+                        upload_to=sitesetting.models.photo_path_upload_to
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("name2", models.CharField(max_length=100)),
+                ("link", models.URLField()),
+                ("is_active", models.BooleanField(default=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Slider',
+            name="Slider",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(upload_to=sitesetting.models.photo_path_upload_to)),
-                ('name', models.CharField(max_length=100)),
-                ('name2', models.CharField(max_length=100)),
-                ('text', models.CharField(max_length=250)),
-                ('link', models.URLField()),
-                ('link_name', models.CharField(max_length=100)),
-                ('is_active', models.BooleanField(default=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "image",
+                    models.ImageField(
+                        upload_to=sitesetting.models.photo_path_upload_to
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("name2", models.CharField(max_length=100)),
+                ("text", models.CharField(max_length=250)),
+                ("link", models.URLField()),
+                ("link_name", models.CharField(max_length=100)),
+                ("is_active", models.BooleanField(default=True)),
             ],
         ),
     ]

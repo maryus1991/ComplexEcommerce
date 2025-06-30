@@ -7,14 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stores', '0004_store_instagram_app_id_store_instagram_app_link_and_more'),
-        ('user', '0002_user_is_verified'),
+        ("stores", "0004_store_instagram_app_id_store_instagram_app_link_and_more"),
+        ("user", "0002_user_is_verified"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='store',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='stores.store'),
+            model_name="user",
+            name="store",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="stores.store",
+            ),
         ),
     ]

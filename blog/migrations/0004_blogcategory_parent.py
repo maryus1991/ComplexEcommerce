@@ -7,13 +7,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0003_remove_blogcategory_blog_remove_blogcategory_parent_and_more'),
+        ("blog", "0003_remove_blogcategory_blog_remove_blogcategory_parent_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='blogcategory',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='blog.blogcategory'),
+            model_name="blogcategory",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="blog.blogcategory",
+            ),
         ),
     ]

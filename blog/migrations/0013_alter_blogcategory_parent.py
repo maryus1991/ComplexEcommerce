@@ -7,13 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0012_alter_blog_admin_verified_alter_blog_category_and_more'),
+        ("blog", "0012_alter_blog_admin_verified_alter_blog_category_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='blogcategory',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='children', to='blog.blogcategory', verbose_name='دسته مادر'),
+            model_name="blogcategory",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="children",
+                to="blog.blogcategory",
+                verbose_name="دسته مادر",
+            ),
         ),
     ]

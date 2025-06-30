@@ -151,6 +151,7 @@
                     <th class="text-center" width="5%">تخفیف</th>
                     <th class="text-center" width="5%">وضعیت</th>
                     <th class="text-center" width="5%">تاییده ادمین</th>
+                    <th class="text-center" width="5%">بازدید</th>
                     <th colspan="5" class="text-center" width="20%">عملیات</th>
                 </tr>
                 </thead>
@@ -211,6 +212,15 @@
                                         تایید نشده
                                     </span>
                                 {% endif %}
+                            </strong>
+                        </td>
+                        <td class="text-center">
+                            <strong>
+
+                                    <span class="label label-success">
+{{ item.views.count }}
+                                    </span>
+
                             </strong>
                         </td>
 

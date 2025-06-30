@@ -7,19 +7,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0007_product_weight'),
-        ('stores', '0004_store_instagram_app_id_store_instagram_app_link_and_more'),
+        ("product", "0007_product_weight"),
+        ("stores", "0004_store_instagram_app_id_store_instagram_app_link_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='product',
-            name='is_active',
+            model_name="product",
+            name="is_active",
             field=models.BooleanField(default=True),
         ),
         migrations.AlterField(
-            model_name='product',
-            name='store',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='products', to='stores.store'),
+            model_name="product",
+            name="store",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="products",
+                to="stores.store",
+            ),
         ),
     ]

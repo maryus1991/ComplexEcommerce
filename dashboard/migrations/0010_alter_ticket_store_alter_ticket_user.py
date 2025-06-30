@@ -8,20 +8,30 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dashboard', '0009_alter_useraddress_city_code'),
-        ('stores', '0019_alter_store_options'),
+        ("dashboard", "0009_alter_useraddress_city_code"),
+        ("stores", "0019_alter_store_options"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ticket',
-            name='store',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='tickets', to='stores.store'),
+            model_name="ticket",
+            name="store",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="tickets",
+                to="stores.store",
+            ),
         ),
         migrations.AlterField(
-            model_name='ticket',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tickets', to=settings.AUTH_USER_MODEL),
+            model_name="ticket",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="tickets",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

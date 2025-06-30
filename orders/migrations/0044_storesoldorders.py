@@ -7,18 +7,40 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0043_alter_order_cart_alter_order_cart_hash'),
-        ('stores', '0019_alter_store_options'),
+        ("orders", "0043_alter_order_cart_alter_order_cart_hash"),
+        ("stores", "0019_alter_store_options"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='StoreSoldOrders',
+            name="StoreSoldOrders",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('price', models.PositiveBigIntegerField(default=0)),
-                ('order', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='store_sold_orders', to='orders.order')),
-                ('store', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='store_sold_orders', to='stores.store')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("price", models.PositiveBigIntegerField(default=0)),
+                (
+                    "order",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="store_sold_orders",
+                        to="orders.order",
+                    ),
+                ),
+                (
+                    "store",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="store_sold_orders",
+                        to="stores.store",
+                    ),
+                ),
             ],
         ),
     ]

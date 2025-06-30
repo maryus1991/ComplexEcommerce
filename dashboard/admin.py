@@ -1,9 +1,7 @@
 from django.contrib import admin
 from auditlog.registry import auditlog
 
-from .models import (UserIP, UserAddress, Ticket, TicketConversation)
-
-
+from .models import UserIP, UserAddress, Ticket, TicketConversation
 
 
 admin.site.register(UserIP)

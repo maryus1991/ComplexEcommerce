@@ -8,14 +8,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0013_alter_blogcategory_parent'),
+        ("blog", "0013_alter_blogcategory_parent"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='blog',
-            name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='blogs', to=settings.AUTH_USER_MODEL, verbose_name='نویسنده'),
+            model_name="blog",
+            name="user",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="blogs",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="نویسنده",
+            ),
         ),
     ]

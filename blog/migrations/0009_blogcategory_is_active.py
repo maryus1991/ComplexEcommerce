@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0008_alter_blogview_count'),
+        ("blog", "0008_alter_blogview_count"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='blogcategory',
-            name='is_active',
+            model_name="blogcategory",
+            name="is_active",
             field=models.BooleanField(default=True),
         ),
     ]

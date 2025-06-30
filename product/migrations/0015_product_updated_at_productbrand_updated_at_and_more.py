@@ -7,23 +7,35 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0014_productviews'),
+        ("product", "0014_productviews"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='product',
-            name='updated_at',
-            field=models.DateTimeField(default=datetime.datetime(2025, 6, 17, 8, 13, 52, 297014, tzinfo=datetime.timezone.utc)),
+            model_name="product",
+            name="updated_at",
+            field=models.DateTimeField(
+                default=datetime.datetime(
+                    2025, 6, 17, 8, 13, 52, 297014, tzinfo=datetime.timezone.utc
+                )
+            ),
         ),
         migrations.AddField(
-            model_name='productbrand',
-            name='updated_at',
-            field=models.DateTimeField(default=datetime.datetime(2025, 6, 17, 8, 13, 52, 296407, tzinfo=datetime.timezone.utc)),
+            model_name="productbrand",
+            name="updated_at",
+            field=models.DateTimeField(
+                default=datetime.datetime(
+                    2025, 6, 17, 8, 13, 52, 296407, tzinfo=datetime.timezone.utc
+                )
+            ),
         ),
         migrations.AddField(
-            model_name='productcategory',
-            name='updated_at',
-            field=models.DateTimeField(default=datetime.datetime(2025, 6, 17, 8, 13, 52, 296680, tzinfo=datetime.timezone.utc)),
+            model_name="productcategory",
+            name="updated_at",
+            field=models.DateTimeField(
+                default=datetime.datetime(
+                    2025, 6, 17, 8, 13, 52, 296680, tzinfo=datetime.timezone.utc
+                )
+            ),
         ),
     ]

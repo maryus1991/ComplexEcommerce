@@ -7,18 +7,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0006_blog_image'),
+        ("blog", "0006_blog_image"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='blogview',
-            name='count',
+            model_name="blogview",
+            name="count",
             field=models.IntegerField(default=0),
         ),
         migrations.AlterField(
-            model_name='blogtag',
-            name='blog',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tags', to='blog.blog'),
+            model_name="blogtag",
+            name="blog",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="tags",
+                to="blog.blog",
+            ),
         ),
     ]

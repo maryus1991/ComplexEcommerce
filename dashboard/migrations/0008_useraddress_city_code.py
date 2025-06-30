@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dashboard', '0007_useraddress_is_active'),
+        ("dashboard", "0007_useraddress_is_active"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='useraddress',
-            name='city_code',
+            model_name="useraddress",
+            name="city_code",
             field=models.CharField(blank=True, max_length=120, null=True),
         ),
     ]

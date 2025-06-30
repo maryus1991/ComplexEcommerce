@@ -16,3 +16,4 @@ stage.yml
 /static/node_modules/*
 */backups/*
 *.psql
+flake8_errors.txt

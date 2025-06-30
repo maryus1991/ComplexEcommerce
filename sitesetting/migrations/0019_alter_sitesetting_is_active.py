@@ -6,13 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sitesetting', '0018_sitesetting_active_store_page'),
+        ("sitesetting", "0018_sitesetting_active_store_page"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sitesetting',
-            name='is_active',
-            field=models.BooleanField(default=True, verbose_name='فعال کردن ورود به سایت و فعال کردن تنظیمات سایت فعلی'),
+            model_name="sitesetting",
+            name="is_active",
+            field=models.BooleanField(
+                default=True,
+                verbose_name="فعال کردن ورود به سایت و فعال کردن تنظیمات سایت فعلی",
+            ),
         ),
     ]

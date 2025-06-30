@@ -141,6 +141,11 @@
                     :</strong>{{ item.created_at|to_jalali:' %H/%M - %Y/%m/%d ' }}</td>
             </tr>
             <tr>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>شماره کارت : </strong>{{ item.card }}</td>
+                <td colspan="2" class="col-md-6 col-sm-12 col-xs-12"><strong>شب کارت : </strong>{{ item.card_shaba }}</td>
+                <td colspan="2" class="col-md-6 col-sm-12 col-xs-12"><strong>نام دارنده کارت : </strong>{{ item.card_name}}</td>
+            </tr>
+            <tr>
                 <td colspan="5" class="col-xs-12">
                     {{ item.description|safe }}
                 </td>

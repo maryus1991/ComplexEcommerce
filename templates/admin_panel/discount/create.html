@@ -170,7 +170,7 @@
                                 {{ form.media }}
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-1">
                             <div class="input-group" dir="rtl">
                             <span class="">
                                 فعال بودن :
@@ -179,13 +179,23 @@
 
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-1">
                             <div class="input-group">
                             <span class="">
                                   درصدی : {{ form.percentage_discount }}
                             </span>
 
                             </div>
+                        </div>
+                        <div class="col-md-4">
+                                                        <div class="input-group" dir="rtl">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #0000ff; color: white;"> حداقل قیمت سبد خرید : </span>
+                            </span>
+                                {{ form.min_price }}
+
+                            </div>
+
                         </div>
                     </div>
 
@@ -218,7 +228,7 @@
                         </div>
                     </div>
 
-                    <p style="margin-top: 10px; margin-bottom: 10px; background-color: orange; color: white;">
+                    <p style="margin-top: 10px; margin-bottom: 10px; background-color: orange; color: white; padding: 10px;">
                         اگر هر یک از فیلد های انتخاب محصول , فروشگاه یا کاربر را خالی بزار این معنا هست که از ان محدودیت
                         استفاده نکردید و همه انها را انتخاب کردید
                     </p>

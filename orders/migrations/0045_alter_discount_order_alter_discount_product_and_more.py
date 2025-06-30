@@ -7,31 +7,39 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0044_storesoldorders'),
-        ('product', '0023_alter_product_updated_at_and_more'),
-        ('stores', '0020_alter_store_official_invoice_phone_number'),
+        ("orders", "0044_storesoldorders"),
+        ("product", "0023_alter_product_updated_at_and_more"),
+        ("stores", "0020_alter_store_official_invoice_phone_number"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='discount',
-            name='order',
-            field=models.ManyToManyField(blank=True, related_name='discounts', to='orders.order'),
+            model_name="discount",
+            name="order",
+            field=models.ManyToManyField(
+                blank=True, related_name="discounts", to="orders.order"
+            ),
         ),
         migrations.AlterField(
-            model_name='discount',
-            name='product',
-            field=models.ManyToManyField(blank=True, related_name='discounts', to='product.product'),
+            model_name="discount",
+            name="product",
+            field=models.ManyToManyField(
+                blank=True, related_name="discounts", to="product.product"
+            ),
         ),
         migrations.AlterField(
-            model_name='discount',
-            name='store',
-            field=models.ManyToManyField(blank=True, related_name='discounts', to='stores.store'),
+            model_name="discount",
+            name="store",
+            field=models.ManyToManyField(
+                blank=True, related_name="discounts", to="stores.store"
+            ),
         ),
         migrations.AlterField(
-            model_name='discount',
-            name='user',
-            field=models.ManyToManyField(blank=True, related_name='discounts', to=settings.AUTH_USER_MODEL),
+            model_name="discount",
+            name="user",
+            field=models.ManyToManyField(
+                blank=True, related_name="discounts", to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

@@ -6,38 +6,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stores', '0003_rename_telegram_app_link_store_telegram_app_link_and_more'),
+        ("stores", "0003_rename_telegram_app_link_store_telegram_app_link_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='store',
-            name='instagram_app_ID',
+            model_name="store",
+            name="instagram_app_ID",
             field=models.CharField(blank=True, max_length=20, null=True),
         ),
         migrations.AddField(
-            model_name='store',
-            name='instagram_app_Link',
+            model_name="store",
+            name="instagram_app_Link",
             field=models.URLField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='store',
-            name='telegram_app_ID',
+            model_name="store",
+            name="telegram_app_ID",
             field=models.CharField(blank=True, max_length=20, null=True),
         ),
         migrations.AlterField(
-            model_name='store',
-            name='telegram_app_Link',
+            model_name="store",
+            name="telegram_app_Link",
             field=models.URLField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='store',
-            name='whats_app_ID',
+            model_name="store",
+            name="whats_app_ID",
             field=models.CharField(blank=True, max_length=20, null=True),
         ),
         migrations.AlterField(
-            model_name='store',
-            name='whats_app_link',
+            model_name="store",
+            name="whats_app_link",
             field=models.URLField(blank=True, null=True),
         ),
     ]

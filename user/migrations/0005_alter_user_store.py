@@ -7,14 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stores', '0008_store_orgin_city'),
-        ('user', '0004_user_is_store_admin'),
+        ("stores", "0008_store_orgin_city"),
+        ("user", "0004_user_is_store_admin"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='store',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='users', to='stores.store'),
+            model_name="user",
+            name="store",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="users",
+                to="stores.store",
+            ),
         ),
     ]

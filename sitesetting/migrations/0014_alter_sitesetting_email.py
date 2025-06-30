@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sitesetting', '0013_alter_sitesetting_about_image_alter_sitesetting_logo'),
+        ("sitesetting", "0013_alter_sitesetting_about_image_alter_sitesetting_logo"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sitesetting',
-            name='email',
-            field=models.EmailField(default='test@test.test', max_length=254, verbose_name='ایمیل'),
+            model_name="sitesetting",
+            name="email",
+            field=models.EmailField(
+                default="test@test.test", max_length=254, verbose_name="ایمیل"
+            ),
         ),
     ]

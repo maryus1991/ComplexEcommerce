@@ -2,16 +2,17 @@ from django.contrib import admin
 from auditlog.registry import auditlog
 
 # Register your models here.
-from .models import (ProductTag,
-                     Product,
-                     ProductComment,
-                     ProductCategory,
-                     ProductFeature,
-                     ProductGallery,
-                     ProductBrand,
-ProductCommentLikeAndDislike,
-UserFavorite
-                     )
+from .models import (
+    ProductTag,
+    Product,
+    ProductComment,
+    ProductCategory,
+    ProductFeature,
+    ProductGallery,
+    ProductBrand,
+    ProductCommentLikeAndDislike,
+    UserFavorite,
+)
 
 admin.site.register(UserFavorite)
 admin.site.register(ProductCommentLikeAndDislike)

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stores', '0013_remove_store_merchant_id_store_additional_price_and_more'),
+        ("stores", "0013_remove_store_merchant_id_store_additional_price_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='store',
-            name='have_official_invoice',
+            model_name="store",
+            name="have_official_invoice",
             field=models.BooleanField(default=True),
         ),
     ]

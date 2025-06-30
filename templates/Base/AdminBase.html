@@ -95,7 +95,7 @@ desired effect
 
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
-                    {% if request.user.is_staff and request.user.store is not None %}
+                    {% if user.is_staff and user.store and 'store' in request.path %}
                         <!-- Messages: style can be found in dropdown.less-->
                         <li id="messages-menu" onclick="hideOrShowMenus(this)" class="dropdown messages-menu">
                             <a class="dropdown-toggle" data-toggle="dropdown">
@@ -445,6 +445,28 @@ desired effect
 
                         </ul>
                     </li>
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
+                            <span style="color: #ff7700">سفارشات</span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="link-activator">
+                                <a href="{% url 'store:orders-list-wait-for-sending-list' %}"><i class="fa fa-link"></i>
+                                    <span style="color: #ff7700"> سفارشات </span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'store:orders-soled' %}"><i class="fa fa-link"></i>
+                                    <span style="color: #ff7700">تصفیه توسط ادمین</span>
+                                </a>
+                            </li>
+
+
+                        </ul>
+                    </li>
 
 
                     {% if user.is_store_admin %}
@@ -469,11 +491,7 @@ desired effect
                         </li>
 
                     {% endif %}
-                    <li class="link-activator">
-                        <a href="{% url 'store:orders-list-wait-for-sending-list' %}"><i class="fa fa-link"></i>
-                            <span style="color: #ff7700"> سفارشات </span>
-                        </a>
-                    </li>
+
                     <li class="link-activator"><a href="{% url 'store:update' %}"><i class="fa fa-link"></i> <span>ویرایش اطلاعات فروشگاه</span></a>
                     </li>
                     <li class="link-activator">
@@ -494,7 +512,7 @@ desired effect
 
                     {% endif %}
 
-                {% elif user.is_superuser %}
+                {% elif user.is_superuser  %}
 
                     <li class="link-activator btn btn-danger " style="width: 100%"><a
                             href="{% url 'admin_panel:backup' %}"><i class="fa fa-link"></i>
@@ -601,6 +619,26 @@ desired effect
 
                         </ul>
                     </li>
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
+                            <span style="color: #ff7700">سفارشات </span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                    <li class="link-activator"><a href="{% url 'admin_panel:orders-sold-list' %}"><i
+                            class="fa fa-link"></i> <span>
+                        تصفیه
+                    </span></a>
+                    <li class="link-activator"><a href="{% url 'admin_panel:orders-list' %}"><i
+                            class="fa fa-link"></i> <span>
+                            سفارشات
+                    </span></a>
+
+
+                        </ul>
+                    </li>
                     <li class="link-activator"><a href="{% url 'admin_panel:user-list' %}"><i
                             class="fa fa-link"></i> <span>
                             کاربران
@@ -609,10 +647,7 @@ desired effect
                             class="fa fa-link"></i> <span>
                             کد تخفیف ها
                     </span></a>
-                    <li class="link-activator"><a href="{% url 'admin_panel:orders-list' %}"><i
-                            class="fa fa-link"></i> <span>
-                            سفارشات
-                    </span></a>
+
                     <li class="link-activator"><a href="{% url 'admin_panel:fast-links-list' %}"><i
                             class="fa fa-link"></i> <span>
                         لینک های سریع

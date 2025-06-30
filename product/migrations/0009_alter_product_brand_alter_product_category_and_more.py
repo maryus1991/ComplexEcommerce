@@ -7,23 +7,31 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0008_product_is_active_alter_product_store'),
+        ("product", "0008_product_is_active_alter_product_store"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='product',
-            name='brand',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='product.productbrand'),
+            model_name="product",
+            name="brand",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="product.productbrand",
+            ),
         ),
         migrations.AlterField(
-            model_name='product',
-            name='category',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='product.productcategory'),
+            model_name="product",
+            name="category",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="product.productcategory",
+            ),
         ),
         migrations.AlterField(
-            model_name='product',
-            name='is_active',
+            model_name="product",
+            name="is_active",
             field=models.BooleanField(default=False),
         ),
     ]

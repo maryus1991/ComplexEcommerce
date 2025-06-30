@@ -16,6 +16,3 @@ auditlog.register(StoreApps)
 auditlog.register(StoreComment)
 auditlog.register(StoreTag)
 auditlog.register(StoreCategory)
-
-
-

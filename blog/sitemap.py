@@ -1,9 +1,11 @@
 from .models import Blog, BlogCategory
 from django.contrib.sitemaps import Sitemap
 
+
 class BlogSitemap(Sitemap):
     """for generate sitemap for blog model"""
-    changefreq = 'always'
+
+    changefreq = "always"
     priority = 1
 
     def items(self):
@@ -15,9 +17,9 @@ class BlogSitemap(Sitemap):
 
 class BlogCategorySitemap(Sitemap):
     """for generate sitemap for blog category model"""
-    changefreq = 'weekly'
+
+    changefreq = "weekly"
     priority = 0.7
 
     def items(self):
         return BlogCategory.objects.filter(is_active=True).all()
-

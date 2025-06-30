@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0037_order_official_invoice_conformed_given_to_user_and_more'),
+        ("orders", "0037_order_official_invoice_conformed_given_to_user_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='order',
-            name='tipax_post_price',
+            model_name="order",
+            name="tipax_post_price",
             field=models.PositiveBigIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='order',
-            name='vip_post_price',
+            model_name="order",
+            name="vip_post_price",
             field=models.PositiveBigIntegerField(default=0),
         ),
     ]

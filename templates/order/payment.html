@@ -7,28 +7,29 @@
 {% endblock %}
 
 {% block breadcrumb %}
-	
+
     <li class="flex items-center gap-x-2">
         <a>پنل کاربری</a>
         <svg class="w-4 h-4">
             <use href="#chevron-left"></use>
         </svg>
-    </li>    <li class="flex items-center gap-x-2">
+    </li>
+    <li class="flex items-center gap-x-2">
         <a>سفارشات</a>
         <svg class="w-4 h-4">
             <use href="#chevron-left"></use>
         </svg>
     </li>
     <li class="flex items-center gap-x-2">
-        <a href="{% url 'dashboard:order_detail' order.pk %}">سفارش شماره {{order.id}}</a>
+        <a href="{% url 'dashboard:order_detail' order.pk %}">سفارش شماره {{ order.id }}</a>
         <svg class="w-4 h-4">
             <use href="#chevron-left"></use>
         </svg>
-    </li>       
+    </li>
     <li class="flex items-center gap-x-2">
-        <a > تایید جهت پرداخت </a>
+        <a> تایید جهت پرداخت </a>
 
-    </li>    
+    </li>
 
 {% endblock %}
 
@@ -292,7 +293,7 @@
                                             <svg class="w-5 h-5">
                                                 <use href="#truke"></use>
                                             </svg>
-                                            <p class="mt-1">{{ product.store.name }}</p>
+                                            <p class="mt-1">{{ product.product.store.name }}</p>
                                         </li>
                                         <li>
                                             <svg class="w-5 h-5">
@@ -531,13 +532,13 @@
 
                                     <li>
                                         <p>هزینه های جانبی فروشگاه :</p>
-                                        <p class="font-DanaMedium text-green-500">{{ order.store.additional_price|tdc}}
+                                        <p class="font-DanaMedium text-green-500">{{ order.store.additional_price|tdc }}
                                             تومان </p>
                                     </li>
                                 {% endif %}
                                 {% if site.active_receive_official_invoice and order.store.have_official_invoice and order.official_invoice %}
                                     <li>
-                                        <p> جمع عوارض و مالیات  :</p>
+                                        <p> جمع عوارض و مالیات :</p>
                                         <p class="font-DanaMedium text-green-500">{{ order.calculate_total_price|clac_tax:order.store.official_invoice_price }}
                                             تومان </p>
                                     </li>
@@ -551,7 +552,8 @@
 
                                 <li class="border-t-2 border-dashed border-gray-400 pt-8">
                                     <p> مبلغ قابل پرداخت :</p>
-                                    <p class="font-DanaMedium text-green-500">{{ order.get_payment_price|tdc }} تومان</p>
+                                    <p class="font-DanaMedium text-green-500">{{ order.get_payment_price|tdc }}
+                                        تومان</p>
                                 </li>
                             </ul>
 

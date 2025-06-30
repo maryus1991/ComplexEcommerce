@@ -158,17 +158,17 @@
                 <tbody>
                 {% for item in items %}
                     <tr>
-                        <td>{{ item.id }}</td>
-                        <td>{{ item.store.name }}</td>
-                        <td dir="ltr">{{ item.user.PhoneNumber }}</td>
-                        <td>
+                        <td class="text-center">{{ item.id }}</td>
+                        <td class="text-center">{{ item.store.name }}</td>
+                        <td class="text-center" dir="ltr">{{ item.user.PhoneNumber }}</td>
+                        <td class="text-center">
                             {% if item.official_invoice %}
                                 <span class="label label-success">فاکتور رسمی</span>
                             {% else %}
                                 <span class="label label-default">فاکتور عادی</span>
                             {% endif %}
                         </td>
-                        <td>
+                        <td class="text-center">
                             {% if item.is_paid %}
                                 <span class="label label-success">پرداخت شده</span>
                             {% elif item.canceled %}
@@ -177,8 +177,8 @@
                                 <span class="label label-default">باز</span>
                             {% endif %}
                         </td>
-                        <td>{{ item.get_payment_price|tdc }}</td>
-                        <td>
+                        <td class="text-center">{{ item.get_payment_price|tdc }}</td>
+                        <td class="text-center">
                             {% if item.sending %}
                                 <span class="label label-warning"> درحال ارسال </span>
                             {% elif item.delivered_to_user %}
@@ -187,7 +187,7 @@
                                 <span class="label label-danger">ارسال نشده</span>
                             {% endif %}
                         </td>
-                        <td>
+                        <td class="text-center">
                             {% if item.vip_post %}
                                 <span class="label label-success">ارسال با پست</span>
                             {% elif item.tipax_post_delivery %}
@@ -198,7 +198,7 @@
                                 <span class="label label-success">تحویل حضوری</span>
                             {% endif %}
                         </td>
-                        <td>{{ item.second_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                        <td class="text-center">{{ item.second_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
                         <td class="text-center">
                             <a href="{% url 'admin_panel:orders-detail' item.id %}"
                                class="btn btn-sm btn-success"

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('blog', '0010_alter_blogcategory_parent'),
+        ("blog", "0010_alter_blogcategory_parent"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='blog',
-            name='admin_verified',
+            model_name="blog",
+            name="admin_verified",
             field=models.BooleanField(default=True),
         ),
     ]

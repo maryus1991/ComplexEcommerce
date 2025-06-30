@@ -7,18 +7,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0009_alter_product_brand_alter_product_category_and_more'),
+        ("product", "0009_alter_product_brand_alter_product_category_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='productbrand',
-            name='image',
-            field=models.ImageField(null=True, upload_to=product.models.photo_path_upload_to),
+            model_name="productbrand",
+            name="image",
+            field=models.ImageField(
+                null=True, upload_to=product.models.photo_path_upload_to
+            ),
         ),
         migrations.AddField(
-            model_name='productbrand',
-            name='is_active',
+            model_name="productbrand",
+            name="is_active",
             field=models.BooleanField(default=True),
         ),
     ]

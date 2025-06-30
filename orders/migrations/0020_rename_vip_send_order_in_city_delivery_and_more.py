@@ -6,33 +6,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0019_order_authority_order_cart'),
+        ("orders", "0019_order_authority_order_cart"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='order',
-            old_name='vip_send',
-            new_name='in_city_delivery',
+            model_name="order",
+            old_name="vip_send",
+            new_name="in_city_delivery",
         ),
         migrations.RenameField(
-            model_name='order',
-            old_name='post_id',
-            new_name='sending_id',
+            model_name="order",
+            old_name="post_id",
+            new_name="sending_id",
         ),
         migrations.AddField(
-            model_name='order',
-            name='physical_delivery',
+            model_name="order",
+            name="physical_delivery",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='order',
-            name='tipax_post_delivery',
+            model_name="order",
+            name="tipax_post_delivery",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='order',
-            name='vip_post',
+            model_name="order",
+            name="vip_post",
             field=models.BooleanField(default=False),
         ),
     ]

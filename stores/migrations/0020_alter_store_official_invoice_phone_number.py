@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stores', '0019_alter_store_options'),
+        ("stores", "0019_alter_store_options"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='store',
-            name='official_invoice_phone_number',
+            model_name="store",
+            name="official_invoice_phone_number",
             field=models.CharField(blank=True, max_length=100, null=True),
         ),
     ]

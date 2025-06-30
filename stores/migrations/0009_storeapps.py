@@ -7,17 +7,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stores', '0008_store_orgin_city'),
+        ("stores", "0008_store_orgin_city"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='StoreApps',
+            name="StoreApps",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(upload_to='')),
-                ('name', models.CharField(max_length=100)),
-                ('store', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='apps', to='stores.store')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("file", models.FileField(upload_to="")),
+                ("name", models.CharField(max_length=100)),
+                (
+                    "store",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="apps",
+                        to="stores.store",
+                    ),
+                ),
             ],
         ),
     ]

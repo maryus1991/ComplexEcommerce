@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sitesetting', '0008_banners_slider'),
+        ("sitesetting", "0008_banners_slider"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='slider',
-            name='link_name',
+            model_name="slider",
+            name="link_name",
         ),
     ]

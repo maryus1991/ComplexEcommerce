@@ -7,23 +7,35 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0021_alter_product_updated_at_and_more'),
+        ("product", "0021_alter_product_updated_at_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='product',
-            name='updated_at',
-            field=models.DateTimeField(default=datetime.datetime(2025, 6, 18, 9, 32, 43, 413998, tzinfo=datetime.timezone.utc)),
+            model_name="product",
+            name="updated_at",
+            field=models.DateTimeField(
+                default=datetime.datetime(
+                    2025, 6, 18, 9, 32, 43, 413998, tzinfo=datetime.timezone.utc
+                )
+            ),
         ),
         migrations.AlterField(
-            model_name='productbrand',
-            name='updated_at',
-            field=models.DateTimeField(default=datetime.datetime(2025, 6, 18, 9, 32, 43, 412006, tzinfo=datetime.timezone.utc)),
+            model_name="productbrand",
+            name="updated_at",
+            field=models.DateTimeField(
+                default=datetime.datetime(
+                    2025, 6, 18, 9, 32, 43, 412006, tzinfo=datetime.timezone.utc
+                )
+            ),
         ),
         migrations.AlterField(
-            model_name='productcategory',
-            name='updated_at',
-            field=models.DateTimeField(default=datetime.datetime(2025, 6, 18, 9, 32, 43, 412877, tzinfo=datetime.timezone.utc)),
+            model_name="productcategory",
+            name="updated_at",
+            field=models.DateTimeField(
+                default=datetime.datetime(
+                    2025, 6, 18, 9, 32, 43, 412877, tzinfo=datetime.timezone.utc
+                )
+            ),
         ),
     ]

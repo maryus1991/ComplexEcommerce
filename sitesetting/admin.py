@@ -1,13 +1,15 @@
 from django.contrib import admin
 from auditlog.registry import auditlog
 
-from .models import (SiteSetting,
-                     FastLinks,
-                     Newsletter,
-                     QuestionAndAnswer,
-                     ContactUs,
-                     Slider,
-                     Banners)
+from .models import (
+    SiteSetting,
+    FastLinks,
+    Newsletter,
+    QuestionAndAnswer,
+    ContactUs,
+    Slider,
+    Banners,
+)
 
 admin.site.register(SiteSetting)
 admin.site.register(QuestionAndAnswer)

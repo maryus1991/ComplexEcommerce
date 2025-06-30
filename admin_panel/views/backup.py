@@ -14,17 +14,17 @@ class OneClickBackup(AdminUserMixin, View):
             # Create a safe backup filename
             backup_name = f"backup_{datetime.now().strftime('%Y-%m-%d_%H-%M')}.psql"
             # Use proper path join
-            backup_path = Path(settings.DBBACKUP_STORAGE_OPTIONS['location']) / backup_name
+            backup_path = (
+                Path(settings.DBBACKUP_STORAGE_OPTIONS["location"]) / backup_name
+            )
             # Create backup
-            call_command('dbbackup', output_filename=str(backup_name))
+            call_command("dbbackup", output_filename=str(backup_name))
             # Verify file exists
             if not backup_path.exists():
                 raise FileNotFoundError("Backup file was not created")
             # Return the file for download
             return FileResponse(
-                open(backup_path, 'rb'),
-                as_attachment=True,
-                filename=backup_name
+                open(backup_path, "rb"), as_attachment=True, filename=backup_name
             )
 
         except Exception as e:
