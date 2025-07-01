@@ -106,17 +106,18 @@ class ProductListView(ListView):
                 end_price = None
 
         # get the url params if exist
+
         if "category" in url_params:
-            have_filter_url = True
-            category_list_id = url_params["category"]
-        else:
-            category_list_id = []
+            products = products.filter(
+                Q(category_id__in=url_params["category"]),
+                Q(category__is_active=True),
+            )
 
         if "brand" in url_params:
-            have_filter_url = True
-            brand_list_id = url_params["brand"]
-        else:
-            brand_list_id = []
+            products = products.filter(
+                Q(brand_id__in=url_params["brand"]),
+                Q(brand__is_active=True)
+            )
 
         if available:
             products = products.filter(count__gte=1)
@@ -166,18 +167,8 @@ class ProductListView(ListView):
             else:
                 sort = None
 
-        if have_filter_url:
-            # set the queryset
-            return_result = products.filter(
-                Q(brand_id__in=brand_list_id),
-                Q(brand__is_active=True) | Q(category_id__in=category_list_id),
-                Q(category__is_active=True),
-            )
 
-            return return_result.order_by("-id").all()
-
-        else:
-            return products.order_by("-id").all()
+        return products.order_by("-id").all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -189,7 +180,7 @@ class ProductListView(ListView):
             .all()
         )
 
-        context["brands"] = ProductBrand.objects.order_by("-id").all()
+        context["brands"] = ProductBrand.objects.filter(is_active=True).order_by("-id").all()
 
         if self.request.user.is_authenticated and self.request.user.is_verified:
             context["user_favorite"] = list(
@@ -287,10 +278,10 @@ class ProductDetailView(DetailView):
         obj = self.object
         same_product = (
             Product.objects.filter(
-                Q(is_active=True)
-                | Q(brand=obj.brand)
-                | Q(category=obj.category)
-                | Q(tags__name=obj.tags.name)
+                Q(is_active=True), Q(admin_verified=True) |
+                Q(brand=obj.brand) , Q(brand__is_active=True) |
+                Q(category=obj.category) , Q(category__is_active=True) |
+                Q(tags__name=obj.tags.name)
             )
             .exclude(id=obj.id)
             .distinct()

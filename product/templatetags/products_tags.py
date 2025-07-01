@@ -72,3 +72,11 @@ def minesR(x, y):
 @register.filter
 def order_by(orm, sort):
     return orm.order_by(sort)
+
+
+@register.filter
+def active_category(orm):
+    if orm.exists():
+        return orm.filter(is_active=True).all()
+    else:
+        return None

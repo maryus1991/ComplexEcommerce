@@ -582,6 +582,7 @@ class UsedAppModelForm(forms.ModelForm):
 
 class AddBlogModelForm(forms.ModelForm):
     user = forms.ModelChoiceField(
+        label="نویسنده",
         queryset=get_user_model()
         .objects.filter(
             is_active=True, is_verified=True, is_staff=True, store__isnull=False
@@ -600,6 +601,7 @@ class AddBlogModelForm(forms.ModelForm):
     )
 
     store = forms.ModelChoiceField(
+        label="فروشگاه منتشر کننده",
         queryset=Store.objects.filter(is_active=True, is_verified=True).all(),
         widget=forms.Select(
             attrs={
@@ -612,6 +614,7 @@ class AddBlogModelForm(forms.ModelForm):
         empty_label="فروشگاه را انتخاب کنید",
     )
     category = forms.ModelChoiceField(
+        label="دسته",
         queryset=BlogCategory.objects.filter().all(),
         widget=forms.Select(
             attrs={

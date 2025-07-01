@@ -22,7 +22,7 @@ from .models import (
 )
 from stores.models import StoreApps
 from user.mixins.logins import CustomLoginRequiredMixin
-
+from config.settings import BASE_DIR
 from user.forms import ActiveAccountForm as NumberForAddToLettersForm
 
 from product.models import Product, ProductCategory
@@ -49,6 +49,19 @@ def robots_txt(request):
     lines.append(f"Sitemap: {sitemap_url}")
 
     return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
+def dynamic_favicon(request):
+    site = SiteSetting.objects.first()
+
+    logo_path = site.logo.path
+
+    if logo_path:
+        with open(logo_path, 'rb') as f:
+            return HttpResponse(f.read(), content_type="image/png")
+    else:
+        with open(BASE_DIR / '1111.jpg' ,'rb') as f:
+            return HttpResponse(f.read(), content_type="image/png")
 
 
 # Create your views here.

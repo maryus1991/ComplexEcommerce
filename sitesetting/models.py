@@ -158,6 +158,7 @@ class ContactUs(models.Model):
     email = models.EmailField()
     phone = PhoneNumberField()
     message = models.TextField()
+    admin_read = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.subject} - {self.email} - {self.phone}"

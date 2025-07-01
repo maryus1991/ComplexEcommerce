@@ -98,8 +98,7 @@ overlay.addEventListener('click', () => {
 // Event listener for submenu toggle
 openSubmenuBtn.addEventListener('click', toggleSubmenu);
 
-// Event listener for closing alert
-alertBtnElem.addEventListener('click', closeAlert);
+
 
 // Event listeners for theme toggle
 toggleThemeBtns.forEach(btn => {

@@ -23,6 +23,12 @@ class ContactUsDetails(AdminUserMixin, DetailView):
     template_name = "admin_panel/contactUs/detials.html"
     context_object_name = "item"
 
+    def get_object(self, queryset=None):
+        item = super().get_object()
+        item.admin_read = True
+        item.save()
+        return item
+
 
 class ContactUsDeleteView(AdminUserMixin, RedirectView):
     """for deleting an  ContactUs model"""

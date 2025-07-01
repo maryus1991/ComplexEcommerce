@@ -27,7 +27,27 @@ class BlogCreate(AdminUserMixin, CreateView):
     context_object_name = "item"
     success_url = reverse_lazy("admin_panel:blog-list")
 
+    def dispatch(self, request, *args, **kwargs):
+        messages.warning(
+            self.request,
+            "توجه داشته باشید اگر نوسینده انتخابی کارمند فروشگاه انتخابی نباشد تغییرات اعمال نخواهد شد باید از اول اقدام کنید",
+        )
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
+        store_users = form.cleaned_data.get('store').users
+
+        if not store_users.filter(pk=form.cleaned_data.get('user').id).exists():
+            messages.warning(
+                self.request,
+                'نویسنده انتخابی باید کارمند فروشگاه انتخابی باشد, کارمندان فروشگاه انتخابی شماره زیر می باشند :'
+            )
+            messages.info(
+                self.request,
+                ''.join(str(item.PhoneNumber).replace(' ', '') + ' | ' for item in store_users.all())
+            )
+            return redirect(self.request.META.get('HTTP_REFERER'))
+
         form.instance.admin_verified = False
         form.save()
         messages.success(self.request, "پست ساخته شد")
@@ -48,9 +68,26 @@ class BlogUpdate(AdminUserMixin, UpdateView):
             self.request,
             "لطفا هنگام تغییرات این پست فروشگاه یا نویسنده مربوطه را مطلع فرمایید",
         )
+        messages.warning(
+            self.request,
+            "توجه داشته باشید اگر نوسینده انتخابی کارمند فروشگاه انتخابی نباشد تغییرات اعمال نخواهد شد باید از اول اقدام کنید",
+        )
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
+        store_users = form.cleaned_data.get('store').users
+
+        if not store_users.filter(pk=form.cleaned_data.get('user').id).exists():
+            messages.warning(
+                self.request,
+                'نویسنده انتخابی باید کارمند فروشگاه انتخابی باشد, کارمندان فروشگاه انتخابی شماره زیر می باشند :'
+            )
+            messages.info(
+                self.request,
+                ''.join(str(item.PhoneNumber).replace(' ', '') + ' | ' for item in store_users.all())
+            )
+            return redirect(self.request.META.get('HTTP_REFERER'))
+
         form.save()
         messages.success(self.request, "تغییرات اعمال شد")
         return super().form_valid(form)

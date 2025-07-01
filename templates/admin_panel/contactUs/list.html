@@ -30,6 +30,7 @@
                     <th width="25%">عنوان</th>
                     <th class="text-center" width="10%">ایمیل</th>
                     <th class="text-center" width="10%">شماره</th>
+                    <th class="text-center" width="10%">خوانده شده / نشده</th>
                     <th colspan="2" class="text-center" width="35%"></th>
                 </tr>
                 </thead>
@@ -49,6 +50,14 @@
                         </td>
                         <td dir="ltr">
                             <strong>{{ item.phone }}</strong>
+                        </td>                       
+                        <td >
+                            {% if item.admin_read %}
+                                <span class="label label-success ">خوانده شده</span>                            	
+                                {% else %}
+                                <span class="label label-danger ">خوانده نشده</span>                            	
+                                
+                            {% endif %} 
                         </td>
 
                         <td class="text-center">

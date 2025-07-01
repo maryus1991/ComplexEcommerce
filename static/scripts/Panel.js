@@ -1,4 +1,4 @@
-// Elements Selection
+
 const toggleThemeBtns = document.querySelectorAll('.toggle-theme');
 const openSidebarBtn = document.querySelector('.open-sidebar-btn');
 const closeSidebarBtn = document.querySelector('.close-sidebar-btn');

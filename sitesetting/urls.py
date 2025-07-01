@@ -10,6 +10,7 @@ from .views import (
     header_render_partial,
     UsedAppView,
     DownloadUsedAppView,
+    dynamic_favicon
 )
 from .sitemap import StaticSitemap, UsedAppSiteMap
 
@@ -18,6 +19,7 @@ app_name = "site"
 
 urlpatterns = [
     path("", Main.as_view(), name="main"),
+    path('favicon.ico', dynamic_favicon, name='favicon'),
     path("Q&A", QuestionsPageView.as_view(), name="Q&A"),
     path("about-us", AboutUs.as_view(), name="about-us"),
     path("contact-us", ContactUs.as_view(), name="contact-us"),
