@@ -50,7 +50,9 @@ CSRF_TRUSTED_ORIGINS = [
 
 # dbbackup config
 DBBACKUP_STORAGE = "django.core.files.storage.FileSystemStorage"
-DBBACKUP_STORAGE_OPTIONS = {"location": BASE_DIR / "admin_panel/backups/"}
+DBBACKUP_STORAGE_OPTIONS = {
+    "location": os.path.join(BASE_DIR, 'admin_panel/backups/')
+}
 
 # Application definition
 

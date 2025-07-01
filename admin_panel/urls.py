@@ -193,6 +193,7 @@ urlpatterns = [
     ),
     # users
     path("users/", views.UserListView.as_view(), name="user-list"),
+    path("users/send-messages", views.UserSendManyMessage.as_view(), name="user-send-message"),
     path("users/create/", views.UserCreateView.as_view(), name="user-create"),
     path("users/update/<int:pk>", views.UserUpdateView.as_view(), name="user-update"),
     path("users/detail/<int:pk>", views.UserDetailsView.as_view(), name="user-detail"),
@@ -313,5 +314,6 @@ urlpatterns = [
         name="discount-delete",
     ),
     # backup
-    path("backup/", views.OneClickBackup.as_view(), name="backup"),
+    path("backup/download/", views.OneClickBackup.as_view(), name="backup"),
+    path("backup/restore/", views.BackupRestoreInOneClickView.as_view(), name="backup-restore"),
 ]

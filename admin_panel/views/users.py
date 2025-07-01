@@ -11,22 +11,90 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect, reverse, render, Http404
 from django.urls import reverse_lazy
 from user.mixins.logins import AdminUserMixin
-from admin_panel.forms import AddUserModelForm
+from admin_panel.forms import AddUserModelForm, MessagingUserForm
 from auditlog.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
-
+from utils.send_otp import send_message
 User = get_user_model()
 
 
-# class UserSendManyMessage(AdminUserMixin, View):
-#     """for message the user"""
-#
-#
-#     def get(self, request):
-#         users = User.objects.all()
-#
-#
-#         return render(request, '')
+class UserSendManyMessage(AdminUserMixin, View):
+    """for message the many users"""
+
+    def get(self, request):
+        return render(request, 'admin_panel/users/message_users.html', {'form':MessagingUserForm()})
+
+    def post(self, request):
+        form = MessagingUserForm(request.POST)
+
+        if form.is_valid():
+            user = form.cleaned_data.get('user')
+            is_verified = form.cleaned_data.get('is_verified')
+            is_store_admin = form.cleaned_data.get('is_store_admin')
+            message_verified = form.cleaned_data.get('message_verified')
+            legal_person = form.cleaned_data.get('legal_person')
+            is_staff = form.cleaned_data.get('is_staff')
+            is_superuser = form.cleaned_data.get('is_superuser')
+            is_active = form.cleaned_data.get('is_active')
+            store = form.cleaned_data.get('store')
+            store_is_active = form.cleaned_data.get('store_is_active')
+            store_is_verified = form.cleaned_data.get('store_is_verified')
+            not_message_verified = form.cleaned_data.get('not_message_verified')
+            content = form.cleaned_data.get('content')
+
+            if user.exists():
+                user_object = user
+            else:
+                user_object = User.objects
+
+            if store.exists():
+                user_object = user_object.filter(store__isnull=False, store__in=store.all())
+
+            if is_verified:
+                user_object = user_object.filter(is_verified=True)
+
+            if is_store_admin:
+                user_object = user_object.filter(is_store_admin=True)
+
+            if not_message_verified:
+                user_object = user_object.filter(message_verified=False)
+
+            if message_verified:
+                user_object = user_object.filter(message_verified=True)
+
+            if legal_person:
+                user_object = user_object.filter(legal_person=True)
+
+            if is_staff:
+                user_object = user_object.filter(is_staff=True)
+
+            if is_superuser:
+                user_object = user_object.filter(is_superuser=True)
+
+            if is_active:
+                user_object = user_object.filter(is_active=True)
+
+            if store_is_active:
+                user_object = user_object.filter(store__isnull=False ,store__is_active=True)
+
+            if store_is_verified:
+                user_object = user_object.filter(store__isnull=False ,store__is_verified=True)
+
+            for user in user_object:
+                send_message(
+                    str(user.PhoneNumber).replace(" ", ""),
+                    content
+                )
+
+            messages.success(
+                request,
+                'پیام شما ارسال شد'
+            )
+
+            return redirect(request.META.get('HTTP_REFERER'))
+
+
+
 
 
 class UserListView(AdminUserMixin, ListView):
@@ -233,7 +301,11 @@ class UserUpdateView(AdminUserMixin, UpdateView):
 
         messages.success(self.request, "تغییرات اعمال شد")
 
-        return redirect(reverse("admin_panel:user-list"))
+        if self.request.user.id != user_object.id:
+            return redirect(reverse("admin_panel:user-list"))
+        else:
+            return redirect('/')
+
 
     def form_invalid(self, form):
         messages.error(self.request, form.errors)
