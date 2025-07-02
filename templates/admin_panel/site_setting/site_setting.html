@@ -337,7 +337,7 @@
                                         >
                                           <span>
 
-                                            {{ form.active_post_delivery.label }}
+                                            {{ form.active_post_delivery.label }}:
 
                                             {{ form.active_post_delivery }}
                                           </span>
@@ -352,7 +352,7 @@
                                           <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                 style="background-color: #3DA0DB; color: white;">
 
-                                            {{ form.active_tipax_delivery.label }}
+                                            {{ form.active_tipax_delivery.label }}:
 
                                             {{ form.active_tipax_delivery }}
 
@@ -433,7 +433,7 @@
                                               {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}>
                                           <span>
 
-                                            {{ form.active_categories_in_main_page.label }}
+                                            {{ form.active_categories_in_main_page.label }}:
 
                                             {{ form.active_categories_in_main_page }}
                                           </span>
@@ -448,7 +448,7 @@
                                           <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                 style="background-color: #3DA0DB; color: white;">
 
-                                            {{ form.active_newset_peoduct_in_main_page.label }}
+                                            {{ form.active_newset_peoduct_in_main_page.label }}:
 
                                             {{ form.active_newset_peoduct_in_main_page }}
 
@@ -524,7 +524,7 @@
                                               {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}>
                                           <span>
 
-                                            {{ form.store_users_staff_logins.label }}
+                                            {{ form.store_users_staff_logins.label }}:
 
                                             {{ form.store_users_staff_logins }}
                                           </span>
@@ -539,7 +539,7 @@
                                           <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                 style="background-color: #3DA0DB; color: white;">
 
-                                            {{ form.legal_users_login.label }}
+                                            {{ form.legal_users_login.label }}:
 
                                             {{ form.legal_users_login }}
 
@@ -614,7 +614,7 @@
                                               {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}>
                                           <span>
 
-                                            {{ form.send_message_official_invoice_upload.label }}
+                                            {{ form.send_message_official_invoice_upload.label }}:
 
                                             {{ form.send_message_official_invoice_upload }}
                                           </span>
@@ -629,7 +629,7 @@
                                           <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
                                                 style="background-color: #3DA0DB; color: white;">
 
-                                            {{ form.send_message_when_set_sending_id.label }}
+                                            {{ form.send_message_when_set_sending_id.label }}:
 
                                             {{ form.send_message_when_set_sending_id }}
 
@@ -657,7 +657,58 @@
 
                                 </div>
                             </div>
-                            
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                              {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}>
+                                          <span>
+
+                                            {{ form.active_brands_in_main_page.label }}:
+
+                                            {{ form.active_brands_in_main_page }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 no-padding" dir="rtl">
+                                        <div class="input-group">
+
+                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                style="background-color: #3DA0DB; color: white;">
+
+                                            {{ form.active_blog_categories_in_main_page.label }}:
+
+                                            {{ form.active_blog_categories_in_main_page }}
+
+                                        </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                  style="background-color: #00ad9c; color: white;">
+
+                                            {{ form.active_fast_links_in_footer_page.label }}:
+                                            {{ form.active_fast_links_in_footer_page }}
+
+                                            </span>
+                                        </div>
+
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+
 
 
                             <br>

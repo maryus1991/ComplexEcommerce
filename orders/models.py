@@ -335,6 +335,7 @@ class Discount(models.Model):
     name = models.CharField(
         max_length=100, null=True, blank=True, unique=True, db_index=True
     )
+    count_of_use_per_user = models.PositiveIntegerField(default=1)
 
     is_active = models.BooleanField(default=True)
 

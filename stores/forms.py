@@ -1215,15 +1215,20 @@ class AddStoreAppForm(forms.ModelForm):
 
     class Meta:
         model = StoreApps
-        fields = ("is_active", "name", "file")
+        fields = ("is_active", "name", "file", 'short_description')
         widgets = {
             "is_active": forms.CheckboxInput(),
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "نام را وارد کنید"}
             ),
+            "short_description": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "توضیحات کوتاه ..."}
+            ),
             "file": forms.ClearableFileInput(
                 attrs={"class": "form-control", "placeholder": "برنامه را وارد کنید"}
             ),
+
+
         }
 
 

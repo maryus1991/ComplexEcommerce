@@ -123,7 +123,7 @@
 
                     <!-- ردیف اول فرم محصول -->
                     <div class="row form-group">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="input-group">
                             <span class="input-group-btn">
                                 <span class="btn btn-warning btn-flat">عنوان کد تخفیف :</span>
@@ -131,7 +131,7 @@
                                 {{ form.name }}
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="input-group">
                             <span class="input-group-btn">
                                 <span class="btn btn-warning btn-flat">درصد تخفیف :</span>
@@ -139,12 +139,20 @@
                                 {{ form.percent }}
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="input-group">
                             <span class="input-group-btn">
                                 <span class="btn btn-warning btn-flat"> مبلغ تخفیف :</span>
                             </span>
                                 {{ form.price }}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat"> تعداد استفاده هر کاربر از این کد تخفیف:</span>
+                            </span>
+                                {{ form.count_of_use_per_user }}
                             </div>
                         </div>
 

@@ -143,6 +143,113 @@
                 <thead>
                 <tr class="bg-primary">
                     <th class="text-center" width="5%">#</th>
+                    <th class="text-center" width="15%">نام فروشگاه</th>
+                    <th class="text-center" width="15%">مبلغ</th>
+                    <th class="text-center" width="15%">تصفیه </th>
+                    <th class="text-center" width="15%">زمان تصفیه</th>
+                    <th class="text-center" width="5%">مشاهده فروشگاه</th>
+                    <th class="text-center" width="10%">تبدیل وضعیت به تصفیه شده</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in stores %}
+                    {% with item.calculate_store_sold_orders as price %}
+
+                        <tr>
+                            <td class="text-center">{{ item.id }}</td>
+                            <td class="text-center">{{ item.name }}</td>
+                            <td class="text-center">{{ price|tdc }}</td>
+                            <td class="text-center">
+                                {% if order.is_returned_by_admin %}
+                                    <span class="label label-success">تصفیه شده</span>
+                                {% else %}
+                                    <span class="label label-danger">تصفیه نشده</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">{{ order.paid_by_admin_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+
+
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:store-detail' item.id %}"
+                                   class="btn btn-sm btn-warning"
+                                   data-toggle="tooltip"
+                                   title="مشاهده فروشگاه">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                        <td class="text-center">
+                                <a href="{% url 'admin_panel:orders-change-sold-list-status' item.id %}"
+                                   class="btn btn-sm btn-success"
+                                   data-toggle="tooltip"
+                                   title="تبدیل وضعیت به تصفیه شده">
+                                    <i class="fa fa-key"></i>
+                                </a>
+                            </td>
+
+                    {% endwith %}
+
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="text-muted">تعداد کل ایتم ها: {{ items.count }}</small>
+                </div>
+                <div class="col-md-6 text-left">
+                    <ul class="pagination pagination-sm no-margin">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}">&raquo;</a></li>
+                        {% endif %}
+                        {% for page_number in page_obj.paginator.page_range %}
+                            <li {% if page_number == page_obj.number %}class="active" {% endif %}>
+                                <a href="?page={{ page_number }}">{{ page_number }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">&laquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip({
+                placement: 'top',
+                delay: {"show": 500, "hide": 100}
+            });
+
+            // افزودن کلاس form-control به تمام فیلدهای فرم
+            // This is already well-handled by Django's form rendering if using crispy forms or similar.
+            // If not, this line is good.
+            $('form input, form select, form textarea').addClass('form-control');
+
+            // تنظیمات برای فیلدهای تاریخ
+            $('.datepicker').datepicker({
+                format: 'yyyy/mm/dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+    </script>
+    <div class="panel box box-primary panel-default" style="margin-top: 20px;">
+        <div class="panel-heading clearfix">
+            <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست سفارشات </h3>
+
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered table-striped">
+                <thead>
+                <tr class="bg-primary">
+                    <th class="text-center" width="5%">#</th>
                     <th class="text-center" width="15%">تصفیه شده</th>
                     <th class="text-center" width="15%">زمان تصفیه</th>
                     <th class="text-center" width="15%">نام فروشگاه</th>
@@ -170,9 +277,9 @@
                                 <span class="label label-danger">تصفیه نشده</span>
                             {% endif %}
                             </td>
-                                                <td class="text-center">{{ item.store.name }}</td>
 
                             <td class="text-center">{{ order.paid_by_admin_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                            <td class="text-center">{{ item.store.name }}</td>
                             <td class="text-center" dir="ltr">{{ item.user.PhoneNumber }}</td>
                             <td class="text-center">
                                 {% if item.official_invoice %}
@@ -213,29 +320,29 @@
                             </td>
                             <td class="text-center">{{ item.second_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
                             <td class="text-center">
-                            <a href="{% url 'admin_panel:orders-detail' item.id %}"
-                               class="btn btn-sm btn-success"
-                               data-toggle="tooltip"
-                               title="مشاهده جزییات">
-                                <i class="fa fa-eye"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:store-detail' item.store.id %}"
-                               class="btn btn-sm btn-warning"
-                               data-toggle="tooltip"
-                               title="مشاهده فروشگاه">
-                                <i class="fa fa-eye"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:user-detail' item.user.pk %}"
-                               class="btn btn-sm btn-success"
-                               data-toggle="tooltip"
-                               title="مشاهده خریدار">
-                                <i class="fa fa-eye"></i>
-                            </a>
-                        </td>
+                                <a href="{% url 'admin_panel:orders-detail' item.id %}"
+                                   class="btn btn-sm btn-success"
+                                   data-toggle="tooltip"
+                                   title="مشاهده جزییات">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:store-detail' item.store.id %}"
+                                   class="btn btn-sm btn-warning"
+                                   data-toggle="tooltip"
+                                   title="مشاهده فروشگاه">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:user-detail' item.user.pk %}"
+                                   class="btn btn-sm btn-success"
+                                   data-toggle="tooltip"
+                                   title="مشاهده خریدار">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
                         </tr>
                     {% endwith %}
 

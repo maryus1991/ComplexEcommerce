@@ -6,7 +6,7 @@
         <!-- LOGO -->
         <a href="{% url 'site:main' %}"
            class="flex items-center gap-x-1 dark:text-brown-300 text-brown-600 font-MorabbaMedium text-xl lg:text-3xl">
-            <img src="{{ site.logo.url }}" alt="logo" class="w-20 h-10 "/>
+            <img src="{{ site.logo.url }}" alt="{{ site.title }}" class="w-20 h-10 "/>
 
         </a>
         <script>
@@ -93,18 +93,6 @@
         <!-- ACTION BTN -->
         <div class="flex items-center gap-x-3 child:z-30">
             <!-- TOGGLE BTN -->
-            <script>
-                function themToggle() {
-                    let html = document.getElementsByTagName('html')[0]
-                    if (html.classList.contains('dark')) {
-                        html.classList.remove('dark');
-                        localStorage.setItem('theme', "light");
-                    } else {
-                        html.classList.add('dark');
-                        localStorage.setItem('theme', "dark");
-                    }
-                }
-            </script>
 
 
             <button class="toggle-theme" onclick="themToggle()">
@@ -115,6 +103,9 @@
                     <use href="#sun"></use>
                 </svg>
             </button>
+            <script>
+
+            </script>
             <!-- SHOPPING CART BTN -->
             <button class="open-shopping-cart__btn relative">
                 <svg class="w-6 h-6">
@@ -410,7 +401,7 @@
                     {% if request.user.is_staff and request.user.store is not None %}
 
                         <a href="{% url 'store:home' %}"
-                           >
+                        >
                             <svg class="h-5 w-5">
                                 <use href="#cog"></use>
                             </svg>
@@ -420,7 +411,7 @@
                 {% if user.is_superuser and user.is_verified and user.is_active %}
 
                     <a href="{% url 'admin_panel:main' %}"
-                       >
+                    >
                         <svg class="h-5 w-5">
                             <use href="#cog"></use>
                         </svg>

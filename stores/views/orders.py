@@ -9,7 +9,7 @@ from django.views.generic import (
     View,
 )
 from django.db.models import Q
-from django.db.models.aggregates import Count
+from django.db.models.aggregates import Count, Sum
 from django.shortcuts import (
     get_object_or_404,
     reverse,
@@ -78,6 +78,7 @@ from utils.send_otp import send_message
 from sitesetting.models import SiteSetting
 
 User = get_user_model()
+
 
 # orders
 
@@ -207,7 +208,7 @@ class StoreOrdersView(UserStoreStaffMixin, ListView):
             if len(parts) != 3:
                 messages.error(
                     self.request,
-                     "لطفاً تاریخ را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                    "لطفاً تاریخ را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
                 )
 
             year, month, day = map(int, parts)
@@ -223,7 +224,7 @@ class StoreOrdersView(UserStoreStaffMixin, ListView):
             if len(parts) != 3:
                 messages.error(
                     self.request,
-                     "لطفاً تاریخ  را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                    "لطفاً تاریخ  را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
                 )
 
             year, month, day = map(int, parts)
@@ -241,7 +242,7 @@ class StoreOrdersView(UserStoreStaffMixin, ListView):
             if len(parts) != 3:
                 messages.error(
                     self.request,
-                     "لطفاً تاریخ   را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                    "لطفاً تاریخ   را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
                 )
 
             year, month, day = map(int, parts)
@@ -256,7 +257,7 @@ class StoreOrdersView(UserStoreStaffMixin, ListView):
             if len(parts) != 3:
                 messages.error(
                     self.request,
-                     "لطفاً تاریخ   را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                    "لطفاً تاریخ   را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
                 )
 
             year, month, day = map(int, parts)
@@ -459,8 +460,8 @@ class AddOfficialInvoiceView(UserStoreStaffMixin, View):
             raise SuspiciousOperation("Invalid file content type")
 
         if not any(
-            uploaded_file.name.lower().endswith(ext)
-            for ext in self.ALLOWED_FILE_EXTENSIONS
+                uploaded_file.name.lower().endswith(ext)
+                for ext in self.ALLOWED_FILE_EXTENSIONS
         ):
             raise SuspiciousOperation("Invalid file extension")
 
@@ -506,9 +507,9 @@ class AddOfficialInvoiceView(UserStoreStaffMixin, View):
         if SiteSetting.objects.first().send_message_official_invoice_upload:
             send_message(
                 str(order.user.PhoneNumber).replace(" ", ""),
-                 """
-                    فاکتور رسمی شما اپلود شد با مراجعه به قسمت حساب کاربری سفارشات  و بعد با انتخاب سفارش مورد نظر ان را دانلود نمایید
-            """,
+                """
+                   فاکتور رسمی شما اپلود شد با مراجعه به قسمت حساب کاربری سفارشات  و بعد با انتخاب سفارش مورد نظر ان را دانلود نمایید
+           """,
             )
 
         return redirect(request.META.get("HTTP_REFERER"))
@@ -535,7 +536,7 @@ class ChangeStatusToDeliveredToUser(UserStoreStaffMixin, RedirectView):
                     str(order.user.PhoneNumber).replace(" ", ""),
                     f"""محموله شما ارسال شد 
                     code:{order.sending_id}
-                    """, # noqa
+                    """,  # noqa
                 )
 
         else:
@@ -554,4 +555,16 @@ class StoreSoleOrders(UserStoreStaffMixin, ListView):
 
     def get_queryset(self):
         return self.model.objects.filter(
-            store_id=self.request.user.store.id).order_by("-id").prefetch_related( "order")
+            store_id=self.request.user.store.id
+        ).order_by("-id"
+        ).prefetch_related("order")
+
+    def get_context_data(
+            self, *, object_list=..., **kwargs
+    ):
+        context = super().get_context_data(**kwargs)
+
+        queryset = self.get_queryset()
+        context["total_price"] = sum(list(queryset.filter(is_returned_by_admin=False).values_list("price", flat=True)))
+
+        return context

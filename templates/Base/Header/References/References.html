@@ -9,12 +9,24 @@
 <link rel="stylesheet" href="/static/styles/swiper.css"/>
 <!-- ==========================  DARK MODE SCRPT ============================= -->
 <script type="text/javascript">
-        const theme = localStorage.getItem("theme");
-        const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        
-        if (theme === "dark" || (theme !== "light" && isSystemDark)) {
-            document.documentElement.classList.add("dark");
+    const theme = localStorage.getItem("theme");
+    const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    if (theme === "dark" || (theme !== "light" && isSystemDark)) {
+        document.documentElement.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+    }
+
+    function themToggle() {
+        let html = document.getElementsByTagName('html')[0]
+        console.log(html)
+        if (html.classList.contains('dark')) {
+            html.classList.remove('dark');
+            localStorage.setItem('theme', "light");
         } else {
-            document.documentElement.classList.remove("dark");
+            html.classList.add('dark');
+            localStorage.setItem('theme', "dark");
         }
+    }
 </script>

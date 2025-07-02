@@ -168,6 +168,7 @@ class AddDiscountForm(forms.ModelForm):
             "percent": forms.NumberInput(attrs={"class": "form-control"}),
             "price": forms.NumberInput(attrs={"class": "form-control"}),
             "min_price": forms.NumberInput(attrs={"class": "form-control"}),
+            "count_of_use_per_user": forms.NumberInput(attrs={"class": "form-control"}),
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "is_active": forms.CheckboxInput(),
         }
@@ -533,6 +534,9 @@ class SiteSettingModelForm(forms.ModelForm):
             "send_message_successful_payment": forms.CheckboxInput(),
             "send_message_official_invoice_upload": forms.CheckboxInput(),
             "send_message_when_set_sending_id": forms.CheckboxInput(),
+            "active_brands_in_main_page": forms.CheckboxInput(),
+            "active_blog_categories_in_main_page": forms.CheckboxInput(),
+            "active_fast_links_in_footer_page": forms.CheckboxInput(),
         }
 
 
@@ -638,6 +642,9 @@ class UsedAppModelForm(forms.ModelForm):
             "admin_verified": forms.CheckboxInput(),
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "نام را وارد کنید"}
+            ),
+            "short_description": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "توضیحات کوتاه ... "}
             ),
             "file": forms.ClearableFileInput(
                 attrs={"class": "form-control", "placeholder": "برنامه را وارد کنید"}

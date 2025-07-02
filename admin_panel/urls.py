@@ -197,6 +197,7 @@ urlpatterns = [
     path("users/create/", views.UserCreateView.as_view(), name="user-create"),
     path("users/update/<int:pk>", views.UserUpdateView.as_view(), name="user-update"),
     path("users/detail/<int:pk>", views.UserDetailsView.as_view(), name="user-detail"),
+    path("users/admin-login/<int:pk>", views.AdminLoginToOtherUsersAccounts.as_view(), name="user-admin-login"),
     path("users/verify/<int:pk>", views.UserVerifyView.as_view(), name="user-verify"),
     path(
         "users/active-deactivate/<int:pk>",
@@ -293,6 +294,7 @@ urlpatterns = [
     path("order/", views.OrderListView.as_view(), name="orders-list"),
     path("order/sold/", views.OrderSoldListView.as_view(), name="orders-sold-list"),
     path("order/<int:pk>", views.OrderDetailView.as_view(), name="orders-detail"),
+    path("order/sold/<int:pk>", views.OrderSoledChangeStatus.as_view(), name="orders-change-sold-list-status"),
     # discount
     path("discount/", views.DiscountListView.as_view(), name="discount-list"),
     path(

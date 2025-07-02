@@ -15,6 +15,7 @@ from admin_panel.forms import AddUserModelForm, MessagingUserForm
 from auditlog.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
 from utils.send_otp import send_message
+from django.contrib.auth import login
 User = get_user_model()
 
 
@@ -94,6 +95,33 @@ class UserSendManyMessage(AdminUserMixin, View):
             return redirect(request.META.get('HTTP_REFERER'))
 
 
+class AdminLoginToOtherUsersAccounts(AdminUserMixin, RedirectView):
+    """for login and solve problems in othere user accounts"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        user = get_object_or_404(User, id=pk)
+
+        if not user.is_active:
+            messages.error(
+                self.request,
+                'حساب مورد نظر فعال نشده می باشد'
+            )
+            return reverse("admin_panel:user-list")
+
+        if not user.is_verified:
+            messages.error(
+                self.request,
+                'حساب مورد نظر تایید نشده می باشد'
+            )
+            return reverse("admin_panel:user-list")
+
+        messages.success(
+            self.request,
+            'وارد حساب مورد نظر شدید برای به برگشت به حساب قبلی باید از این حساب خارج بشید و دوباره با حساب اولیه وارد بشید'
+        )
+        login(self.request, user)
+        return '/'
 
 
 

@@ -10,15 +10,21 @@
 {% endblock %}
 
 {% block body %}
- <div class="box-primary" style="margin-top:40px">
-    <div class="box-header with-border">
-        <h3 class="box-title">بروز رسانی اطلاعات فروشگاه یا اضافه کردن کابر</h3>
-                    {% if item %}
+    <div class="box-primary" style="margin-top:40px">
+        <div class="box-header with-border">
+            <h3 class="box-title">بروز رسانی اطلاعات فروشگاه یا اضافه کردن کابر</h3>
+            {% if item %}
 
                 <tabel class="pull-left">
                     <td class="text-center">
                         <a href="{% url 'admin_panel:user-detail' item.id %}" class="btn btn-sm btn-success"
                            data-toggle="tooltip" title="مشاهده">
+                            <i class="fa fa-eye"></i>
+                        </a>
+                    </td>
+                    <td class="text-center">
+                        <a href="{% url 'admin_panel:user-admin-login' item.id %}" class="btn btn-sm btn-warning"
+                           data-toggle="tooltip" title="وارد حساب شدن">
                             <i class="fa fa-eye"></i>
                         </a>
                     </td>
@@ -61,168 +67,174 @@
                 </tabel>
             {% endif %}
 
-    </div>
+        </div>
 
-    <form role="form" method='POST' action='' class="box" enctype='multipart/form-data'>
-        {% csrf_token %}
+        <form role="form" method='POST' action='' class="box" enctype='multipart/form-data'>
+            {% csrf_token %}
 
-        <!-- ردیف اول -->
-        <div class="box-body form-group flex col-md-12">
-            <div class="col-md-3">
-                <div class="input-group input-group-sm">
+            <!-- ردیف اول -->
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-3">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-info btn-flat">نام </button>
                     </span>
-                    {{ form.first_name }}
+                        {{ form.first_name }}
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="input-group input-group-sm">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-info btn-flat">نام خانوادگی</button>
                     </span>
-                    {{ form.last_name }}
+                        {{ form.last_name }}
+                    </div>
                 </div>
-            </div>
 
 
-
-            <div class="col-md-5">
-                <div class=" input-group-sm">
+                <div class="col-md-5">
+                    <div class=" input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-info btn-flat">فروشگاه</button>
                     </span>
-                    <span {% if not request.user_agent.is_mobile %} class="input-group" {% endif %}>
+                        <span {% if not request.user_agent.is_mobile %} class="input-group" {% endif %}>
                     {{ form.store }}
                         </span>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="box-body form-group flex col-md-12">
+            <div class="box-body form-group flex col-md-12">
 
-            <div class="col-md-4">
-                <div class="input-group input-group-sm">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-info btn-flat">شماه همراه</button>
                     </span>
-                    {{ form.PhoneNumber }}
+                        {{ form.PhoneNumber }}
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-4">
-                <div class="input-group input-group-sm">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-success btn-flat">رمز عبور</button>
                     </span>
-                    {{ form.password }}
+                        {{ form.password }}
+                    </div>
                 </div>
-            </div>            <div class="col-md-4">
-                <div class="input-group input-group-sm">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-success btn-flat">تایید رمز عبور</button>
                     </span>
-                    {{ form.conform_password }}
+                        {{ form.conform_password }}
+                    </div>
                 </div>
+
             </div>
 
-        </div>
-
-        <!-- ردیف دوم -->
-        <div class="box-body form-group flex col-md-12">
-            <div class="col-md-2">
-                <div class="input-group ">
+            <!-- ردیف دوم -->
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-2">
+                    <div class="input-group ">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-warning btn-block">وضعیت حقوقی:{{ form.legal_person }}</button>
+                        <button type="button"
+                                class="btn btn-warning btn-block">وضعیت حقوقی:{{ form.legal_person }}</button>
                     </span>
 
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-2">
-                <div class="input-group ">
+                <div class="col-md-2">
+                    <div class="input-group ">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-warning btn-block">فعال بودن حساب:{{ form.is_active }}</button>
+                        <button type="button"
+                                class="btn btn-warning btn-block">فعال بودن حساب:{{ form.is_active }}</button>
                     </span>
 
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-2">
-                <div class="input-group ">
+                <div class="col-md-2">
+                    <div class="input-group ">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-warning btn-block">ادمین سایت:{{ form.is_superuser }}</button>
+                        <button type="button"
+                                class="btn btn-warning btn-block">ادمین سایت:{{ form.is_superuser }}</button>
                     </span>
 
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-2">
-                <div class="input-group ">
+                <div class="col-md-2">
+                    <div class="input-group ">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-warning btn-block">تایید حساب:{{ form.is_verified }}</button>
+                        <button type="button"
+                                class="btn btn-warning btn-block">تایید حساب:{{ form.is_verified }}</button>
 
                     </span>
 
 
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-2">
-                <div class="input-group ">
+                <div class="col-md-2">
+                    <div class="input-group ">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-warning btn-block">مدیر فروشگاه:{{ form.is_store_admin }}</button>
+                        <button type="button"
+                                class="btn btn-warning btn-block">مدیر فروشگاه:{{ form.is_store_admin }}</button>
                     </span>
 
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-2">
-                <div class="input-group ">
+                <div class="col-md-2">
+                    <div class="input-group ">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-block btn-warning">وضعیت کارمندی: {{ form.is_staff }}</button>
+                        <button type="button"
+                                class="btn btn-block btn-warning">وضعیت کارمندی: {{ form.is_staff }}</button>
                     </span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ردیف سوم -->
-        <div class="box-body form-group flex col-md-12">
+            <!-- ردیف سوم -->
+            <div class="box-body form-group flex col-md-12">
 
-            <div class="col-md-4">
-                <div class="input-group input-group-sm">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-success btn-flat">شماره اقتصادی افراد حقوقی</button>
                     </span>
-                    {{ form.legal_person_economic_number }}
+                        {{ form.legal_person_economic_number }}
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-4">
-                <div class="input-group input-group-sm">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-success btn-flat">شماره ثبت افراد حقوقی</button>
                     </span>
-                    {{ form.legal_person_registration_number }}
+                        {{ form.legal_person_registration_number }}
+                    </div>
                 </div>
-            </div>            <div class="col-md-4">
-                <div class="input-group input-group-sm">
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-success btn-flat">نامبر یا شماره افراد حقوقی</button>
                     </span>
-                    {{ form.legal_person_phone }}
+                        {{ form.legal_person_phone }}
+                    </div>
                 </div>
+
             </div>
 
-        </div>
 
-
-
-        <!-- دکمه ثبت -->
-        <div class="box-footer">
-            <button type="submit" class="btn btn-info btn-sm btn-block">ثبت</button>
-        </div>
-    </form>
-</div>
+            <!-- دکمه ثبت -->
+            <div class="box-footer">
+                <button type="submit" class="btn btn-info btn-sm btn-block">ثبت</button>
+            </div>
+        </form>
+    </div>
 
 {% endblock %}
 

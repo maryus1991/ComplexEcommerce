@@ -59,7 +59,15 @@ class AddOrder(LoginRequiredMixin, RedirectView):
 
         request = self.request
         product_id = kwargs.get("pk")
-        product = get_object_or_404(Product, pk=product_id)
+        product = get_object_or_404(Product,
+                                    pk=product_id,
+                                    is_active=True,
+                                    store__is_active=True,
+                                    store__is_verified=True,
+                                    admin_verified=True,
+                                    brand__is_active=True,
+                                    category__is_active=True,
+                                    )
 
         order = Order.objects.get_or_create(
             user=request.user,
@@ -263,7 +271,7 @@ class ChangeInvoiceToOfficial(LoginRequiredMixin, RedirectView):
 
                 messages.success(
                     self.request,
-                    "دریافت فاکتور رسمی برای شما فعال شد برای دریافت ان بعد از پرداخت به صفحه سفارشات در داشبور مراجعه کنید ",
+                    "دریافت فاکتور رسمی برای شما فعال شد بعد از اتمام پرداخت و اماده شدن و صادر شدن و ان برای دریافت  به صفحه سفارشات در داشبور خود مراجعه کنید ",
                 )
 
         return self.request.META.get("HTTP_REFERER", "/")
@@ -305,7 +313,6 @@ class OrderSetDiscount(LoginRequiredMixin, RedirectView):
                         if discount_obj.first().count > 0:
                             discount_obj = discount_obj.first()
                             if discount_obj.end_date_discount is not None and discount_obj.end_date_discount < timezone.now():
-
                                 messages.error(
                                     self.request,
                                     "مهلت استفاده شده از این کد تخفیف با پایان رسیده",
@@ -317,7 +324,7 @@ class OrderSetDiscount(LoginRequiredMixin, RedirectView):
                             if discount_obj.user.exists():
 
                                 if not discount_obj.user.filter(
-                                    id=user.id
+                                        id=user.id
                                 ).exists():
                                     messages.error(
                                         self.request,
@@ -329,7 +336,7 @@ class OrderSetDiscount(LoginRequiredMixin, RedirectView):
 
                             if discount_obj.store.exists():
                                 if not discount_obj.store.filter(
-                                    id=store_id
+                                        id=store_id
                                 ).exists():
                                     messages.error(
                                         self.request,
@@ -352,7 +359,7 @@ class OrderSetDiscount(LoginRequiredMixin, RedirectView):
 
                                 # Find products in order that aren't in discount
                                 non_discounted_products = (
-                                    order_product_ids - discount_product_ids
+                                        order_product_ids - discount_product_ids
                                 )
 
                                 if non_discounted_products:
@@ -369,12 +376,25 @@ class OrderSetDiscount(LoginRequiredMixin, RedirectView):
                                         "orders:payment-conform", kwargs={"pk": pk}
                                     )
 
+                            used_order_count = Order.objects.filter(user=user,
+                                                                    use_discount_code=True,
+                                                                    discount=discount_obj).count()
+
+                            if used_order_count >= discount_obj.count_of_use_per_user:
+                                messages.error(
+                                    self.request,
+                                    'شما قبلا از این کد تخفیف استفاده کردید',
+                                )
+                                return reverse(
+                                    "orders:payment-conform", kwargs={"pk": pk}
+                                )
+
                             order_total_price = obj.calculate_total_price()
                             discount_price = 0
 
                             if discount_obj.percentage_discount:
                                 discount_price = order_total_price * (
-                                    discount_obj.percent / 100
+                                        discount_obj.percent / 100
                                 )
 
                             elif not discount_obj.percentage_discount:
@@ -510,7 +530,7 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
                 return reverse("orders:payment-conform", kwargs={"pk": pk})
 
         elif (
-            delivery_id == 3 and site.active_in_same_city_delivery
+                delivery_id == 3 and site.active_in_same_city_delivery
         ):  # delivery in same city
             if order.store.orgin_city_id == order.address.city_code:
                 order.in_city_delivery = True
@@ -611,7 +631,7 @@ class ConformPayment(LoginRequiredMixin, View):
         order = self.order
 
         if (
-            order.vip_post or
+                order.vip_post or
                 order.tipax_post_delivery or
                 order.in_city_delivery or
                 order.physical_delivery
@@ -641,9 +661,9 @@ class ConformPayment(LoginRequiredMixin, View):
             base = "https://" if request.is_secure() else "http://"
 
             callback_url = (
-                base
-                + str(request.get_host())
-                + reverse("orders:payment-result", kwargs={"pk": pk})
+                    base
+                    + str(request.get_host())
+                    + reverse("orders:payment-result", kwargs={"pk": pk})
             )
 
             data = {

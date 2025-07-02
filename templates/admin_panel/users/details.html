@@ -30,6 +30,12 @@
                             </a>
                         </td>
                         <td class="text-center">
+                            <a href="{% url 'admin_panel:user-admin-login' item.id %}" class="btn btn-sm btn-warning"
+                               data-toggle="tooltip" title="وارد حساب شدن">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
                             <a href="{% url 'admin_panel:user-update' item.id %}" class="btn btn-sm btn-info"
                                data-toggle="tooltip" title="ویرایش">
                                 <i class="fa fa-edit"></i>

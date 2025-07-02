@@ -478,7 +478,7 @@ class LegalPersonHelpText(RedirectView):
             self.request,
             "برای ورود افراد حقیقی اول با ورود با شماره یا نامبر و تایید ان با وارد کردن پیامک ارسالی به ان شماره و سپس باید وارد قسمت پروفایل کاربری شده و در بخش اطلاعات حساب باید شماره اقتصادی و بقیه اطلاعلات را وارد کنید و بعد از این فرایند شما می توانید فاکتور رسمی دریافت کنید  ",
         )
-        return self.request.META.get("HTTP_REFERER")
+        return reverse('user:login')
 
 
 def e_namad(request):

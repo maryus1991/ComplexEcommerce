@@ -557,6 +557,10 @@ class StoreListCategoryView(UserStoreStaffMixin, ListView):
     paginate_by = 25
     context_object_name = "categories"
 
+    def dispatch(self, request, *args, **kwargs):
+        messages.success(request, '')
+        return super().dispatch(request, *args, **kwargs)
+
     def get_queryset(self):
         query = (
             super()

@@ -67,8 +67,17 @@ class SiteSetting(models.Model):
     active_banner_in_main_page = models.BooleanField(
         default=True, verbose_name="فعال کردن بنر ها در صفحه اصلی"
     )
+    active_fast_links_in_footer_page = models.BooleanField(
+        default=True, verbose_name="فعال کردن  لینک های سریع در پایین صفحه"
+    )
     active_categories_in_main_page = models.BooleanField(
         default=True, verbose_name="فعال کردن محبوب ترین دسته ها در صفحه اصلی"
+    )
+    active_brands_in_main_page = models.BooleanField(
+        default=True, verbose_name="فعال کردن محبوب ترین برندها در صفحه اصلی"
+    )
+    active_blog_categories_in_main_page = models.BooleanField(
+        default=True, verbose_name="فعال کردن محبوب ترین دسته های مطالب خواندی در صفحه اصلی"
     )
     active_newset_peoduct_in_main_page = models.BooleanField(
         default=True, verbose_name="فعال کردن جدیدترین محصولات در صفحه اصلی"

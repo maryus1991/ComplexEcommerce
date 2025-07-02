@@ -730,8 +730,10 @@
                         {% endif %}
 
                         <!-- PRODUCT IMGAE -->
-                        <img src="{{ product.picture.url }}" alt="product-1"
-                             class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3">
+                        <a href="{% url 'product:detail' product.id %}">
+                            <img src="{{ product.picture.url }}" alt="product-1"
+                                 class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3">
+                        </a>
                         <!-- PRODUCT MAIN -->
                         <div class="px-2 lg:px-4 mb-3">
                             <a href="{% url 'product:detail' product.id %}"

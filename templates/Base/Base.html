@@ -14,7 +14,7 @@
 <body class="font-Dana bg-[#f3f4f6] text-zinc-900 dark:bg-zinc-900 dark:text-white overflow-x-hidden transition-all">
 
 {% render_partial 'sitesetting.views.header_render_partial' %}
-<main class="container child:mt-8">
+<main class=" {% if request.path != '/' %} container {% endif %} child:mt-8 px-2">
     <!-- Breadcrumbs -->
     <section>
         <ul class="flex items-center gap-x-2 text-gray-400 text-sm lg:text-base">

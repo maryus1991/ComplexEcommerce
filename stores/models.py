@@ -63,6 +63,9 @@ class Store(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def calculate_store_sold_orders(self):
+        return sum(list(self.store_sold_orders.filter(is_returned_by_admin=False).values_list("price", flat=True)))
+
     def __str__(self):
         return self.name
 
@@ -77,6 +80,10 @@ class StoreApps(models.Model):
     file = models.FileField(upload_to="app/", verbose_name="فایل")
     name = models.CharField(max_length=100, verbose_name="نام")
     is_active = models.BooleanField(default=False, verbose_name="فعال / غیر فعال")
+    short_description = models.CharField(
+        max_length=321,null=True,
+        blank=True,verbose_name='توضیحات کوتاه'
+    )
     admin_verified = models.BooleanField(default=True)
 
     def __str__(self):

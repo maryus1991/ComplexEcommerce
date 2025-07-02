@@ -25,8 +25,8 @@ from user.mixins.logins import CustomLoginRequiredMixin
 from config.settings import BASE_DIR
 from user.forms import ActiveAccountForm as NumberForAddToLettersForm
 
-from product.models import Product, ProductCategory
-from blog.models import Blog
+from product.models import Product, ProductCategory, ProductBrand
+from blog.models import Blog, BlogCategory
 
 
 
@@ -81,6 +81,16 @@ class Main(TemplateView):
         context["categories"] = (
             ProductCategory.objects.filter(is_active=True)
             .order_by("products__count")
+            .all()[0:5]
+        )
+        context["brands"] = (
+            ProductBrand.objects.filter(is_active=True)
+            .order_by("products__count")
+            .all()[0:5]
+        )
+        context["categories_blog"] = (
+            BlogCategory.objects.filter(is_active=True)
+            .order_by("-blogs")
             .all()[0:5]
         )
         context["products_newst"] = products.order_by("-id").all()
