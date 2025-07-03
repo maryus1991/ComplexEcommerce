@@ -13,7 +13,8 @@ ENV PYTHONUNBUFFERED 1
 
 COPY req.txt req.txt
 COPY . /app/
-
+RUN apt-get update
+RUN apt-get install -y postgresql-client
 
 RUN pip install -r req.txt
 

@@ -1,5 +1,16 @@
 {% load products_tags %}
 
+<head>
+    {% block header %}
+
+    {% endblock %}
+    {% include 'Base/Header/References/References.html' with site=site  %}
+    <title>{% block title %} {% endblock %}</title>
+<link rel="icon" href="{{ site.logo.url }}">
+<meta name="description" content="{{ site.short_description }}">
+</head>
+<body class="font-Dana bg-[#f3f4f6] text-zinc-900 dark:bg-zinc-900 dark:text-white overflow-x-hidden transition-all">
+
 <!-- NAV BAR  -->
 <nav class="w-full hidden md:flex shadow py-5 bg-white dark:bg-zinc-700">
     <div class="container flex items-center justify-between">
@@ -9,29 +20,6 @@
             <img src="{{ site.logo.url }}" alt="{{ site.title }}" class="w-20 h-10 "/>
 
         </a>
-        <script>
-            window.onload = function () {
-                // 1. Create a new <link> element
-                const link = document.createElement('link');
-
-                // 2. Set its attributes
-                link.rel = 'icon';
-                link.href = '{{ site.logo.url }}'; // Make sure 'site.logo.url' is correctly rendered by your template engine
-
-                // 3. Append the created link element to the <head>
-                document.getElementsByTagName('head')[0].appendChild(link);
-
-                // 1. Create a new <link> element
-                const meta = document.createElement('meta');
-
-                // 2. Set its attributes
-                meta.name = 'description';
-                meta.content = '{{ site.short_description }}'; // Make sure 'site.logo.url' is correctly rendered by your template engine
-
-                // 3. Append the created link element to the <head>
-                document.getElementsByTagName('head')[0].appendChild(meta);
-            };
-        </script>
         {% with request.path as url %}
 
             <!-- MENU -->

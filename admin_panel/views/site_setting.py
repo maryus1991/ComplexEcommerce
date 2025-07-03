@@ -4,7 +4,7 @@ from sitesetting.models import SiteSetting
 from admin_panel.forms import SiteSettingModelForm
 from user.mixins.logins import AdminUserMixin
 from django.views.generic import View, TemplateView
-
+from django.utils.text import get_valid_filename
 from django.http import JsonResponse
 from django.conf import settings
 import os
@@ -13,7 +13,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.contrib import messages
 from django.shortcuts import redirect, reverse, HttpResponse
-
+from django.core.files.storage import FileSystemStorage
 
 class UpdateSiteSettingView(AdminUserMixin, UpdateView):
     """
@@ -124,12 +124,17 @@ class UploadFontView(AdminUserMixin, View):
         if not os.path.exists(user_upload_path):
             os.makedirs(user_upload_path, mode=0o755, exist_ok=True)
 
-        try:
-            # ذخیره فایل
-            file_path = os.path.join(user_upload_path, uploaded_file.name)
-            default_storage.save(file_path, ContentFile(uploaded_file.read()))
+        font_storage = FileSystemStorage(
+            location=os.path.join(settings.MEDIA_ROOT, 'check_editor/uploads/fonts'),
+            base_url='/media/check_editor/uploads/fonts/'
+        )
 
-            messages.success(request, f'فونت "{uploaded_file.name}" با موفقیت آپلود شد')
+        try:
+            file_name = get_valid_filename(os.path.basename(uploaded_file.name))
+            saved_name = font_storage.save(file_name, uploaded_file)
+
+            messages.success(request, f'فونت "{saved_name}" با موفقیت آپلود شد')
+
         except Exception as e:
             messages.error(request, f'خطا در آپلود فونت: {str(e)}')
 
