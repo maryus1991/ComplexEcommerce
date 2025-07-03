@@ -1,6 +1,7 @@
 from django import forms
 from django.core.validators import FileExtensionValidator
 from ckeditor_uploader.fields import RichTextUploadingFormField
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from phonenumber_field.formfields import PhoneNumberField
 from phonenumber_field.validators import validate_phonenumber
 
@@ -175,7 +176,9 @@ class AddDiscountForm(forms.ModelForm):
 
 
 class AddProductForm(forms.ModelForm):
-    description = RichTextUploadingFormField()
+    description = RichTextUploadingFormField(
+        widget=CKEditorUploadingWidget(attrs={'id': 'id_description'})
+    )
     store = forms.ModelChoiceField(
         queryset=Store.objects.all(),
         required=True,
@@ -450,7 +453,9 @@ class SiteSettingModelForm(forms.ModelForm):
         ],
     )
 
-    long_description = RichTextUploadingFormField()
+    long_description = forms.CharField(
+        widget=CKEditorUploadingWidget(attrs={'id': 'id_description'})
+    )
     phone = PhoneNumberField(
         widget=forms.TextInput(
             attrs={

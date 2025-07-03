@@ -15,30 +15,30 @@
             <h3 class="box-title">بروز رسانی اطلاعات فروشگاه یا اضافه کردن فروشگاه</h3>
             {% if item %}
                 <div class="pull-left">
-                <a href="{% url 'admin_panel:store-detail' item.id %}" class="btn btn-sm btn-success"
-                   data-toggle="tooltip" title="مشاهده">
-                    <i class="fa fa-eye"></i>
-                </a>
-                <a href="{% url 'admin_panel:store-update' item.id %}" class="btn btn-sm btn-info"
-                   data-toggle="tooltip" title="ویرایش">
-                    <i class="fa fa-edit"></i>
-                </a>
-                <a href="{% url 'admin_panel:store-active-deactivate' item.id %}"
-                   class="btn btn-sm btn-warning"
-                   data-toggle="tooltip"
-                   title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
-                    <i class="fa fa-power-off"></i>
-                </a>
-                <a href="{% url 'admin_panel:store-verify' item.id %}"
-                   class="btn btn-sm btn-info"
-                   data-toggle="tooltip"
-                   title="{% if item.is_active %}تایید نکردن اطلاعات{% else %}تایید کردن اطلاعات{% endif %}">
-                    <i class="fa fa-key"></i>
-                </a>
-                <a href="{% url 'admin_panel:store-delete' item.id %}" class="btn btn-sm btn-danger"
-                   data-toggle="tooltip" title="حذف">
-                    <i class="fa fa-trash"></i>
-                </a>
+                    <a href="{% url 'admin_panel:store-detail' item.id %}" class="btn btn-sm btn-success"
+                       data-toggle="tooltip" title="مشاهده">
+                        <i class="fa fa-eye"></i>
+                    </a>
+                    <a href="{% url 'admin_panel:store-update' item.id %}" class="btn btn-sm btn-info"
+                       data-toggle="tooltip" title="ویرایش">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <a href="{% url 'admin_panel:store-active-deactivate' item.id %}"
+                       class="btn btn-sm btn-warning"
+                       data-toggle="tooltip"
+                       title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                        <i class="fa fa-power-off"></i>
+                    </a>
+                    <a href="{% url 'admin_panel:store-verify' item.id %}"
+                       class="btn btn-sm btn-info"
+                       data-toggle="tooltip"
+                       title="{% if item.is_active %}تایید نکردن اطلاعات{% else %}تایید کردن اطلاعات{% endif %}">
+                        <i class="fa fa-key"></i>
+                    </a>
+                    <a href="{% url 'admin_panel:store-delete' item.id %}" class="btn btn-sm btn-danger"
+                       data-toggle="tooltip" title="حذف">
+                        <i class="fa fa-trash"></i>
+                    </a>
                 </div>
             {% endif %}
         </div>
@@ -346,9 +346,50 @@
 
             <!-- توضیحات -->
             <div class="col-md-12">
-                {{ form.description }}
+                
                 {{ form.media }}
+                {{ form.description }}
+                
             </div>
+        <script>
+     fetch('{% url "admin_panel:font_list_json" %}')
+        .then(response => response.json())
+        .then(fontList => {
+            const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
+            
+            CKEDITOR.instances['{{ form.description.id_for_label }}'].destroy(true);
+
+            CKEDITOR.replace('{{ form.description.id_for_label }}', {
+                toolbar: [
+            ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
+             'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
+             'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
+             'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
+             'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
+             'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
+             'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
+             'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
+             'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
+             'Styles', 'Format', 'Font', 'FontSize'],
+
+        ],
+                width: 750,
+                height: 200,
+                skin: 'moono',
+                extraPlugins: 'font',
+                contentsCss: ['{% url 'admin_panel:fonts.css' %}'],
+                font_names: fontNamesStr +
+                    'Arial/Arial, Helvetica, sans-serif;' +
+                    'Courier New/Courier New, Courier, monospace;' +
+                    'Georgia/Georgia, serif;' +
+                    'Tahoma/Tahoma, Geneva, sans-serif;' +
+                    'Times New Roman/Times New Roman, Times, serif;' +
+                    'Verdana/Verdana, Geneva, sans-serif;'
+            });
+        });
+</script>
+            
+
 
             {% if item is not None and item.about_image and item.logo %}
                 عکس مورد استفاده :
@@ -363,6 +404,7 @@
             </div>
         </form>
     </div>
+    
 
 {% endblock %}
 

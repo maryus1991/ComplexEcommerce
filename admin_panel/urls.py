@@ -11,6 +11,11 @@ urlpatterns = [
         views.UpdateSiteSettingView.as_view(),
         name="update-site-setting",
     ),
+    path('fonts/', views.FontManagerView.as_view(), name='font-manager'),
+    path('fonts/upload/', views.UploadFontView.as_view(), name='upload-font'),
+    path('fonts/fonts.css', views.dynamic_fonts_css, name='fonts.css' ),
+    path('fonts/json/list/', views.font_list_json, name='font_list_json' ),
+    path('fonts/delete/<str:font_name>', views.DeleteFontView.as_view(), name='delete-font'),
     # banners
     path("banners/", views.BannersListView.as_view(), name="banners-list"),
     path("banners/create/", views.BannersCreateView.as_view(), name="banners-create"),

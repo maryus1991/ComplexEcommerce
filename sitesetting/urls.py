@@ -13,7 +13,7 @@ from .views import (
     dynamic_favicon
 )
 from .sitemap import StaticSitemap, UsedAppSiteMap
-
+from admin_panel.views import dynamic_fonts_css
 
 app_name = "site"
 
@@ -28,6 +28,8 @@ urlpatterns = [
     path("apps/download/<int:pk>", DownloadUsedAppView.as_view(), name="apps-download"),
     path("partial/header/", header_render_partial, name="partial-header"),
     path("partial/footer/", footer_render_partial, name="partial-footer"),
+    path('fonts/fonts.css', dynamic_fonts_css, name='fonts.css'),
+
 ]
 
 sitemaps = {

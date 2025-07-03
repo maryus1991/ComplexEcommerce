@@ -37,7 +37,6 @@ DEBUG = bool(int(os.getenv("DJANGO_DEBUG", default="0")))
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="*").split(",")
 
-
 CSRF_COOKIE_SECURE = True  # ارسال کوکی CSRF فقط از طریق HTTPS
 SESSION_COOKIE_SECURE = True  # ارسال کوکی session فقط از طریق HTTPS
 CSRF_COOKIE_HTTPONLY = True  # جلوگیری از دسترسی JavaScript به کوکی C
@@ -46,7 +45,6 @@ CSRF_TRUSTED_ORIGINS = [
     "https://amvajsarmad.com",
     "https://*.amvajsarmad.com",
 ]
-
 
 # dbbackup config
 DBBACKUP_STORAGE = "django.core.files.storage.FileSystemStorage"
@@ -205,13 +203,29 @@ LOGIN_REDIRECT_URL = "/"
 
 # check editor config
 CKEDITOR_UPLOAD_PATH = "check_editor/uploads/"
+CKEDITOR_RESTRICT_BY_USER = True
+CKEDITOR_ALLOW_NONIMAGE_FILES = True
 
 CKEDITOR_CONFIGS = {
-    "default": {
-        "toolbar": "advance",
-        "width": 750,
-        "height": 200,
-        "skin": "moono",
+     'default': {
+        'auto_inline': False,
+        'toolbar': [
+            ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
+             'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
+             'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
+             'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
+             'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
+             'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
+             'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
+             'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
+             'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
+             'Styles', 'Format', 'Font', 'FontSize'],
+
+        ],
+        'width': '999px',
+        'height': 300,
+        'extraPlugins': 'font,colorbutton,justify,iframe',
+        'contentsCss': ["/admin-panel/fonts/fonts.css"],
     },
     "mobile": {
         "toolbar": "Basic",

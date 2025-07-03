@@ -55,6 +55,44 @@
                 {{ form.message_message }}
                 {{ form.media }}  {# برای جاوااسکریپت‌های مربوط به فیلدهای فرم (مانند WYSIWYG editors) #}
             </div>
+                    <script>
+     fetch('{% url "admin_panel:font_list_json" %}')
+        .then(response => response.json())
+        .then(fontList => {
+            const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
+            CKEDITOR.instances['{{ form.message_message.id_for_label }}'].destroy(true);
+
+            CKEDITOR.replace('{{ form.message_message.id_for_label }}', {
+   
+                width: 750,
+                height: 200,
+                skin: 'moono',
+                toolbar: [
+            ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
+             'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
+             'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
+             'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
+             'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
+             'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
+             'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
+             'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
+             'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
+             'Styles', 'Format', 'Font', 'FontSize'],
+
+        ],
+                extraPlugins: 'font',
+                contentsCss: ['{% url 'admin_panel:fonts.css' %}'],
+                font_names: fontNamesStr +
+                    'Arial/Arial, Helvetica, sans-serif;' +
+                    'Courier New/Courier New, Courier, monospace;' +
+                    'Georgia/Georgia, serif;' +
+                    'Tahoma/Tahoma, Geneva, sans-serif;' +
+                    'Times New Roman/Times New Roman, Times, serif;' +
+                    'Verdana/Verdana, Geneva, sans-serif;'
+            });
+        });
+</script>
+
 
         </div>
 

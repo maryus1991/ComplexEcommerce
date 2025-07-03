@@ -1,4 +1,5 @@
 {% load static %}
+{% load static %}
 {% load store_tags %}
 {% load jalali_tags %}
 <!DOCTYPE html>
@@ -38,7 +39,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+<script src="/static/ckeditor/ckeditor/ckeditor.js"></script>
 
     {% block header_reference %}
 
@@ -68,6 +69,7 @@ desired effect
 |---------------------------------------------------------|
 -->
 <body class="hold-transition skin-blue sidebar-mini">
+
 <div class="wrapper">
 
     <!-- Main Header -->
@@ -573,6 +575,10 @@ desired effect
                                 <a href="{% url 'admin_panel:banners-list' %}"><i class="fa fa-link"></i>
                                     <span>بنر های صفحه اصلی</span>
                                 </a>
+                            </li>                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:font-manager' %}"><i class="fa fa-link"></i>
+                                    <span>فونت ها</span>
+                                </a>
                             </li>
 
 
@@ -783,6 +789,7 @@ desired effect
 {% block footer_reference %}
 
 {% endblock %}
+
 
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
      Both of these plugins are recommended to enhance the

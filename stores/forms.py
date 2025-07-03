@@ -10,6 +10,7 @@ from phonenumber_field.formfields import PhoneNumberField
 from phonenumber_field.validators import validate_phonenumber
 from product.models import Product, ProductCategory, ProductBrand
 from ckeditor_uploader.fields import RichTextUploadingFormField
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from blog.models import Blog, BlogCategory
 from .models import Store, StoreApps
 from .upload_multi_image import MultiImageField
@@ -643,7 +644,9 @@ class BrandAndCategorySearchForm(forms.Form):
 
 
 class AddProductForm(forms.ModelForm):
-    description = RichTextUploadingFormField()
+    description = forms.CharField(
+        widget=CKEditorUploadingWidget( attrs={'id': 'id_description'})
+    )
     category = forms.ModelChoiceField(
         queryset=ProductCategory.objects.filter(is_active=True).all(),
         required=True,
@@ -894,7 +897,9 @@ class AddStoreForm(forms.ModelForm):
         validators=[validate_phonenumber],
     )
 
-    description = RichTextUploadingFormField()
+    description = forms.CharField(
+        widget=CKEditorUploadingWidget(attrs={'id': 'id_description'})
+    )
 
     class Meta:
         model = Store
