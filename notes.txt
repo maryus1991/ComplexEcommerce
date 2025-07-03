@@ -22,6 +22,4 @@ requests for send message @celery
 restore backup with one click
 اضافه کردن کش برای سایت ستینگ
 
-قابلبت جابه جایی و وبرایش برای ویژگی ها مشخصات و تگ های محصولات
-توضیحات و صفحه مخصوص برای برنامه ها
 

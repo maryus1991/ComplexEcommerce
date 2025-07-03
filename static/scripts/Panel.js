@@ -1,9 +1,7 @@
 
-const toggleThemeBtns = document.querySelectorAll('.toggle-theme');
 const openSidebarBtn = document.querySelector('.open-sidebar-btn');
 const closeSidebarBtn = document.querySelector('.close-sidebar-btn');
 const sidebarMobile = document.querySelector('.sidebar-mobile');
-const overlay = document.querySelector('.overlay');
 const notifBox = document.querySelector('.notif-box');
 const notifToggleBtn = document.querySelector('.notif-toggle-btn');
 
