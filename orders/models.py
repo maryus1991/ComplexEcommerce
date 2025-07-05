@@ -127,14 +127,18 @@ class Order(models.Model):
             return price.first().price
         else:
             price = calculate_price_post()
-            DeliveryPrices.objects.create(
-                is_tipax=False,
-                origin_city_id=self.store.orgin_city_id,
-                destination_city_id=self.address.city_code,
-                date=now(),
-                price=price,
-            )
-            return price
+            if price is not None:
+                DeliveryPrices.objects.create(
+                    is_tipax=False,
+                    origin_city_id=self.store.orgin_city_id,
+                    destination_city_id=self.address.city_code,
+                    date=now(),
+                    price=price,
+                )
+                return price
+            else:
+                return -1
+
 
     def calculate_total_price(self):
         if not self.is_paid or not self.canceled:

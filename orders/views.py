@@ -80,7 +80,8 @@ class AddOrder(LoginRequiredMixin, RedirectView):
         detail = OrderDetail.objects.get_or_create(order=order, product=product)
 
         if product.count <= 0:
-            messages.error(request, "تعداد درخواستی شما از موجودی کلا بیشتر می باشد")
+            messages.error(request, "موجودی کالا تموم شده است")
+            detail[0].delete()
             return request.META.get("HTTP_REFERER", "/")
 
         if int(num) > product.count:
@@ -491,10 +492,10 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
             store_id=store_id,
         )
 
-        if delivery_id == 1 and site.active_post_delivery:  # delivery with post
+        if delivery_id == 1 and site.active_post_delivery and order.store.have_post_delivery:  # delivery with post
             price = order.calculate_post_price()
 
-            if price >= 1:
+            if price and price >= 1:
                 order.vip_post = True
                 order.tipax_post_delivery = False
                 order.in_city_delivery = False
@@ -511,10 +512,10 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
                 )
                 return reverse("orders:payment-conform", kwargs={"pk": pk})
 
-        elif delivery_id == 2 and site.active_tipax_delivery:  # delivery with tipax
+        elif delivery_id == 2 and site.active_tipax_delivery and order.store.have_tipax_delivery:  # delivery with tipax
 
             price = order.calculate_tipax_price()
-            if price >= 1:
+            if price and price >= 1:
                 order.tipax_post_delivery = True
                 order.vip_post = False
                 order.in_city_delivery = False
@@ -530,7 +531,7 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
                 return reverse("orders:payment-conform", kwargs={"pk": pk})
 
         elif (
-                delivery_id == 3 and site.active_in_same_city_delivery
+                delivery_id == 3 and site.active_in_same_city_delivery and order.store.have_in_same_city_delivery and order.store.in_same_city_delivery_price
         ):  # delivery in same city
             if order.store.orgin_city_id == order.address.city_code:
                 order.in_city_delivery = True
@@ -546,7 +547,7 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
                 )
                 return reverse("orders:payment-conform", kwargs={"pk": pk})
 
-        elif delivery_id == 4 and site.active_physical_delivery:  # physical delivery
+        elif delivery_id == 4 and site.active_physical_delivery and order.store.have_physical_delivery:  # physical delivery
 
             order.physical_delivery = True
             order.in_city_delivery = False
@@ -650,13 +651,14 @@ class ConformPayment(LoginRequiredMixin, View):
                 return redirect("dashboard:order_detail", pk=pk)
 
             result = self.result
+            print(result >= self.site.min_payment, type(result),type(self.site.min_payment) )
 
-            #            if result < 100000 and not settings.DEBUG:
-            #                messages.warning(
-            #                    request,
-            #                    'قیمت سفارش شما نباید کمتر از100,000 تومان باشد'
-            #                )
-            #                return redirect('orders:payment-conform', pk=pk)
+            if result <= self.site.min_payment:
+                messages.warning(
+                    request,
+                     ' قیمت سفارش شما نباید کمتر از {:,} تومان باشد '.format(self.site.min_payment)
+                )
+                return redirect('orders:payment-conform', pk=pk)
 
             base = "https://" if request.is_secure() else "http://"
 
@@ -685,9 +687,16 @@ class ConformPayment(LoginRequiredMixin, View):
                 "content-length": str(len(data)),
             }
 
-            response = requests.post(
-                ZARINPAL_SEND_DATA_URL, data=data, headers=headers, timeout=20
-            )
+            try:
+                response = requests.post(
+                    ZARINPAL_SEND_DATA_URL, data=data, headers=headers, timeout=20
+                )
+            except Exception as e:
+                messages.error(
+                    self.request,
+                    'مشکلی در ارتباط با سرور پیش امده است لطفا بعدا امتحان کنید'
+                )
+                return redirect(self.request.META.get("HTTP_REFERER", "/"))
 
             if response.status_code == 200:
                 authority = response.json()["data"]["authority"]

@@ -1,16 +1,8 @@
 # store apps
 from django.views.generic import (
-    DetailView,
-    ListView,
-    TemplateView,
-    CreateView,
-    FormView,
-    UpdateView,
     RedirectView,
     View,
 )
-from django.db.models import Q
-from django.db.models.aggregates import Count
 from django.shortcuts import (
     get_object_or_404,
     reverse,
@@ -18,65 +10,46 @@ from django.shortcuts import (
     redirect,
     get_list_or_404,
 )
-from django.urls import reverse_lazy
-from django.contrib.auth import get_user_model
 from django.contrib import messages
-from django.utils.timezone import now
-from phonenumbers.phonenumber import PhoneNumber
-from django.db import transaction
-from django.core.exceptions import (
-    PermissionDenied,
-    SuspiciousOperation,
-    ValidationError,
-)
-from django.views.decorators.http import require_http_methods
-from django.utils.decorators import method_decorator
-from django.core.files.uploadedfile import UploadedFile
-from orders.models import Order
-from stores.models import Store, StoreComment, StoreTag, StoreCategory, StoreApps
-from dashboard.models import Ticket, TicketConversation
-from django.utils.dateparse import parse_date
-from stores.forms import (
-    AddProductForm,
-    AddBrandForm,
-    AddCategoryForm,
-    AddStoreForm,
-    StoreSendTicketForm,
-    AddStoreUserStaffForm,
-    AddStoreAppForm,
-    AddStoreBlogForm,
-    AddStoreBlogCategoryForm,
-    ProductSearchForm,
-    BrandAndCategorySearchForm,
-    TicketFilterForm,
-    OrderFilteringForm,
-    StoreBlogFilteringForm,
-    StoreUsersStaffFilteringForm,
-)
-from product.models import (
-    Product,
-    ProductTag,
-    ProductFeature,
-    ProductGallery,
-    ProductBrand,
-    ProductCategory,
-)
-
-from django.db.models import Value
-from django.db.models.functions import Concat
-from blog.models import Blog, BlogCategory
-from auditlog.models import LogEntry
-from django.contrib.contenttypes.models import ContentType
-
-from user.mixins.logins import UserStoreStaffMixin, AdminUserMixin, StoreAdminUserStaff
-from dashboard.forms import TicketConversationForm
-import jdatetime
-
+from stores.models import StoreApps
+from stores.forms import AddStoreAppForm
+from user.mixins.logins import UserStoreStaffMixin
 from stores.validators import is_valid_message
-from utils.tipax_price_calc import validate_city
+from config import settings
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.core.files.storage import default_storage
+import os
+import shutil
+from django.core.files import File
 
-User = get_user_model()
+@method_decorator(csrf_exempt, name='dispatch')
+class ChunkedFileUploadView(UserStoreStaffMixin, View):
+    def post(self, request):
+        chunk = request.FILES.get('file')
+        chunk_number = int(request.POST.get('chunkNumber'))
+        total_chunks = int(request.POST.get('totalChunks'))
+        filename = request.POST.get('filename')
 
+        tmp_dir = f'media/uploads/tmp/{filename}'
+        os.makedirs(tmp_dir, exist_ok=True)
+        chunk_path = os.path.join(tmp_dir, f'chunk_{chunk_number}')
+
+        with open(chunk_path, 'wb+') as f:
+            for part in chunk.chunks():
+                f.write(part)
+
+        if chunk_number == total_chunks:
+            final_path = f'media/app/{filename}'
+            with open(final_path, 'wb+') as final_file:
+                for i in range(1, total_chunks + 1):
+                    chunk_file = os.path.join(tmp_dir, f'chunk_{i}')
+                    with open(chunk_file, 'rb') as part:
+                        final_file.write(part.read())
+            shutil.rmtree(tmp_dir)
+
+        return JsonResponse({'status': 'ok'})
 
 class StoreAppsView(UserStoreStaffMixin, View):
     """
@@ -116,6 +89,13 @@ class StoreAppsView(UserStoreStaffMixin, View):
         form = AddStoreAppForm(request.POST, request.FILES)
         if form.is_valid():
             form.instance.store = store
+            uploaded_filename = self.request.POST.get('uploaded_filename')
+            if uploaded_filename:
+                full_path = os.path.join(settings.MEDIA_ROOT, 'app', uploaded_filename)
+                if os.path.exists(full_path):
+                    with open(full_path, 'rb') as f:
+                        form.instance.file.save(uploaded_filename, File(f), save=False)
+                    os.remove(full_path)  # بعد از ذخیره فایل پاکش کن (اختیاری)
             form.save()
             messages.success(self.request, "فایل شما ذخیره شد")
         else:
@@ -163,8 +143,12 @@ class RemoveAppsOrActiveOrDeactivateAppsView(UserStoreStaffMixin, View):
             pk=pk,
             store=store,
         )
-
-        obj.delete()
-        messages.info(self.request, "فایل شما حذف شد")
-
+        if obj.admin_verified:
+            obj.delete()
+            messages.info(self.request, "فایل شما حذف شد")
+        else:
+            messages.error(
+                self.request,
+                "ادمین سایت این برنامه را غیر فعال کرده است برای فعال کردن ان و انتشار ان با ادمین سایت در ارتباط باشید",
+            )
         return redirect("store:app-list")

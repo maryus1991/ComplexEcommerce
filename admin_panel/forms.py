@@ -485,6 +485,11 @@ class SiteSettingModelForm(forms.ModelForm):
                     "class": "form-control",
                 }
             ),
+            "min_payment": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                }
+            ),
             "copy_right_text": forms.TextInput(
                 attrs={
                     "class": "form-control",
@@ -631,8 +636,8 @@ class UsedAppModelForm(forms.ModelForm):
             attrs={
                 "class": 'form-control select2 select2-hidden-accessible"',
                 "style": "width: 100%;",
-                "tabindex ": "-1",
-                "aria - hidden ": "true",
+                "tabindex": "-1",
+                "aria-hidden ": "true",
             }
         ),
         empty_label="فروشگاه را انتخاب کنید",

@@ -1,7 +1,7 @@
 {% extends 'Base/AdminBase.html' %}
 
 {% block title %}
-    بروز رسانی یا ساخت لینک سریع جدید
+    بروز رسانی یا ساخت برنامه جدید
 {% endblock %}
 
 {% block header_reference %}
@@ -62,9 +62,11 @@
     <li class="active">
         صفحه مدیریت
     </li>
-    <li class="active"> لینک سریع
+    <li class="active">برنامه ها
+
     </li>
-    <li class="active"> بروز رسانی یا ساخت لینک سریع جدید
+    <li class="active"> بروز رسانی یا ساخت برنامه
+        جدید
 
     </li>
 {% endblock %}
@@ -75,128 +77,244 @@
             padding-left: 0 !important;
             padding-right: 0 !important;
         }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group-addon.custom-addon {
+            min-width: 120px;
+            text-align: right;
+            background: #5cb85c;
+            color: white;
+            border-color: #4cae4c;
+        }
+
+        .btn-upload {
+            margin-top: 10px;
+        }
+
+        .progress-container {
+            margin-top: 15px;
+            display: none;
+        }
     </style>
+
     {% if form.errors %}
-        <div class="col-md-12 bg-red" style="margin-bottom: 20px; margin-top: 50px; border-radius: 10px">
+        <div class="alert alert-danger alert-dismissible" style="margin-top: 20px; border-radius: 5px">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h4><i class="icon fa fa-ban"></i> خطا!</h4>
             {{ form.errors }}
-
         </div>
-
     {% endif %}
 
     <!-- Main content -->
     <section class="content" style="min-height: 600px; margin-top: 20px;">
-
         <div class="row">
-
             <div class="col-md-12">
-
-                <div class="box box-info">
-                    <div class="box-header">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
                         <h3 class="box-title">
-                            بروز رسانی یا ساخت لینک سریع جدید
-
+                            <i class="fa fa-plus-circle"></i> بروز رسانی یا ساخت برنامه جدید
                         </h3>
-                        <!-- tools box -->
-                    {% if item %}
-                    	
-                        <div class="pull-left">
-                            <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
-                                    data-toggle="tooltip" title="" data-original-title="Collapse">
-                                <i class="fa fa-minus"></i></button>
-                            <a href="{{ item.get_absolute_url }}" class="btn btn-sm btn-success"
-                               data-toggle="tooltip" title="مشاهده">
-                                <i class="fa fa-eye"></i>
-                            </a>
-                            <a href="{% url 'admin_panel:apps-active-deactivate' item.id %}"
-                               class="btn btn-sm btn-warning"
-                               data-toggle="tooltip"
-                               title="{% if item.admin_verified %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
-                                <i class="fa fa-power-off"></i>
-                            </a>
-                            <a href="{% url 'admin_panel:apps-delete' item.id %}" class="btn btn-sm btn-danger"
-                               data-toggle="tooltip" title="حذف">
-                                <i class="fa fa-trash"></i>
-                            </a>
 
-                        </div>
-                    {% endif %} 
-                        <!-- /. tools -->
+                        {% if item %}
+                            <div class="box-tools pull-left">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                <a href="{{ item.get_absolute_url }}" class="btn btn-box-tool text-green"
+                                   data-toggle="tooltip" title="مشاهده">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <a href="{% url 'admin_panel:apps-active-deactivate' item.id %}"
+                                   class="btn btn-box-tool text-yellow"
+                                   data-toggle="tooltip"
+                                   title="{% if item.admin_verified %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                    <i class="fa fa-power-off"></i>
+                                </a>
+                                <a href="{% url 'admin_panel:apps-delete' item.id %}" class="btn btn-box-tool text-red"
+                                   data-toggle="tooltip" title="حذف">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        {% endif %}
                     </div>
 
                     <!-- /.box-header -->
-                    <div class="box-body pad">
-                        <form enctype="multipart/form-data" method="post" action="">
+                    <div class="box-body">
+                        <form enctype="multipart/form-data" method="post" action="" class="form-horizontal">
                             {% csrf_token %}
+                            <input type="hidden" name="uploaded_filename" id="uploaded_filename">
+                            
+                            <div class="form-section">
+                                <h4 class="form-header"><i class="fa fa-info-circle"></i> اطلاعات پایه</h4>
 
-                            <div class="col-md-12 form-group">
-                                <div class="">
+                                <div class="row">
                                     <div class="col-md-4">
-                                        <div class="input-group input-group" dir="rtl">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-success">
-                                            {{ form.name.label }}
-
-                                          </span>
-                                        </span>
-                                            {{ form.name }}
-
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4">{{ form.name.label }}</label>
+                                            <div class="col-md-8">
+                                                {{ form.name }}
+                                                <span class="help-block">نام برنامه را وارد کنید</span>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4" dir="rtl">
-                                        <div class="input-group input-group">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-success">
-                                            {{ form.file.label }}
-
-                                          </span>
-                                        </span>
-                                            {{ form.file }}
-
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4">{{ form.store.label }}</label>
+                                            <div class="col-md-8">
+                                                {{ form.store }}
+                                                <span class="help-block">فروشگاه برنامه را انتخاب کنید</span>
+                                            </div>
                                         </div>
-
-                                    </div>
-                                    <div class="col-md-4" dir="rtl">
-                                        <div class="input-group input-group">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-success">
-                                            {{ form.store.label }}
-
-                                          </span>
-                                        </span>
-                                            {{ form.store }}
-
-                                        </div>
-
                                     </div>
 
-
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4">{{ form.file.label }}</label>
+                                            <div class="col-md-8">
+                                                {{ form.file }}
+                                                <div class="progress-container" id="progress-wrapper">
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-success progress-bar-striped active"
+                                                             id="progress-bar"
+                                                             role="progressbar"
+                                                             style="width: 0%">
+                                                            0%
+                                                        </div>
+                                                    </div>
+                                                    <div id="upload-speed"
+                                                         style="margin-top: 5px; font-size: 12px;"></div>
+                                                </div>
+                                                <div class="btn-group btn-upload">
+                                                    <button type="button" class="btn btn-success btn-xs"
+                                                            onclick="startUpload()">
+                                                        <i class="fa fa-upload"></i> شروع آپلود
+                                                    </button>
+                                                    <button type="button" class="btn btn-warning btn-xs"
+                                                            onclick="pauseUpload()">
+                                                        <i class="fa fa-pause"></i> توقف
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary btn-xs"
+                                                            onclick="resumeUpload()">
+                                                        <i class="fa fa-play"></i> ادامه
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-12 form-group">
-                            {{ form.short_description }}
+
+                            <div class="form-section">
+                                <h4 class="form-header"><i class="fa fa-align-left"></i> توضیحات کوتاه</h4>
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        {{ form.short_description }}
+                                        <span class="help-block">توضیح مختصری درباره برنامه وارد کنید</span>
+                                    </div>
                                 </div>
-                            <div class="col-md-12">
-                                <br>
-                                <br>
-                                <br>
-                                <button type="submit" onclick="submitForm()" class="btn btn-success btn-block">ثبت
-                                </button>
                             </div>
 
+                            <div class="form-group">
+                                <div class="col-md-12 text-center">
+                                    <button type="submit" onclick="submitForm()" class="btn btn-success btn-lg">
+                                        <i class="fa fa-save"></i> ثبت اطلاعات
+                                    </button>
+                                </div>
+                            </div>
                         </form>
-
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
+    <script>
+        let uploadPaused = false;
+        let currentChunk = 0;
+        let totalChunks = 0;
+        let chunkSize = 1024 * 1024; // 1MB
+        let file = null;
+        let startTime = null;
 
+        function startUpload() {
+            file = document.getElementById('id_file').files[0];
+            if (!file) {
+                alert("لطفاً یک فایل انتخاب کنید.");
+                return;
+            }
+            document.getElementById('uploaded_filename').value = file.name;
+            totalChunks = Math.ceil(file.size / chunkSize);
+            currentChunk = 0;
+            uploadPaused = false;
+            document.getElementById('progress-wrapper').style.display = 'block';
+            startTime = Date.now();
+            uploadNextChunk();
+        }
+
+        function pauseUpload() {
+            uploadPaused = true;
+        }
+
+        function resumeUpload() {
+            if (uploadPaused) {
+                uploadPaused = false;
+                uploadNextChunk();
+            }
+        }
+
+        function uploadNextChunk() {
+            if (uploadPaused || currentChunk >= totalChunks) return;
+
+            const chunk = file.slice(currentChunk * chunkSize, (currentChunk + 1) * chunkSize);
+            const formData = new FormData();
+            formData.append('file', chunk);
+            formData.append('chunkNumber', currentChunk + 1);
+            formData.append('totalChunks', totalChunks);
+            formData.append('filename', file.name);
+
+            const start = Date.now();
+
+            fetch("{% url 'admin_panel:apps-chunk-upload' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const now = Date.now();
+                    const elapsed = (now - start) / 1000;
+                    const speed = (chunk.size / 1024 / 1024 / elapsed).toFixed(2);
+                    const percent = Math.round(((currentChunk + 1) / totalChunks) * 100);
+
+                    document.getElementById('progress-bar').style.width = percent + '%';
+                    document.getElementById('progress-bar').innerText = percent + '%';
+                    document.getElementById('upload-speed').innerText = `سرعت: ${speed} مگابایت بر ثانیه`;
+
+                    currentChunk++;
+                    uploadNextChunk();  // ادامه آپلود chunk بعدی
+                })
+                .catch(error => {
+                    console.error('خطا در chunk:', error);
+                });
+        }
+    </script>
 
 {% endblock %}
-
 
 {% block footer_reference %}
     <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
@@ -319,4 +437,5 @@
             $('.textarea').wysihtml5()
         })
     </script>
+
 {% endblock %}

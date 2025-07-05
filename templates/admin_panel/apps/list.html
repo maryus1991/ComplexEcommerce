@@ -162,8 +162,11 @@
                         </td>
 
                         <td>
-                            <strong>{{ item.file.size|filesizeformat }}</strong>
-                        </td>                       
+                            {% if item.file.size %}
+                                <strong>{{ item.file.size|filesizeformat }}</strong>
+
+                            {% endif %}
+                        </td>
                         <td>
                             <strong>{{ item.store.name }}</strong>
                         </td>

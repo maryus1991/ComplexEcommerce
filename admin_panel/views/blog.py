@@ -17,7 +17,6 @@ class BlogListView(AdminUserMixin, ListView):
     paginate_by = 25
     context_object_name = "items"
 
-
 class BlogCreate(AdminUserMixin, CreateView):
     """for creating the post"""
 
@@ -162,6 +161,39 @@ class BlogCategoryListView(AdminUserMixin, ListView):
             .prefetch_related("parent")
             .prefetch_related("blogs")
         )
+
+
+class BlogCategoryChangeSortNumber(AdminUserMixin, RedirectView):
+    """for change sort number product categories"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        category = get_object_or_404(BlogCategory, pk=pk)
+        sort_number = self.request.POST[f'{pk}']
+
+        try:
+            sort_number = int(sort_number)
+            if 1000 >= sort_number  >= 0:
+                category.sort_number = sort_number
+                category.save()
+                messages.success(
+                    self.request,
+                    'ثبت شد'
+                )
+                return reverse("admin_panel:blog-category-list")
+
+            else:
+                messages.error(
+                    self.request,
+                    'عدد وارد شده باید بین 0 الی 1000 باشد'
+                )
+        except Exception as e:
+            messages.error(
+                self.request,
+                'عدد وارد شده باید بین 0 الی 1000 باشد'
+            )
+
+        return reverse("admin_panel:blog-category-list")
 
 
 class BlogCategoryCreate(AdminUserMixin, CreateView):

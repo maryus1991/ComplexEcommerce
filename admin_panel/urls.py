@@ -94,6 +94,7 @@ urlpatterns = [
     ),
     # apps
     path("apps/", views.AppsListView.as_view(), name="apps-list"),
+    path("apps/ChunkedFileUploadView/", views.ChunkedFileUploadView.as_view(), name="apps-chunk-upload"),
     path("apps/create/", views.AppsCreateView.as_view(), name="apps-create"),
     path("apps/update/<int:pk>", views.AppsUpdateView.as_view(), name="apps-update"),
     path(
@@ -129,6 +130,11 @@ urlpatterns = [
         "blog/categories/",
         views.BlogCategoryListView.as_view(),
         name="blog-category-list",
+    ),
+    path(
+        "blog/categories/set-sort-number/<int:pk>",
+        views.BlogCategoryChangeSortNumber.as_view(),
+        name="blog-category-sort-number",
     ),
     path(
         "blog/categories/create/",
@@ -250,6 +256,11 @@ urlpatterns = [
         name="product-category-list",
     ),
     path(
+        "product/categories/set-sort-number/<int:pk>",
+        views.ProductCategoryChangeSortNumber.as_view(),
+        name="product-category-sort-number",
+    ),
+    path(
         "product/categories/create/",
         views.ProductCategoryCreateView.as_view(),
         name="product-category-create",
@@ -274,6 +285,11 @@ urlpatterns = [
         "product/brands/",
         views.ProductBrandListView.as_view(),
         name="product-brand-list",
+    ),
+    path(
+        "product/brands/set-sort-number/<int:pk>",
+        views.ProductBrandChangeSortNumber.as_view(),
+        name="product-brands-sort-number",
     ),
     path(
         "product/brands/create/",

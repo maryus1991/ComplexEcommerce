@@ -321,6 +321,39 @@ class ProductCategoryListView(AdminUserMixin, ListView):
         ).order_by(self.ordering)
 
 
+class ProductCategoryChangeSortNumber(AdminUserMixin, RedirectView):
+    """for change sort number product categories"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        category = get_object_or_404(ProductCategory, pk=pk)
+        sort_number = self.request.POST[f'{pk}']
+
+        try:
+            sort_number = int(sort_number)
+            if 1000 >= sort_number  >= 0:
+                category.sort_number = sort_number
+                category.save()
+                messages.success(
+                    self.request,
+                    'ثبت شد'
+                )
+                print(sort_number, type(sort_number))
+                return reverse("admin_panel:product-category-list")
+
+            else:
+                messages.error(
+                    self.request,
+                    'عدد وارد شده باید بین 0 الی 1000 باشد'
+                )
+        except Exception as e:
+            messages.error(
+                self.request,
+                'در وارد کردن عدد دقت فرمایید'
+            )
+
+        return reverse("admin_panel:product-category-list")
+
 class ProductCategoryCreateView(AdminUserMixin, CreateView):
     """
     for creating a category for products
@@ -419,6 +452,39 @@ class ProductBrandListView(AdminUserMixin, ListView):
 
     def get_queryset(self):
         return super().get_queryset().prefetch_related("products")
+
+
+class ProductBrandChangeSortNumber(AdminUserMixin, RedirectView):
+    """for change sort number product Brand"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        brand = get_object_or_404(ProductBrand, pk=pk)
+        sort_number = self.request.POST[f'{pk}']
+
+        try:
+            sort_number = int(sort_number)
+            if 1000 >= sort_number  >= 0:
+                brand.sort_number = sort_number
+                brand.save()
+                messages.success(
+                    self.request,
+                    'ثبت شد'
+                )
+                return reverse("admin_panel:product-brand-list")
+
+            else:
+                messages.error(
+                    self.request,
+                    'عدد وارد شده باید بین 0 الی 1000 باشد'
+                )
+        except Exception as e:
+            messages.error(
+                self.request,
+                'در وارد کردن عدد دقت فرمایید'
+            )
+
+        return reverse("admin_panel:product-brand-list")
 
 
 class ProductBrandCreateView(AdminUserMixin, CreateView):

@@ -153,15 +153,28 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
             Order, is_paid=True, is_active=True, canceled=False, id=order_id
         )
 
-        if (obj.user != self.request.user) or (obj.store != self.request.user.store):
+        if (obj.user != self.request.user):
             return HttpResponseForbidden()
 
         if obj.address is None:
             messages.warning(request, "برای دریافت فاکتور لطفا ادرس انتخاب کنید")
             return redirect(reverse("dashboard:order_detail", kwargs={"pk": order_id}))
 
+
+        site = SiteSetting.objects.filter(is_active=True).first()
+
+
         # Handle official invoice case
-        if obj.official_invoice:
+        if obj.official_invoice :
+
+            if site.active_receive_official_invoice:
+                messages.warning(request, 'صدور فاکتور رسمی تا اطلاع ثانویه از سمت ادمین سایت غیر فعال شده است')
+                return redirect(reverse("dashboard:order_detail", kwargs={"pk": order_id}))
+            
+            if obj.store.have_official_invoice:
+                messages.warning(request, 'صدور فاکتور رسمی تا اطلاع ثانویه از سمت فروشگاه غیر فعال شده است')
+                return redirect(reverse("dashboard:order_detail", kwargs={"pk": order_id}))
+
             # Check if user is a legal person
             if not request.user.legal_person:
                 messages.warning(
@@ -203,7 +216,6 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
                 )
 
         # Regular invoice case (render template)
-        site = SiteSetting.objects.filter(is_active=True).first()
 
         context = {"order": obj, "site": site}
         return render(request, "utils/invoice_pdf.html", context)
@@ -310,31 +322,39 @@ class CreateUserAddress(LoginRequiredMixin, FormView):
     success_url = reverse_lazy("dashboard:address")
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
 
-        city = form.cleaned_data["city"]
-        validate_city_result = validate_city(city)
+        try:
+            form.instance.user = self.request.user
 
-        if validate_city_result is None:
-            messages.error(self.request, "مشکلی پیش امد")
-            return redirect(self.request.META.get("HTTP_REFERER", "/"))
+            city = form.cleaned_data["city"]
+            validate_city_result = validate_city(city)
 
-        if len(validate_city_result) > 1:
-            messages.warning(
+            if validate_city_result is None:
+                messages.error(self.request, "مشکلی پیش امد")
+                return redirect(self.request.META.get("HTTP_REFERER", "/"))
+
+            if len(validate_city_result) > 1:
+                messages.warning(
+                    self.request,
+                    f"""
+                    شهر شما یافت نشد لطفا در نشونتن ان دقت فرمایید
+                    لیست شهر های پیدا شده با این اسم ارسالی شما 
+                        {" , ".join([x['title'] for x in list(validate_city_result)])}""",
+                )
+                return redirect(self.request.META.get("HTTP_REFERER", "/"))
+
+            if len(validate_city_result) == 1:
+                form.instance.city_code = validate_city_result[0]["id"]
+                form.save()
+
+            messages.success(self.request, "ادرس شما با موفقیت اضافه شد")
+            return super().form_valid(form)
+        except Exception as e:
+            messages.error(
                 self.request,
-                f"""
-                شهر شما یافت نشد لطفا در نشونتن ان دقت فرمایید
-                لیست شهر های پیدا شده با این اسم ارسالی شما 
-                    {" , ".join([x['title'] for x in list(validate_city_result)])}""",
+                'مشکلی در ارتباط با سرور پیش امده است لطفا بعدا امتحان کنید'
             )
-            return redirect(self.request.META.get("HTTP_REFERER", "/"))
-
-        if len(validate_city_result) == 1:
-            form.instance.city_code = validate_city_result[0]["id"]
-            form.save()
-
-        messages.success(self.request, "ادرس شما با موفقیت اضافه شد")
-        return super().form_valid(form)
+            return redirect(reverse_lazy("dashboard:address"))
 
 
 class UpdateUserAddress(LoginRequiredMixin, UpdateView):
@@ -353,29 +373,37 @@ class UpdateUserAddress(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
 
-        city = form.cleaned_data["city"]
-        validate_city_result = validate_city(city)
+        try:
+            city = form.cleaned_data["city"]
+            validate_city_result = validate_city(city)
 
-        if validate_city_result is None:
-            messages.error(self.request, "مشکلی پیش امد")
-            return redirect(self.request.META.get("HTTP_REFERER", "/"))
+            if validate_city_result is None:
+                messages.error(self.request, "مشکلی پیش امد")
+                return redirect(self.request.META.get("HTTP_REFERER", "/"))
 
-        if len(validate_city_result) > 1:
-            messages.warning(
+            if len(validate_city_result) > 1:
+                messages.warning(
+                    self.request,
+                    f"""
+                    شهر شما یافت نشد لطفا در نشونت ان دقت فرمایید
+                    لیست شهر های پیدا شده با این اسم ارسالی شما 
+                        {" , ".join([x['title'] for x in list(validate_city_result)])}""",
+                )
+                return redirect(self.request.META.get("HTTP_REFERER", "/"))
+
+            if len(validate_city_result) == 1:
+                form.instance.city_code = validate_city_result[0]["id"]
+
+            form.save()
+            messages.success(self.request, "ادرس شما با موفقیت بروز رسانی شد")
+            return super().form_valid(form)
+
+        except Exception as e:
+            messages.error(
                 self.request,
-                f"""
-                شهر شما یافت نشد لطفا در نشونت ان دقت فرمایید
-                لیست شهر های پیدا شده با این اسم ارسالی شما 
-                    {" , ".join([x['title'] for x in list(validate_city_result)])}""",
+                'مشکلی در ارتباط با سرور پیش امده است لطفا بعدا امتحان کنید'
             )
-            return redirect(self.request.META.get("HTTP_REFERER", "/"))
-
-        if len(validate_city_result) == 1:
-            form.instance.city_code = validate_city_result[0]["id"]
-
-        form.save()
-        messages.success(self.request, "ادرس شما با موفقیت بروز رسانی شد")
-        return super().form_valid(form)
+            return redirect(reverse_lazy("dashboard:address"))
 
 
 class DeleteUserAddress(LoginRequiredMixin, RedirectView):

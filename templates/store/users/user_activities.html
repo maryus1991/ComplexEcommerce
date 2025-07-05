@@ -46,7 +46,6 @@
                             <thead>
                             <tr class="bg-light-blue-active">
                                 <th style="width: 15%" class="text-center">تاریخ و زمان</th>
-                                <th style="width: 10%" class="text-center">نوع عملیات</th>
                                 <th style="width: 15%" class="text-center">مدل</th>
                                 <th style="width: 60%" class="text-center">جزئیات تغییرات</th>
                             </tr>
@@ -55,21 +54,6 @@
                             {% for log in activities %}
                                 <tr>
                                     <td class="text-center" dir="ltr">{{ log.timestamp|to_jalali:"%Y/%M/%d - %H:%m" }}</td>
-                                    <td class="text-center">
-                                        {% if log.action == 1 %}
-                                            <span class="label label-success">
-                                                <i class="fa fa-plus-circle"></i> ایجاد
-                                            </span>
-                                        {% elif log.action == 2 %}
-                                            <span class="label label-warning">
-                                                <i class="fa fa-edit"></i> ویرایش
-                                            </span>
-                                        {% elif log.action == 3 %}
-                                            <span class="label label-danger">
-                                                <i class="fa fa-trash"></i> حذف
-                                            </span>
-                                        {% endif %}
-                                    </td>
                                     <td class="text-center">
                                         <span class="label label-default">
                                             {{ log.content_type.model }}
@@ -103,18 +87,18 @@
                 <div class="box-footer clearfix">
                     <div class="pull-right">
                         <ul class="pagination pagination-sm no-margin">
-                            {% if activities.has_previous %}
-                                <li><a href="?page={{ activities.previous_page_number }}">&laquo;</a></li>
+                            {% if page_obj.has_previous %}
+                                <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
                             {% endif %}
 
-                            {% for num in activities.paginator.page_range %}
-                                <li class="{% if activities.number == num %}active{% endif %}">
+                            {% for num in page_obj.paginator.page_range %}
+                                <li class="{% if page_obj.number == num %}active{% endif %}">
                                     <a href="?page={{ num }}">{{ num }}</a>
                                 </li>
                             {% endfor %}
 
-                            {% if activities.has_next %}
-                                <li><a href="?page={{ activities.next_page_number }}">&raquo;</a></li>
+                            {% if page_obj.has_next %}
+                                <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
                             {% endif %}
                         </ul>
                     </div>

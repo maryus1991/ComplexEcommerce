@@ -43,7 +43,7 @@ class Store(models.Model):
 
     # official invoice
     have_official_invoice = models.BooleanField(default=True)
-    official_invoice_price = models.PositiveIntegerField(null=True, blank=True)
+    official_invoice_price = models.PositiveIntegerField(default=0)
     economic_number = models.CharField(max_length=100, null=True, blank=True)
     registration_number = models.CharField(max_length=100, null=True, blank=True)
     official_invoice_phone_number = models.CharField(
@@ -55,10 +55,10 @@ class Store(models.Model):
     have_tipax_delivery = models.BooleanField(default=True)
     have_in_same_city_delivery = models.BooleanField(default=True)
     have_physical_delivery = models.BooleanField(default=True)
-    in_same_city_delivery_price = models.PositiveIntegerField(null=True, blank=True)
+    in_same_city_delivery_price = models.PositiveIntegerField(default=0)
 
-    additional_price = models.PositiveIntegerField(null=True, blank=True)
-    additional_tax = models.PositiveIntegerField(null=True, blank=True)
+    additional_price = models.PositiveIntegerField(default=0)
+    additional_tax = models.PositiveIntegerField(default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

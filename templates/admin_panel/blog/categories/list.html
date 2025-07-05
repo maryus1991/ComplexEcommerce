@@ -142,6 +142,7 @@
                 <tr class="bg-primary">
                     <th class="text-center" width="5%">#</th>
                     <th width="30%">نام</th>
+                    <th width="30%"> اولویت ترتیب</th>
                     <th width="10%">تعداد پست ها</th>
                     <th width="20%">دسته مادر</th>
                     <th width="20%">دسته های زیر دست</th>
@@ -158,6 +159,35 @@
                                 <span class="label label-danger pull-left">غیر فعال</span>
                             {% endif %}
                         </td>
+                                            <td class="text-center" style="min-width: 200px;">
+                            <form action="{% url 'admin_panel:blog-category-sort-number' item.id %}" method="POST" class="form-inline">
+                                {% csrf_token %}
+                                <div class="input-group input-group-sm">
+                                    <input type="text"
+                                           value="{{ item.sort_number }}"
+                                           name="{{ item.id }}"
+                                           id="input_{{ item.id }}"
+                                           class="form-control input-sm"
+                                           style="width: 120px; display: inline-block;">
+
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default btn-sm sort-up"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-up"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm sort-down"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-down"></i>
+                                        </button>
+                                        <button type="submit" class="btn btn-success btn-sm sort-down">
+                                            <i class="fa fa-hand-pointer-o"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </td>
+
                         <td class="text-center"> <span class="badge label-primary">{{ item.blogs.count }}</span></td>
 
                         <td class="text-center"><strong class="label label-primary">{{ item.parent.name|default:'-' }}</strong></td>
@@ -228,7 +258,29 @@
             </div>
         </div>
     </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // معالجة أزرار الزيادة
+                document.querySelectorAll('.sort-up').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        var inputId = 'input_' + this.getAttribute('data-id');
+                        var input = document.getElementById(inputId);
+                        input.value = parseInt(input.value) + 1;
+                    });
+                });
 
+                // معالجة أزرار النقصان
+                document.querySelectorAll('.sort-down').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        var inputId = 'input_' + this.getAttribute('data-id');
+                        var input = document.getElementById(inputId);
+                        if (input.value > 0) {
+                            input.value = parseInt(input.value) - 1;
+                        }
+                    });
+                });
+            });
+        </script>
     <script>
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip({

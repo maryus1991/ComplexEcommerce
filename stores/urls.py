@@ -38,6 +38,7 @@ urlpatterns = [
     path("update/", views.StoreUpdateInformationView.as_view(), name="update"),
     # tickets
     path("tickets/send/", views.StoreSendTicketView.as_view(), name="send-ticket"),
+    path("tickets/messages/delete/<int:pk>", views.StoreDeleteMessage.as_view(), name="send-messages-delete"),
     path(
         "tickets/close/sender-side<int:pk>/",
         views.StoreCloseTicketViewSenderSide.as_view(),
@@ -115,6 +116,7 @@ urlpatterns = [
     ),
     # store apps
     path("app/list/", views.StoreAppsView.as_view(), name="app-list"),
+    path("app/upload-chunk-file/", views.ChunkedFileUploadView.as_view(), name="app-upload-app"),
     path(
         "app/remove-active-deactive/<int:pk>",
         views.RemoveAppsOrActiveOrDeactivateAppsView.as_view(),

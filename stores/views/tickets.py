@@ -123,6 +123,35 @@ class StoreCloseTicketViewReceiverSide(UserStoreStaffMixin, RedirectView):
 
 # send tickets
 
+class StoreDeleteMessage(UserStoreStaffMixin, RedirectView):
+    """for delete message in ticket"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        pk = kwargs.get("pk")
+        print(pk)
+        obj = get_object_or_404(TicketConversation, pk=pk)
+
+        if not obj.ticket.close_ticket:
+            if obj.ticket.user == self.request.user and not obj.admin_message:
+                obj.delete()
+                messages.info(
+                    self.request,
+                    'پیام حذف شد'
+                )
+            elif obj.ticket.store == self.request.user.store and obj.admin_message:
+                obj.delete()
+                messages.info(
+                    self.request,
+                    'پیام حذف شد'
+                )
+        else:
+            messages.error(
+                self.request,
+                'این تیکت بسته شده است'
+            )
+
+        return self.request.META.get("HTTP_REFERER", "/")
+
 
 class StoreSendTicketView(UserStoreStaffMixin, CreateView):
     """

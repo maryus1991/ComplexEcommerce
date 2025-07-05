@@ -124,7 +124,6 @@ class AdminLoginToOtherUsersAccounts(AdminUserMixin, RedirectView):
         return '/'
 
 
-
 class UserListView(AdminUserMixin, ListView):
     """for listing Users"""
 

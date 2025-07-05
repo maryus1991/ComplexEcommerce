@@ -168,7 +168,7 @@ class ProductListView(ListView):
                 sort = None
 
 
-        return products.order_by("-id").all()
+        return products.order_by("-count").all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -176,11 +176,11 @@ class ProductListView(ListView):
         context["categories"] = (
             ProductCategory.objects.exclude(parent__isnull=False)
             .prefetch_related("child")
-            .order_by("-id")
+            .order_by("-sort_number")
             .all()
         )
 
-        context["brands"] = ProductBrand.objects.filter(is_active=True).order_by("-id").all()
+        context["brands"] = ProductBrand.objects.filter(is_active=True).order_by("-sort_number").all()
 
         if self.request.user.is_authenticated and self.request.user.is_verified:
             context["user_favorite"] = list(
@@ -200,6 +200,10 @@ class ProductListView(ListView):
         else:
             context["user_favorite"] = []
             context["user_details_orders"] = []
+
+        if "search" in dict(self.request.GET.lists()):
+            context['search_param'] = dict(self.request.GET.lists())["search"][0]
+
 
         return context
 

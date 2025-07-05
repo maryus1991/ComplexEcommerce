@@ -62,24 +62,32 @@ class StoreCreateView(AdminUserMixin, CreateView):
                 return redirect(self.request.META.get("HTTP_REFERER"))
 
         if True:
-            validate_city_result = validate_city(data.get("orgin_city"))
+            try:
+                validate_city_result = validate_city(data.get("orgin_city"))
 
-            if validate_city_result is None:
-                messages.error(self.request, "مشکلی پیش امد")
-                return redirect(self.request.META.get("HTTP_REFERER", "/"))
+                if validate_city_result is None:
+                    messages.error(self.request, "مشکلی پیش امد")
+                    return redirect(self.request.META.get("HTTP_REFERER", "/"))
 
-            if len(validate_city_result) > 1:
-                messages.warning(
+                if len(validate_city_result) > 1:
+                    messages.warning(
+                        self.request,
+                        f"""
+                        شهر شما یافت نشد لطفا در نشونتن ان دقت فرمایید
+                        لیست شهر های پیدا شده با این اسم ارسالی شما 
+                            {" , ".join([x['title'] for x in list(validate_city_result)])}""",
+                    ) # noqa
+                    return redirect(self.request.META.get("HTTP_REFERER", "/"))
+
+                if len(validate_city_result) == 1:
+                    form.instance.orgin_city_id = validate_city_result[0]["id"]
+
+            except Exception as e:
+                messages.error(
                     self.request,
-                    f"""
-                    شهر شما یافت نشد لطفا در نشونتن ان دقت فرمایید
-                    لیست شهر های پیدا شده با این اسم ارسالی شما 
-                        {" , ".join([x['title'] for x in list(validate_city_result)])}""",
-                ) # noqa
-                return redirect(self.request.META.get("HTTP_REFERER", "/"))
-
-            if len(validate_city_result) == 1:
-                form.instance.orgin_city_id = validate_city_result[0]["id"]
+                    'مشکلی در ارتباط با سرور پیش امده است لطفا بعدا امتحان کنید'
+                )
+                return redirect(self.request.META.get("HTTP_REFERER",'/'))
 
         messages.success(self.request, "  فروشگاه ساخته شد")
         form.instance.is_verified = False
@@ -129,24 +137,31 @@ class StoreUpdateView(AdminUserMixin, UpdateView):
                 return redirect(self.request.META.get("HTTP_REFERER"))
 
         if self.get_object().orgin_city != data.get("orgin_city"):
-            validate_city_result = validate_city(data.get("orgin_city"))
+            try:
+                validate_city_result = validate_city(data.get("orgin_city"))
 
-            if validate_city_result is None:
-                messages.error(self.request, "مشکلی پیش امد")
-                return redirect(self.request.META.get("HTTP_REFERER", "/"))
+                if validate_city_result is None:
+                    messages.error(self.request, "مشکلی پیش امد")
+                    return redirect(self.request.META.get("HTTP_REFERER", "/"))
 
-            if len(validate_city_result) > 1:
-                messages.warning(
+                if len(validate_city_result) > 1:
+                    messages.warning(
+                        self.request,
+                        f"""
+                        شهر شما یافت نشد لطفا در نشونتن ان دقت فرمایید
+                        لیست شهر های پیدا شده با این اسم ارسالی شما 
+                            {" , ".join([x['title'] for x in list(validate_city_result)])}""",
+                    ) # noqa
+                    return redirect(self.request.META.get("HTTP_REFERER", "/"))
+
+                if len(validate_city_result) == 1:
+                    form.instance.orgin_city_id = validate_city_result[0]["id"]
+            except Exception as e:
+                messages.error(
                     self.request,
-                    f"""
-                    شهر شما یافت نشد لطفا در نشونتن ان دقت فرمایید
-                    لیست شهر های پیدا شده با این اسم ارسالی شما 
-                        {" , ".join([x['title'] for x in list(validate_city_result)])}""",
-                ) # noqa
+                    'مشکلی در ارتباط با سرور پیش امده است لطفا بعدا امتحان کنید'
+                )
                 return redirect(self.request.META.get("HTTP_REFERER", "/"))
-
-            if len(validate_city_result) == 1:
-                form.instance.orgin_city_id = validate_city_result[0]["id"]
 
         messages.success(self.request, "اطلاعات شما با موقیت ثبت شد")
         form.instance.is_verified = False

@@ -22,6 +22,7 @@ class ProductBrand(models.Model):
     image = models.ImageField(upload_to=photo_path_upload_to, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
+    sort_number = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -39,6 +40,7 @@ class ProductCategory(models.Model):
     image = models.ImageField(upload_to=photo_path_upload_to, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
+    sort_number = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -52,7 +54,7 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.BigIntegerField()
     have_discount = models.BooleanField(default=False)
-    discount = models.IntegerField(default=0, null=True, blank=True)
+    discount = models.IntegerField(default=0)
     picture = models.ImageField(upload_to=photo_path_upload_to, null=True, blank=True)
     brand = models.ForeignKey(
         ProductBrand, on_delete=models.SET_NULL, null=True, related_name="products"
@@ -69,6 +71,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=False)
     admin_verified = models.BooleanField(default=True)
+
 
     def __str__(self):
         return f"{self.name}-{self.id}-{self.count}"

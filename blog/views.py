@@ -100,13 +100,13 @@ class ListArticlesView(ListView):
                 # Process start date
                 if "start_date" in url_params:
 
-                    if url_params["start_date"][0] != " ":
+                    if url_params["start_date"][0] != " " and url_params["start_date"][0] !='':
 
                         start_date = parse_jalali_date(url_params["start_date"], "شروع")
 
                 # Process end date
                 if "end_date" in url_params:
-                    if url_params["end_date"][0] != " ":
+                    if url_params["end_date"][0] != " " and url_params["end_date"][0] != "":
                         end_date = parse_jalali_date(url_params["end_date"], "پایان")
 
                 # Apply date filtering
@@ -150,10 +150,10 @@ class ListArticlesView(ListView):
         context = super().get_context_data(**kwargs)
 
         context["categories"] = (
-            BlogCategory.objects.filter(parent=None).prefetch_related("children").all()
+            BlogCategory.objects.filter(parent=None).prefetch_related("children").order_by('-sort_number').all()
         )
 
-        context["date_input"] = BlogFilterForm()
+        context["date_input"] = BlogFilterForm(self.request.GET)
 
         return context
 

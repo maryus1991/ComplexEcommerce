@@ -133,7 +133,8 @@
     <div class="panel box box-primary panel-default" style="margin-top: 20px;">
         <div class="panel-heading clearfix">
             <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست دسته بندی های محصولات </h3>
-            <a href="{% url 'admin_panel:product-category-create' %}" class="pull-left btn btn-success">ساختن دسته جدید</a>
+            <a href="{% url 'admin_panel:product-category-create' %}" class="pull-left btn btn-success">ساختن دسته
+                جدید</a>
         </div>
         <div class="table-responsive">
             <table class="table table-hover table-bordered table-striped">
@@ -141,7 +142,8 @@
                 <tr class="bg-primary">
                     <th class="text-center" width="5%">#</th>
                     <th width="30%">نام</th>
-                    <th width="10%">تعداد محصولات </th>
+                    <th width="20%"> اولویت ترتیب</th>
+                    <th width="10%">تعداد محصولات</th>
                     <th width="20%">دسته مادر</th>
                     <th width="20%">دسته های زیر دست</th>
                     <th colspan="4" class="text-center" width="3%">عملیات</th>
@@ -157,15 +159,44 @@
                                 <span class="label label-danger pull-left">غیر فعال</span>
                             {% endif %}
                         </td>
-                        <td class="text-center"> <span class="badge label-primary">{{ item.products.count }}</span></td>
+                        <td class="text-center" style="min-width: 200px;">
+                            <form action="{% url 'admin_panel:product-category-sort-number' item.id %}" method="POST" class="form-inline">
+                                {% csrf_token %}
+                                <div class="input-group input-group-sm">
+                                    <input type="text"
+                                           value="{{ item.sort_number }}"
+                                           name="{{ item.id }}"
+                                           id="input_{{ item.id }}"
+                                           class="form-control input-sm"
+                                           style="width: 120px; display: inline-block;">
 
-                        <td class="text-center"><strong class="label label-primary">{{ item.parent.name|default:'-' }}</strong></td>
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default btn-sm sort-up"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-up"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm sort-down"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-down"></i>
+                                        </button>
+                                        <button type="submit" class="btn btn-success btn-sm sort-down">
+                                            <i class="fa fa-hand-pointer-o"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </td>
+                        <td class="text-center"><span class="badge label-primary">{{ item.products.count }}</span></td>
+
+                        <td class="text-center"><strong
+                                class="label label-primary">{{ item.parent.name|default:'-' }}</strong></td>
                         <td class="text-center">
                             {% for child in item.child.all %}
-                            	<span class="label label-primary" style="margin-right: 10px; margin-left: 10px; ">
+                                <span class="label label-primary" style="margin-right: 10px; margin-left: 10px; ">
                                     <strong>{{ child.name }}</strong>
                                 </span>
-                                {% empty %}
+                            {% empty %}
                                 -
                             {% endfor %}
 
@@ -179,7 +210,8 @@
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:product-category-update' item.id %}" class="btn btn-sm btn-info"
+                            <a href="{% url 'admin_panel:product-category-update' item.id %}"
+                               class="btn btn-sm btn-info"
                                data-toggle="tooltip" title="ویرایش">
                                 <i class="fa fa-edit"></i>
                             </a>
@@ -193,7 +225,8 @@
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:product-category-delete' item.id %}" class="btn btn-sm btn-danger"
+                            <a href="{% url 'admin_panel:product-category-delete' item.id %}"
+                               class="btn btn-sm btn-danger"
                                data-toggle="tooltip" title="حذف">
                                 <i class="fa fa-trash"></i>
                             </a>
@@ -203,7 +236,29 @@
                 </tbody>
             </table>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // معالجة أزرار الزيادة
+                document.querySelectorAll('.sort-up').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        var inputId = 'input_' + this.getAttribute('data-id');
+                        var input = document.getElementById(inputId);
+                        input.value = parseInt(input.value) + 1;
+                    });
+                });
 
+                // معالجة أزرار النقصان
+                document.querySelectorAll('.sort-down').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        var inputId = 'input_' + this.getAttribute('data-id');
+                        var input = document.getElementById(inputId);
+                        if (input.value > 0) {
+                            input.value = parseInt(input.value) - 1;
+                        }
+                    });
+                });
+            });
+        </script>
         <div class="panel-footer">
             <div class="row">
                 <div class="col-md-6">

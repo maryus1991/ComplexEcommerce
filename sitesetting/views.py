@@ -80,17 +80,17 @@ class Main(TemplateView):
         context["Sliders"] = Slider.objects.filter(is_active=True)
         context["categories"] = (
             ProductCategory.objects.filter(is_active=True)
-            .order_by("products__count")
+            .order_by("-sort_number")
             .all()[0:5]
         )
         context["brands"] = (
             ProductBrand.objects.filter(is_active=True)
-            .order_by("products__count")
+            .order_by("-sort_number")
             .all()[0:5]
         )
         context["categories_blog"] = (
             BlogCategory.objects.filter(is_active=True)
-            .order_by("-blogs")
+            .order_by("-sort_number")
             .all()[0:5]
         )
         context["products_newst"] = products.order_by("-id").all()

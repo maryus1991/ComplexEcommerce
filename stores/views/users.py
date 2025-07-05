@@ -316,7 +316,7 @@ class StoreUserShowActivities(StoreAdminUserStaff, ListView):
 
     template_name = "store/users/user_activities.html"
     context_object_name = "activities"
-    paginate_by = 50  # نمایش 25 فعالیت در هر صفحه
+    paginate_by = 100
 
     def get_queryset(self):
         user = get_object_or_404(self.request.user.store.users, pk=self.kwargs["pk"])

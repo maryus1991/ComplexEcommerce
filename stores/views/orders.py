@@ -72,7 +72,6 @@ from dashboard.forms import TicketConversationForm
 import jdatetime
 
 from stores.validators import is_valid_message
-from utils.tipax_price_calc import validate_city
 
 from utils.send_otp import send_message
 from sitesetting.models import SiteSetting

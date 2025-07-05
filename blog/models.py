@@ -21,6 +21,7 @@ class BlogCategory(models.Model):
 
     image = models.ImageField(verbose_name="عکس", upload_to="blog_categories/")
     is_active = models.BooleanField(verbose_name="فعال / غیر فعال", default=True)
+    sort_number = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
         return self.name

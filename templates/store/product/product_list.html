@@ -336,8 +336,8 @@
                             <thead>
                                 <tr>
                                     <th>نام محصول</th>
-                                    <th>تعداد کامنت ها</th>
-                                    <th>موجودی کالا</th>
+                                    <th>وزن(گرم)</th>
+                                    <th>تعداد</th>
                                     <th>بازدید ها</th>
                                     <th>قیمت</th>
                                     <th>دسته بندی</th>
@@ -353,7 +353,7 @@
                                 {% for product in products %}
                                 <tr>
                                     <td>{{ product.name }}</td>
-                                    <td>{{ product.comments.count }}</td>
+                                    <td>{{ product.weight }}</td>
                                     <td>{{ product.count }}</td>
                                     <td>{{ product.views.count }}</td>
                                     <td>

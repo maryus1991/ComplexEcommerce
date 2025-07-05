@@ -25,3 +25,12 @@ class BlogFilterForm(forms.Form):
         ),
         required=False,
     )
+
+    def clean(self):
+        items = self.cleaned_data
+        keys_to_remove = [
+            key for key, value in items.items() if value is None or value == ""
+        ]
+        for key in keys_to_remove:
+            items.pop(key)
+        return items

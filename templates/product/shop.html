@@ -253,7 +253,7 @@
                 <div class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
                     {#                        <p>جستجو محصول</p>#}
                     <div class="grid">
-                        <input name="search" placeholder="جستجو محصول ... " class="tailwind-input col-span-6">
+                        <input name="search" {% if search_param %} value="{{ search_param }}" {% endif %} placeholder="جستجو محصول ... " class="tailwind-input col-span-6">
                     </div>
                 </div>
                 <div class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
@@ -286,6 +286,55 @@
                     <button type="reset" class="text-green-500">حذف همه فیلتر ها</button>
                 </div>
             </form>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    // تابع برای گرفتن تمام مقادیر یک پارامتر از URL (به صورت آرایه)
+                    function getAllQueryParams(paramName) {
+                        const params = new URLSearchParams(window.location.search);
+                        return params.getAll(paramName); // این متد تمام مقادیر یک پارامتر را برمی‌گرداند
+                    }
+
+                    // برای دسته‌بندی‌ها
+                    const selectedCategories = getAllQueryParams('category');
+                    if (selectedCategories.length > 0) {
+                        // باز کردن آکاردیون دسته‌بندی
+                        document.getElementById('category-accordion').classList.remove('hidden');
+
+                        // علامت‌گذاری تمام دسته‌بندی‌های انتخاب شده
+                        selectedCategories.forEach(catId => {
+                            const checkbox = document.querySelector(`input[name="category"][value="${catId}"]`);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    }
+
+                    // برای برندها (اگر نیاز بود)
+                    const selectedBrands = getAllQueryParams('brand');
+                    if (selectedBrands.length > 0) {
+                        document.getElementById('brand-accordion').classList.remove('hidden');
+                        selectedBrands.forEach(brandId => {
+                            const checkbox = document.querySelector(`input[name="brand"][value="${brandId}"]`);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    }
+
+                    // برای سایر فیلدها
+                    const params = new URLSearchParams(window.location.search);
+
+
+                    if (params.has('start_price')) {
+                        document.querySelector('input[name="start_price"]').value = params.get('start_price');
+                    }
+
+                    if (params.has('end_price')) {
+                        document.querySelector('input[name="end_price"]').value = params.get('end_price');
+                    }
+
+                    if (params.has('available')) {
+                        document.querySelector('input[name="available"]').checked = true;
+                    }
+                    
+                });
+            </script>
         </div>
         <!-- FILTER BOXES & products -->
         <div class="lg:w-3/4">
@@ -298,30 +347,30 @@
                     </svg>
                     <h2 class="font-DanaDemiBold">مرتب سازی بر اساس :</h2>
                 </div>
-<script>
-    function OrderingFilter(id) {
-        const params = new URLSearchParams(window.location.search);
-        params.set('sort', id);
-        window.location.search = params.toString();
-    }
-</script>
-<ul class="flex items-center gap-x-1 lg:gap-x-5 child:transition-all child:cursor-pointer child-hover:bg-gray-300/30 child:rounded-lg child:px-1 child:py-1 child:text-sm child:lg:text-base">
-    <li class="" id="sort__obj__1">
-        <a onclick="OrderingFilter('1')">پر تخفیف ترین</a>
-    </li>
-    <li class="" id="sort__obj__5">
-        <a onclick="OrderingFilter('5')">جدید ترین</a>
-    </li>
-    <li class="" id="sort__obj__2">
-        <a onclick="OrderingFilter('2')">پرفروش ترین</a>
-    </li>
-    <li class="" id="sort__obj__3">
-        <a onclick="OrderingFilter('3')">ارزان ترین</a>
-    </li>
-    <li class="" id="sort__obj__4">
-        <a onclick="OrderingFilter('4')">گران ترین</a>
-    </li>
-</ul>
+                <script>
+                    function OrderingFilter(id) {
+                        const params = new URLSearchParams(window.location.search);
+                        params.set('sort', id);
+                        window.location.search = params.toString();
+                    }
+                </script>
+                <ul class="flex items-center gap-x-1 lg:gap-x-5 child:transition-all child:cursor-pointer child-hover:bg-gray-300/30 child:rounded-lg child:px-1 child:py-1 child:text-sm child:lg:text-base">
+                    <li class="" id="sort__obj__1">
+                        <a onclick="OrderingFilter('1')">پر تخفیف ترین</a>
+                    </li>
+                    <li class="" id="sort__obj__5">
+                        <a onclick="OrderingFilter('5')">جدید ترین</a>
+                    </li>
+                    <li class="" id="sort__obj__2">
+                        <a onclick="OrderingFilter('2')">پرفروش ترین</a>
+                    </li>
+                    <li class="" id="sort__obj__3">
+                        <a onclick="OrderingFilter('3')">ارزان ترین</a>
+                    </li>
+                    <li class="" id="sort__obj__4">
+                        <a onclick="OrderingFilter('4')">گران ترین</a>
+                    </li>
+                </ul>
 
             </div>
             <script>
