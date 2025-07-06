@@ -10,7 +10,8 @@ from .views import (
     header_render_partial,
     UsedAppView,
     DownloadUsedAppView,
-    dynamic_favicon
+    dynamic_favicon,
+SiteLawListView
 )
 from .sitemap import StaticSitemap, UsedAppSiteMap
 from admin_panel.views import dynamic_fonts_css
@@ -21,6 +22,7 @@ urlpatterns = [
     path("", Main.as_view(), name="main"),
     path('favicon.ico', dynamic_favicon, name='favicon'),
     path("Q&A", QuestionsPageView.as_view(), name="Q&A"),
+    path("site-law", SiteLawListView.as_view(), name="site-law"),
     path("about-us", AboutUs.as_view(), name="about-us"),
     path("contact-us", ContactUs.as_view(), name="contact-us"),
     path("add-to-news-letters", AddTONewsLetters.as_view(), name="add-to-news-letters"),

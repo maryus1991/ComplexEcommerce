@@ -26,7 +26,7 @@ class CustomLoginRequiredMixin(AccessMixin):
                 return redirect("user:login")
 
             if (
-                not Site.store_users_staff_logins and
+                    not Site.store_users_staff_logins and
                     request.user.is_staff and
                     request.user.store is not None
             ):
@@ -66,7 +66,7 @@ class UserStoreStaffMixin(AccessMixin):
 
         if request.user.is_authenticated:
             if (
-                request.user.is_active and
+                    request.user.is_active and
                     request.user.is_staff and
                     request.user.is_verified
             ):
@@ -77,7 +77,13 @@ class UserStoreStaffMixin(AccessMixin):
                             request, "ورود کارمندان فروشگاه غیر فعال شده است"
                         )
                         return redirect("user:login")
-                    return super().dispatch(request, *args, **kwargs)
+                    if request.user.store.is_active:
+                        return super().dispatch(request, *args, **kwargs)
+                    else:
+                        messages.warning(
+                            request, 'فروشگاه شما توسط ادمین سایت فعال نمی باشد'
+                        )
+                        return redirect('/')
 
         raise Http404()
 
@@ -98,14 +104,20 @@ class StoreAdminUserStaff(AccessMixin):
 
         if request.user.is_authenticated:
             if (
-                request.user.is_active and
+                    request.user.is_active and
                     request.user.is_staff and
                     request.user.is_verified
             ):
                 if request.user.store is not None:
 
                     if request.user.is_store_admin:
-                        return super().dispatch(request, *args, **kwargs)
+                        if request.user.store.is_active and request.user.store.is_verified:
+                            return super().dispatch(request, *args, **kwargs)
+                        else:
+                            messages.warning(
+                                request, 'فروشگاه شما توسط ادمین سایت تایید و فعال نمی باشد'
+                            )
+                            return redirect('/')
 
         raise Http404()
 
@@ -114,7 +126,7 @@ class AdminUserMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             if (
-                request.user.is_active and
+                    request.user.is_active and
                     request.user.is_superuser and
                     request.user.is_verified
             ):

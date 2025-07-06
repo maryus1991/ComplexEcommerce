@@ -5,6 +5,37 @@ app_name = "admin_panel"
 
 urlpatterns = [
     path("", views.HomePageView.as_view(), name="main"),
+    # site law
+    path(
+        "site-law/",
+        views.SiteLawListView.as_view(),
+        name="site-law-list",
+    ),
+    path(
+        "site-law/set-sort-number/<int:pk>",
+        views.SiteLawChangeSortNumber.as_view(),
+        name="site-law-sort-number",
+    ),
+    path(
+        "site-law/create/",
+        views.SiteLawCreateView.as_view(),
+        name="site-law-create",
+    ),
+    path(
+        "site-law/update/<int:pk>",
+        views.SiteLawUpdateView.as_view(),
+        name="site-law-update",
+    ),
+    path(
+        "site-law/active-deactivate/<int:pk>",
+        views.SiteLawActiveAndDeactivateView.as_view(),
+        name="site-law-active-deactivate",
+    ),
+    path(
+        "site-law/delete/<int:pk>",
+        views.SiteLawDeleteView.as_view(),
+        name="site-law-delete",
+    ),
     # site setting
     path(
         "update-site-setting/",
@@ -13,8 +44,8 @@ urlpatterns = [
     ),
     path('fonts/', views.FontManagerView.as_view(), name='font-manager'),
     path('fonts/upload/', views.UploadFontView.as_view(), name='upload-font'),
-    path('fonts/fonts.css', views.dynamic_fonts_css, name='fonts.css' ),
-    path('fonts/json/list/', views.font_list_json, name='font_list_json' ),
+    path('fonts/fonts.css', views.dynamic_fonts_css, name='fonts.css'),
+    path('fonts/json/list/', views.font_list_json, name='font_list_json'),
     path('fonts/delete/<str:font_name>', views.DeleteFontView.as_view(), name='delete-font'),
     # banners
     path("banners/", views.BannersListView.as_view(), name="banners-list"),
@@ -185,6 +216,11 @@ urlpatterns = [
     # store
     path("stores/", views.StoreListView.as_view(), name="store-list"),
     path("stores/create/", views.StoreCreateView.as_view(), name="store-create"),
+    path(
+        "store/set-sort-number/<int:pk>",
+        views.StoreChangeSortNumber.as_view(),
+        name="store-sort-number",
+    ),
     path(
         "stores/update/<int:pk>", views.StoreUpdateView.as_view(), name="store-update"
     ),

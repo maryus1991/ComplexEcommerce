@@ -30,6 +30,7 @@
                         خوش آمدید
                     </h2>
                     <p class="mt2 lg:mt-4 text-center text-gray-400">ایجاد حساب کاربری</p>
+                    <p class="mt2 lg:mt-4 text-center text-gray-400">شما با ثبت نام در سایت تمامی <a href="{% url 'site:site-law' %}" class="text-blue-400">قوانین و مقررات </a>مورد پذیرش شما تلقی می شود</p>
                     <form method="POST" action="" class="mt-8 space-y-6">
                         {% csrf_token %}
                         <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">

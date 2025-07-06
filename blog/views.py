@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import TemplateView
 from django.views.generic import ListView, DetailView
 from django.utils.timezone import now, datetime, timedelta
-
+from stores.models import Store
 from .models import Blog, BlogView, BlogCategory, BlogTag
 from ipware import get_client_ip
 from django.utils.dateparse import parse_date
@@ -31,11 +31,19 @@ class ListArticlesView(ListView):
         item = (
             super()
             .get_queryset()
-            .filter(is_active=True, admin_verified=True, category__is_active=True)
+            .filter(
+                is_active=True, admin_verified=True,
+                category__is_active=True,
+                store__is_active=True,
+                store__is_verified=True
+            )
             .annotate(view_count=Count("views"))
         )
 
         url_params = dict(self.request.GET.lists())
+
+        if "store" in url_params:
+            item = item.filter(store_id__in=url_params["store"])
 
         if "category" in url_params:
             category = url_params["category"]
@@ -100,8 +108,7 @@ class ListArticlesView(ListView):
                 # Process start date
                 if "start_date" in url_params:
 
-                    if url_params["start_date"][0] != " " and url_params["start_date"][0] !='':
-
+                    if url_params["start_date"][0] != " " and url_params["start_date"][0] != '':
                         start_date = parse_jalali_date(url_params["start_date"], "شروع")
 
                 # Process end date
@@ -151,6 +158,12 @@ class ListArticlesView(ListView):
 
         context["categories"] = (
             BlogCategory.objects.filter(parent=None).prefetch_related("children").order_by('-sort_number').all()
+        )
+
+        context["stores"] = (
+            Store.objects.filter(is_active=True, is_verified=True)
+            .order_by("-sort_number").distinct()
+            .all()
         )
 
         context["date_input"] = BlogFilterForm(self.request.GET)

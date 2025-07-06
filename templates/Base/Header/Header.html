@@ -4,10 +4,10 @@
     {% block header %}
 
     {% endblock %}
-    {% include 'Base/Header/References/References.html' with site=site  %}
+    {% include 'Base/Header/References/References.html' with site=site %}
     <title>{% block title %} {% endblock %}</title>
-<link rel="icon" href="{{ site.logo.url }}">
-<meta name="description" content="{{ site.short_description }}">
+    <link rel="icon" href="{{ site.logo.url }}">
+    <meta name="description" content="{{ site.short_description }}">
 </head>
 <body class="font-Dana bg-[#f3f4f6] text-zinc-900 dark:bg-zinc-900 dark:text-white overflow-x-hidden transition-all">
 
@@ -41,7 +41,8 @@
                     <div
                             class="absolute bg-white flex flex-col gap-y-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:top-10 transition-all delay-100 dark:bg-zinc-700 top-20 w-52 rounded border-t-2 border-green-500 p-5 text-base shadow-md child-hover:text-green-500 child:transition-all">
                         <a href="{% url 'product:list' %}">محصولات</a>
-                        <a href="{% url 'product:list' %}">فروشگاها</a>
+                        <a href="{% url 'stores:main-template-list' %}">فروشگاها</a>
+                        <a href="{% url 'stores:main-template-create' %}">ثبت فروشگاه</a>
 
                     </div>
                 </li>
@@ -64,7 +65,7 @@
                     <a href="{% url 'site:apps-list' %}">برنامه های کاربردی</a>
                 </li>
                 {% if request.user.is_authenticated and request.user.is_verified %}
-                    {% if request.user.is_staff and request.user.store is not None %}
+                    {% if request.user.is_staff and request.user.store is not None and request.user.store.is_active %}
                         <li class="nav-item ">
                             <a href="{% url 'store:home' %}">مدیریت فروشگاه</a>
                         </li>
@@ -94,7 +95,7 @@
             <script>
                 function themToggle() {
                     let html = document.getElementsByTagName('html')[0]
-        
+
                     if (html.classList.contains('dark')) {
                         html.classList.remove('dark');
                         localStorage.setItem('theme', "light");
@@ -166,7 +167,7 @@
                             اطلاعات کاربری
                         </a>
                         {% if request.user.is_authenticated and request.user.is_verified %}
-                            {% if request.user.is_staff and request.user.store is not None %}
+                            {% if request.user.is_staff and request.user.store is not None and request.user.store.is_active %}
 
                                 <a href="{% url 'store:home' %}"
                                    class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
@@ -353,7 +354,8 @@
                         <a class="{% if url == '/product/' %} text-green-500  {% endif %}"
                            href="{% url 'product:list' %}">محصولات</a>
                         <a class="{% if  url == '/store/' %} text-green-500  {% endif %}"
-                           href="shop.html">فروشگاها</a>
+                           href="{% url 'stores:main-template-list' %}">فروشگاها</a>
+                        <a href="{% url 'stores:main-template-create' %}">ثبت فروشگاه</a>
                     </div>
 
                 </li>

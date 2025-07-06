@@ -20,6 +20,110 @@ from jalali_date.widgets import AdminJalaliDateWidget
 from orders.models import Discount
 
 
+class RegisterStoreMinimalInformationForm(forms.Form):
+    name = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input col-span-6",
+                "placeholder": "نام فروشگاه",
+            }
+        )
+
+    )
+    phone = PhoneNumberField(
+        widget=forms.NumberInput(
+            attrs={"class": "tailwind-input col-span-3",
+                   "dir": "rtl",
+                   "placeholder": "شماره همراه"}
+        ),
+        required=True,
+        validators=[validate_phonenumber],
+    )
+
+    logo = forms.ImageField(
+        required=True,
+        label='لوگو',
+        widget=forms.FileInput(
+            attrs={"class": "absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 ", "placeholder": "لوگو"}
+        ),
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
+    )
+    about_image = forms.ImageField(
+        required=True,
+        label='عکس معرفی',
+        widget=forms.FileInput(
+            attrs={"class": "absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10", "placeholder": "تصویر معرفی"}
+        ),
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
+    )
+    province = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input col-span-3",
+                "placeholder": "استان محل فروشگاه",
+            }
+        ))
+    card = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input col-span-3",
+                "placeholder": "شماره کارت",
+            }
+        ))
+    card_shaba = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input col-span-6",
+                "placeholder": "شماره شبا",
+            }
+        ))
+    card_name = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input col-span-3",
+                "placeholder": "نام دارنده کارت",
+            }
+        ))
+
+    economic_number = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input col-span-6",
+                "placeholder": "شماره اقتصادی",
+            }
+        ))
+    registration_number = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input col-span-6",
+                "placeholder": "شماره ثبت",
+            }
+        ))
+    official_invoice_phone_number = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input col-span-6",
+                "placeholder": "نامبر / تلفن ثابت",
+            }
+        ))
+
+
 class OrderFilteringForm(forms.Form):
     discount = forms.ModelChoiceField(
         queryset=Discount.objects.filter(is_active=True).all(),
@@ -645,7 +749,7 @@ class BrandAndCategorySearchForm(forms.Form):
 
 class AddProductForm(forms.ModelForm):
     description = forms.CharField(
-        widget=CKEditorUploadingWidget( attrs={'id': 'id_description'})
+        widget=CKEditorUploadingWidget(attrs={'id': 'id_description'})
     )
     category = forms.ModelChoiceField(
         queryset=ProductCategory.objects.filter(is_active=True).all(),
@@ -1023,10 +1127,7 @@ class AddStoreForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "مالیات اضافی(درصد)"}
             ),
             "official_invoice_price": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "درصد برای صدور فاکتور رسمی",
-                }
+                attrs={"class": "form-control", "placeholder": "درصد برای صدور فاکتور رسمی"}
             ),
             "economic_number": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "شماره اقتصادی"}
@@ -1232,7 +1333,6 @@ class AddStoreAppForm(forms.ModelForm):
             "file": forms.ClearableFileInput(
                 attrs={"class": "form-control", "placeholder": "برنامه را وارد کنید"}
             ),
-
 
         }
 

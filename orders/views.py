@@ -492,6 +492,13 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
             store_id=store_id,
         )
 
+        if order.details.count <= 0:
+            messages.error(
+                self.request,
+                'سبد خرید شما خالیست'
+            )
+            return reverse("orders:payment-conform", kwargs={"pk": pk})
+
         if delivery_id == 1 and site.active_post_delivery and order.store.have_post_delivery:  # delivery with post
             price = order.calculate_post_price()
 

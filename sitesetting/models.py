@@ -192,6 +192,17 @@ class Slider(models.Model):
         return f"{self.id}"
 
 
+class SiteLaw(models.Model):
+    name = models.CharField(verbose_name="نام قانون", max_length=250)
+    description = RichTextUploadingField(
+         verbose_name="توضیحات "
+    )
+    is_active = models.BooleanField(
+        default=True,
+    )
+    sort_number = models.IntegerField(default=0)
+
+
 class Banners(models.Model):
     image = models.ImageField(upload_to=photo_path_upload_to, verbose_name="عکس")
     name = models.CharField(

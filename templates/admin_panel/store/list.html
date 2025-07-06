@@ -148,7 +148,8 @@
                     <th class="text-center" width="10%">شماره</th>
                     <th class="text-center" width="10%">وضعیت</th>
                     <th class="text-center" width="10%">وضعیت اطلاعات</th>
-                    <th colspan="5" class="text-center" width="35%">عملیات</th>
+                    <th class="text-center" width="10%">ترتیب</th>
+                    <th colspan="5" class="text-center" width="15%">عملیات</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -190,6 +191,34 @@
                                 {% endif %}
                             </strong>
                         </td>
+                        <td class="text-center" style="min-width: 200px;">
+                            <form action="{% url 'admin_panel:store-sort-number' item.id %}" method="POST" class="form-inline">
+                                {% csrf_token %}
+                                <div class="input-group input-group-sm">
+                                    <input type="text"
+                                           value="{{ item.sort_number }}"
+                                           name="{{ item.id }}"
+                                           id="input_{{ item.id }}"
+                                           class="form-control input-sm"
+                                           style="width: 120px; display: inline-block;">
+
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default btn-sm sort-up"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-up"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm sort-down"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-down"></i>
+                                        </button>
+                                        <button type="submit" class="btn btn-success btn-sm sort-down">
+                                            <i class="fa fa-hand-pointer-o"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </td>
 
                         <td class="text-center">
                             <a href="{% url 'admin_panel:store-detail' item.id %}" class="btn btn-sm btn-success"
@@ -230,6 +259,29 @@
                 </tbody>
             </table>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // معالجة أزرار الزيادة
+                document.querySelectorAll('.sort-up').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        var inputId = 'input_' + this.getAttribute('data-id');
+                        var input = document.getElementById(inputId);
+                        input.value = parseInt(input.value) + 1;
+                    });
+                });
+
+                // معالجة أزرار النقصان
+                document.querySelectorAll('.sort-down').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        var inputId = 'input_' + this.getAttribute('data-id');
+                        var input = document.getElementById(inputId);
+                        if (input.value > 0) {
+                            input.value = parseInt(input.value) - 1;
+                        }
+                    });
+                });
+            });
+        </script>
 
         <div class="panel-footer">
             <div class="row">

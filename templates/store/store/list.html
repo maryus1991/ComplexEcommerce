@@ -1,0 +1,130 @@
+{% extends 'Base/Base.html' %}
+
+{% load jalali_tags %}
+
+{% block title %}
+    لیست فروشگاها
+{% endblock %}
+
+{% block breadcrumb %}
+
+    <li class="flex items-center gap-x-2">
+        <a href="{% url 'product:list' %}"> فروشگاها</a>
+    </li>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    <div class="flex flex-col lg:flex-row gap-6">
+        <!-- بخش اصلی فروشگاه‌ها -->
+        <div class="w-full">
+            <!-- هدر و دکمه اضافه کردن فروشگاه -->
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">فروشگاه‌های شما</h2>
+                <a href="{% url 'stores:main-template-create' %}"
+                   class="flex items-center gap-2 bg-green-600 hover:bg-green-700 dark:text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    افزودن فروشگاه جدید
+                </a>
+            </div>
+
+            <!-- پیام عدم وجود فروشگاه -->
+            {% if not items %}
+                <div class="text-center py-10 dark:bg-zinc-700 rounded-lg shadow">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                    <h3 class="mt-4 text-lg font-medium text-gray-700 dark:text-gray-300">هنوز فروشگاهی ثبت
+                        نکرده‌اید</h3>
+                    <p class="mt-2 text-gray-800 dark:text-gray-400">برای شروع، فروشگاه جدید خود را ثبت کنید</p>
+                    <a href="{% url 'stores:main-template-create' %}"
+                       class="mt-4 button inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 dark:text-white rounded-lg transition-colors duration-200">
+                        ثبت فروشگاه جدید
+                    </a>
+                </div>
+            {% endif %}
+
+            <!-- لیست فروشگاه‌ها -->
+            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                {% for item in items %}
+                    <div class="group bg-white dark:bg-zinc-700 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 w-full">
+                        <!-- تصویر فروشگاه -->
+                        <a href="{% url 'stores:main-template-detail' item.id %}" class="block relative">
+                            <img src="{{ item.about_image.url }}" alt="{{ item.name }}"
+                                 class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </a>
+
+                        <!-- اطلاعات فروشگاه -->
+                        <div class="p-4">
+                            <div class="flex items-center justify-between">
+                                <a href="{% url 'stores:main-template-detail' item.id %}"
+                                   class="block font-medium text-gray-800 dark:text-white hover:text-green-600 transition-colors duration-200 line-clamp-2">
+                                    {{ item.name }}
+                                </a>
+                                <a href="{% url 'stores:main-template-detail' item.id %}">
+                                    <img src="{{ item.logo.url }}" alt="{{ item.name }}" class="w-10 h-10 rounded-full">
+                                </a>
+                            </div>
+
+
+                            <!-- آیکون‌های وضعیت -->
+                            <div class="mt-3 flex items-center justify-between">
+                        <span class="text-xs px-2 py-1 rounded-full text-white
+                            {% if item.is_active %}bg-green-500 text-green-800{% else %}bg-red-500 text-red-800{% endif %}">
+                            {% if item.is_active %}فعال{% else %}غیرفعال{% endif %}
+                        </span>
+                                <span class="text-xs text-gray-700 dark:text-gray-100">{{ item.created_at|to_jalali:"%Y/%m/%d" }}</span>
+
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- صفحه‌بندی -->
+            <div class="mt-10 w-full flex items-center justify-center">
+                <ul class="flex items-center gap-x-3 child:flex child:items-center child:justify-center child:w-8 child:h-8 child:cursor-pointer child:shadow child:rounded-lg child:transition-all child:duration-300">
+                    {% if page_obj.has_previous %}
+                        <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
+                            <a href="?page={{ page_obj.previous_page_number }}">
+
+                                <svg class="w-5 h-5">
+                                    <use href="#chevron-right"></use>
+                                </svg>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for page_number in page_obj.paginator.page_range %}
+                        <li class="text-white {% if page_number == page_obj.number %} bg-green-500 {% else %} bg-white dark:bg-zinc-700 {% endif %} ">
+                            <a href="?page={{ page_number }}" class="w-full text-center">
+                                {{ page_number }}
+                            </a>
+                        </li>
+                    {% endfor %}
+
+
+                    {% if page_obj.has_next %}
+
+                        <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
+                            <a href="?page={{ page_obj.next_page_number }}">
+                                <svg class="w-5 h-5">
+                                    <use href="#chevron-left"></use>
+                                </svg>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+

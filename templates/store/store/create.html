@@ -1,0 +1,190 @@
+{% extends 'Base/Base.html' %}
+
+{% block title %}
+    ثبت درخواست افتتاح فروشگاه
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="flex items-center gap-x-2">
+        <span>فروشگاها</span>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>
+    <li class="flex items-center gap-x-2">
+        <span> ثبت درخواست افتتاح فروشگاه</span>
+    </li>
+{% endblock %}
+
+{% block content %}
+    {% if not request.user_agent.is_mobile %}
+    	
+    <main class="container child:mt-8">
+        <!-- Breadcrumbs -->
+
+        <!-- CONTACT US -->
+        <section class="w-full p-5 rounded-lg shadow bg-white dark:bg-zinc-700">
+            <h2 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1"> ثبت درخواست افتتاح
+                فروشگاه</h2>
+
+            <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-4 mb-1 text-sm lg:text-base">
+                قبل ثبت درخواست لطفا <a class="text-green-500" href="{% url 'site:Q&A' %}">سوالات متداول</a> را مطالعه
+                نمایید
+
+            </p>
+                                <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-1 mb-8 text-sm lg:text-base">شما با افتتاح فروشگاه در سایت تمامی <a href="{% url 'site:site-law' %}" class="text-blue-400">قوانین و مقررات </a>مورد پذیرش شما تلقی می شود</p>
+
+
+
+            <div class="flex flex-col lg:flex-row items-start gap-x-8">
+                <div class="w-full">
+                    <form class="w-full grid grid-cols-12 gap-4" method="post" action="" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.name }}
+
+                        <div class="col-span-3 md:col-span-3">
+                            <div class="relative">
+                                {{ form.logo }}
+                                <div class="w-full px-4 py-2 bg-gray-50 dark:bg-zinc-600 border border-gray-300 dark:border-zinc-500 rounded-lg text-gray-500 dark:text-gray-400 border-dashed hover:border-green-500 hover:bg-green-50 dark:hover:bg-zinc-600 transition-all cursor-pointer">
+                                    <div class="flex items-center justify-center space-x-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                        </svg>
+                                        <span> لوگو </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- About Image Upload -->
+                        <div class="col-span-3 md:col-span-3">
+                            <div class="relative">
+                                {{ form.about_image }}
+
+                                <div class="w-full px-4 py-2 bg-gray-50 dark:bg-zinc-600 border border-gray-300 dark:border-zinc-500 rounded-lg text-gray-500 dark:text-gray-400 border-dashed hover:border-green-500 hover:bg-green-50 dark:hover:bg-zinc-600 transition-all cursor-pointer">
+                                    <div class="flex items-center justify-center space-x-2">
+                                        <span> عکس معرفی </span>
+
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{ form.phone }}
+                        {{ form.province }}
+                        {{ form.card_shaba }}
+                        {{ form.card }}
+                        {{ form.card_name }}
+                        {{ form.economic_number }}
+                        {{ form.registration_number }}
+                        {{ form.official_invoice_phone_number }}
+                        <button
+                                class="mx-auto rounded-lg col-span-12 w-32 p-2 bg-green-500 hover:bg-green-600 text-white transition-all">
+                            ارسال
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+    </main>
+        {% else %}
+        <main class="container child:mt-8">
+    <!-- Breadcrumbs -->
+
+    <!-- CONTACT US -->
+    <section class="w-full p-5 rounded-lg shadow bg-white dark:bg-zinc-700">
+        <h2 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1"> ثبت درخواست افتتاح فروشگاه</h2>
+
+        <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-4 mb-1 text-sm lg:text-base">
+            قبل ثبت درخواست لطفا <a class="text-green-500" href="{% url 'site:Q&A' %}">سوالات متداول</a> را مطالعه نمایید
+        </p>
+        <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-1 mb-8 text-sm lg:text-base">
+            شما با افتتاح فروشگاه در سایت تمامی <a href="{% url 'site:site-law' %}" class="text-blue-400">قوانین و مقررات </a>مورد پذیرش شما تلقی می شود
+        </p>
+
+        <div class="flex flex-col lg:flex-row items-start gap-x-8">
+            <div class="w-full">
+                <form class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4" method="post" action="" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- Name Field - Full width on mobile, spans 12 columns on desktop -->
+                    <div class="md:col-span-2 lg:col-span-12">
+                        {{ form.name }}
+                    </div>
+
+                    <!-- Logo Upload - Full width on mobile, spans 3 columns on desktop -->
+                    <div class="md:col-span-1 lg:col-span-3">
+                        <div class="relative">
+                            {{ form.logo }}
+                            <div class="w-full px-4 py-2 bg-gray-50 dark:bg-zinc-600 border border-gray-300 dark:border-zinc-500 rounded-lg text-gray-500 dark:text-gray-400 border-dashed hover:border-green-500 hover:bg-green-50 dark:hover:bg-zinc-600 transition-all cursor-pointer">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                    <span> لوگو </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- About Image Upload - Full width on mobile, spans 3 columns on desktop -->
+                    <div class="md:col-span-1 lg:col-span-3">
+                        <div class="relative">
+                            {{ form.about_image }}
+                            <div class="w-full px-4 py-2 bg-gray-50 dark:bg-zinc-600 border border-gray-300 dark:border-zinc-500 rounded-lg text-gray-500 dark:text-gray-400 border-dashed hover:border-green-500 hover:bg-green-50 dark:hover:bg-zinc-600 transition-all cursor-pointer">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <span> عکس معرفی </span>
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other fields - Full width on mobile, span appropriate columns on desktop -->
+                    <div class="md:col-span-1 lg:col-span-3">
+                        {{ form.phone }}
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-3">
+                        {{ form.province }}
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-4">
+                        {{ form.card_shaba }}
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-4">
+                        {{ form.card }}
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-4">
+                        {{ form.card_name }}
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-6">
+                        {{ form.economic_number }}
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-6">
+                        {{ form.registration_number }}
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-6">
+                        {{ form.official_invoice_phone_number }}
+                    </div>
+
+                    <!-- Submit Button - Full width on all devices -->
+                    <div class="col-span-full text-center mt-4">
+                        <button class="rounded-lg w-full md:w-32 p-2 bg-green-500 hover:bg-green-600 text-white transition-all">
+                            ارسال
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+    {% endif %} 
+{% endblock %}

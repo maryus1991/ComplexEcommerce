@@ -15,7 +15,7 @@ from .models import (
     NotificationUserForProductAvailability,
     ProductViews,
 )
-
+from stores.models import Store
 from .forms import ProductCommentForm
 from orders.models import OrderDetail, Order
 from sitesetting.models import SiteSetting
@@ -113,6 +113,9 @@ class ProductListView(ListView):
                 Q(category__is_active=True),
             )
 
+        if "store" in url_params:
+            products = products.filter(store_id__in=url_params["store"])
+
         if "brand" in url_params:
             products = products.filter(
                 Q(brand_id__in=url_params["brand"]),
@@ -177,6 +180,12 @@ class ProductListView(ListView):
             ProductCategory.objects.exclude(parent__isnull=False)
             .prefetch_related("child")
             .order_by("-sort_number")
+            .all()
+        )
+
+        context["stores"] = (
+            Store.objects.filter(is_active=True, products__count__gt=0, is_verified=True)
+            .order_by("-sort_number").distinct()
             .all()
         )
 

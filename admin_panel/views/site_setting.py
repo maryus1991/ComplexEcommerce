@@ -1,7 +1,7 @@
-from django.views.generic import UpdateView, RedirectView
+from django.views.generic import UpdateView, RedirectView, CreateView, ListView
 from django.urls import reverse_lazy
-from sitesetting.models import SiteSetting
-from admin_panel.forms import SiteSettingModelForm
+from sitesetting.models import SiteSetting, SiteLaw
+from admin_panel.forms import SiteSettingModelForm, SiteLawModelForm
 from user.mixins.logins import AdminUserMixin
 from django.views.generic import View, TemplateView
 from django.utils.text import get_valid_filename
@@ -12,8 +12,125 @@ from ckeditor_uploader import utils
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.contrib import messages
-from django.shortcuts import redirect, reverse, HttpResponse
+from django.shortcuts import redirect, reverse, HttpResponse, get_object_or_404
 from django.core.files.storage import FileSystemStorage
+
+
+class SiteLawChangeSortNumber(AdminUserMixin, RedirectView):
+    """for change sort number site law"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        law = get_object_or_404(SiteLaw, pk=pk)
+        sort_number = self.request.POST[f'{pk}']
+
+        try:
+            sort_number = int(sort_number)
+            if 1000 >= sort_number >= 0:
+                law.sort_number = sort_number
+                law.save()
+                messages.success(
+                    self.request,
+                    'ثبت شد'
+                )
+                return reverse("admin_panel:site-law-list")
+
+            else:
+                messages.error(
+                    self.request,
+                    'عدد وارد شده باید بین 0 الی 1000 باشد'
+                )
+        except Exception as e:
+            messages.error(
+                self.request,
+                'در وارد کردن عدد دقت فرمایید'
+            )
+
+        return reverse("admin_panel:site-law-list")
+
+
+class SiteLawCreateView(AdminUserMixin, CreateView):
+    """for creating new site law"""
+
+    form_class = SiteLawModelForm
+    template_name = 'admin_panel/site_setting/law/create.html'
+    success_url = reverse_lazy('admin_panel:site-law-list')
+
+    def form_valid(self, form):
+        messages.success(
+            self.request, 'ثبت شد'
+        )
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.success(
+            self.request, form.errors
+        )
+        return super().form_invalid(form)
+
+
+class SiteLawUpdateView(AdminUserMixin, UpdateView):
+    """for updating new site law"""
+    model = SiteLaw
+    form_class = SiteLawModelForm
+    template_name = 'admin_panel/site_setting/law/create.html'
+    context_object_name = 'item'
+    success_url = reverse_lazy('admin_panel:site-law-list')
+
+    def form_valid(self, form):
+        messages.success(
+            self.request, 'اعمال شد'
+        )
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.success(
+            self.request, form.errors
+        )
+        return super().form_invalid(form)
+
+
+class SiteLawDeleteView(AdminUserMixin, RedirectView):
+    """for deleting new site law"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        obj = get_object_or_404(SiteLaw, pk=self.kwargs['pk'])
+        obj.delete()
+        messages.success(
+            self.request, 'حذف شد'
+        )
+        return reverse('admin_panel:site-law-list')
+
+
+class SiteLawActiveAndDeactivateView(AdminUserMixin, RedirectView):
+    """
+    for active or deactivate slider
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+        pk = kwargs.get("pk")
+        law = get_object_or_404(SiteLaw, pk=pk)
+        if law.is_active:
+            law.is_active = False
+            law.save()
+            messages.success(self.request, "قانون مورد نظر غیر فعال شد")
+        else:
+            law.is_active = True
+            law.save()
+            messages.success(self.request, "قانون مورد نظر فعال شد")
+
+        return reverse_lazy("admin_panel:site-law-list")
+
+
+class SiteLawListView(AdminUserMixin, ListView):
+    """for listing the site law"""
+
+    model = SiteLaw
+    context_object_name = 'items'
+    template_name = 'admin_panel/site_setting/law/list.html'
+    ordering = '-sort_number'
+    paginate_by = 50
+
 
 class UpdateSiteSettingView(AdminUserMixin, UpdateView):
     """
@@ -68,6 +185,7 @@ class FontManagerView(AdminUserMixin, TemplateView):
         context['fonts'] = fonts
         return context
 
+
 def font_list_json(request):
     storage = utils.get_storage_class()
     font_path = os.path.join(settings.CKEDITOR_UPLOAD_PATH, 'fonts')
@@ -81,6 +199,7 @@ def font_list_json(request):
                 font_names.append(font_name)
 
     return JsonResponse(font_names, safe=False)
+
 
 def dynamic_fonts_css(request):
     storage = utils.get_storage_class()

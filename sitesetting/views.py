@@ -4,7 +4,6 @@ from django.views.generic import TemplateView, RedirectView, View, ListView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.views.generic.edit import FormView
-from django.utils.text import slugify
 import os
 from wsgiref.util import FileWrapper
 from mimetypes import guess_type
@@ -19,6 +18,7 @@ from .models import (
     Newsletter,
     Slider,
     Banners,
+SiteLaw
 )
 from stores.models import StoreApps
 from user.mixins.logins import CustomLoginRequiredMixin
@@ -28,6 +28,12 @@ from user.forms import ActiveAccountForm as NumberForAddToLettersForm
 from product.models import Product, ProductCategory, ProductBrand
 from blog.models import Blog, BlogCategory
 
+
+class SiteLawListView(ListView):
+    """for listing the law for users"""
+    model = SiteLaw
+    template_name = 'site/law.html'
+    context_object_name = 'items'
 
 
 def robots_txt(request):
@@ -64,7 +70,6 @@ def dynamic_favicon(request):
             return HttpResponse(f.read(), content_type="image/png")
 
 
-# Create your views here.
 class Main(TemplateView):
     """
     main page

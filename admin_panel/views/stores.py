@@ -16,6 +16,40 @@ from utils.tipax_price_calc import validate_city
 from django.core.exceptions import ValidationError
 
 
+class StoreChangeSortNumber(AdminUserMixin, RedirectView):
+    """for change sort number product categories"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        store = get_object_or_404(Store, pk=pk)
+        sort_number = self.request.POST[f'{pk}']
+
+        try:
+            sort_number = int(sort_number)
+            if 1000 >= sort_number  >= 0:
+                store.sort_number = sort_number
+                store.save()
+                messages.success(
+                    self.request,
+                    'ثبت شد'
+                )
+                print(sort_number, type(sort_number))
+                return reverse("admin_panel:store-list")
+
+            else:
+                messages.error(
+                    self.request,
+                    'عدد وارد شده باید بین 0 الی 1000 باشد'
+                )
+        except Exception as e:
+            messages.error(
+                self.request,
+                'در وارد کردن عدد دقت فرمایید'
+            )
+
+        return reverse("admin_panel:store-list")
+
+
 class StoreListView(AdminUserMixin, ListView):
     """
     for listing the stores

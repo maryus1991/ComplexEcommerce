@@ -13,6 +13,7 @@ from sitesetting.models import (
     FastLinks,
     QuestionAndAnswer,
     ContactUs,
+SiteLaw
 )
 from stores.forms import MultiImageField, MultiUploadMetaInput
 from stores.models import StoreApps, Store
@@ -25,6 +26,19 @@ from jalali_date.fields import JalaliDateField
 from jalali_date.widgets import AdminJalaliDateWidget
 
 User = get_user_model()
+
+
+class SiteLawModelForm(forms.ModelForm):
+    description = forms.CharField(
+        widget=CKEditorUploadingWidget(attrs={'id': 'id_description'})
+    )
+    class Meta:
+        model = SiteLaw
+        fields = ('name', 'description', 'is_active')
+        widgets = {
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "is_active": forms.CheckboxInput(),
+        }
 
 
 class MessagingUserForm(forms.Form):
@@ -106,6 +120,7 @@ class MessagingUserForm(forms.Form):
             }
         ),
     )
+
 
 class AddDiscountForm(forms.ModelForm):
     end_date_discount = JalaliDateField(

@@ -1,7 +1,5 @@
 from django.views.generic import (
-    DetailView,
     ListView,
-    TemplateView,
     CreateView,
     FormView,
     UpdateView,
@@ -15,42 +13,19 @@ from django.shortcuts import (
     reverse,
     render,
     redirect,
-    get_list_or_404,
 )
 from django.urls import reverse_lazy
-from django.contrib.auth import get_user_model
 from django.contrib import messages
-from django.utils.timezone import now
-from phonenumbers.phonenumber import PhoneNumber
-from django.db import transaction
-from django.core.exceptions import (
-    PermissionDenied,
-    SuspiciousOperation,
-    ValidationError,
-)
-from django.views.decorators.http import require_http_methods
-from django.utils.decorators import method_decorator
 from django.core.files.uploadedfile import UploadedFile
-from orders.models import Order
-from stores.models import Store, StoreComment, StoreTag, StoreCategory, StoreApps
-from dashboard.models import Ticket, TicketConversation
-from django.utils.dateparse import parse_date
+from stores.models import Store
+
 from stores.forms import (
     AddProductForm,
     AddBrandForm,
     AddCategoryForm,
-    AddStoreForm,
-    StoreSendTicketForm,
-    AddStoreUserStaffForm,
-    AddStoreAppForm,
-    AddStoreBlogForm,
     AddStoreBlogCategoryForm,
     ProductSearchForm,
     BrandAndCategorySearchForm,
-    TicketFilterForm,
-    OrderFilteringForm,
-    StoreBlogFilteringForm,
-    StoreUsersStaffFilteringForm,
 )
 from product.models import (
     Product,
@@ -60,22 +35,14 @@ from product.models import (
     ProductBrand,
     ProductCategory,
     ProductSpecifications,
+    UserFavorite
 )
-
-from django.db.models import Value
-from django.db.models.functions import Concat
-from blog.models import Blog, BlogCategory
-from auditlog.models import LogEntry
-from django.contrib.contenttypes.models import ContentType
-
-from user.mixins.logins import UserStoreStaffMixin, AdminUserMixin, StoreAdminUserStaff
-from dashboard.forms import TicketConversationForm
-import jdatetime
-
-from stores.validators import is_valid_message
+from orders.models import OrderDetail
 
 
-User = get_user_model()
+
+from user.mixins.logins import UserStoreStaffMixin, StoreAdminUserStaff
+
 
 
 class StoreProductListView(UserStoreStaffMixin, ListView):
@@ -429,7 +396,20 @@ class StoreEditActiveOrDeactivateProduct(UserStoreStaffMixin, RedirectView):
         )
         if product.is_active is True:
             product.is_active = False
-            messages.success(self.request, "محصول مورد نظر غیر فعال شد")
+            product.save()
+            OrderDetail.objects.filter(
+                product=product,
+                order__is_active=True,
+                order__is_paid=False,
+                order__canceled=False,
+                order__Authority__isnull=True,
+                order__vip_post=False,
+                order__tipax_post_delivery=False,
+                order__in_city_delivery=False,
+                order__physical_delivery=False,
+            ).delete()
+            UserFavorite.objects.filter(product=product).delete()
+            messages.warning(self.request, "ایتم مورد نظر غیر فعال شد و از تمامی سبد خرید ها حذف شد")
         elif product.is_active is False:
             product.is_active = True
             messages.success(self.request, "محصول مورد نظر فعال شد")

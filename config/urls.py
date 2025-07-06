@@ -9,6 +9,7 @@ from product.urls import sitemaps as product_sitemaps
 from sitesetting.urls import sitemaps as site_sitemaps
 from user.views import e_namad
 from sitesetting.views import robots_txt
+from stores.sitemap import StoreSitemap
 
 urlpatterns = [
     path("user/", include("user.urls")),
@@ -16,8 +17,9 @@ urlpatterns = [
     path("product/", include("product.urls")),
     path("order/", include("orders.urls")),
     path("blog/", include("blog.urls")),
+    path("store/", include("stores.main_template_urls")),
     # path(f"{get_random_string(100)}-store/", include("stores.urls")),
-    path("store/", include("stores.urls")),
+    path("store-panel/", include("stores.urls")),
     # path(f"{get_random_string(500)}-admin-panel/", include("admin_panel.urls")),
     path("admin-panel/", include("admin_panel.urls")),
     path("admin/", admin.site.urls),
@@ -36,10 +38,11 @@ if settings.DEBUG:
 # site map and robots.txt
 
 
-sitemaps = {}
+sitemaps = {'store':StoreSitemap}
 sitemaps.update(blog_sitemaps)
 sitemaps.update(product_sitemaps)
 sitemaps.update(site_sitemaps)
+
 
 urlpatterns += [
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),

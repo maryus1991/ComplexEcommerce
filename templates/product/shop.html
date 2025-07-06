@@ -9,7 +9,7 @@
 {% block breadcrumb %}
 
     <li class="flex items-center gap-x-2">
-        <a href="{% url 'product:list' %}">فروشگاه</a>
+        <a href="{% url 'product:list' %}">محصولات</a>
     </li>
 {% endblock breadcrumb %}
 
@@ -227,6 +227,30 @@
                 </div>
                 <br>
                 <div class="w-full dark:bg-zinc-600 cursor-pointer shadow rounded-lg">
+                    <div onclick="categoryFilter('store-accordion')"
+                         class="accordion-header p-3 flex items-center justify-between">
+                        <p class="font-DanaMedium">فروشگاها</p>
+                        <svg class="w-4 h-4">
+                            <use href="#chevron-left"></use>
+                        </svg>
+                    </div>
+                    <ul id="store-accordion"
+                        class="accordion-content hidden mx-2 py-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
+                        <hr>
+                        {% for store in stores %}
+                            <li>
+                                <label class="cl-checkbox">
+                                    <input name="store" value="{{ store.id }}" type="checkbox">
+                                    <span></span>
+                                </label>
+                                <p>{{ store.name }}</p>
+                            </li>
+                        {% endfor %}
+
+                    </ul>
+                </div>
+                <br>
+                <div class="w-full dark:bg-zinc-600 cursor-pointer shadow rounded-lg">
                     <div onclick="categoryFilter('brand-accordion')"
                          class="accordion-header p-3 flex items-center justify-between">
                         <p class="font-DanaMedium">برند</p>
@@ -313,6 +337,15 @@
                         document.getElementById('brand-accordion').classList.remove('hidden');
                         selectedBrands.forEach(brandId => {
                             const checkbox = document.querySelector(`input[name="brand"][value="${brandId}"]`);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    }
+
+                    const selectedStores = getAllQueryParams('store');
+                    if (selectedStores.length > 0) {
+                        document.getElementById('store-accordion').classList.remove('hidden');
+                        selectedStores.forEach(brandId => {
+                            const checkbox = document.querySelector(`input[name="store"][value="${brandId}"]`);
                             if (checkbox) checkbox.checked = true;
                         });
                     }
@@ -503,7 +536,7 @@
 
                     {% for page_number in page_obj.paginator.page_range %}
                         <li class="text-white {% if page_number == page_obj.number %} bg-green-500 {% else %} bg-white dark:bg-zinc-700 {% endif %} ">
-                            <a href="?page={{ page_number }}">
+                            <a href="?page={{ page_number }}" class="w-full text-center">
                                 {{ page_number }}
                             </a>
                         </li>

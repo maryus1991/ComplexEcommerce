@@ -9,6 +9,7 @@ class Store(models.Model):
     phone = PhoneNumberField(null=True, blank=True)
     phone2 = PhoneNumberField(null=True, blank=True)
 
+    sort_number = models.IntegerField(default=0)
     whats_app_link = models.URLField(
         null=True,
         blank=True,
@@ -66,6 +67,9 @@ class Store(models.Model):
     def calculate_store_sold_orders(self):
         return sum(list(self.store_sold_orders.filter(is_returned_by_admin=False).values_list("price", flat=True)))
 
+    def get_absolute_url(self):
+        return reverse('stores:main-template-detail', kwargs={'pk': self.pk})
+
     def __str__(self):
         return self.name
 
@@ -98,16 +102,3 @@ class StoreComment(models.Model):
     user = PhoneNumberField(unique=True, db_index=True)
     subject = models.CharField(max_length=100)
     comment = models.TextField()
-
-
-class StoreTag(models.Model):
-    Store = models.ForeignKey(Store, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-
-
-class StoreCategory(models.Model):
-    Store = models.ForeignKey(Store, on_delete=models.CASCADE)
-    parent = models.ForeignKey(
-        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="child"
-    )
-    name = models.CharField(max_length=100)

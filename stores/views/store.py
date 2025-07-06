@@ -1,80 +1,113 @@
 from django.views.generic import (
     DetailView,
     ListView,
-    TemplateView,
-    CreateView,
-    FormView,
-    UpdateView,
-    RedirectView,
     View,
+    UpdateView,
 )
-from django.db.models import Q
-from django.db.models.aggregates import Count
 from django.shortcuts import (
     get_object_or_404,
     reverse,
     render,
     redirect,
-    get_list_or_404,
 )
 from django.urls import reverse_lazy
-from django.contrib.auth import get_user_model
 from django.contrib import messages
-from django.utils.timezone import now
-from phonenumbers.phonenumber import PhoneNumber
-from django.db import transaction
-from django.core.exceptions import (
-    PermissionDenied,
-    SuspiciousOperation,
-    ValidationError,
-)
-from django.views.decorators.http import require_http_methods
-from django.utils.decorators import method_decorator
-from django.core.files.uploadedfile import UploadedFile
-from orders.models import Order
-from stores.models import Store, StoreComment, StoreTag, StoreCategory, StoreApps
-from dashboard.models import Ticket, TicketConversation
-from django.utils.dateparse import parse_date
+from stores.models import Store
 from stores.forms import (
-    AddProductForm,
-    AddBrandForm,
-    AddCategoryForm,
-    AddStoreForm,
-    StoreSendTicketForm,
-    AddStoreUserStaffForm,
-    AddStoreAppForm,
-    AddStoreBlogForm,
-    AddStoreBlogCategoryForm,
-    ProductSearchForm,
-    BrandAndCategorySearchForm,
-    TicketFilterForm,
-    OrderFilteringForm,
-    StoreBlogFilteringForm,
-    StoreUsersStaffFilteringForm,
+    AddStoreForm, RegisterStoreMinimalInformationForm
 )
-from product.models import (
-    Product,
-    ProductTag,
-    ProductFeature,
-    ProductGallery,
-    ProductBrand,
-    ProductCategory,
-)
-
-from django.db.models import Value
-from django.db.models.functions import Concat
-from blog.models import Blog, BlogCategory
-from auditlog.models import LogEntry
-from django.contrib.contenttypes.models import ContentType
-
-from user.mixins.logins import UserStoreStaffMixin, AdminUserMixin, StoreAdminUserStaff
-from dashboard.forms import TicketConversationForm
-import jdatetime
-
-from stores.validators import is_valid_message
+from user.mixins.logins import StoreAdminUserStaff, CustomLoginRequiredMixin
 from utils.tipax_price_calc import validate_city
 
-User = get_user_model()
+
+class StoreMainTemplateCreateView(CustomLoginRequiredMixin, View):
+    """for store create view in main template"""
+    model = Store
+    template_name = 'store/store/create.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if request.user.store :
+                messages.warning(request, 'شما نمی توانید اینجا وارد شوید')
+                return redirect('/')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        form = RegisterStoreMinimalInformationForm(
+            initial={
+                'phone': str(request.user.PhoneNumber).replace(' ', '')
+            }
+        )
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        data = RegisterStoreMinimalInformationForm(request.POST, request.FILES)
+
+        if data.is_valid():
+            name = data.cleaned_data.get('name')
+            phone = data.cleaned_data.get('phone')
+            logo = data.cleaned_data.get('logo')
+            about_image = data.cleaned_data.get('about_image')
+            province = data.cleaned_data.get('province')
+            card = data.cleaned_data.get('card')
+            card_shaba = data.cleaned_data.get('card_shaba')
+            card_name = data.cleaned_data.get('card_name')
+            economic_number = data.cleaned_data.get('economic_number')
+            registration_number = data.cleaned_data.get('registration_number')
+            official_invoice_phone_number = data.cleaned_data.get('official_invoice_phone_number')
+
+            store = Store.objects.create(
+                is_active=False,
+                is_verified=False,
+                name=name,
+                phone=phone,
+                logo=logo,
+                about_image=about_image,
+                province=province,
+                card=card,
+                card_shaba=card_shaba,
+                card_name=card_name,
+                economic_number=economic_number,
+                registration_number=registration_number,
+                official_invoice_phone_number=official_invoice_phone_number,
+            )
+
+            user = request.user
+
+            user.is_staff = True
+            user.store = store
+            user.is_store_admin = True
+            user.legal_person = True
+            user.legal_person_economic_number = economic_number
+            user.legal_person_registration_number = registration_number
+            user.legal_person_phone = official_invoice_phone_number
+            user.save()
+            messages.success(request, 'فروشگاه مورد نظر ساخته شد و به ادمین جهت برسی ارسال شد در صورت تایید با شما تماس خواهند گرفت و بعد از تایید پنل فروشگاهی شما فعال خواهد شد ')
+        else:
+            messages.warning(request, 'اطلاعات را به درستی وارد کنید')
+            return redirect(request.META.get('HTTP_REFERER', '/'))
+        return redirect('/')
+
+
+class StoreMainTemplateDetailView(DetailView):
+    """for store detail view in main template"""
+    model = Store
+    template_name = 'store/store/detail.html'
+    context_object_name = 'item'
+
+    def get_object(self, queryset=...):
+        return get_object_or_404(Store, pk=self.kwargs['pk'], is_active=True, is_verified=True)
+
+
+class StoreMainTemplateListView(ListView):
+    """for store list view in main template"""
+    model = Store
+    template_name = 'store/store/list.html'
+    context_object_name = 'items'
+    paginate_by = 21
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_active=True, is_verified=True)
 
 
 class StoreUpdateInformationView(StoreAdminUserStaff, UpdateView):
@@ -103,13 +136,12 @@ class StoreUpdateInformationView(StoreAdminUserStaff, UpdateView):
 
         if data.get("have_official_invoice"):
             if (
-                data.get("have_official_invoice") is None or
+                    data.get("have_official_invoice") is None or
                     data.get("official_invoice_price") is None or
                     data.get("economic_number") is None or
                     data.get("registration_number") is None or
                     data.get("official_invoice_phone_number") is None
             ):
-
                 raise ValidationError(
                     "برای فعال شدن صدور فاکتور رسمی باید همه فیلد های مربوط به فاکتور رسمی پر شود"
                 )
@@ -129,12 +161,12 @@ class StoreUpdateInformationView(StoreAdminUserStaff, UpdateView):
                         f""" 
                         شهر شما یافت نشد لطفا در نشونتن ان دقت فرمایید
                         لیست شهر های پیدا شده با این اسم ارسالی شما 
-                            {" , ".join([x['title'] for x in list(validate_city_result)])}""", # noqa
+                            {" , ".join([x['title'] for x in list(validate_city_result)])}""",  # noqa
                     )  # noqa
                     return redirect(self.request.META.get("HTTP_REFERER", "/"))
 
                 if len(validate_city_result) == 1:
-                        form.instance.orgin_city_id = validate_city_result[0]["id"]
+                    form.instance.orgin_city_id = validate_city_result[0]["id"]
 
             except Exception as e:
                 messages.error(

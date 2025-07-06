@@ -33,7 +33,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
 from django.core.files.uploadedfile import UploadedFile
 from orders.models import Order
-from stores.models import Store, StoreComment, StoreTag, StoreCategory, StoreApps
+from stores.models import Store, StoreApps
 from dashboard.models import Ticket, TicketConversation
 from django.utils.dateparse import parse_date
 from stores.forms import (

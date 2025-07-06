@@ -1,0 +1,94 @@
+{% extends 'Base/Base.html' %}
+
+{% block title %}
+
+    {{ item.name }}
+
+{% endblock %}
+
+{% block breadcrumb %}
+
+    <li class="flex items-center gap-x-2">
+
+        <span>فروشگاها</span>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>
+    <li class="flex items-center gap-x-2">
+
+        <span class="">{{ item.name }}</span>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <main class="container child:mt-8">
+
+
+        <!-- aboute us -->
+        <section class="w-full  flex flex-col lg:flex-row gap-4 p-5 rounded-lg shadow bg-white dark:bg-zinc-700">
+            <div class=" w-full lg:w-2/4">
+                <!-- LOGO -->
+                <a href="/" class="text-green-500 transition-colors w-fit block">
+                    <img src="{{ item.logo.url }}" alt="logo" class="w-24 h-15 " height="6px" width="96px"/>
+
+                </a>
+
+                {{ item.description|safe }}
+
+
+                <br>
+                <hr>
+                <br>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-4 sm:gap-10 flex-wrap">
+                    {% if item.instagram_app_ID and item.instagram_app_Link %}
+                        <a href="{{ item.instagram_app_Link }}"
+                           class="flex items-center gap-x-2 bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-600 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
+                            <p dir="ltr" class="text-sm sm:text-base">{{ item.instagram_app_ID }}</p>
+                            <img src="/static/Images/svg/instagram.png" class="w-5 h-5 sm:w-6 sm:h-6" alt="instagram"/>
+                        </a>
+                    {% endif %}
+
+                    {% if item.telegram_app_ID and item.telegram_app_Link %}
+                        <a href="{{ item.telegram_app_Link }}"
+                           class="flex items-center gap-x-2 bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-600 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
+                            <p dir="ltr" class="text-sm sm:text-base">{{ item.telegram_app_ID }}</p>
+                            <img src="/static/Images/svg/telegram.png" class="w-5 h-5 sm:w-6 sm:h-6" alt="telegram"/>
+                        </a>
+                    {% endif %}
+
+                    {% if item.whats_app_link and item.whats_app_ID %}
+                        <a href="{{ item.whats_app_link }}"
+                           class="flex items-center gap-x-2 bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-600 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
+                            <p dir="ltr" class="text-sm sm:text-base">{{ item.whats_app_ID }}</p>
+                            <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-5 h-5 sm:w-6 sm:h-6"
+                                 alt="whatsapp"/>
+                        </a>
+                    {% endif %}
+                    {% if item.products.count > 0 %}
+                        <a href="{% url 'product:list' %}?store={{ item.id }}"
+                           class="flex items-center gap-x-2 bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-600 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
+                            <p dir="ltr" class="text-sm sm:text-base">محصولات </p>
+                            <svg class="w-4 h-4">
+                                <use href="#chevron-left"></use>
+                            </svg>
+                        </a>
+                    {% endif %}                    
+                    {% if item.blogs.count > 0 %}
+                        <a href="{% url 'blog:list' %}?store={{ item.id }}"
+                           class="flex items-center gap-x-2 bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-600 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
+                            <p dir="ltr" class="text-sm sm:text-base">پست ها </p>
+                            <svg class="w-4 h-4">
+                                <use href="#chevron-left"></use>
+                            </svg>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="flex justify-end  w-full lg:w-2/4">
+                <img src="{{ item.about_image.url }}" class="rounded-lg lg:h-[35rem]" alt="">
+            </div>
+        </section>
+    </main>
+{% endblock %}
+

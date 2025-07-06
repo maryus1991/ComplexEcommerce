@@ -5,7 +5,7 @@ from stores.forms import AddBrandForm, AddCategoryForm
 from admin_panel.forms import AddProductForm
 from django.urls import reverse_lazy
 from user.mixins.logins import AdminUserMixin
-
+from orders.models import OrderDetail
 from product.models import (
     Product,
     ProductCategory,
@@ -14,7 +14,10 @@ from product.models import (
     ProductSpecifications,
     ProductFeature,
     ProductTag,
+UserFavorite
+
 )
+
 
 # product
 
@@ -86,7 +89,7 @@ class ProductCreateView(AdminUserMixin, CreateView):
 
             for feature in features:
                 if (
-                    feature.isalnum and
+                        feature.isalnum and
                         feature != " " and
                         feature != "" and
                         feature is not None
@@ -187,7 +190,7 @@ class ProductUpdateView(AdminUserMixin, UpdateView):
 
             for feature in features:
                 if (
-                    feature.isalnum and
+                        feature.isalnum and
                         feature != " " and
                         feature != "" and
                         feature is not None
@@ -236,7 +239,19 @@ class ProductActiveAndDeactivateView(AdminUserMixin, RedirectView):
         if product.is_active:
             product.is_active = False
             product.save()
-            messages.warning(self.request, "ایتم مورد نظر غیر فعال شد")
+            OrderDetail.objects.filter(
+                product=product,
+                order__is_active=True,
+                order__is_paid=False,
+                order__canceled=False,
+                order__Authority__isnull=True,
+                order__vip_post=False,
+                order__tipax_post_delivery=False,
+                order__in_city_delivery=False,
+                order__physical_delivery=False,
+            ).delete()
+            UserFavorite.objects.filter(product=product).delete()
+            messages.warning(self.request, "ایتم مورد نظر غیر فعال شد و از تمامی سبد خرید ها حذف شد")
         else:
             product.is_active = True
             product.save()
@@ -256,7 +271,19 @@ class ProductAdminVerifiedView(AdminUserMixin, RedirectView):
         if product.admin_verified:
             product.admin_verified = False
             product.save()
-            messages.warning(self.request, "ایتم مورد نظر مورد تایید ادمین قرار نگرفت")
+            OrderDetail.objects.filter(
+                product=product,
+                order__is_active=True,
+                order__is_paid=False,
+                order__canceled=False,
+                order__Authority__isnull=True,
+                order__vip_post=False,
+                order__tipax_post_delivery=False,
+                order__in_city_delivery=False,
+                order__physical_delivery=False,
+            ).delete()
+            UserFavorite.objects.filter(product=product).delete()
+            messages.warning(self.request, "ایتم مورد نظر مورد تایید ادمین قرار نگرفت و از تمامی سبد خرید ها حذف شد")
         else:
             product.admin_verified = True
             product.save()
@@ -331,7 +358,7 @@ class ProductCategoryChangeSortNumber(AdminUserMixin, RedirectView):
 
         try:
             sort_number = int(sort_number)
-            if 1000 >= sort_number  >= 0:
+            if 1000 >= sort_number >= 0:
                 category.sort_number = sort_number
                 category.save()
                 messages.success(
@@ -353,6 +380,7 @@ class ProductCategoryChangeSortNumber(AdminUserMixin, RedirectView):
             )
 
         return reverse("admin_panel:product-category-list")
+
 
 class ProductCategoryCreateView(AdminUserMixin, CreateView):
     """
@@ -464,7 +492,7 @@ class ProductBrandChangeSortNumber(AdminUserMixin, RedirectView):
 
         try:
             sort_number = int(sort_number)
-            if 1000 >= sort_number  >= 0:
+            if 1000 >= sort_number >= 0:
                 brand.sort_number = sort_number
                 brand.save()
                 messages.success(
