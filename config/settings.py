@@ -71,7 +71,7 @@ INSTALLED_APPS = [
     "django_user_agents",
     "multiupload",
     "auditlog",
-    "dbbackup",
+    #"dbbackup",
     # installed apps
     "user",
     "product",
