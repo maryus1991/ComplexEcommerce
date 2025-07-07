@@ -163,17 +163,7 @@
                     </ul>
                 </div>
                 <!-- CHECK BOX -->
-                <script>
-                    function categoryFilter(id) {
-                        let elem = document.getElementById(id).classList;
-                        if (elem.contains('hidden')) {
-                            elem.remove('hidden')
-                        } else {
-                            elem.add('hidden')
-                        }
-                    }
 
-                </script>
                 <div
                         class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
                     <div class="">
@@ -403,6 +393,17 @@
         </div>
 
     </main>
+                    <script>
+                    function categoryFilter(id) {
+                        let elem = document.getElementById(id).classList;
+                        if (elem.contains('hidden')) {
+                            elem.remove('hidden')
+                        } else {
+                            elem.add('hidden')
+                        }
+                    }
+
+                </script>
 {% endblock %}
 
 

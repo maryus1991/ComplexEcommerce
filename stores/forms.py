@@ -1323,6 +1323,13 @@ class AddStoreAppForm(forms.ModelForm):
     for upload apps for stores
     """
 
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # اگر فایل ارسال نشده، فیلد فایل اختیاری شود
+        if not self.files.get('file'):
+            self.fields['file'].required = False
+
     class Meta:
         model = StoreApps
         fields = ("is_active", "name", "file", 'short_description')

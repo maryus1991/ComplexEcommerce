@@ -1,7 +1,7 @@
 {% extends 'Base/AdminBase.html' %}
 
 {% block title %}
-    لیست برندها
+    لیست برنامه ها
 {% endblock %}
 
 {% block breadcrumb %}
@@ -14,7 +14,7 @@
         <div class="col-md-6">
             <div class="box box-primary" style="margin-top: 20px;">
                 <div class="box-header with-border">
-                    <h3 class="box-title"><i class="fa fa-plus"></i> اضافه کردن برنامه جدید</h3>
+                    <h3 class="box-title"><i class="fa fa-plus"></i>اپلود برنامه جدید</h3>
                 </div>
                 <form role="form" method="POST" action="" enctype="multipart/form-data">
                     {% csrf_token %}

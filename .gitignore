@@ -19,3 +19,4 @@ stage.yml
 flake8_errors.txt
 *.csv
 *.sql
+data.json

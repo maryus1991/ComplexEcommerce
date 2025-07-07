@@ -83,23 +83,38 @@ class StoreAppsView(UserStoreStaffMixin, View):
             {"items": obj.all(), "form": AddStoreAppForm()},
         )
 
+    from django.core.files import File
+
     def post(self, request, *args, **kwargs):
         store = request.user.store
+        uploaded_filename = request.POST.get('uploaded_filename')
 
-        form = AddStoreAppForm(request.POST, request.FILES)
+        # کپی گرفتن از POST و FILES
+        post_data = request.POST.copy()
+        files_data = request.FILES.copy()
+
+        # اگه فایل قبلاً آپلود شده، فایل جدید رو نادیده بگیر
+        if uploaded_filename:
+            files_data.pop('file', None)
+
+        # ساخت فرم بدون فایل جدید
+        form = AddStoreAppForm(post_data, files_data)
+
         if form.is_valid():
             form.instance.store = store
-            uploaded_filename = self.request.POST.get('uploaded_filename')
+
             if uploaded_filename:
                 full_path = os.path.join(settings.MEDIA_ROOT, 'app', uploaded_filename)
                 if os.path.exists(full_path):
                     with open(full_path, 'rb') as f:
                         form.instance.file.save(uploaded_filename, File(f), save=False)
-                    os.remove(full_path)  # بعد از ذخیره فایل پاکش کن (اختیاری)
+                    os.remove(full_path)  # اختیاری
+
             form.save()
-            messages.success(self.request, "فایل شما ذخیره شد")
+            messages.success(request, "فایل شما با موفقیت ذخیره شد.")
         else:
-            messages.error(self.request, form.errors)
+            messages.error(request, form.errors)
+
         return redirect("store:app-list")
 
 

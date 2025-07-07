@@ -172,11 +172,14 @@
                                     <ul class="chart-legend clearfix" id="data-chart-views"
                                         data-total-number-of-views="{{ total_view }}">
                                         {% for view in views %}
-                                            <li data-value="{{ view.views_count }}"
+                                            
+                                            	
+                                            
+                                            <li data-value="{{ view.views_count }}" {% if forloop.counter > 8 %} style="display:none;" {% endif %} 
                                                 data-color="{% cycle 'red' 'green' 'yellow' 'aqua' 'gray' '#0E2231' '#660e7a' '#4d06ff' %}">
                                                 <i class="fa fa-circle-o"
                                                    style="color: {% cycle 'red' 'green' 'yellow' 'aqua' 'gray' '#0E2231' '#660e7a' '#4d06ff' %} "></i>
-                                                {{ view.name }}</li>
+                                                {{ view.name|truncatewords:'75' }}</li>
                                         {% endfor %}
 
                                     </ul>

@@ -645,6 +645,9 @@ class QuestionAndAnswerModelForm(forms.ModelForm):
 
 
 class UsedAppModelForm(forms.ModelForm):
+
+
+
     store = forms.ModelChoiceField(
         queryset=Store.objects.filter(is_active=True, is_verified=True).all(),
         widget=forms.Select(
@@ -657,6 +660,12 @@ class UsedAppModelForm(forms.ModelForm):
         ),
         empty_label="فروشگاه را انتخاب کنید",
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # اگر فایل ارسال نشده، فیلد فایل اختیاری شود
+        if not self.files.get('file'):
+            self.fields['file'].required = False
 
     class Meta:
         model = StoreApps

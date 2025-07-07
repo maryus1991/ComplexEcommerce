@@ -58,28 +58,41 @@ class AppsCreateView(AdminUserMixin, CreateView):
     """
     for creating a apps
     """
-
     model = StoreApps
     form_class = UsedAppModelForm
     template_name = "admin_panel/apps/create.html"
     success_url = reverse_lazy("admin_panel:apps-list")
 
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        uploaded_filename = self.request.POST.get('uploaded_filename')
+
+        post_data = self.request.POST.copy()
+        files_data = self.request.FILES.copy()
+
+        # اگر فایل از قبل آپلود شده، فایل جدید رو نادیده بگیر
+        if uploaded_filename:
+            files_data.pop('file', None)
+
+        return form_class(post_data, files_data)
+
     def form_valid(self, form):
+        form.instance.store = self.request.user.store
+
         uploaded_filename = self.request.POST.get('uploaded_filename')
         if uploaded_filename:
             full_path = os.path.join(settings.MEDIA_ROOT, 'app', uploaded_filename)
             if os.path.exists(full_path):
                 with open(full_path, 'rb') as f:
                     form.instance.file.save(uploaded_filename, File(f), save=False)
-                os.remove(full_path)  # بعد از ذخیره فایل پاکش کن (اختیاری)
+                os.remove(full_path)  # اختیاری: حذف فایل بعد از attach شدن
 
-        messages.success(self.request, "برنامه  مورد نظر با موفقت افزوده شد")
+        messages.success(self.request, "برنامه مورد نظر با موفقیت افزوده شد")
         return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(self.request, form.errors)
         return super().form_invalid(form)
-
 
 class AppsUpdateView(AdminUserMixin, UpdateView):
     """for updating a apps"""
@@ -90,22 +103,35 @@ class AppsUpdateView(AdminUserMixin, UpdateView):
     success_url = reverse_lazy("admin_panel:apps-list")
     context_object_name = "item"
 
+    def get_form(self, form_class=None):
+        form_class = self.get_form_class()
+        uploaded_filename = self.request.POST.get('uploaded_filename')
+
+        post_data = self.request.POST.copy()
+        files_data = self.request.FILES.copy()
+
+        if uploaded_filename:
+            files_data.pop('file', None)
+
+        return form_class(post_data, files_data, instance=self.get_object())
+
     def form_valid(self, form):
         uploaded_filename = self.request.POST.get('uploaded_filename')
+
         if uploaded_filename:
             full_path = os.path.join(settings.MEDIA_ROOT, 'app', uploaded_filename)
             if os.path.exists(full_path):
+                # فقط وقتی فایل جدید هست، فایل قبلی رو جایگزین کن
                 with open(full_path, 'rb') as f:
                     form.instance.file.save(uploaded_filename, File(f), save=False)
-                os.remove(full_path)  # بعد از ذخیره فایل پاکش کن (اختیاری)
+                os.remove(full_path)  # اختیاری: حذف فایل بعد از attach شدن
 
-        messages.success(self.request, "تغییرات اعمال شد")
+        messages.success(self.request, "تغییرات با موفقیت اعمال شد")
         return super().form_valid(form)
 
     def form_invalid(self, form):
         messages.error(self.request, form.errors)
         return super().form_invalid(form)
-
 
 class AppsActiveAndDeactivateView(AdminUserMixin, RedirectView):
     """for activating and deactivating a apps"""
