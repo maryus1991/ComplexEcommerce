@@ -47,7 +47,7 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.BigIntegerField()
     have_discount = models.BooleanField(default=False)
-    discount = models.IntegerField(default=0, null=True, blank=True)
+    discount = models.IntegerField(default=0)
     picture = models.ImageField(upload_to=photo_path_upload_to, null=True, blank=True)
     brand = models.ForeignKey(ProductBrand, on_delete=models.SET_NULL, null=True, related_name='products')
     category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True, related_name='products')
