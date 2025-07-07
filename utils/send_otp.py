@@ -31,7 +31,7 @@ def send_message(
         password=melipayamak_password,
         _from=melipayamak_from_number,
 ):
-    print(to)
+
     try:
         api = Api(username, password)
         result = api.sms("soap").send(to, _from, text)
@@ -42,6 +42,7 @@ def send_message(
 
         print(result)
         return result
+
     except Exception:
         client = Client("https://api.payamak-panel.com/post/Smartsms.asmx?wsdl")
         data = {

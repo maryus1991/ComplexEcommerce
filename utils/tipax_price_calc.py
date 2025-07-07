@@ -64,7 +64,7 @@ def send_request_for_city(city):
     }
     response = requests.get(
         TIPAX_GET_LIST_CITIES + f"?title={city}",
-        headers=headers,
+        headers=headers, timeout=20
     )
 
     if response.status_code == 200:

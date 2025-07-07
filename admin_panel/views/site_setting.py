@@ -190,7 +190,20 @@ def font_list_json(request):
     storage = utils.get_storage_class()
     font_path = os.path.join(settings.CKEDITOR_UPLOAD_PATH, 'fonts')
 
-    font_names = []
+    font_names = ['Ravi-Bold',
+                  'Ravi-ExtraBold',
+                  'Ravi-Medium',
+                  'Ravi-Regular',
+                  'Ravi-SemiBold',
+                  'Ravi-Thin',
+                  'Vazir',
+                  'NotoNaskhArabic',
+                  'Morabba-Light',
+                  'Morabba-Medium',
+                  'Morabba-Bold',
+                  'DanaFaNum-DemiBold',
+                  'DanaFaNum-Medium',
+                  'DanaFaNum-Regular']
 
     if storage.exists(font_path):
         for font_file in storage.listdir(font_path)[1]:
@@ -213,7 +226,17 @@ def dynamic_fonts_css(request):
                 font_url = storage.url(os.path.join(font_path, font_file))
                 fonts.append((font_name, font_url))
 
-    css = ""
+    file_path = os.path.join(settings.BASE_DIR, 'static/fonts/font.css')
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            css_content = f.read()
+
+    except Exception as e:
+        pass
+
+
+    css = css_content
+
     for name, url in fonts:
         css += f"""
 @font-face {{

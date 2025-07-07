@@ -1041,6 +1041,7 @@ class AddStoreForm(forms.ModelForm):
             'card',
             'card_shaba',
             'card_name',
+            'time_for_return_order_days',
 
         )
 
@@ -1124,6 +1125,9 @@ class AddStoreForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "هزینه اضافی"}
             ),
             "additional_tax": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "مالیات اضافی(درصد)"}
+            ),
+            "time_for_return_order_days": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "مالیات اضافی(درصد)"}
             ),
             "official_invoice_price": forms.NumberInput(

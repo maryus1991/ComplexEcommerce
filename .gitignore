@@ -17,3 +17,5 @@ stage.yml
 */backups/*
 *.psql
 flake8_errors.txt
+*.csv
+*.sql

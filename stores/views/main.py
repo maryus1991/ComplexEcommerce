@@ -1,90 +1,16 @@
-from django.views.generic import (
-    DetailView,
-    ListView,
-    TemplateView,
-    CreateView,
-    FormView,
-    UpdateView,
-    RedirectView,
-    View,
-)
-from django.db.models import Q
-from django.db.models.aggregates import Count
-from django.shortcuts import (
-    get_object_or_404,
-    reverse,
-    render,
-    redirect,
-    get_list_or_404,
-)
-from django.urls import reverse_lazy
-from django.contrib.auth import get_user_model
-from django.contrib import messages
+from django.db.models import Count, Sum, Case, When, IntegerField
+from django.db.models.functions import TruncDate
+from user.mixins.logins import UserStoreStaffMixin
+from django.views.generic import DetailView
+from product.models import Product, ProductViews
+from stores.models import Store
+from orders.models import Order, StoreSoldOrders
+from django.utils.timezone import timedelta, now
+
+from django.db.models import Case, When, Value, IntegerField
+from django.db.models.functions import TruncDate, Coalesce
+from datetime import timedelta
 from django.utils.timezone import now
-from phonenumbers.phonenumber import PhoneNumber
-from django.db import transaction
-from django.core.exceptions import (
-    PermissionDenied,
-    SuspiciousOperation,
-    ValidationError,
-)
-from django.views.decorators.http import require_http_methods
-from django.utils.decorators import method_decorator
-from django.core.files.uploadedfile import UploadedFile
-from orders.models import Order
-from stores.models import Store, StoreComment, StoreApps
-from dashboard.models import Ticket, TicketConversation
-from django.utils.dateparse import parse_date
-from stores.forms import (
-    AddProductForm,
-    AddBrandForm,
-    AddCategoryForm,
-    AddStoreForm,
-    StoreSendTicketForm,
-    AddStoreUserStaffForm,
-    AddStoreAppForm,
-    AddStoreBlogForm,
-    AddStoreBlogCategoryForm,
-    ProductSearchForm,
-    BrandAndCategorySearchForm,
-    TicketFilterForm,
-    OrderFilteringForm,
-    StoreBlogFilteringForm,
-    StoreUsersStaffFilteringForm,
-)
-from product.models import (
-    Product,
-    ProductTag,
-    ProductFeature,
-    ProductGallery,
-    ProductBrand,
-    ProductCategory,
-)
-
-from django.db.models import Value
-from django.db.models.functions import Concat
-from blog.models import Blog, BlogCategory
-from auditlog.models import LogEntry
-from django.contrib.contenttypes.models import ContentType
-
-from user.mixins.logins import UserStoreStaffMixin, AdminUserMixin, StoreAdminUserStaff
-from dashboard.forms import TicketConversationForm
-import jdatetime
-
-from stores.validators import is_valid_message
-from utils.tipax_price_calc import validate_city
-
-User = get_user_model()
-
-
-class StoreDetailView(DetailView):
-    """
-    for store detail view
-    """
-
-    model = Store
-    template_name = "store_detail.html"
-
 
 class StoreMainPage(UserStoreStaffMixin, DetailView):
     """
@@ -95,8 +21,59 @@ class StoreMainPage(UserStoreStaffMixin, DetailView):
     pk_url_kwarg = None
     context_object_name = "store"
 
-    def get_object(self):
+    def get_object(self, queryset=None):
         return self.request.user.store
 
-    def get_queryset(self):
-        return self.request.user.store
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        views = Product.objects.filter(
+            store=self.request.user.store
+        )
+        last_product = views.order_by('-id').all()[0:4]
+        views = views.annotate(
+            views_count=Count('views')
+        ).filter(
+            views_count__gt=0
+        ).order_by(
+            '-views_count'
+        ).distinct().values('name', 'views_count')
+
+        context['last_product'] = last_product
+        context['views'] = views
+        context['total_view'] = views.aggregate(total=Sum('views_count')).get('total')
+
+        context['orders'] = Order.objects.filter(store=self.request.user.store).order_by('-id').all()[0:6]
+
+        item = StoreSoldOrders.objects.filter(
+            store_id=self.request.user.store.id
+        )
+
+        context['total_price_not_returned_from_admin'] = sum(list(
+            item.filter(is_returned_by_admin=False).values_list("price", flat=True)
+        ))
+
+        context['total_price'] = sum(list(
+            item.values_list("price", flat=True)
+        ))
+
+        daily_sales = (
+            item.filter(
+                open_date__date__gte=now().date() - timedelta(days=30),
+            )
+            .annotate(
+                sale_date=TruncDate("open_date"),
+                valid_sale=Case(
+                    When(price__gt=0, then="price"),  # فقط قیمت‌های مثبت
+                    default=0,
+                    output_field=IntegerField(),
+                ),
+            )
+            .values("sale_date")
+            .annotate(daily_total=Sum("valid_sale"))
+        )
+
+        context['daily_sales'] = [{"date": d, "total": dict(map(lambda x: (x['sale_date'], x['daily_total']),
+         daily_sales)).get(d, 0) } for d in [(now().date() - timedelta(days=30)) + timedelta(days=x) for x in range(30)]]
+
+        return context

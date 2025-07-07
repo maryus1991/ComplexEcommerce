@@ -127,23 +127,23 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 #
-# DATABASES = {
-#     "default": {
-#         "ENGINE": os.getenv("POSTGRES_ENGIN", default="django.db.backends.postgresql"),
-#         "NAME": os.getenv("POSTGRES_DB"),
-#         "USER": os.getenv("POSTGRES_USER"),
-#         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-#         "HOST": os.getenv("POSTGRES_HOST", default="postgres"),
-#         "PORT": os.getenv("POSTGRES_PORT", default="5432"),
-#     }
-# }
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": os.getenv("POSTGRES_ENGIN", default="django.db.backends.postgresql"),
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST", default="postgres"),
+        "PORT": os.getenv("POSTGRES_PORT", default="5432"),
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -180,10 +180,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 if DEBUG:
-    STATICFILES_DIRS = [
-        BASE_DIR / "static",
-    ]
-    STATIC_ROOT = BASE_DIR / "static-cdn"
+
+    STATIC_ROOT = BASE_DIR / "static"
 else:
     STATIC_ROOT = BASE_DIR / "static"
 
@@ -207,7 +205,7 @@ CKEDITOR_RESTRICT_BY_USER = True
 CKEDITOR_ALLOW_NONIMAGE_FILES = True
 
 CKEDITOR_CONFIGS = {
-     'default': {
+    'default': {
         'auto_inline': False,
         'toolbar': [
             ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
@@ -225,7 +223,31 @@ CKEDITOR_CONFIGS = {
         'width': '999px',
         'height': 300,
         'extraPlugins': 'font,colorbutton,justify,iframe',
-        'contentsCss': ["/admin-panel/fonts/fonts.css"],
+        'contentsCss': ['/static/fonts/font.css'],
+        'font_names': (
+            'Ravi-Bold;'
+            'Ravi-ExtraBold;'
+            'Ravi-Medium;'
+            'Ravi-Regular;'
+            'Ravi-SemiBold;'
+            'Ravi-Thin;'
+            'Vazir;'
+            'NotoNaskhArabic'
+            'Morabba-Light;'
+            'Morabba-Medium;'
+            'Morabba-Bold;'
+            'DanaFaNum-DemiBold;'
+            'DanaFaNum-Medium;'
+            'DanaFaNum-Regular;'
+            'IRANSans/IRANSans;'
+            'Vazir/Vazir;'
+            'Arial/Arial, Helvetica, sans-serif;'
+            'Courier New/Courier New, Courier, monospace;'
+            'Georgia/Georgia, serif;'
+            'Tahoma/Tahoma, Geneva, sans-serif;'
+            'Times New Roman/Times New Roman, Times, serif;'
+            'Verdana/Verdana, Geneva, sans-serif;'
+        ),
     },
     "mobile": {
         "toolbar": "Basic",
@@ -244,7 +266,7 @@ JALALI_DATE_DEFAULTS = {
     "LIST_DISPLAY_AUTO_CONVERT": True,
     "Strftime": {
         "date": "%y/%m/%d",
-        "datetime": "%y/%m/%-d%H:%M:%S",
+        "datetime": "%y/%m/%d - %H:%M:%S",
     },
     "Static": {
         "js": [

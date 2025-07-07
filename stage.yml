@@ -24,6 +24,7 @@ services:
       - media_volume:/app/media
       - ./admin_panel/backups:/app/admin_panel/backups/
       - ./media:/app/media
+      - ./static:/app/static
 
     env_file:
       - .envs
@@ -54,6 +55,8 @@ services:
       - media_volume:/home/app/media
       - ./admin_panel/backups:/home/app/admin_panel/backups/
       - ./media:/home/app/media
+      - ./static:/home/app/static
+
 
 volumes:
   blog-postgres:

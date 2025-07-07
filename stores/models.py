@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -50,6 +52,7 @@ class Store(models.Model):
     official_invoice_phone_number = models.CharField(
         max_length=100, null=True, blank=True
     )
+    time_for_return_order_days = models.PositiveSmallIntegerField(default=1)
 
     # store delivery
     have_post_delivery = models.BooleanField(default=True)

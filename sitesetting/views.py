@@ -58,17 +58,20 @@ def robots_txt(request):
 
 
 def dynamic_favicon(request):
-    site = SiteSetting.objects.first()
+    try:
+        site = SiteSetting.objects.first()
 
-    logo_path = site.logo.path
+        logo_path = site.logo.path
 
-    if logo_path:
-        with open(logo_path, 'rb') as f:
+        if logo_path:
+            with open(logo_path, 'rb') as f:
+                return HttpResponse(f.read(), content_type="image/png")
+        else:
+            with open(BASE_DIR / '1111.jpg' ,'rb') as f:
+                return HttpResponse(f.read(), content_type="image/png")
+    except Exception as e:
+        with open(BASE_DIR / '1111.jpg', 'rb') as f:
             return HttpResponse(f.read(), content_type="image/png")
-    else:
-        with open(BASE_DIR / '1111.jpg' ,'rb') as f:
-            return HttpResponse(f.read(), content_type="image/png")
-
 
 class Main(TemplateView):
     """
@@ -255,7 +258,8 @@ def custom_404_page(request, exception=None):
     return render(request, "site/404.html")
 
 
-def header_render_partial(request):
+def header_render_partial(request, title=None):
+
     if request.user.is_authenticated:
         orders = OrderDetail.objects.filter(
             order__user=request.user,
@@ -267,8 +271,8 @@ def header_render_partial(request):
         orders = None
 
     site = SiteSetting.objects.filter(is_active=True).first()
-
-    return render(request, "Base/Header/Header.html", {"orders": orders, "site": site})
+    title = title if title else site.title
+    return render(request, "Base/Header/Header.html", {"orders": orders, "site": site, 'title': title})
 
 
 def footer_render_partial(request):

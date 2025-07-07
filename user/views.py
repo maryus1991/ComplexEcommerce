@@ -37,7 +37,7 @@ class LoginView(View):
         self.site = SiteSetting.objects.first()
         site = self.site
 
-        if not site.is_active:
+        if self.site and not site.is_active:
             messages.warning(request, "ورود به سایت غیر فعال می باشد")
             return redirect("/")
 
@@ -77,14 +77,16 @@ class LoginView(View):
                             if user == _user:
                                 site = self.site
 
-                                if site.is_active:
+                                if self.site  :
+                                    if site.is_active:
+                                        login(request, user)
+                                    elif not site.is_active:
+                                        messages.warning(
+                                            request, "ورود به سایت غیر فعال می باشد"
+                                        )
+                                        return redirect("/")
+                                else:
                                     login(request, user)
-
-                                elif not site.is_active:
-                                    messages.warning(
-                                        request, "ورود به سایت غیر فعال می باشد"
-                                    )
-                                    return redirect("/")
 
                                 messages.success(request, "خوش امدید")
                                 return redirect("dashboard:dashboard")
@@ -157,7 +159,7 @@ class RegisterView(View):
                 messages.success(request, "کاربر با موفیت ساخته شد")
                 site = SiteSetting.objects.first()
 
-                if not site.force_user_to_verify_with_message:
+                if site and not site.force_user_to_verify_with_message:
                     user.is_verified = True
                     user.message_verified = False
                     user.save()

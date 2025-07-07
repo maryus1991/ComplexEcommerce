@@ -11,7 +11,7 @@ class CustomLoginRequiredMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
         Site = SiteSetting.objects.first()
 
-        if not Site.is_active:
+        if Site and not Site.is_active:
 
             if request.user.is_authenticated:
                 logout(request)
@@ -19,13 +19,13 @@ class CustomLoginRequiredMixin(AccessMixin):
             messages.warning(request, "ورود به سایت غیر فعال می باشد")
             return redirect("user:login")
 
-        if request.user.is_authenticated and Site.is_active:
-            if not Site.legal_users_login and request.user.legal_person:
+        if request.user.is_authenticated and Site and Site.is_active:
+            if Site and not Site.legal_users_login and request.user.legal_person:
                 logout(request)
                 messages.warning(request, "ورود افراد با حساب رسمی غیر فعال است")
                 return redirect("user:login")
 
-            if (
+            if ( Site and
                     not Site.store_users_staff_logins and
                     request.user.is_staff and
                     request.user.store is not None
@@ -44,6 +44,9 @@ class CustomLoginRequiredMixin(AccessMixin):
                 )
                 return redirect("user:otp")
 
+        if Site is None:
+            return super().dispatch(request, *args, **kwargs)
+
         messages.warning(request, "لطفا وارد سایت شوید")
         return redirect("user:login")
 
@@ -54,13 +57,13 @@ class UserStoreStaffMixin(AccessMixin):
 
         Site = SiteSetting.objects.first()
 
-        if not Site.is_active:
+        if Site and not Site.is_active:
             if request.user.is_authenticated:
                 logout(request)
             messages.warning(request, "ورود به سایت غیر فعال می باشد")
             return redirect("user:login")
 
-        if not Site.active_store_page:
+        if Site and not Site.active_store_page:
             messages.warning(request, "ورود به صفحه فروشگاه غیر فعال می باشد")
             return redirect("user:login")
 
@@ -71,7 +74,7 @@ class UserStoreStaffMixin(AccessMixin):
                     request.user.is_verified
             ):
                 if request.user.store is not None:
-                    if not Site.store_users_staff_logins:
+                    if Site and not Site.store_users_staff_logins:
                         logout(request)
                         messages.warning(
                             request, "ورود کارمندان فروشگاه غیر فعال شده است"
@@ -92,13 +95,13 @@ class StoreAdminUserStaff(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
         Site = SiteSetting.objects.first()
 
-        if not Site.is_active:
+        if Site and not Site.is_active:
             if request.user.is_authenticated:
                 logout(request)
             messages.warning(request, "ورود به سایت غیر فعال می باشد")
             return redirect("user:login")
 
-        if not Site.active_store_page:
+        if Site and not Site.active_store_page:
             messages.warning(request, "ورود به صفحه فروشگاه غیر فعال می باشد")
             return redirect("user:login")
 

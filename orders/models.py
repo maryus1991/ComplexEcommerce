@@ -361,3 +361,20 @@ class StoreSoldOrders(models.Model):
 
     def __str__(self):
         return f"{self.price} <-> {self.store.name} <-> {self.is_returned_by_admin}"
+
+
+class ReturnsOrders(models.Model):
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name="returns")
+    user = models.ForeignKey(User, related_name="returns", on_delete=models.CASCADE,)
+    card_number = models.CharField()
+    is_returned_by_admin = models.BooleanField(default=False)
+    date_open_request = models.DateTimeField(auto_now_add=True)
+    date_close_request = models.DateTimeField(null=True, blank=True)
+    accept_by_store = models.BooleanField(default=False)
+
+class SpecificsOrders(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
+    price = models.PositiveBigIntegerField(default=0)
+    name = models.CharField(max_length=500)
+    is_paid = models.BooleanField(default=False)
