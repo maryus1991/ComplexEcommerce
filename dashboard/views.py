@@ -317,12 +317,17 @@ class CreateUserAddress(LoginRequiredMixin, FormView):
     for Create User Address
     """
 
+
     template_name = "dashboard/address/create-user-address.html"
     form_class = CreateUserAddressForm
     success_url = reverse_lazy("dashboard:address")
 
-    def form_valid(self, form):
+    def dispatch(self, request, *args, **kwargs):
+        print(1234)
+        return super().dispatch(request, *args, **kwargs)
 
+    def form_valid(self, form):
+        print(1234)
         try:
             form.instance.user = self.request.user
 
