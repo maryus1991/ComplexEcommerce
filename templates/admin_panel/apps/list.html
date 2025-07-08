@@ -143,7 +143,7 @@
                 <tr class="bg-primary">
                     <th class="text-center" width="5%">#</th>
                     <th width="25%">عنوان برنامه</th>
-                    <th class="text-center" width="10%">حجم</th>
+
                     <th class="text-center" width="10%">فروشگاه</th>
                     <th colspan="4" class="text-center" width="35%">عملیات</th>
                 </tr>
@@ -161,12 +161,7 @@
                             {% endif %}
                         </td>
 
-                        <td>
-                            {% if item.file.size %}
-                                <strong>{{ item.file.size|filesizeformat }}</strong>
 
-                            {% endif %}
-                        </td>
                         <td>
                             <strong>{{ item.store.name }}</strong>
                         </td>

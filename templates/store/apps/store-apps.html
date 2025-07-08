@@ -229,7 +229,7 @@
                         <thead>
                         <tr class="bg-light-blue">
                             <th width="25%">نام برنامه</th>
-                            <th width="5%">حجم</th>
+
                             <th width="5%">وضعیت</th>
                             <th width="10%">عملیات</th>
                             <th width="45%">توضیحات</th>
@@ -239,7 +239,7 @@
                         {% for item in items %}
                             <tr>
                                 <td>{{ item.name }}</td>
-                                <td>{{ item.file.size|filesizeformat }}</td>
+
                                 <td>
                                     {% if item.is_active and item.admin_verified %}
                                         <span class="label label-success">فعال</span>
