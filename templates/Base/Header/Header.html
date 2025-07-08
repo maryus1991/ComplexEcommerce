@@ -84,7 +84,7 @@
             <!-- TOGGLE BTN -->
 
 
-            <button class="toggle-theme" onclick="themToggle()">
+            <button class="toggle-theme" id="toggle-theme-odkqwpdkp" onclick="themToggle()">
                 <svg class="inline-block dark:hidden w-6 h-6">
                     <use href="#moon"></use>
                 </svg>
@@ -105,6 +105,10 @@
                         localStorage.setItem('theme', "dark");
                     }
                 }
+
+                document.getElementById("toggle-theme-odkqwpdkp").addEventListener("click", function () {
+                    themToggle();
+                });
 
             </script>
             <!-- SHOPPING CART BTN -->
@@ -434,7 +438,7 @@
                     ورود | ثبت نام
                 </a>
             {% endif %}
-            <button onclick="themToggle()" class="toggle-theme">
+            <button onclick="themToggle()" id="toggle-theme-mobile" class="toggle-theme">
                         <span class="flex dark:hidden gap-x-1 items-center">
                             <svg class="w-6 h-6">
                                 <use href="#moon"/>
@@ -448,6 +452,11 @@
                             تم روشن
                         </span>
             </button>
+            <script>
+                document.getElementById("toggle-theme-mobile").addEventListener("click", function () {
+                    themToggle();
+                });
+            </script>
         </div>
     </div>
     <a href="/"

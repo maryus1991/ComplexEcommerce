@@ -745,6 +745,8 @@ class VerifyPayment(LoginRequiredMixin, View):
         )
         self.result = self.order.get_payment_price()
 
+        self.site = SiteSetting.objects.first()
+
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -781,6 +783,12 @@ class VerifyPayment(LoginRequiredMixin, View):
 
                 order.mines_order_detail_count_from_products_count()
                 order.save()
+
+
+                StoreSoldOrders.objects.create(
+                    order=order, price=order.total_price, store=order.store
+                )
+
                 if self.site.send_message_successful_payment:
                     send_message(
                         str(order.user.PhoneNumber).replace(" ", ""),
@@ -789,10 +797,6 @@ class VerifyPayment(LoginRequiredMixin, View):
                         سفارش شما در وضعیت ارسال قرار گرفت
                         """,
                     )
-
-                StoreSoldOrders.objects.create(
-                    order=order, price=order.total_price, store=order.store
-                )
 
                 messages.success(request, "از خرید شما متشکریم")
 
