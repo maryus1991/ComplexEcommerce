@@ -656,20 +656,16 @@ class UsedAppModelForm(forms.ModelForm):
                 "style": "width: 100%;",
                 "tabindex": "-1",
                 "aria-hidden ": "true",
+                'dir':'rtl'
             }
         ),
         empty_label="فروشگاه را انتخاب کنید",
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # اگر فایل ارسال نشده، فیلد فایل اختیاری شود
-        if not self.files.get('file'):
-            self.fields['file'].required = False
 
     class Meta:
         model = StoreApps
-        fields = "__all__"
+        exclude = ('file',)
 
         widgets = {
             "is_active": forms.CheckboxInput(),
@@ -680,9 +676,7 @@ class UsedAppModelForm(forms.ModelForm):
             "short_description": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "توضیحات کوتاه ... "}
             ),
-            "file": forms.ClearableFileInput(
-                attrs={"class": "form-control", "placeholder": "برنامه را وارد کنید"}
-            ),
+
         }
 
 

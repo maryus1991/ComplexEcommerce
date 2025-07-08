@@ -108,6 +108,7 @@ class StoreAppsView(UserStoreStaffMixin, View):
                 if os.path.exists(full_path):
                     with open(full_path, 'rb') as f:
                         form.instance.file.save(uploaded_filename, File(f), save=False)
+
                     os.remove(full_path)  # اختیاری
 
             form.save()

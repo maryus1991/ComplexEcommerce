@@ -1324,15 +1324,9 @@ class AddStoreAppForm(forms.ModelForm):
     """
 
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # اگر فایل ارسال نشده، فیلد فایل اختیاری شود
-        if not self.files.get('file'):
-            self.fields['file'].required = False
-
     class Meta:
         model = StoreApps
-        fields = ("is_active", "name", "file", 'short_description')
+        fields = ("is_active", "name", 'short_description')
         widgets = {
             "is_active": forms.CheckboxInput(),
             "name": forms.TextInput(
@@ -1341,9 +1335,7 @@ class AddStoreAppForm(forms.ModelForm):
             "short_description": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "توضیحات کوتاه ..."}
             ),
-            "file": forms.ClearableFileInput(
-                attrs={"class": "form-control", "placeholder": "برنامه را وارد کنید"}
-            ),
+
 
         }
 

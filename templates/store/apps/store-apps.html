@@ -40,7 +40,7 @@
                                     <span class="input-group-btn">
                                         <button type="button" class="btn btn-info btn-flat">فایل</button>
                                     </span>
-                                        {{ form.file }}
+                                        <input type="file" name="file" class="form-control" placeholder="برنامه را وارد کنید" id="id_file">
                                     </div>
                                 </div>
                             </div>
@@ -65,7 +65,7 @@
                     <div class="box-footer clearfix">
                         <div class="row">
                             <div class="col-md-8">
-                                <div class="progress" style="margin-bottom: 5px; height: 20px;">
+                                <div class="progress" style="margin-bottom: 2px; height: 18px;">
                                     <div class="progress-bar progress-bar-success progress-bar-striped active"
                                          id="progress-bar"
                                          role="progressbar"
@@ -73,7 +73,7 @@
                                         0%
                                     </div>
                                 </div>
-                                <div id="upload-speed" class="text-muted small" style="margin-bottom: 10px;"></div>
+                                <div id="upload-speed" class="text-muted small" style="margin-bottom: 0px;"></div>
                             </div>
 
                             <div class="col-md-4 text-left">
@@ -161,6 +161,10 @@
                         document.getElementById('progress-bar').innerText = percent + '%';
                         document.getElementById('upload-speed').innerText = `سرعت: ${speed} مگابایت بر ثانیه`;
 
+                        if (percent === 100) {
+                            document.getElementById('id_file').remove();
+                        }
+
                         currentChunk++;
                         uploadNextChunk();  // ادامه آپلود chunk بعدی
                     })
@@ -204,6 +208,7 @@
                     </div>
                     <div class="box-footer">
                         <button type="submit" class="btn btn-success btn-sm btn-block">جستجو</button>
+
                     </div>
                 </form>
             </div>

@@ -63,19 +63,6 @@ class AppsCreateView(AdminUserMixin, CreateView):
     template_name = "admin_panel/apps/create.html"
     success_url = reverse_lazy("admin_panel:apps-list")
 
-    def get_form(self, form_class=None):
-        form_class = self.get_form_class()
-        uploaded_filename = self.request.POST.get('uploaded_filename')
-
-        post_data = self.request.POST.copy()
-        files_data = self.request.FILES.copy()
-
-        # اگر فایل از قبل آپلود شده، فایل جدید رو نادیده بگیر
-        if uploaded_filename:
-            files_data.pop('file', None)
-
-        return form_class(post_data, files_data)
-
     def form_valid(self, form):
         form.instance.store = self.request.user.store
 
@@ -103,17 +90,6 @@ class AppsUpdateView(AdminUserMixin, UpdateView):
     success_url = reverse_lazy("admin_panel:apps-list")
     context_object_name = "item"
 
-    def get_form(self, form_class=None):
-        form_class = self.get_form_class()
-        uploaded_filename = self.request.POST.get('uploaded_filename')
-
-        post_data = self.request.POST.copy()
-        files_data = self.request.FILES.copy()
-
-        if uploaded_filename:
-            files_data.pop('file', None)
-
-        return form_class(post_data, files_data, instance=self.get_object())
 
     def form_valid(self, form):
         uploaded_filename = self.request.POST.get('uploaded_filename')
