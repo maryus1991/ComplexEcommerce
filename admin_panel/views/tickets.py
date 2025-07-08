@@ -181,13 +181,19 @@ class DeleteTicketView(AdminUserMixin, RedirectView):
     """for delete Ticket"""
 
     def get_redirect_url(self, *args, **kwargs):
+        print(1)
         obj = get_object_or_404(Ticket, pk=kwargs.get("pk"))
+        print(2)
         if obj.close_ticket:
             obj.delete()
             messages.warning(self.request, "تیکت حذف شد")
+            print(4)
         else:
+            print(3)
             messages.error(self.request, "برای حذف تیکت انرا بسته کنید")
-        return redirect("admin_panel:ticket-received-list")
+
+        print(5)
+        return reverse("admin_panel:ticket-received-list")
 
 
 class DeleteMessageView(AdminUserMixin, RedirectView):

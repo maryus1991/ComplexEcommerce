@@ -154,7 +154,7 @@
 
                 <!-- accordion -->
                 <div class="mt-3 w-full dark:bg-zinc-600 cursor-pointer shadow rounded-lg">
-                    <div onclick="categoryFilter('category-accordion')"
+                    <div id="category-header" onclick="categoryFilter('category-accordion')"
                          class="accordion-header p-3 flex items-center justify-between">
                         <p class="font-DanaMedium">دسته بندی </p>
 
@@ -214,7 +214,7 @@
                 </div>
                 <br>
                 <div class="w-full dark:bg-zinc-600 cursor-pointer shadow rounded-lg">
-                    <div onclick="categoryFilter('store-accordion')"
+                    <div id="store-header" onclick="categoryFilter('store-accordion')"
                          class="accordion-header p-3 flex items-center justify-between">
                         <p class="font-DanaMedium">فروشگاها</p>
                         <svg class="w-4 h-4">
@@ -238,7 +238,7 @@
                 </div>
                 <br>
                 <div class="w-full dark:bg-zinc-600 cursor-pointer shadow rounded-lg">
-                    <div onclick="categoryFilter('brand-accordion')"
+                    <div id="brand-header" onclick="categoryFilter('brand-accordion')"
                          class="accordion-header p-3 flex items-center justify-between">
                         <p class="font-DanaMedium">برند</p>
                         <svg class="w-4 h-4">
@@ -546,16 +546,31 @@
             </div>
         </div>
     </div>
-                            <script>
-                            function categoryFilter(id) {
-                                let elem = document.getElementById(id).classList;
-                                if (elem.contains('hidden')) {
-                                    elem.remove('hidden')
-                                } else {
-                                    elem.add('hidden')
-                                }
-                            }
-                        </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function categoryFilter(id) {
+                let elem = document.getElementById(id).classList;
+
+                if (elem.contains('hidden')) {
+                    elem.remove('hidden')
+                } else {
+                    elem.add('hidden')
+                }
+            }
+
+            window.categoryFilter = categoryFilter;
+        });
+
+        document.getElementById("category-header").addEventListener("click", function () {
+            categoryFilter("category-accordion");
+        });
+        document.getElementById("store-header").addEventListener("click", function () {
+            categoryFilter("store-accordion");
+        });
+        document.getElementById("brand-header").addEventListener("click", function () {
+            categoryFilter("brand-accordion");
+        });
+    </script>
 
 {% endblock %}
 

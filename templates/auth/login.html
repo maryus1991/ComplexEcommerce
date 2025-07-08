@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block breadcrumb %}
-	
+
     <li class="flex items-center gap-x-2">
         <a>صفحه کابری</a>
         <svg class="w-4 h-4">
@@ -17,7 +17,7 @@
     <li class="flex items-center gap-x-2">
         <a>ورود به سایت</a>
 
-    </li>    
+    </li>
 
 {% endblock %}
 
@@ -32,7 +32,6 @@
                     </h2>
                     <p class="mt-2 lg:mt-4 text-center text-gray-400">ورود به حساب کاربری
                     </p>
-                                        <p class="mt2 lg:mt-4 text-center text-gray-400">شما با ورود  به سایت تمامی <a href="{% url 'site:site-law' %}" class="text-blue-400">قوانین و مقررات </a>مورد پذیرش شما تلقی می شود</p>
 
                     <form method="POST" action="{% url 'user:login' %}" class="mt-8 space-y-6">
                         {% csrf_token %}
@@ -43,8 +42,8 @@
                             </svg>
                         </div>
                         <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
-{#                            <input placeholder="رمز عبور" class="appearance-none bg-transparent w-full py-3" required=""#}
-{#                                autocomplete="password" type="password" />#}
+                            {#                            <input placeholder="رمز عبور" class="appearance-none bg-transparent w-full py-3" required=""#}
+                            {#                                autocomplete="password" type="password" />#}
                             {{ login_form.password }}
                             <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
                                 <use href="#lock"></use>
@@ -54,20 +53,22 @@
 
                         <div class="flex items-center justify-between mt-4">
                             <div class="text-sm">
-                                <a class="font-medium text-green-500 hover:text-green-600" href="{% url 'user:reset_password' %}">
+                                <a class="font-medium text-green-500 hover:text-green-600"
+                                   href="{% url 'user:reset_password' %}">
                                     فراموشی رمز عبور
                                 </a>
-                            </div>                            
+                            </div>
                             <div class="text-sm">
-                                <a class="font-medium text-green-500 hover:text-green-600" href="{% url 'user:active_account' %}">
+                                <a class="font-medium text-green-500 hover:text-green-600"
+                                   href="{% url 'user:active_account' %}">
                                     فعال کردن حساب کاربری
                                 </a>
                             </div>
                         </div>
                         <div>
                             <button
-                                class="group transition-colors relative w-full flex justify-center py-3 px-4 border border-transparent font-DanaMedium rounded-lg text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                                type="submit">
+                                    class="group transition-colors relative w-full flex justify-center py-3 px-4 border border-transparent font-DanaMedium rounded-lg text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                    type="submit">
                                 وارد شوید
                             </button>
                         </div>
@@ -75,10 +76,17 @@
                 </div>
                 <div class="px-8 py-4 text-sm flex items-center justify-between ">
                     <span class="text-gray-400 ">حساب کاربری ندارید؟ </span>
-                    <a class="font-medium text-green-500 hover:text-green-400" href="{% url 'user:register' %}">ثبت نام کنید</a>
+                    <a class="font-medium text-green-500 hover:text-green-400" href="{% url 'user:register' %}">ثبت نام
+                        کنید</a>
                     <span class="text-gray-400 ">ورود افراد حقیقی؟</span>
-                    <a class="font-medium text-green-500 hover:text-green-400" href="{% url 'user:help-legal-person' %}">راهنمایی</a>
+                    <a class="font-medium text-green-500 hover:text-green-400"
+                       href="{% url 'user:help-legal-person' %}">راهنمایی</a>
+
+
                 </div>
+                            <p class="mt2 mt-2 mb-2 text-center text-xs text-gray-400">شما با ورود به سایت تمامی <a
+                            href="{% url 'site:site-law' %}" class="text-blue-400 text-xs">قوانین و مقررات </a>مورد پذیرش شما
+                        تلقی می شود</p>
             </div>
         </div>
 

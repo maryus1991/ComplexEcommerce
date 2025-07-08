@@ -492,7 +492,8 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
             store_id=store_id,
         )
 
-        if order.details.count <= 0:
+
+        if not order.details.exists():
             messages.error(
                 self.request,
                 'سبد خرید شما خالیست'

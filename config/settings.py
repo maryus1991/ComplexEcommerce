@@ -180,6 +180,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 if DEBUG:
+    # STATICFILES_DIRS = [BASE_DIR / "static"]
 
     STATIC_ROOT = BASE_DIR / "static"
 else:
@@ -225,28 +226,15 @@ CKEDITOR_CONFIGS = {
         'extraPlugins': 'font,colorbutton,justify,iframe',
         'contentsCss': ['/static/fonts/font.css'],
         'font_names': (
-            'Ravi-Bold;'
-            'Ravi-ExtraBold;'
-            'Ravi-Medium;'
-            'Ravi-Regular;'
-            'Ravi-SemiBold;'
-            'Ravi-Thin;'
-            'Vazir;'
-            'NotoNaskhArabic'
-            'Morabba-Light;'
-            'Morabba-Medium;'
-            'Morabba-Bold;'
-            'DanaFaNum-DemiBold;'
-            'DanaFaNum-Medium;'
-            'DanaFaNum-Regular;'
-            'IRANSans/IRANSans;'
-            'Vazir/Vazir;'
-            'Arial/Arial, Helvetica, sans-serif;'
-            'Courier New/Courier New, Courier, monospace;'
-            'Georgia/Georgia, serif;'
-            'Tahoma/Tahoma, Geneva, sans-serif;'
-            'Times New Roman/Times New Roman, Times, serif;'
-            'Verdana/Verdana, Geneva, sans-serif;'
+            'Ravi-Bold;' 'Ravi-ExtraBold;' 'Ravi-Medium;' 'Ravi-Regular;' 'Ravi-SemiBold;' 'Ravi-Thin;'
+            'Vazir;' 'NotoNaskhArabic'
+            'Morabba-Light;' 'Morabba-Medium;' 'Morabba-Bold;' 'DanaFaNum-DemiBold;' 'DanaFaNum-Medium;' 'DanaFaNum-Regular;'
+            'IRANSans/IRANSans;' 'Vazir/Vazir;'
+            'Arial/Arial, Helvetica, sans-serif;' 'Courier New/Courier New, Courier, monospace;' 'Georgia/Georgia, serif;'
+            'Tahoma/Tahoma, Geneva, sans-serif;' 'Times New Roman/Times New Roman, Times, serif;' 'Verdana/Verdana, Geneva, sans-serif;'
+            'PINAR-BOLD;' 'PINAR-DS3-BLACK;' 'PINAR-DS3-BOLD;'
+            'PINAR-DS3-EXTRABOLD;' 'PINAR-DS3-LIGHT;' 'PINAR-DS3-MEDIUM;' 'PINAR-DS3-REGULAR;' 'PINAR-DS3-SEMIBOLD;' 'PINAR-EXTRABOLD;'
+            'PINAR-FD-VF[WGHT-KSHD-DSTY];' 'PINAR-LIGHT;' 'PINAR-MEDIUM;' 'PINAR-REGULAR;' 'PINAR-SEMIBOLD;' 'PINAR-VF[WGHT-KSHD-DSTY];'
         ),
     },
     "mobile": {

@@ -42,7 +42,7 @@
                 </div>
                 <!-- accordion -->
                 <div class="mt-6 w-full dark:bg-zinc-600 cursor-pointer shadow  rounded-lg">
-                    <div onclick="categoryFilter('blog-categories-filter')"
+                    <div id='blog-category-header' onclick="categoryFilter('blog-categories-filter')"
                          class="accordion-header p-3 flex items-center justify-between">
                         <p class="font-DanaMedium">دسته بندی </p>
                         <svg class="w-4 h-4">
@@ -102,7 +102,7 @@
                 </div>
 
                 <div class="w-full dark:bg-zinc-600 cursor-pointer shadow rounded-lg">
-                    <div onclick="categoryFilter('store-accordion')"
+                    <div id="store-header" onclick="categoryFilter('store-accordion')"
                          class="accordion-header p-3 flex items-center justify-between">
                         <p class="font-DanaMedium">فروشگاها</p>
                         <svg class="w-4 h-4">
@@ -126,7 +126,7 @@
                 </div>
 
                 <div class="w-full dark:bg-zinc-600 cursor-pointer shadow  rounded-lg">
-                    <div onclick="categoryFilter('date-filter')"
+                    <div id="date-header" onclick="categoryFilter('date-filter')"
                          class="accordion-header p-3 flex items-center justify-between">
                         <p class="font-DanaMedium">تاریخ انتشار</p>
                         <svg class="w-4 h-4">
@@ -186,84 +186,84 @@
 
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
-    // تابع برای گرفتن تمام مقادیر یک پارامتر از URL
-    function getAllParams(paramName) {
-        const params = new URLSearchParams(window.location.search);
-        return params.getAll(paramName);
-    }
+                    // تابع برای گرفتن تمام مقادیر یک پارامتر از URL
+                    function getAllParams(paramName) {
+                        const params = new URLSearchParams(window.location.search);
+                        return params.getAll(paramName);
+                    }
 
-    // تابع برای بررسی وجود پارامتر
-    function hasParam(paramName) {
-        return new URLSearchParams(window.location.search).has(paramName);
-    }
+                    // تابع برای بررسی وجود پارامتر
+                    function hasParam(paramName) {
+                        return new URLSearchParams(window.location.search).has(paramName);
+                    }
 
-    // --- پردازش دسته‌بندی‌ها ---
-    const selectedCategories = getAllParams('category');
-    if (selectedCategories.length > 0) {
-        const categoriesAccordion = document.getElementById('blog-categories-filter');
-        if (categoriesAccordion) {
-            categoriesAccordion.classList.remove('hidden');
-            
-            selectedCategories.forEach(catId => {
-                const checkbox = document.querySelector(`input[name="category"][value="${catId}"]`);
-                if (checkbox) {
-                    checkbox.checked = true;
-                    
-                    // برای به روزرسانی UI در صورت نیاز
-                    const event = new Event('change');
-                    checkbox.dispatchEvent(event);
-                }
-            });
-        }
-    }
+                    // --- پردازش دسته‌بندی‌ها ---
+                    const selectedCategories = getAllParams('category');
+                    if (selectedCategories.length > 0) {
+                        const categoriesAccordion = document.getElementById('blog-categories-filter');
+                        if (categoriesAccordion) {
+                            categoriesAccordion.classList.remove('hidden');
 
-    // --- پردازش فروشگاه‌ها (با استفاده از تابع صحیح) ---
-    const selectedStores = getAllParams('store'); // تغییر از getAllQueryParams به getAllParams
-    if (selectedStores.length > 0) {
-        const storeAccordion = document.getElementById('store-accordion');
-        if (storeAccordion) {
-            storeAccordion.classList.remove('hidden');
-            
-            selectedStores.forEach(storeId => {
-                const checkbox = document.querySelector(`input[name="store"][value="${storeId}"]`);
-                if (checkbox) {
-                    checkbox.checked = true;
-                    
-                    // برای به روزرسانی UI در صورت نیاز
-                    const event = new Event('change');
-                    checkbox.dispatchEvent(event);
-                }
-            });
-        }
-    }
+                            selectedCategories.forEach(catId => {
+                                const checkbox = document.querySelector(`input[name="category"][value="${catId}"]`);
+                                if (checkbox) {
+                                    checkbox.checked = true;
 
-    // --- پردازش تاریخ انتشار ---
-    if (hasParam('today') || hasParam('yesterday') || hasParam('start_date') || hasParam('end_date')) {
-        const dateAccordion = document.getElementById('date-filter');
-        if (dateAccordion) {
-            dateAccordion.classList.remove('hidden');
+                                    // برای به روزرسانی UI در صورت نیاز
+                                    const event = new Event('change');
+                                    checkbox.dispatchEvent(event);
+                                }
+                            });
+                        }
+                    }
 
-            if (hasParam('today')) {
-                const todayCheckbox = document.querySelector('input[name="today"]');
-                if (todayCheckbox) todayCheckbox.checked = true;
-            }
-            if (hasParam('yesterday')) {
-                const yesterdayCheckbox = document.querySelector('input[name="yesterday"]');
-                if (yesterdayCheckbox) yesterdayCheckbox.checked = true;
-            }
-        }
-    }
+                    // --- پردازش فروشگاه‌ها (با استفاده از تابع صحیح) ---
+                    const selectedStores = getAllParams('store'); // تغییر از getAllQueryParams به getAllParams
+                    if (selectedStores.length > 0) {
+                        const storeAccordion = document.getElementById('store-accordion');
+                        if (storeAccordion) {
+                            storeAccordion.classList.remove('hidden');
 
-    // --- پردازس سوئیچ‌ها ---
-    if (hasParam('hottest')) {
-        const hottestCheckbox = document.querySelector('input[name="hottest"]');
-        if (hottestCheckbox) hottestCheckbox.checked = true;
-    }
-    if (hasParam('newset')) {
-        const newestCheckbox = document.querySelector('input[name="newset"]');
-        if (newestCheckbox) newestCheckbox.checked = true;
-    }
-});
+                            selectedStores.forEach(storeId => {
+                                const checkbox = document.querySelector(`input[name="store"][value="${storeId}"]`);
+                                if (checkbox) {
+                                    checkbox.checked = true;
+
+                                    // برای به روزرسانی UI در صورت نیاز
+                                    const event = new Event('change');
+                                    checkbox.dispatchEvent(event);
+                                }
+                            });
+                        }
+                    }
+
+                    // --- پردازش تاریخ انتشار ---
+                    if (hasParam('today') || hasParam('yesterday') || hasParam('start_date') || hasParam('end_date')) {
+                        const dateAccordion = document.getElementById('date-filter');
+                        if (dateAccordion) {
+                            dateAccordion.classList.remove('hidden');
+
+                            if (hasParam('today')) {
+                                const todayCheckbox = document.querySelector('input[name="today"]');
+                                if (todayCheckbox) todayCheckbox.checked = true;
+                            }
+                            if (hasParam('yesterday')) {
+                                const yesterdayCheckbox = document.querySelector('input[name="yesterday"]');
+                                if (yesterdayCheckbox) yesterdayCheckbox.checked = true;
+                            }
+                        }
+                    }
+
+                    // --- پردازس سوئیچ‌ها ---
+                    if (hasParam('hottest')) {
+                        const hottestCheckbox = document.querySelector('input[name="hottest"]');
+                        if (hottestCheckbox) hottestCheckbox.checked = true;
+                    }
+                    if (hasParam('newset')) {
+                        const newestCheckbox = document.querySelector('input[name="newset"]');
+                        if (newestCheckbox) newestCheckbox.checked = true;
+                    }
+                });
             </script><!-- FILTER BOXES & articles -->
 
             <div class="lg:w-3/4">
@@ -393,17 +393,27 @@
         </div>
 
     </main>
-                    <script>
-                    function categoryFilter(id) {
-                        let elem = document.getElementById(id).classList;
-                        if (elem.contains('hidden')) {
-                            elem.remove('hidden')
-                        } else {
-                            elem.add('hidden')
-                        }
-                    }
+    <script>
+        function categoryFilter(id) {
+            let elem = document.getElementById(id).classList;
+            if (elem.contains('hidden')) {
+                elem.remove('hidden')
+            } else {
+                elem.add('hidden')
+            }
+        }
 
-                </script>
+        document.getElementById("blog-category-header").addEventListener("click", function () {
+            categoryFilter("blog-categories-filter");
+        });
+        document.getElementById("date-header").addEventListener("click", function () {
+            categoryFilter("date-filter");
+        });
+        document.getElementById("store-header").addEventListener("click", function () {
+            categoryFilter("store-accordion");
+        });
+
+    </script>
 {% endblock %}
 
 

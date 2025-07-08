@@ -190,20 +190,22 @@ def font_list_json(request):
     storage = utils.get_storage_class()
     font_path = os.path.join(settings.CKEDITOR_UPLOAD_PATH, 'fonts')
 
-    font_names = ['Ravi-Bold',
-                  'Ravi-ExtraBold',
-                  'Ravi-Medium',
-                  'Ravi-Regular',
-                  'Ravi-SemiBold',
-                  'Ravi-Thin',
-                  'Vazir',
-                  'NotoNaskhArabic',
-                  'Morabba-Light',
-                  'Morabba-Medium',
-                  'Morabba-Bold',
-                  'DanaFaNum-DemiBold',
-                  'DanaFaNum-Medium',
-                  'DanaFaNum-Regular']
+    font_names = ['Ravi-Bold', 'PINAR-BOLD',
+                  'Ravi-ExtraBold', 'PINAR-DS3-BLACK',
+                  'Ravi-Medium', 'PINAR-DS3-BOLD',
+                  'Ravi-Regular', 'PINAR-DS3-EXTRABOLD',
+                  'Ravi-SemiBold', 'PINAR-DS3-LIGHT',
+                  'Ravi-Thin', 'PINAR-DS3-MEDIUM',
+                  'Vazir', 'PINAR-DS3-REGULAR',
+                  'NotoNaskhArabic', 'PINAR-DS3-SEMIBOLD',
+                  'Morabba-Light', 'PINAR-EXTRABOLD',
+                  'Morabba-Medium', 'PINAR-FD-VF[WGHT-KSHD-DSTY]',
+                  'Morabba-Bold', 'PINAR-LIGHT',
+                  'DanaFaNum-DemiBold', 'PINAR-MEDIUM',
+                  'DanaFaNum-Medium', 'PINAR-REGULAR',
+                  'DanaFaNum-Regular', 'PINAR-SEMIBOLD',
+                  'PINAR-VF[WGHT-KSHD-DSTY]',
+                  ]
 
     if storage.exists(font_path):
         for font_file in storage.listdir(font_path)[1]:
