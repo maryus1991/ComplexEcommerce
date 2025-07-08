@@ -55,7 +55,7 @@ class UserAddress(models.Model):
     city_code = models.PositiveIntegerField(null=True, blank=True)
     address = models.TextField()
     phone = PhoneNumberField()
-    zipcode = models.IntegerField()
+    zipcode = models.CharField(max_length=120, null=True, blank=True)
     additional_decryption = models.TextField(null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
