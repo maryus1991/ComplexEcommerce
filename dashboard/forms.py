@@ -44,7 +44,7 @@ class CreateUserAddress(forms.ModelForm):
             "phone": forms.TextInput(
                 attrs={
                     "class": "tailwind-input col-span-6",
-                    "placeholder": "شماره مبایل*",
+                    "placeholder": "شماره موبایل*",
                     "dir": "rtl",
                 }
             ),

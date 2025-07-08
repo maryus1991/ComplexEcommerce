@@ -207,7 +207,11 @@ class AddAddressToOrder(LoginRequiredMixin, View):
         address = request.POST.get("address")
 
         store = get_object_or_404(Store, pk=store, is_active=True, is_verified=True)
-        address = get_object_or_404(UserAddress, pk=address, is_active=True, user=user)
+        address = UserAddress.objects.filter(pk=address, is_active=True, user=user).first()
+
+        if address is None:
+            messages.warning(request, 'ادرس مورد نظر پیدا نشد لطفا ادرس ثبت کنید')
+            return redirect("dashboard:address")
 
         order = get_object_or_404(
             Order,

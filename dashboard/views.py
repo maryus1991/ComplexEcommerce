@@ -167,11 +167,11 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
         # Handle official invoice case
         if obj.official_invoice :
 
-            if site.active_receive_official_invoice:
+            if not site.active_receive_official_invoice:
                 messages.warning(request, 'صدور فاکتور رسمی تا اطلاع ثانویه از سمت ادمین سایت غیر فعال شده است')
                 return redirect(reverse("dashboard:order_detail", kwargs={"pk": order_id}))
             
-            if obj.store.have_official_invoice:
+            if not obj.store.have_official_invoice:
                 messages.warning(request, 'صدور فاکتور رسمی تا اطلاع ثانویه از سمت فروشگاه غیر فعال شده است')
                 return redirect(reverse("dashboard:order_detail", kwargs={"pk": order_id}))
 
@@ -337,7 +337,7 @@ class CreateUserAddress(LoginRequiredMixin, FormView):
                 messages.warning(
                     self.request,
                     f"""
-                    شهر شما یافت نشد لطفا در نشونتن ان دقت فرمایید
+                    شهر شما یافت نشد لطفا در نوشتن ان دقت فرمایید
                     لیست شهر های پیدا شده با این اسم ارسالی شما 
                         {" , ".join([x['title'] for x in list(validate_city_result)])}""",
                 )
@@ -385,7 +385,7 @@ class UpdateUserAddress(LoginRequiredMixin, UpdateView):
                 messages.warning(
                     self.request,
                     f"""
-                    شهر شما یافت نشد لطفا در نشونت ان دقت فرمایید
+                    شهر شما یافت نشد لطفا در نوشتن ان دقت فرمایید
                     لیست شهر های پیدا شده با این اسم ارسالی شما 
                         {" , ".join([x['title'] for x in list(validate_city_result)])}""",
                 )

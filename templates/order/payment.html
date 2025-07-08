@@ -3,7 +3,7 @@
 {% load products_tags %}
 
 {% block title %}
-سبد خرید
+    سبد خرید
 {% endblock %}
 
 {% block breadcrumb %}
@@ -371,21 +371,17 @@
                     <hr>
                     {% if site.active_receive_official_invoice and order.store.have_official_invoice %}
 
-                        <a href="{% url 'orders:invoice-status' store_id=order.store.id pk=order.id %}"
-                           class="grid grid-cols-12  rounded-lg  shadow child:col-span-12 gap-4 child:w-full child:flex child:items-center child:gap-x-2 child:rounded-lg child:shadow child:p-2 mb-5 child:duration-300 child:transition-all dark:child:text-white child:text-sm"
-                        >
-                            <div class="flex items-center">
-                                <input type="checkbox" id="myCheckbox" name="myCheckbox"
-                                        {% if order.official_invoice %} checked {% endif %} disabled
-                                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                >
-                                <label for="myCheckbox"
-                                       class="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                    درخواست دریافت فاکتور رسمی
-                                </label>
-                            </div>
+                        <div class="grid grid-cols-12 child:col-span-12 gap-4 child:w-full child:flex child:items-center child:gap-x-2 child:rounded-lg child:shadow child:p-2 mb-5 child:duration-300child:transition-all dark:child:text-white child:text-sm">
+                            <a type="button"
+                               href="{% url 'orders:invoice-status' store_id=order.store.id pk=order.id %}"
+                               class="group ring-transparent ring-1 border {% if order.official_invoice %} border-green-500 bg-green-200  {% else %} focus:ring-blue-500 dark:ring-white/20 dark:focus:ring-blue-400  {% endif %}">
+                            <span
+                                    class="w-4 h-4 border rounded-full  {% if order.official_invoice %} bg-green-400 border-green-500 {% else %} border-gray-400  group-focus:bg-blue-400 group-focus:border-blue-500 {% endif %} duration-300 transition-all "></span>
+                                                                    درخواست دریافت فاکتور رسمی
+                            </a>
+                        </div>
 
-                        </a>
+
                         <p class="text-green-500">
                             {% if order.official_invoice %}
                                 هزینه دریافت فاکتور رسمی از این فروشگاه
@@ -437,7 +433,7 @@
                             <a type="button"
                                href="{% url 'orders:choose-type-of-delivery' store_id=order.store.id pk=order.id did=1 %}"
                                class="  group border ring-transparent ring-1 {% if order.vip_post %} border-green-500 bg-green-200  {% else %} focus:ring-blue-500 dark:ring-white/20 dark:focus:ring-blue-400  {% endif %}  ">
-                            <span class="w-4 h-4 border {% if order.vip_post %} bg-green-400 border-green-500 {% else %} border-gray-400  group-focus:bg-blue-400 group-focus:border-blue-500 {% endif %}  rounded-full duration-300 transition-all"></span>
+                                <span class="w-4 h-4 border {% if order.vip_post %} bg-green-400 border-green-500 {% else %} border-gray-400  group-focus:bg-blue-400 group-focus:border-blue-500 {% endif %}  rounded-full duration-300 transition-all"></span>
                                 پست پیشتاز : {{ order.calculate_post_price|tdc }} تومان
                             </a>
                         {% endif %}

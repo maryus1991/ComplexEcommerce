@@ -159,7 +159,7 @@ class StoreUpdateInformationView(StoreAdminUserStaff, UpdateView):
                     messages.warning(
                         self.request,
                         f""" 
-                        شهر شما یافت نشد لطفا در نشونتن ان دقت فرمایید
+                        شهر شما یافت نشد لطفا در نوشتن ان دقت فرمایید
                         لیست شهر های پیدا شده با این اسم ارسالی شما 
                             {" , ".join([x['title'] for x in list(validate_city_result)])}""",  # noqa
                     )  # noqa
