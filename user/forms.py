@@ -68,17 +68,8 @@ class RegistrationForm(forms.Form):
                 "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
             )
 
-        if not password.isalnum():
-            raise ValidationError(
-                "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
-            )
-
-        if not password.isascii():
-            raise ValidationError(
-                "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
-            )
-
         return password
+
 
     def clean_phone_number(self):
         phone_number = self.cleaned_data["phone_number"]

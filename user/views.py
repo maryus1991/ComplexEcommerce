@@ -77,7 +77,7 @@ class LoginView(View):
                             if user == _user:
                                 site = self.site
 
-                                if self.site  :
+                                if self.site :
                                     if site.is_active:
                                         login(request, user)
                                     elif not site.is_active:
@@ -156,20 +156,32 @@ class RegisterView(View):
 
                 user = User.objects.get(PhoneNumber=phone_number)
 
-                messages.success(request, "کاربر با موفیت ساخته شد")
+                messages.success(request, "کاربر با موفقیت ساخته شد")
+
                 site = SiteSetting.objects.first()
 
                 if site and not site.force_user_to_verify_with_message:
                     user.is_verified = True
                     user.message_verified = False
                     user.save()
+
+                    if site.is_active:
+                        login(request, user)
+
                     return redirect("dashboard:dashboard")
 
-                return redirect("user:otp")
+                if site and site.is_active:
+                    login(request, user)
+                    return redirect("user:otp")
+                else:
+                    messages.warning(
+                        request,'ثبت نام شما انجام شده است ولی ورود به سایت غیر فعال می باشد'
+                    )
+                    return redirect("/")
 
             else:
                 messages.error(request, "کاربری با این شماره موجود میباشد")
-                return redirect("user:login")
+                return redirect("user:login" )
         else:
             messages.error(
                 request,
@@ -185,10 +197,8 @@ class OTP(LoginRequiredMixin, View):
     form = OTPForm
 
     def dispatch(self, request, *args, **kwargs):
-        site = SiteSetting.objects.first()
 
         if request.user.is_authenticated and request.user.is_verified:
-
             messages.info(request, "حساب شما قبلا فعال شده است")
             return redirect("dashboard:dashboard")
         else:
@@ -280,6 +290,7 @@ class ForgotPassword(View):
                         "رمز عبور شما با موفقیت تغییر یافت حال برای فعال شدن حساب خود کد ارسال به شماره خود را وارد کنید",
                     )
                     return redirect("user:otp")
+
                 else:
                     messages.error(
                         request,

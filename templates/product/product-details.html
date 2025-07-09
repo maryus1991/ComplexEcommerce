@@ -259,25 +259,24 @@
                             </div>
                         {% endif %}
                     </div>
-
-                    <!-- SLIDER -->
-                    <div class="swiper mt-2 w-full product-details-slider rounded-lg overflow-hidden shadow-md">
+                    <div class="swiper mt-2 w-full porduct-details-slider rounded-lg">
                         <div class="swiper-wrapper">
                             <div class="swiper-slide">
                                 <img src="{{ product.picture.url }}"
-                                     class="rounded-lg w-full h-auto object-cover aspect-square"
+                                     class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
                                      alt="{{ product.name }}">
                             </div>
                             {% for img in product.gallery.all %}
                                 <div class="swiper-slide">
                                     <img src="{{ img.image.url }}"
-                                         class="rounded-lg w-full h-auto object-cover aspect-square"
-                                         alt="{{ product.name }}">
+                                         class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit" alt="{{ product.name }}">
                                 </div>
                             {% endfor %}
                         </div>
                         <div class="swiper-pagination"></div>
                     </div>
+                    <!-- SLIDER -->
+
 
                     <!-- SOCIAL LINKS -->
                     <div class="flex items-center gap-4">

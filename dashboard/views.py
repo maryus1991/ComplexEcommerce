@@ -321,10 +321,6 @@ class CreateUserAddress(LoginRequiredMixin, FormView):
     form_class = CreateUserAddressForm
     success_url = reverse_lazy("dashboard:address")
 
-    def dispatch(self, request, *args, **kwargs):
-        print(1234)
-        return super().dispatch(request, *args, **kwargs)
-
     def form_invalid(self, form):
         messages.error(
             self.request,form.errors,
@@ -332,7 +328,6 @@ class CreateUserAddress(LoginRequiredMixin, FormView):
         return super().form_invalid(form)
 
     def form_valid(self, form):
-        print(12345)
         try:
             form.instance.user = self.request.user
 
@@ -405,7 +400,7 @@ class UpdateUserAddress(LoginRequiredMixin, UpdateView):
                 form.instance.city_code = validate_city_result[0]["id"]
 
             form.save()
-            messages.success(self.request, "ادرس شما با موفقیت بروز رسانی شد")
+
             return super().form_valid(form)
 
         except Exception as e:

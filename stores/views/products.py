@@ -214,7 +214,19 @@ class StoreAddProduct(UserStoreStaffMixin, FormView):
 
             for spec in specs:
                 if spec.isalnum and spec != " " and spec != "" and spec is not None:
-                    ProductSpecifications.objects.create(product=product, name=spec)
+                    if len(spec) <= 999:
+                        ProductSpecifications.objects.create(product=product, name=spec)
+
+                    else:
+                        messages.warning(
+                            self.request,
+                            'تگ زیر ذخیره نشده است به دلیل بالای 1000 کاراکتر بودن'
+                        )
+                        messages.warning(
+                            self.request,
+                            f'{spec}'
+
+                        )
                 else:
                     if spec != " " and spec != "" and spec is not None:
                         messages.warning(
@@ -227,24 +239,49 @@ class StoreAddProduct(UserStoreStaffMixin, FormView):
 
             for feature in features:
                 if (
-                    feature.isalnum and
+                        feature.isalnum and
                         feature != " " and
                         feature != "" and
                         feature is not None
                 ):
-                    ProductFeature.objects.create(product=product, title=feature)
+                    if len(feature) <= 999:
+                        ProductFeature.objects.create(product=product, title=feature)
+
+                    else:
+                        messages.warning(
+                            self.request,
+                            'ویژگی زیر ذخیره نشده است به دلیل بالای 1000 کاراکتر بودن'
+                        )
+                        messages.warning(
+                            self.request,
+                            f'{feature}'
+
+                        )
+
                 else:
                     if feature != " " and feature != "" and feature is not None:
                         messages.warning(
                             self.request,
                             f"{feature} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید",
                         )
+
         if tags:
             ProductTag.objects.filter(Product=product).all().delete()
 
             for tag in tags:
                 if tag.isalnum and tag != " " and tag != "" and tag is not None:
-                    ProductTag.objects.create(Product=product, name=tag)
+                    if len(tag) <= 999:
+                        ProductTag.objects.create(Product=product, name=tag)
+                    else:
+                        messages.warning(
+                            self.request,
+                            'تگ زیر ذخیره نشده است به دلیل بالای 1000 کاراکتر بودن'
+                        )
+                        messages.warning(
+                            self.request,
+                            f'{tag}'
+                        )
+
                 else:
                     if tag != " " and tag != "" and tag is not None:
                         messages.warning(
@@ -255,6 +292,11 @@ class StoreAddProduct(UserStoreStaffMixin, FormView):
         messages.success(self.request, "محصول شما با موفقیت ذخیره شد")
         product.save()
         return redirect("store:list-product")
+
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+        return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -323,7 +365,19 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
 
             for spec in specs:
                 if spec.isalnum and spec != " " and spec != "" and spec is not None:
-                    ProductSpecifications.objects.create(product=product, name=spec)
+                    if len(spec) <= 999:
+                        ProductSpecifications.objects.create(product=product, name=spec)
+
+                    else:
+                        messages.warning(
+                            self.request,
+                            'تگ زیر ذخیره نشده است به دلیل بالای 1000 کاراکتر بودن'
+                        )
+                        messages.warning(
+                            self.request,
+                            f'{spec}'
+
+                        )
                 else:
                     if spec != " " and spec != "" and spec is not None:
                         messages.warning(
@@ -336,24 +390,49 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
 
             for feature in features:
                 if (
-                    feature.isalnum and
+                        feature.isalnum and
                         feature != " " and
                         feature != "" and
                         feature is not None
                 ):
-                    ProductFeature.objects.create(product=product, title=feature)
+                    if len(feature) <= 999:
+                        ProductFeature.objects.create(product=product, title=feature)
+
+                    else:
+                        messages.warning(
+                            self.request,
+                            'ویژگی زیر ذخیره نشده است به دلیل بالای 1000 کاراکتر بودن'
+                        )
+                        messages.warning(
+                            self.request,
+                            f'{feature}'
+
+                        )
+
                 else:
                     if feature != " " and feature != "" and feature is not None:
                         messages.warning(
                             self.request,
                             f"{feature} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید",
                         )
+
         if tags:
             ProductTag.objects.filter(Product=product).all().delete()
 
             for tag in tags:
                 if tag.isalnum and tag != " " and tag != "" and tag is not None:
-                    ProductTag.objects.create(Product=product, name=tag)
+                    if len(tag) <= 999:
+                        ProductTag.objects.create(Product=product, name=tag)
+                    else:
+                        messages.warning(
+                            self.request,
+                            'تگ زیر ذخیره نشده است به دلیل بالای 1000 کاراکتر بودن'
+                        )
+                        messages.warning(
+                            self.request,
+                            f'{tag}'
+                        )
+
                 else:
                     if tag != " " and tag != "" and tag is not None:
                         messages.warning(

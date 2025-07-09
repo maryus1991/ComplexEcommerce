@@ -6,7 +6,11 @@
     {% endblock %}
     {% include 'Base/Header/References/References.html' with site=site %}
     <title>{{ title }}</title>
-    <link rel="icon" href="{{ site.logo.url }}">
+    <link rel="icon" href="{{ site.logo.url }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ site.logo.url }}" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ site.logo.url }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ site.logo.url }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ site.logo.url }}">
     <meta name="description" content="{{ site.short_description }}">
 </head>
 <body class="font-Dana bg-[#f3f4f6] text-zinc-900 dark:bg-zinc-900 dark:text-white overflow-x-hidden transition-all">
@@ -467,11 +471,11 @@
         </svg>
     </button>
 </nav>
-            <script>
-                document.getElementById("toggle-theme-mobile").addEventListener("click", function () {
-                    themToggle();
-                });
-            </script>
+<script>
+    document.getElementById("toggle-theme-mobile").addEventListener("click", function () {
+        themToggle();
+    });
+</script>
 
 <svg class="hidden">
     <symbol id="arrow-down-circle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

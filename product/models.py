@@ -18,7 +18,7 @@ User = get_user_model()
 
 
 class ProductBrand(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=1000)
     image = models.ImageField(upload_to=photo_path_upload_to, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
@@ -36,7 +36,7 @@ class ProductCategory(models.Model):
     parent = models.ForeignKey(
         "self", on_delete=models.SET_NULL, null=True, blank=True, related_name="child"
     )
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=1000)
     image = models.ImageField(upload_to=photo_path_upload_to, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
@@ -51,7 +51,7 @@ class ProductCategory(models.Model):
 
 class Product(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="products")
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=1000)
     price = models.BigIntegerField()
     have_discount = models.BooleanField(default=False)
     discount = models.IntegerField(default=0)
