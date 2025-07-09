@@ -139,7 +139,7 @@ class ProductFeature(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="features"
     )
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=1000)
 
     def __str__(self):
         return f"{self.product.name} -> {self.title}"
@@ -147,12 +147,12 @@ class ProductFeature(models.Model):
 
 class ProductTag(models.Model):
     Product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="tags")
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=1000)
 
 
 class ProductSpecifications(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="specs")
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=1000)
 
 
 class ProductViews(models.Model):

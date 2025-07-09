@@ -249,7 +249,6 @@ class ProductUpdateView(AdminUserMixin, UpdateView):
                 ):
                     if len(feature) <= 999:
                         ProductFeature.objects.create(product=product, title=feature)
-
                     else:
                         messages.warning(
                             self.request,
