@@ -184,9 +184,7 @@
             <!-- MENU -->
             <ul
                     class="relative mt-4 space-y-2 child:duration-300 child:transition-all child:py-3  child:px-2 child:flex child:gap-x-2 text-lg child:cursor-pointer child:rounded-lg">
-                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600 {% if request.path == url %}
-
-                    {% endif %} ">
+                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600  ">
                     <svg class="w-6 h-6 ">
                         <use href="#squares"></use>
                     </svg>
@@ -199,6 +197,13 @@
                     <a href="{% url 'dashboard:orders' %}">
                         سفارش ها
                     </a>
+                </li>
+
+                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600  ">
+                    <svg class="w-6 h-6 ">
+                        <use href="#squares"></use>
+                    </svg>
+                    <a href="{% url 'orders:specifics-orders' %}">فاکتور موارد خاص</a>
                 </li>
                 <li class=" hover:bg-zinc-100 dark:hover:bg-zinc-600 ">
                     <svg class="w-6 h-6 ">
@@ -333,7 +338,7 @@
                     </svg>
                     <a href="/"> صفحه اصلی</a>
                 </li>
-                                {% if user.is_superuser %}
+                {% if user.is_superuser %}
                     <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600">
                         <svg class="w-6 h-6 ">
                             <use href="#arrow-left-start-on-rectangle"></use>

@@ -50,19 +50,19 @@
                                 </button>
                             {% endif %}
                             
-                            {% if ticket.send_to_superuser %}
+                            {% if ticket.store is None %}
                                 <button class="bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-1.5 lg:p-2 w-full sm:w-auto">
                                     <p class="text-xs lg:text-sm">
                                         ارسال شده به ادمین سایت
                                     </p>
                                 </button>
                             {% else %}
-                                <button class="bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-1.5 lg:p-2 w-full sm:w-auto">
+                                <a href="{% url 'stores:main-template-detail' ticket.store.id %}" class="bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-1.5 lg:p-2 w-full sm:w-auto">
                                     <p class="text-xs lg:text-sm">مشاهده صفحه فروشگاه</p>
                                     <svg class="w-4 h-4 lg:w-5 lg:h-5">
                                         <use href="#chevron-left"></use>
                                     </svg>
-                                </button>
+                                </a>
                             {% endif %}
                             
                             <a href="{% url 'dashboard:tickets-conversation' ticket.id %}" class="w-full sm:w-auto">

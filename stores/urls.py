@@ -6,6 +6,13 @@ app_name = "store"
 urlpatterns = [
     path("", views.StoreMainPage.as_view(), name="home"),
 
+    # order specifics
+    path("specifics-order/", views.StoreSpecificsOrdersListView.as_view(), name="specifics-list"),
+    path("specifics-order/detials/<int:pk>", views.StoreSpecificsOrdersDetailsView.as_view(), name="specifics-details"),
+    path("specifics-order/create/<int:pk>/", views.StoreSpecificsOrdersCreateView.as_view(), name="specifics-create"),
+    path("specifics-order/update/<int:pk>", views.StoreSpecificsOrdersUpdateView.as_view(), name="specifics-update"),
+    path("specifics-order/delete/<int:pk>", views.StoreSpecificsOrdersDeleteView.as_view(), name="specifics-delete"),
+
     # product
     path("product/add/", views.StoreAddProduct.as_view(), name="add-product"),
     path("product/", views.StoreProductListView.as_view(), name="list-product"),

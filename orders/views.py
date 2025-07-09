@@ -15,7 +15,7 @@ import requests
 
 from product.models import Product
 from sitesetting.models import SiteSetting
-from .models import Order, OrderDetail, Discount, StoreSoldOrders
+from .models import Order, OrderDetail, Discount, StoreSoldOrders, SpecificsOrders
 
 from config.settings import (
     MERCHANT_ID,
@@ -39,7 +39,132 @@ def get_zarinpal_error_code_return_perian_message(code):
 
 
 # Create your views here.
+class SpecificsOrdersView(LoginRequiredMixin, View):
+    """for list and payment the specifics orders"""
 
+    def get(self, request, *args, **kwargs):
+        orders = SpecificsOrders.objects.filter(user=request.user).order_by('is_paid').order_by('-id')
+        context = {
+            'items': orders.all(),
+        }
+        return render(request, 'dashboard/orders/specifics/list.html', context=context)
+
+    def post(self, request, *args, **kwargs):
+
+        order = get_object_or_404(SpecificsOrders, user=request.user, pk=request.POST.get('order_id'))
+
+        base = "https://" if request.is_secure() else "http://"
+
+        callback_url = (
+                base
+                + str(request.get_host())
+                + reverse("orders:specifics-payment-verify", kwargs={"pk": order.id})
+        )
+
+        data = {
+            "merchant_id": MERCHANT_ID,
+            "amount": int(order.price * 10),
+            "callback_url": callback_url,
+            "description": f"""شماره فا کتور خاص : {order.id}
+                {order.store.name}-{order.store.phone} فروشگاه و شماره ان :
+                کاربر :{order.user.PhoneNumber}
+                """,
+            "metadata": {
+                "mobile": str(request.user.PhoneNumber),
+                "order_id": str(order.id),
+            },
+        }
+        data = json.dumps(data)
+        headers = {
+            "content-type": "application/json",
+            "content-length": str(len(data)),
+        }
+
+        try:
+            response = requests.post(
+                ZARINPAL_SEND_DATA_URL, data=data, headers=headers, timeout=20
+            )
+        except Exception as e:
+            messages.error(
+                request,
+                'مشکلی در ارتباط با سرور پیش امده است لطفا بعدا امتحان کنید'
+            )
+            return redirect(self.request.META.get("HTTP_REFERER", "/"))
+
+        if response.status_code == 200:
+            authority = response.json()["data"]["authority"]
+            order.Authority = authority
+            order.save()
+            return redirect(f"{ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE}{authority}")
+
+        else:
+            error_code = response.json()["errors"]["code"]
+            error_message = get_zarinpal_error_code_return_perian_message(
+                str(error_code)
+            )
+            return render(
+                request,
+                "order/payment-failed.html",
+                {"error": error_message, "order": order, "date": now(), 'specifics_order':True},
+            )
+
+class SpecificsOrdersVerifyPayment(LoginRequiredMixin, View):
+
+    def get(self, request, *args, **kwargs):
+
+        order = SpecificsOrders.objects.get(pk=kwargs.get('pk'), Authority=request.GET.get('Authority'))
+
+        data = {
+            "merchant_id": MERCHANT_ID,
+            "amount": int(order.price * 10),
+            "authority": order.Authority,
+        }
+
+        headers = {"content-type": "application/json", "content-length": str(len(data))}
+
+        response = requests.post(
+            ZARINPAL_VERIFY_PAYMENT, data=json.dumps(data), timeout=20, headers=headers
+        )
+
+        if response.status_code == 200:
+            response = response.json()
+            if 101 >= response["data"]["code"] >= 100:
+
+                order.cart_hash = response["data"]["card_hash"]
+                order.cart = response["data"]["card_pan"]
+                order.payment_id = response["data"]["ref_id"]
+                order.ZarinPal_fee = response["data"]["fee"]
+                order.is_paid = True
+                order.second_date = now()
+                order.save()
+
+                try:
+                    StoreSoldOrders.objects.create(
+                        specifics_order=order, price=order.price, store=order.store
+                    )
+                except Exception as e:
+                    pass
+
+                messages.success(request, "از خرید شما متشکریم")
+
+                return render(
+                    request,
+                    "order/successful-payment.html",
+                    {
+                        "order": order,
+                        'specifics_order': True,
+                    },
+                )
+        else:
+            error_code = response.json()["errors"]["code"]
+            error_message = get_zarinpal_error_code_return_perian_message(
+                str(error_code)
+            )
+            return render(
+                request,
+                "order/payment-failed.html",
+                {"error": error_message, "date": now(), "order": order, 'specifics_order':True},
+            )
 
 class AddOrder(LoginRequiredMixin, RedirectView):
     """
@@ -663,7 +788,6 @@ class ConformPayment(LoginRequiredMixin, View):
                 return redirect("dashboard:order_detail", pk=pk)
 
             result = self.result
-            print(result >= self.site.min_payment, type(result),type(self.site.min_payment) )
 
             if result <= self.site.min_payment:
                 messages.warning(
@@ -725,7 +849,7 @@ class ConformPayment(LoginRequiredMixin, View):
                 return render(
                     request,
                     "order/payment-failed.html",
-                    {"error": error_message, "order": self.order},
+                    {"error": error_message, "order": self.order, "date": now()},
                 )
 
         else:

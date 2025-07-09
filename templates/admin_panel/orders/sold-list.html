@@ -169,7 +169,7 @@
 
                             <td class="text-center">{{ order.paid_by_admin_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
 
-
+                            
                             <td class="text-center">
                                 <a href="{% url 'admin_panel:store-detail' item.id %}"
                                    class="btn btn-sm btn-warning"
@@ -267,6 +267,7 @@
                 </thead>
                 <tbody>
                 {% for order in items %}
+                    {% if order.order %}
                     {% with order.order as item %}
 
                         <tr>
@@ -345,6 +346,75 @@
                             </td>
                         </tr>
                     {% endwith %}
+                        
+                        {% elif order.specifics_order %}
+                                        {% with order.specifics_order as item %}
+
+                        <tr>
+                            <td class="text-center">{{ item.id }}</td>
+                            <td class="text-center">                            {% if order.is_returned_by_admin %}
+                                <span class="label label-success">تصفیه شده</span>
+                            {% else %}
+                                <span class="label label-danger">تصفیه نشده</span>
+                            {% endif %}
+                            </td>
+
+                            <td class="text-center">{{ order.paid_by_admin_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                            <td class="text-center">{{ item.store.name }}</td>
+                            <td class="text-center" dir="ltr">{{ item.user.PhoneNumber }}</td>
+                            <td class="text-center">
+
+                                    <span class="label label-success">فاکتور خاص</span>
+
+                            </td>
+                            <td class="text-center">
+                                {% if item.is_paid %}
+                                    <span class="label label-success">پرداخت شده</span>
+                                {% elif item.canceled %}
+                                    <span class="label label-danger">کنسل شده</span>
+                                {% else %}
+                                    <span class="label label-default">باز</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">{{ order.price|tdc }}</td>
+                            <td class="text-center">
+    فاکتور خاص
+                            </td>
+                            <td class="text-center">
+فاکتور خاص
+                            </td>
+                            <td class="text-center">{{ item.second_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                            <td class="text-center">
+                                <a href="{% url 'store:specifics-details' item.id %}"
+                                   class="btn btn-sm btn-success"
+                                   data-toggle="tooltip"
+                                   title="مشاهده جزییات">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                                                    <td class="text-center">
+                                <a href="{% url 'admin_panel:store-detail' item.store.id %}"
+                                   class="btn btn-sm btn-warning"
+                                   data-toggle="tooltip"
+                                   title="مشاهده فروشگاه">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:user-detail' item.user.pk %}"
+                                   class="btn btn-sm btn-success"
+                                   data-toggle="tooltip"
+                                   title="مشاهده خریدار">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+
+                        </tr>
+                    {% endwith %}
+
+                        
+                    {% endif %} 
+                    	
 
                 {% endfor %}
 

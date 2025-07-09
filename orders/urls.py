@@ -11,11 +11,15 @@ from .views import (
     ChooseTypeOfDelivery,
     OrderRemoveDiscount,
     VerifyPayment,
+    SpecificsOrdersView,SpecificsOrdersVerifyPayment
 )
 
 app_name = "orders"
 
 urlpatterns = [
+    path('specifics-orders/', SpecificsOrdersView.as_view(), name='specifics-orders'),
+    path('specifics-orders/payment/verify/<int:pk>/', SpecificsOrdersVerifyPayment.as_view(), name='specifics-payment-verify'),
+
     path("add/<int:pk>/", AddOrder.as_view(), name="add"),
     path("cancel/<int:pk>/", CancelingOrder.as_view(), name="cancel"),
     path("remove/<int:pk>/", RemoveItemFromOrder.as_view(), name="remove"),

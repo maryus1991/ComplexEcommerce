@@ -5,6 +5,34 @@ app_name = "admin_panel"
 
 urlpatterns = [
     path("", views.HomePageView.as_view(), name="main"),
+
+    # specifics orders
+    path(
+        "specifics-orders/",
+        views.SpecificsOrdersListView.as_view(),
+        name="specifics-list",
+    ),
+    path(
+        "specifics-orders/create/",
+        views.SpecificsOrderCreateView.as_view(),
+        name="specifics-create",
+    ),
+    path(
+        "specifics-orders/detail/<int:pk>/",
+        views.SpecificsOrderDetailView.as_view(),
+        name="specifics-details",
+    ),
+    path(
+        "specifics-orders/update/<int:pk>/",
+        views.SpecificsOrdersUpdateView.as_view(),
+        name="specifics-update",
+    ),
+    path(
+        "specifics-orders/delete/<int:pk>/",
+        views.SpecificsOrdersDeleteView.as_view(),
+        name="specifics-delete",
+    ),
+
     # site law
     path(
         "site-law/",

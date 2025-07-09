@@ -1,5 +1,4 @@
-from datetime import datetime
-
+from django.utils.timezone import now, timedelta
 from django.http import FileResponse, HttpResponseForbidden
 from django.shortcuts import render, reverse, redirect
 from django.urls import reverse_lazy
@@ -28,6 +27,7 @@ from .forms import (
     TicketConversationForm,
     UserTicketsClientFormMobile,
     TicketConversationMobileForm,
+CreateRequestReturnOrder
 )
 
 from user.forms import LegalPersonForm
@@ -41,6 +41,7 @@ User = get_user_model()
 
 
 # Create your views here.
+
 
 
 class UserSettingDashboard(LoginRequiredMixin, TemplateView):
@@ -107,6 +108,40 @@ class Dashboard(LoginRequiredMixin, TemplateView):
 
         return context
 
+# return order
+
+class ReturnOrderView(LoginRequiredMixin, View):
+    """for send return order request"""
+
+    def dispatch(self, request, *args, **kwargs):
+        self.order = get_object_or_404(Order, user=self.request.user, pk=self.kwargs["pk"], is_paid=True)
+        self.store = self.order.store
+
+        store_date_for_accept_return_order = self.order.second_date + timedelta(days=self.store.time_for_return_order_days)
+
+        if store_date_for_accept_return_order < now():
+            messages.error(
+                request,'مهلت درخواست مرجوعی به پایان رسیده'
+            )
+            return redirect(request.META.get("HTTP_REFERER", '/'))
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+
+        return render(request, 'dashboard/orders/retuen-order-request.html'
+                      , {'form': CreateRequestReturnOrder()})
+
+    def post(self, request, *args, **kwargs):
+        form = CreateRequestReturnOrder(request.POST)
+
+        if form.is_valid():
+            pass
+        else:
+            messages.error(
+                request, form.errors
+            )
+        pass
 
 # order section in dashboard
 
@@ -140,6 +175,25 @@ class OrdersDetailHistoryDashboard(LoginRequiredMixin, ListView):
             self.model, user=self.request.user, id=self.kwargs.get("pk")
         )
         return obj.details.all()
+
+    def get_context_data(
+        self, *, object_list = ..., **kwargs
+    ):
+        context = super().get_context_data(**kwargs)
+
+        self.order = Order.objects.filter(user=self.request.user, pk=self.kwargs["pk"], is_paid=True).first()
+
+        if self.order:
+
+            store_date_for_accept_return_order = self.order.second_date + timedelta(
+                days=self.order.store.time_for_return_order_days)
+
+
+            context['can_return'] = store_date_for_accept_return_order >= now()
+        else:
+            context['can_return'] = False
+
+        return context
 
 
 class GenerateOrderInvoice(LoginRequiredMixin, View):

@@ -20,12 +20,49 @@ from stores.models import StoreApps, Store
 from blog.models import Blog, BlogCategory
 from django.contrib.auth import get_user_model
 from product.models import ProductBrand, ProductCategory, Product
-from orders.models import Discount
+from orders.models import Discount, SpecificsOrders
 
 from jalali_date.fields import JalaliDateField
 from jalali_date.widgets import AdminJalaliDateWidget
 
 User = get_user_model()
+
+class SpecificsOrdersModelForm(forms.ModelForm):
+    user = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control select2",
+                "style": "width: 100%;",
+                "tabindex": "-1",
+                "aria-hidden": "true",
+            }
+        ),
+    )
+
+    store = forms.ModelChoiceField(
+        queryset=Store.objects.all(),
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control select2",
+                "style": "width: 100%;",
+                "tabindex": "-1",
+                "aria-hidden": "true",
+                "dir": "rtl",
+            }
+        ),
+    )
+
+    class Meta:
+        model = SpecificsOrders
+        fields = ('user', 'store', 'price', 'name')
+
+        widgets = {
+            "price": forms.NumberInput(attrs={"class": "form-control"}),
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+        }
 
 
 class SiteLawModelForm(forms.ModelForm):

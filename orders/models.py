@@ -349,7 +349,10 @@ class Discount(models.Model):
 
 class StoreSoldOrders(models.Model):
     order = models.OneToOneField(
-        Order, on_delete=models.CASCADE, related_name="store_sold_orders"
+        Order, on_delete=models.CASCADE, related_name="store_sold_orders", null=True, blank=True
+    )
+    specifics_order = models.OneToOneField(
+        'SpecificsOrders', on_delete=models.CASCADE, related_name="store_sold_orders", null=True, blank=True
     )
     store = models.ForeignKey(
         Store, on_delete=models.CASCADE, related_name="store_sold_orders"
@@ -365,12 +368,14 @@ class StoreSoldOrders(models.Model):
 
 class ReturnsOrders(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name="returns")
-    user = models.ForeignKey(User, related_name="returns", on_delete=models.CASCADE,)
-    card_number = models.CharField()
-    is_returned_by_admin = models.BooleanField(default=False)
+    user = models.ForeignKey(User, related_name="returns", on_delete=models.CASCADE)
+    card_number = models.CharField(max_length=500)
+    decryption = models.TextField(null=True, blank=True)
+    cart_name = models.TextField(null=True, blank=True)
     date_open_request = models.DateTimeField(auto_now_add=True)
     date_close_request = models.DateTimeField(null=True, blank=True)
     accept_by_store = models.BooleanField(default=False)
+    send_request_to_return_this_order_by_admin = models.BooleanField(default=False)
 
 class SpecificsOrders(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -378,3 +383,12 @@ class SpecificsOrders(models.Model):
     price = models.PositiveBigIntegerField(default=0)
     name = models.CharField(max_length=500)
     is_paid = models.BooleanField(default=False)
+    Authority = models.CharField(max_length=120, null=True, blank=True, unique=True)
+    cart = models.CharField(max_length=120, null=True, blank=True)
+    cart_hash = models.CharField(max_length=120, null=True, blank=True)
+    payment_id = models.PositiveBigIntegerField(default=0)
+    ZarinPal_fee = models.PositiveBigIntegerField(default=0)
+    date = models.DateTimeField(auto_now_add=True)
+    second_date = models.DateTimeField(null=True, blank=True)
+    additional_descriptions = models.TextField(null=True, blank=True)
+

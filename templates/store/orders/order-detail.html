@@ -218,7 +218,87 @@
         </div>
     </div>
 </div>
+    <!-- Main content -->
+    <section class="content" style="min-height: 600px; margin-top: 20px;">
 
+    <div class="row">
+
+    <div class="col-md-12">
+
+        <!-- فرم محصول -->
+        <div class="box box-info">
+            <div class="box-header">
+                <h3 class="box-title">اضافه کردن فاکتور خاص برای این کاربر</h3>
+                <div class="pull-right box-tools">
+                </div>
+            </div>
+
+            <div class="box-body pad">
+                <form enctype="multipart/form-data" method="post" action="{% url 'store:specifics-create' order.id %}">
+                    {% csrf_token %}
+
+                    <!-- ردیف اول فرم محصول -->
+                    <div class="row form-group">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat">عنوان فاکتور :</span>
+                            </span>
+                                {{ form.name }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat"> مبلغ فاکتور :</span>
+                            </span>
+                                {{ form.price }}
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="row form-group">
+
+                        <div class="col-md-6">
+                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat"
+                                      style="background-color: #932ab6; color: white;">کاربر :</span>
+                            </span>
+                                {{ form.user }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-info btn-flat">فروشگاه :</span>
+                            </span>
+                                {{ form.store }}
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- دکمه ثبت -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <br>
+                            <button type="submit" onclick="prepareFormData()" class="btn btn-success btn-block">ثبت
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    </div></section>
 <style>
 @media (max-width: 767px) {
     /* Force table to not be like tables anymore */
@@ -297,6 +377,7 @@
     }
 }
 </style>
+
 {% endblock %}
 
 {% block footer_reference %}

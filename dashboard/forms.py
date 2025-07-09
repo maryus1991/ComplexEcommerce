@@ -7,6 +7,21 @@ from ckeditor_uploader.fields import RichTextUploadingFormField
 from .models import UserAddress, Store
 
 
+class CreateRequestReturnOrder(forms.Form):
+    cart_name = forms.CharField(widget=forms.TextInput(
+        attrs={"class": "tailwind-input col-span-6 ", "placeholder": "نام صاحب کارت"}
+    ))
+    card_number = forms.CharField(widget=forms.TextInput(
+        attrs={"class": "tailwind-input col-span-6 ", "placeholder": "شماره کارت یا شماره شبا"}
+    ))
+    description = forms.CharField(widget=forms.Textarea(
+        attrs={
+            "class": "tailwind-input col-span-12 h-24",
+            "placeholder": "توضیحات اضافی",
+        })
+    )
+
+
 class CreateUserAddress(forms.ModelForm):
     class Meta:
         model = UserAddress
@@ -70,7 +85,6 @@ class CreateUserAddress(forms.ModelForm):
 
 
 class UserTicketsClientForm(forms.Form):
-
     subject = forms.CharField(
         widget=forms.TextInput(
             attrs={
@@ -104,7 +118,6 @@ class UserTicketsClientForm(forms.Form):
 
 
 class UserTicketsClientFormMobile(forms.Form):
-
     subject = forms.CharField(
         widget=forms.TextInput(
             attrs={

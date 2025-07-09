@@ -1,83 +1,37 @@
+from django.urls import reverse_lazy
 from django.views.generic import (
     DetailView,
     ListView,
-    TemplateView,
-    CreateView,
-    FormView,
     UpdateView,
     RedirectView,
     View,
 )
 from django.db.models import Q
-from django.db.models.aggregates import Count, Sum
 from django.shortcuts import (
     get_object_or_404,
     reverse,
-    render,
     redirect,
-    get_list_or_404,
 )
-from django.urls import reverse_lazy
-from django.contrib.auth import get_user_model
 from django.contrib import messages
-from django.utils.timezone import now
-from phonenumbers.phonenumber import PhoneNumber
 from django.db import transaction
 from django.core.exceptions import (
     PermissionDenied,
     SuspiciousOperation,
-    ValidationError,
 )
 from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
 from django.core.files.uploadedfile import UploadedFile
-from orders.models import Order, StoreSoldOrders
-from stores.models import Store, StoreApps
-from dashboard.models import Ticket, TicketConversation
+from orders.models import Order, StoreSoldOrders, SpecificsOrders
+from stores.models import Store
 from django.utils.dateparse import parse_date
-from stores.forms import (
-    AddProductForm,
-    AddBrandForm,
-    AddCategoryForm,
-    AddStoreForm,
-    StoreSendTicketForm,
-    AddStoreUserStaffForm,
-    AddStoreAppForm,
-    AddStoreBlogForm,
-    AddStoreBlogCategoryForm,
-    ProductSearchForm,
-    BrandAndCategorySearchForm,
-    TicketFilterForm,
-    OrderFilteringForm,
-    StoreBlogFilteringForm,
-    StoreUsersStaffFilteringForm,
-)
-from product.models import (
-    Product,
-    ProductTag,
-    ProductFeature,
-    ProductGallery,
-    ProductBrand,
-    ProductCategory,
-)
-
+from stores.forms import OrderFilteringForm
 from django.db.models import Value
 from django.db.models.functions import Concat
-from blog.models import Blog, BlogCategory
-from auditlog.models import LogEntry
-from django.contrib.contenttypes.models import ContentType
-
-from user.mixins.logins import UserStoreStaffMixin, AdminUserMixin, StoreAdminUserStaff
-from dashboard.forms import TicketConversationForm
+from user.mixins.logins import UserStoreStaffMixin
 import jdatetime
-
-from stores.validators import is_valid_message
-
 from utils.send_otp import send_message
 from sitesetting.models import SiteSetting
-
-User = get_user_model()
-
+from admin_panel.forms import SpecificsOrdersModelForm
 
 # orders
 
@@ -394,6 +348,19 @@ class StoreOrderDetailView(UserStoreStaffMixin, DetailView):
             self.model, pk=self.kwargs.get("pk"), store=self.request.user.store
         )
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = SpecificsOrdersModelForm(
+            initial={
+                'user':self.object.user,
+                'store':self.request.user.store
+            }
+        )
+        form.fields['store'].disabled = True
+        form.fields['user'].disabled = True
+        context["form"] = form
+        return context
+
 
 class AddOfficialInvoiceView(UserStoreStaffMixin, View):
     """
@@ -567,3 +534,88 @@ class StoreSoleOrders(UserStoreStaffMixin, ListView):
         context["total_price"] = sum(list(queryset.filter(is_returned_by_admin=False).values_list("price", flat=True)))
 
         return context
+
+
+class StoreSpecificsOrdersListView(UserStoreStaffMixin, ListView):
+    """for listing the special orders"""
+
+    model = SpecificsOrders
+    paginate_by = 25
+    template_name = "store/orders/specifics/list.html"
+    context_object_name = "items"
+
+    def get_queryset(self):
+        return self.model.objects.filter(store_id=self.request.user.store.id).prefetch_related('user')
+
+class StoreSpecificsOrdersDetailsView(UserStoreStaffMixin, DetailView):
+    """for listing the special orders"""
+    model = SpecificsOrders
+    context_object_name = "item"
+    template_name = "store/orders/specifics/details.html"
+
+class StoreSpecificsOrdersCreateView(UserStoreStaffMixin, RedirectView):
+    """for listing the special orders"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        order = get_object_or_404(Order, pk=self.kwargs["pk"], store=self.request.user.store)
+        name = self.request.POST.get("name")
+        price = self.request.POST.get("price")
+        SpecificsOrders.objects.create(
+            user=order.user,
+            store=self.request.user.store,
+            name=name,
+            price=price,
+        )
+        messages.success(
+            self.request,
+            'ساخته شد'
+        )
+        return reverse('store:specifics-list')
+
+class StoreSpecificsOrdersUpdateView(UserStoreStaffMixin, UpdateView):
+    """for listing the special orders"""
+    model = SpecificsOrders
+    context_object_name = "item"
+    template_name = "store/orders/specifics/update.html"
+    form_class = SpecificsOrdersModelForm
+    success_url = reverse_lazy('store:specifics-list')
+
+    def form_valid(self, form):
+        obj = get_object_or_404(self.model, pk=self.kwargs["pk"], store=self.request.user.store)
+        if not obj.is_paid:
+            obj.name = form.cleaned_data.get('name')
+            obj.price = form.cleaned_data.get('price')
+            obj.save()
+            messages.success(self.request, 'ادیت شد')
+        else:
+            messages.error(
+                self.request,'شما نمی توانید فاکتوری که پرداخت شده رو ادیت کنید'
+            )
+        return redirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            form.errors
+        )
+        return super().form_invalid(form)
+
+class StoreSpecificsOrdersDeleteView(UserStoreStaffMixin, RedirectView):
+    """for delete orders"""
+
+    def get_redirect_url(self, *args, **kwargs):
+
+        obj = get_object_or_404(SpecificsOrders, pk=self.kwargs["pk"])
+        if not obj.is_paid and obj.Authority is None:
+            obj.delete()
+            messages.success(
+                self.request,
+                'حذف شد'
+            )
+
+        else:
+            messages.error(
+                self.request,
+                'شما نمی توانید فاکتور پرداخت شده رو پاک کنید'
+            )
+        return reverse('store:specifics-list')
