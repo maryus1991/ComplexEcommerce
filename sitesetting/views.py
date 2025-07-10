@@ -85,7 +85,6 @@ class Main(TemplateView):
 
         products = Product.objects.filter(is_active=True)
 
-        context["Sliders"] = Slider.objects.filter(is_active=True)
         context["categories"] = (
             ProductCategory.objects.filter(is_active=True)
             .order_by("-sort_number")
@@ -106,9 +105,17 @@ class Main(TemplateView):
         context["products_most_discount"] = (
             products.filter(have_discount=True).order_by("-discount").all()
         )
-        context["Banners"] = Banners.objects.filter(is_active=True)
+
         context["blogs"] = Blog.objects.filter(is_active=True).all()[0:4]
         context["site"] = SiteSetting.objects.filter(is_active=True).first()
+        if self.request.user_agent.is_mobile:
+
+            context["Banners"] = Banners.objects.filter(is_active=True, only_show_on_phone=True)
+            context["Sliders"] = Slider.objects.filter(is_active=True, only_show_on_phone=True)
+
+        else:
+            context["Banners"] = Banners.objects.filter(is_active=True, only_show_on_phone=False)
+            context["Sliders"] = Slider.objects.filter(is_active=True, only_show_on_phone=False)
 
         return context
 

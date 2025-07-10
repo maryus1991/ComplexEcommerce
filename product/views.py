@@ -32,7 +32,7 @@ class ProductListView(ListView):
 
     template_name = "product/shop.html"
     model = Product
-    paginate_by = 20
+    paginate_by = 25
     context_object_name = "products"
 
     def get_queryset(self):

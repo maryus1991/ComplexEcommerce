@@ -16,6 +16,7 @@ services:
   app:
     container_name : app
     restart: always
+    network_mode: host
     build: .
     command: gunicorn config.wsgi --bind  0.0.0.0:32852 --timeout 120 
     volumes:

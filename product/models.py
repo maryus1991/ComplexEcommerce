@@ -115,7 +115,7 @@ class ProductComment(models.Model):
         User, on_delete=models.CASCADE, db_index=True, related_name="product_comments"
     )
     subject = models.CharField(max_length=100)
-    comment = models.TextField()
+    comment = models.TextField(null=True, blank=True)
     suggest_product = models.BooleanField(default=True)
     date = models.DateTimeField(auto_now_add=True)
     buyer = models.BooleanField(default=False)

@@ -187,6 +187,7 @@ class Slider(models.Model):
     is_active = models.BooleanField(
         default=True, null=True, blank=True, verbose_name="فعال یا فعال نبودن"
     )
+    only_show_on_phone = models.BooleanField(default=True, verbose_name="مخصوص نمایش در گوشی")
 
     def __str__(self):
         return f"{self.id}"
@@ -213,6 +214,7 @@ class Banners(models.Model):
     )
     link = models.URLField(verbose_name="لینک")
     is_active = models.BooleanField(default=True, verbose_name="فعال یا فعال نبودن")
+    only_show_on_phone = models.BooleanField(default=True, verbose_name="مخصوص نمایش در گوشی")
 
     def __str__(self):
         return f"{self.id}"

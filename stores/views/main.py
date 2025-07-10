@@ -7,7 +7,6 @@ from stores.models import Store
 from orders.models import Order, StoreSoldOrders
 from django.utils.timezone import timedelta, now
 
-from django.db.models import Case, When, Value, IntegerField
 from django.db.models.functions import TruncDate, Coalesce
 from datetime import timedelta
 from django.utils.timezone import now
@@ -30,7 +29,7 @@ class StoreMainPage(UserStoreStaffMixin, DetailView):
         views = Product.objects.filter(
             store=self.request.user.store
         )
-        last_product = views.order_by('-id').all()[0:4]
+        last_product = views.order_by('-id').all()[0:6]
         views = views.annotate(
             views_count=Count('views')
         ).filter(

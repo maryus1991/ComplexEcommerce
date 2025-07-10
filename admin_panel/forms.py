@@ -27,6 +27,7 @@ from jalali_date.widgets import AdminJalaliDateWidget
 
 User = get_user_model()
 
+
 class SpecificsOrdersModelForm(forms.ModelForm):
     user = forms.ModelChoiceField(
         queryset=User.objects.all(),
@@ -290,7 +291,7 @@ class AddProductForm(forms.ModelForm):
 
     gallery = MultiImageField(
         required=False,
-        max_num=10,
+        max_num=20,
         min_num=0,
         widget=MultiUploadMetaInput(
             attrs={
@@ -628,6 +629,7 @@ class BannersModelForm(forms.ModelForm):
             "name2": forms.TextInput(attrs={"class": "form-control"}),
             "link": forms.URLInput(attrs={"class": "form-control"}),
             "is_active": forms.CheckboxInput(attrs={"checked": "checked"}),
+            "only_show_on_phone": forms.CheckboxInput(),
         }
 
 
@@ -656,6 +658,7 @@ class SliderModelForm(forms.ModelForm):
             "text": forms.TextInput(attrs={"class": "form-control"}),
             "link": forms.URLInput(attrs={"class": "form-control"}),
             "is_active": forms.CheckboxInput(attrs={"checked": "checked"}),
+            "only_show_on_phone": forms.CheckboxInput(),
         }
 
 

@@ -524,7 +524,7 @@
                     {% endif %}
 
                     {% for page_number in page_obj.paginator.page_range %}
-                        <li class="text-white {% if page_number == page_obj.number %} bg-green-500 {% else %} bg-white dark:bg-zinc-700 {% endif %} ">
+                        <li class="dark:text-white {% if page_number == page_obj.number %} bg-green-500 text-white {% else %} bg-white dark:bg-zinc-700 {% endif %} ">
                             <a href="?page={{ page_number }}" class="w-full text-center">
                                 {{ page_number }}
                             </a>

@@ -340,7 +340,6 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
         gallery = form.cleaned_data["gallery"]
 
         product = Product.objects.get(pk=self.kwargs.get("pk"))
-        product.store = form.cleaned_data["store"]
         product.name = form.cleaned_data["name"]
         product.description = form.cleaned_data["description"]
         product.price = form.cleaned_data["price"]

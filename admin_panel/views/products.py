@@ -150,7 +150,7 @@ class ProductCreateView(AdminUserMixin, CreateView):
                             f"{tag} تایید نشد لطفا فقط از اعداد و حروف استفاده کنید",
                         )
 
-        messages.success(self.request, "محصول شما با موفقیت شاخته شد")
+        messages.success(self.request, "محصول شما با موفقیت ساخته شد")
         product.save()
         return redirect(self.success_url)
     

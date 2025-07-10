@@ -5,16 +5,89 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
     CreateView,
+View
 )
 from django.shortcuts import get_object_or_404
 from user.mixins.logins import AdminUserMixin
 from admin_panel.forms import FastLinksModelForm, QuestionAndAnswerModelForm
 from sitesetting.models import FastLinks, QuestionAndAnswer
 from django.contrib import messages
+import psutil
+from django.http.response import JsonResponse
+from product.models import Product
+from orders.models import Order, StoreSoldOrders
+from django.db.models import Count, Sum, Case, When, IntegerField
+from django.utils.timezone import timedelta, now
+from django.db.models.functions import TruncDate, Coalesce
+
+
+
+class StatsApi(AdminUserMixin, View):
+    """for get the server data """
+    def get(self, request):
+        stats = {
+            'cpu': psutil.cpu_percent(),
+            'ram': psutil.virtual_memory().percent,
+            'disk': psutil.disk_usage('/').percent,
+            'upload': psutil.net_io_counters().bytes_sent,
+            'download': psutil.net_io_counters().bytes_recv
+        }
+
+        return JsonResponse(stats)
 
 
 class HomePageView(AdminUserMixin, TemplateView):
     template_name = "admin_panel/index2.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        views = Product.objects
+        last_product = views.order_by('-id').all()[0:6]
+        views = views.annotate(
+            views_count=Count('views')
+        ).filter(
+            views_count__gt=0
+        ).order_by(
+            '-views_count'
+        ).distinct().values('name', 'views_count')
+
+        context['last_product'] = last_product
+        context['views'] = views
+        context['total_view'] = views.aggregate(total=Sum('views_count')).get('total')
+
+        context['orders'] = Order.objects.order_by('-id').all()[0:6]
+
+        item = StoreSoldOrders.objects
+
+        context['total_price_not_returned_from_admin'] = sum(list(
+            item.filter(is_returned_by_admin=False).values_list("price", flat=True)
+        ))
+
+        context['total_price'] = sum(list(
+            item.values_list("price", flat=True)
+        ))
+
+        daily_sales = (
+            item.filter(
+                open_date__date__gte=now().date() - timedelta(days=30),
+            )
+            .annotate(
+                sale_date=TruncDate("open_date"),
+                valid_sale=Case(
+                    When(price__gt=0, then="price"),  # فقط قیمت‌های مثبت
+                    default=0,
+                    output_field=IntegerField(),
+                ),
+            )
+            .values("sale_date")
+            .annotate(daily_total=Sum("valid_sale"))
+        )
+
+        context['daily_sales'] = [{"date": d, "total": dict(map(lambda x: (x['sale_date'], x['daily_total']),
+         daily_sales)).get(d, 0) } for d in [(now().date() - timedelta(days=30)) + timedelta(days=x) for x in range(30)]]
+
+        return context
 
 
 class FastLinksListView(AdminUserMixin, ListView):

@@ -12,6 +12,7 @@ class ProductCommentForm(forms.ModelForm):
                 attrs={"class": "tailwind-input", "placeholder": "عنوان"}
             ),
             "comment": forms.Textarea(
+
                 attrs={"class": "h-24 tailwind-input", "placeholder": "متن دیدگاه"}
             ),
             "suggest_product": forms.HiddenInput(

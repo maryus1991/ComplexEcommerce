@@ -1,6 +1,5 @@
 اصلاح فرم های فیلترینگ
 درست کردن ارسال با پست
-درست کردن صفحه گزارش از سرور و از فروش
 اتومات سازی صدور فاکتور رسمی
 requests for send message @celery
 restore backup with one click

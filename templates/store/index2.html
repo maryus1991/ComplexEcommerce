@@ -360,60 +360,118 @@
     <!-- SlimScroll -->
     <script src="/static/node_modules/jquery-slimscroll/jquery.slimscroll.min.js"></script>
     <!-- ChartJS -->
-    <script src="/static/dist/js/Chart.js"></script>
+    <script src="/static/dist/js/chartjs.js"></script>
 
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="/static/dist/js/pages/dashboard2.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="/static/dist/js/demo.js"></script>
-    <script>
-        var pieChartCanvas = $('#pieChart').get(0).getContext('2d');
-        var pieChart = new Chart(pieChartCanvas);
-        var PieData = [];
-        datas = document.getElementById('data-chart-views').children
-        total_number_of_views = document.getElementById('data-chart-views').getAttribute('data-total-number-of-views')
-        for (data of datas) {
+        <script>
+// نمودار پای (Pie Chart) بدون متن
+var pieChartCanvas = document.getElementById('pieChart').getContext('2d');
+var PieData = [];
+var datas = document.getElementById('data-chart-views').children;
+var total_number_of_views = document.getElementById('data-chart-views').getAttribute('data-total-number-of-views');
 
-            PieData.push({
-                value: Math.round((parseInt(data.getAttribute('data-value')) / parseInt(total_number_of_views)) * 100),
-                color: data.getAttribute('data-color'),
-                highlight: data.getAttribute('data-color'),
-                label: data.innerText
-            });
-        }
+for (var data of datas) {
+    PieData.push({
+        data: [Math.round((parseInt(data.getAttribute('data-value')) / parseInt(total_number_of_views)) * 100)],
+        backgroundColor: data.getAttribute('data-color'),
+        borderColor: data.getAttribute('data-color'),
+        hoverBackgroundColor: data.getAttribute('data-color')
+    });
+}
 
-        var salesChartCanvas = $('#salesChart').get(0).getContext('2d');
-
-
-        // This will get the first returned node in the jQuery collection.
-        var salesChart = new Chart(salesChartCanvas);
-
-        var chart_div_daily_sales = document.getElementById('chart_div_daily_sales').children;
-
-        const dates_list = new Array();
-        const price_list = new Array();
-
-        for (item of chart_div_daily_sales) {
-            dates_list.push(item.getAttribute('data-date'))
-            price_list.push(item.getAttribute('data-price'))
-        }
-
-        var salesChartData = {
-            labels: dates_list,
-            datasets: [
-
-                {
-                    label: 'فروش',
-                    fillColor: 'rgba(230,255,0,0.51)',
-                    strokeColor: 'rgba(171,60,188,0.8)',
-                    pointColor: '#b2ba3b',
-                    pointStrokeColor: 'rgb(60,244,54)',
-                    pointHighlightFill: '#f10909',
-                    pointHighlightStroke: 'rgb(60,244,54)',
-                    data: price_list
+var pieChart = new Chart(pieChartCanvas, {
+    type: 'pie',
+    data: {
+        labels: [], // لیبل‌ها خالی می‌مانند
+        datasets: [{
+            data: PieData.map(item => item.data[0]),
+            backgroundColor: PieData.map(item => item.backgroundColor),
+            borderColor: PieData.map(item => item.borderColor),
+            hoverBackgroundColor: PieData.map(item => item.hoverBackgroundColor),
+            borderWidth: 1
+        }]
+    },
+    options: {
+    responsive: true,
+    plugins: {
+        legend: {
+            display: false
+        },
+        tooltip: {
+            callbacks: {
+                label: function(context) {
+                    return context.raw + '%';
                 }
-            ]
-        };
+            }
+        }
+    }
+}
+});
+
+// نمودار خطی (Sales Chart)
+var salesChartCanvas = document.getElementById('salesChart').getContext('2d');
+var chart_div_daily_sales = document.getElementById('chart_div_daily_sales').children;
+
+const dates_list = [];
+const price_list = [];
+
+for (var item of chart_div_daily_sales) {
+    dates_list.push(item.getAttribute('data-date'));
+    price_list.push(parseInt(item.getAttribute('data-price')));
+}
+
+var salesChart = new Chart(salesChartCanvas, {
+    type: 'line',
+    data: {
+        labels: dates_list,
+        datasets: [{
+            label: 'فروش',
+            data: price_list,
+            backgroundColor: 'rgba(230, 255, 0, 0.2)',
+            borderColor: 'rgba(171, 60, 188, 0.8)',
+            pointBackgroundColor: '#b2ba3b',
+            pointBorderColor: 'rgb(60, 244, 54)',
+            pointHoverBackgroundColor: '#f10909',
+            pointHoverBorderColor: 'rgb(60, 244, 54)',
+            borderWidth: 2,
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
+                rtl: true
+            },
+            tooltip: {
+                mode: 'index',
+                intersect: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return value.toLocaleString() + ' تومان';
+                    }
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+
 
     </script>
+
 {% endblock %}
