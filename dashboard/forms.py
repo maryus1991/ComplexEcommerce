@@ -14,7 +14,9 @@ class CreateRequestReturnOrder(forms.Form):
     card_number = forms.CharField(widget=forms.TextInput(
         attrs={"class": "tailwind-input col-span-6 ", "placeholder": "شماره کارت یا شماره شبا"}
     ))
-    description = forms.CharField(widget=forms.Textarea(
+    description = forms.CharField(
+        required=False,
+        widget=forms.Textarea(
         attrs={
             "class": "tailwind-input col-span-12 h-24",
             "placeholder": "توضیحات اضافی",

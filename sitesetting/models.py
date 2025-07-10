@@ -150,7 +150,7 @@ class Newsletter(models.Model):
     phone_number = PhoneNumberField()
 
     def __str__(self):
-        return self.phone_number
+        return str(self.phone_number).replace(' ','')
 
 
 class QuestionAndAnswer(models.Model):

@@ -171,9 +171,13 @@ class AddTONewsLetters(RedirectView):
     """
 
     def get_redirect_url(self, *args, **kwargs):
-        phone = self.request.POST.get("phone_number")
-        Newsletter.objects.create(phone_number=phone)
-        messages.success(self.request, "شماره شما با موفقیت اضافه شد")
+        form = NumberForAddToLettersForm(self.request.POST)
+        if form.is_valid():
+            Newsletter.objects.create(phone_number=form.cleaned_data["phone_number"])
+            messages.success(self.request, "شماره شما با موفقیت اضافه شد")
+        else:
+            messages.warning(self.request, 'در وارد کردن شماره دقت فرمایید')
+
         return self.request.META.get("HTTP_REFERER", "/")
 
 

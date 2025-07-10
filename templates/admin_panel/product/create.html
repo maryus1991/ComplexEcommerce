@@ -165,6 +165,8 @@
                 <div class="box box-info">
                     <div class="box-header">
                         <h3 class="box-title">اضافه کردن محصول</h3>
+                    
+                    
 
                         <div class="pull-right box-tools">
                             <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
@@ -216,6 +218,14 @@
                         <br>
                         <span style="font-size: smaller" class="text-muted">
                         نام و تگ ها و مشخصات و ویژگی های محصول نباید بیشتر از 1000 کاراکتر باشد در غیر این صورت محصول شما سیو نخواهد شد
+                    </span>
+                                           <br>
+                        <span style="font-size: smaller" class="text-muted">
+فیلد های اجباری برای ثبت اولیه محصول عنوان  دسته و برند تعداد و وزن می باشد حال پیشنهاد می شود که اول موارد ضروری پر بشه و محصول به صورت اولیه ثبت بشه و بعد در مراحل بعدی اقدام به ثبت توضیحات و عکس و گالری بشه
+                    </span>
+                        <br>
+                        <span style="font-size: smaller" class="text-muted">
+                محدودیت گالری تا 10 عکس می باشد که با نگه داشت کلید کنترل کیبورد میشه انتخاب کرد و جهت نمایش بهتر محصول شما در گوگل از عکسای کم حجم استفاده کنید
                     </span>
                         <br>
                     </div>
@@ -908,8 +918,11 @@
                                     </h6>
                                     <div class="col-md-3">
                                         <h6>عکس اصلی محصول:</h6>
+                                        {% if product.picture %}
                                         <img src="{{ product.picture.url }}" alt="" class="img-thumbnail img-responsive"
-                                             style="height: 250px; width: 250px;">
+                                             style="height: 250px; width: 250px;">	
+                                        {% endif %} 
+                                        
                                     </div>
                                     <div class="col-md-9">
                                         <h6>گالری محصول:</h6>

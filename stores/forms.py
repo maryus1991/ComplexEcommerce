@@ -749,8 +749,10 @@ class BrandAndCategorySearchForm(forms.Form):
 
 class AddProductForm(forms.ModelForm):
     description = forms.CharField(
+        required=False,
         widget=CKEditorUploadingWidget(attrs={'id': 'id_description'})
     )
+
     category = forms.ModelChoiceField(
         queryset=ProductCategory.objects.filter(is_active=True).all(),
         required=True,
@@ -759,8 +761,8 @@ class AddProductForm(forms.ModelForm):
             attrs={
                 "class": 'form-control select2 select2-hidden-accessible"',
                 "style": "width: 100%;",
-                "tabindex ": "-1",
-                "aria - hidden ": "true",
+                "tabindex": "-1",
+                "aria-hidden ": "true",
                 "placeholder": "درسته بندی",
             }
         ),
@@ -781,7 +783,7 @@ class AddProductForm(forms.ModelForm):
     )
 
     picture = forms.ImageField(
-        required=True,
+        required=False,
         widget=forms.FileInput(
             attrs={"class": "form-control", "placeholder": "تصویر اصلی"}
         ),
@@ -793,7 +795,7 @@ class AddProductForm(forms.ModelForm):
     )
 
     gallery = MultiImageField(
-        required=True,
+        required=False,
         max_num=10,
         min_num=0,
         widget=MultiUploadMetaInput(

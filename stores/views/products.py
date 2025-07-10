@@ -57,9 +57,10 @@ class StoreProductListView(UserStoreStaffMixin, ListView):
 
     def get_queryset(self):
         # Base queryset
+
         queryset = Product.objects.filter(
             store=self.request.user.store
-        ).prefetch_related("comments", "views")
+        ).prefetch_related("comments", "views").order_by('-id')
 
         # Process search parameters if form is valid
         params = ProductSearchForm(self.request.GET or None)
@@ -335,21 +336,25 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
         return context
 
     def form_valid(self, form):
-        store = self.request.user.store
 
         gallery = form.cleaned_data["gallery"]
-        product = Product.objects.filter(pk=self.kwargs.get("pk"), store=store).update(
-            name=form.cleaned_data["name"],
-            description=form.cleaned_data["description"],
-            price=form.cleaned_data["price"],
-            have_discount=form.cleaned_data["have_discount"],
-            discount=form.cleaned_data["discount"],
-            picture=form.cleaned_data["picture"],
-            count=form.cleaned_data["count"],
-            weight=form.cleaned_data["weight"],
-            brand=form.cleaned_data["brand"],
-            category=form.cleaned_data["category"],
-        )
+
+        product = Product.objects.get(pk=self.kwargs.get("pk"))
+        product.store = form.cleaned_data["store"]
+        product.name = form.cleaned_data["name"]
+        product.description = form.cleaned_data["description"]
+        product.price = form.cleaned_data["price"]
+        product.have_discount = form.cleaned_data["have_discount"]
+        product.discount = form.cleaned_data["discount"]
+        product.count = form.cleaned_data["count"]
+        product.weight = form.cleaned_data["weight"]
+        product.brand = form.cleaned_data["brand"]
+        product.category = form.cleaned_data["category"]
+
+        if form.cleaned_data["picture"]:  # اگر تصویر جدید ارسال شده است
+            product.picture = form.cleaned_data["picture"]
+
+        product.save()
 
         product = self.get_object()
 

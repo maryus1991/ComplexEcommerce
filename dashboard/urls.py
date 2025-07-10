@@ -9,6 +9,8 @@ urlpatterns = [
     path("return-order/<int:pk>", views.ReturnOrderView.as_view(), name="return-order"),
     # orders
     path("orders/", views.OrdersHistoryDashboard.as_view(), name="orders"),
+    path("orders/returns/", views.ReturnsOrderListView.as_view(), name="orders-returns-list"),
+    path("orders/returns/delete/<int:pk>", views.ReturnsOrderDelete.as_view(), name="orders-returns-delete"),
     path(
         "orders/<int:pk>/detials/",
         views.OrdersDetailHistoryDashboard.as_view(),

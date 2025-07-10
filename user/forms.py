@@ -180,7 +180,7 @@ class ActiveAccountForm(forms.Form):
                 "class": "appearance-none bg-transparent w-full py-3",
                 "placeholder": "شماره همراه",
                 "autocomplete": "tel",
-                "dir": "ltr",
+                "dir": "rtl",
             }
         ),
     )

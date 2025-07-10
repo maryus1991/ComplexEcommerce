@@ -187,23 +187,26 @@ class ProductUpdateView(AdminUserMixin, UpdateView):
         return queryset
 
     def form_valid(self, form):
+        store = self.request.user.store
+        product = Product.objects.get(pk=self.kwargs.get("pk"), store=store)
+        product.name = form.cleaned_data["name"]
+        product.description = form.cleaned_data["description"]
+        product.price = form.cleaned_data["price"]
+        product.have_discount = form.cleaned_data["have_discount"]
+        product.discount = form.cleaned_data["discount"]
+        product.count = form.cleaned_data["count"]
+        product.weight = form.cleaned_data["weight"]
+        product.brand = form.cleaned_data["brand"]
+        product.category = form.cleaned_data["category"]
 
-        gallery = form.cleaned_data["gallery"]
-        product = Product.objects.filter(pk=self.kwargs.get("pk")).update(
-            name=form.cleaned_data["name"],
-            store=form.cleaned_data["store"],
-            description=form.cleaned_data["description"],
-            price=form.cleaned_data["price"],
-            have_discount=form.cleaned_data["have_discount"],
-            discount=form.cleaned_data["discount"],
-            picture=form.cleaned_data["picture"],
-            count=form.cleaned_data["count"],
-            weight=form.cleaned_data["weight"],
-            brand=form.cleaned_data["brand"],
-            category=form.cleaned_data["category"],
-        )
+        if form.cleaned_data["picture"]:  # اگر تصویر جدید ارسال شده است
+            product.picture = form.cleaned_data["picture"]
+
+        product.save()
 
         product = self.get_object()
+
+        gallery = form.cleaned_data["gallery"]
 
         for img in gallery:
             ProductGallery.objects.create(product=product, image=img).save()

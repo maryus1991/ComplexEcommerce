@@ -15,9 +15,8 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from django.http import Http404
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-
 from product.models import Product, UserFavorite
-from orders.models import Order, OrderDetail
+from orders.models import Order, OrderDetail, ReturnsOrders
 from user.mixins.logins import CustomLoginRequiredMixin as LoginRequiredMixin
 from user.forms import ActiveAccountForm as ChangeNumberForm
 from user.forms import ChangePasswordForm, EditUserInformationForm
@@ -27,21 +26,17 @@ from .forms import (
     TicketConversationForm,
     UserTicketsClientFormMobile,
     TicketConversationMobileForm,
-CreateRequestReturnOrder
+    CreateRequestReturnOrder
 )
-
 from user.forms import LegalPersonForm
-
 from .models import UserAddress, Ticket, TicketConversation
 from sitesetting.models import SiteSetting
-
 from utils.tipax_price_calc import validate_city
 
 User = get_user_model()
 
 
 # Create your views here.
-
 
 
 class UserSettingDashboard(LoginRequiredMixin, TemplateView):
@@ -108,6 +103,7 @@ class Dashboard(LoginRequiredMixin, TemplateView):
 
         return context
 
+
 # return order
 
 class ReturnOrderView(LoginRequiredMixin, View):
@@ -117,31 +113,96 @@ class ReturnOrderView(LoginRequiredMixin, View):
         self.order = get_object_or_404(Order, user=self.request.user, pk=self.kwargs["pk"], is_paid=True)
         self.store = self.order.store
 
-        store_date_for_accept_return_order = self.order.second_date + timedelta(days=self.store.time_for_return_order_days)
+        store_date_for_accept_return_order = self.order.second_date + timedelta(
+            days=self.store.time_for_return_order_days)
 
         if store_date_for_accept_return_order < now():
             messages.error(
-                request,'مهلت درخواست مرجوعی به پایان رسیده'
+                request, 'مهلت درخواست مرجوعی به پایان رسیده'
+            )
+            return redirect(request.META.get("HTTP_REFERER", '/'))
+
+        if request.user.returns_orders.filter(order=self.order).exists():
+            messages.error(
+                request, 'درخواست مرجوعی برای این سفارش قبلا داده شده است'
             )
             return redirect(request.META.get("HTTP_REFERER", '/'))
 
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-
         return render(request, 'dashboard/orders/retuen-order-request.html'
-                      , {'form': CreateRequestReturnOrder()})
+        ,{'form': CreateRequestReturnOrder(initial={'cart_name':request.user.get_full_name()})})
 
     def post(self, request, *args, **kwargs):
         form = CreateRequestReturnOrder(request.POST)
 
         if form.is_valid():
-            pass
+            cart_name = form.cleaned_data["cart_name"]
+            card_number = form.cleaned_data["card_number"]
+            description = form.cleaned_data["description"]
+
+            ReturnsOrders.objects.create(
+                order=self.order,
+                user=request.user,
+                card_number=card_number,
+                decryption=description,
+                cart_name=cart_name
+            )
+            messages.success(
+                request,'درخواست شما ارسال شد'
+            )
+
         else:
             messages.error(
                 request, form.errors
             )
-        pass
+        return redirect('dashboard:orders-returns-list')
+
+class ReturnsOrderListView(LoginRequiredMixin, ListView):
+    """for return order list"""
+
+    model = ReturnsOrders
+    template_name = "dashboard/orders/returns-order-list.html"
+    context_object_name = "items"
+
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user).order_by("-id")
+
+class ReturnsOrderDelete(LoginRequiredMixin, RedirectView):
+    """for return order detail"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        pk = kwargs.get("pk")
+        obj = self.request.user.returns_orders.filter(pk=pk)
+
+        if obj.exists():
+            obj = obj.first()
+            if not obj.accept_by_store :
+                if obj.date_close_request is None:
+                    obj.delete()
+                    messages.info(
+                        self.request,
+                        'حذف شد'
+                    )
+                else:
+                    messages.error(
+                        self.request,
+                        'شما نمی توانید درخواست هایی که نهایی شده را حذف کنید'
+                    )
+
+            else:
+                messages.error(
+                    self.request,
+                    'شما نمی توانید درخواست هایی که توسط فروشگاه تایید شده را حذف کنید را حذف کنید'
+                )
+        else:
+            messages.error(
+                self.request,
+                'درخواست مورر نظر پیدا نشد'
+            )
+
+        return reverse("dashboard:orders-returns-list")
 
 # order section in dashboard
 
@@ -177,19 +238,20 @@ class OrdersDetailHistoryDashboard(LoginRequiredMixin, ListView):
         return obj.details.all()
 
     def get_context_data(
-        self, *, object_list = ..., **kwargs
+            self, *, object_list=..., **kwargs
     ):
         context = super().get_context_data(**kwargs)
 
         self.order = Order.objects.filter(user=self.request.user, pk=self.kwargs["pk"], is_paid=True).first()
 
-        if self.order:
+        if self.order and not self.request.user.returns_orders.filter(order=self.order).exists():
 
             store_date_for_accept_return_order = self.order.second_date + timedelta(
                 days=self.order.store.time_for_return_order_days)
 
-
             context['can_return'] = store_date_for_accept_return_order >= now()
+        elif self.request.user.returns_orders.filter(order=self.order).exists():
+            context['can_return'] = 2
         else:
             context['can_return'] = False
 
@@ -214,17 +276,15 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
             messages.warning(request, "برای دریافت فاکتور لطفا ادرس انتخاب کنید")
             return redirect(reverse("dashboard:order_detail", kwargs={"pk": order_id}))
 
-
         site = SiteSetting.objects.filter(is_active=True).first()
 
-
         # Handle official invoice case
-        if obj.official_invoice :
+        if obj.official_invoice:
 
             if not site.active_receive_official_invoice:
                 messages.warning(request, 'صدور فاکتور رسمی تا اطلاع ثانویه از سمت ادمین سایت غیر فعال شده است')
                 return redirect(reverse("dashboard:order_detail", kwargs={"pk": order_id}))
-            
+
             if not obj.store.have_official_invoice:
                 messages.warning(request, 'صدور فاکتور رسمی تا اطلاع ثانویه از سمت فروشگاه غیر فعال شده است')
                 return redirect(reverse("dashboard:order_detail", kwargs={"pk": order_id}))
@@ -377,7 +437,7 @@ class CreateUserAddress(LoginRequiredMixin, FormView):
 
     def form_invalid(self, form):
         messages.error(
-            self.request,form.errors,
+            self.request, form.errors,
         )
         return super().form_invalid(form)
 

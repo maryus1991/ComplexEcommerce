@@ -228,7 +228,10 @@
                                 {% for item in last_product %}
                                     <li class="item">
                                         <div class="product-img">
+                                            {% if item.picture %}
+                                            	
                                             <img src="{{ item.picture.url }}">
+                                            {% endif %} 
                                         </div>
                                         <div class="product-info">
                                             <a href="{% url 'product:detail' item.id %}"

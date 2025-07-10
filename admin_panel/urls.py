@@ -6,6 +6,13 @@ app_name = "admin_panel"
 urlpatterns = [
     path("", views.HomePageView.as_view(), name="main"),
 
+
+    # return orders
+    path("return-order/", views.ReturnOrderList.as_view(), name="return-order-list"),
+    path("return-order/details/<int:pk>", views.ReturnOrderDetail.as_view(), name="return-order-details"),
+    path("return-order/accept-by-store/<int:pk>", views.ReturnOrderAcceptByAdmin.as_view(),
+         name="return-accept-by-store"),
+
     # specifics orders
     path(
         "specifics-orders/",
@@ -268,6 +275,7 @@ urlpatterns = [
     ),
     # users
     path("users/", views.UserListView.as_view(), name="user-list"),
+    path("users/news-letters/", views.UsersNewsLetters.as_view(), name="user-news-letters"),
     path("users/send-messages", views.UserSendManyMessage.as_view(), name="user-send-message"),
     path("users/create/", views.UserCreateView.as_view(), name="user-create"),
     path("users/update/<int:pk>", views.UserUpdateView.as_view(), name="user-update"),

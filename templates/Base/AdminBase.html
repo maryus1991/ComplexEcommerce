@@ -466,10 +466,15 @@ desired effect
                                 <a href="{% url 'store:orders-soled' %}"><i class="fa fa-link"></i>
                                     <span style="color: #ff7700">تصفیه توسط ادمین</span>
                                 </a>
-                            </li>                            
+                            </li>
                             <li class="link-activator">
                                 <a href="{% url 'store:specifics-list' %}"><i class="fa fa-link"></i>
                                     <span style="color: #ff7700">فاکتور های خاص</span>
+                                </a>
+                            </li>                         
+                            <li class="link-activator">
+                                <a href="{% url 'store:return-order-list' %}"><i class="fa fa-link"></i>
+                                    <span style="color: #ff7700">سفارشات مرجوعی</span>
                                 </a>
                             </li>
 
@@ -657,15 +662,19 @@ desired effect
                             <li class="link-activator"><a href="{% url 'admin_panel:orders-sold-list' %}"><i
                                     class="fa fa-link"></i> <span>
                         تصفیه
-                    </span></a>
+                            </span></a></li>
                             <li class="link-activator"><a href="{% url 'admin_panel:orders-list' %}"><i
                                     class="fa fa-link"></i> <span>
                             سفارشات
-                    </span></a>
+                        </span></a></li>
                             <li class="link-activator"><a href="{% url 'admin_panel:specifics-list' %}"><i
                                     class="fa fa-link"></i> <span>
                             فاکتور های خاص
-                    </span></a>
+                        </span></a></li>                 
+                            <li class="link-activator"><a href="{% url 'admin_panel:return-order-list' %}"><i
+                                    class="fa fa-link"></i> <span>
+سفارشات مرجوعی
+                        </span></a></li>
 
 
                         </ul>
@@ -682,27 +691,47 @@ desired effect
                                 <a href="{% url 'admin_panel:user-send-message' %}"><i
                                         class="fa fa-link"></i>
                                     <span>
-                        ارسال پیامک خدماتی انبوه
-                    </span>
+                                         ارسال پیامک خدماتی انبوه
+                                    </span>
                                 </a>
-                            <li class="link-activator"><a href="{% url 'admin_panel:user-list' %}"><i
-                                    class="fa fa-link"></i> <span>
-                            کاربران
-                    </span></a>
+                            </li>
+
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:user-list' %}">
+                                    <i class="fa fa-link"></i>
+                                    <span>
+                                  کاربران
+                                </span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:user-news-letters' %}">
+                                    <i class="fa fa-link"></i>
+                                    <span>
+                                  خبرنامه
+                                </span>
+                                </a>
+                            </li>
 
 
                         </ul>
                     </li>
 
-                    <li class="link-activator"><a href="{% url 'admin_panel:discount-list' %}"><i
-                            class="fa fa-link"></i> <span>
-                            کد تخفیف ها
-                    </span></a>
+                    <li class="link-activator">
+                        <a href="{% url 'admin_panel:discount-list' %}">
+                            <i class="fa fa-link"></i>
+                            <span>
+                                    کد تخفیف ها
+                             </span>
+                        </a>
+                    </li>
 
                     <li class="link-activator"><a href="{% url 'admin_panel:fast-links-list' %}"><i
                             class="fa fa-link"></i> <span>
                         لینک های سریع
                     </span></a>
+                    </li>
+
                     <li class="link-activator"><a href="{% url 'admin_panel:store-list' %}"><i
                             class="fa fa-link"></i> <span>
                         فروشگاها

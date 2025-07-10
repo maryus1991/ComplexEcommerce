@@ -229,6 +229,7 @@ class AddDiscountForm(forms.ModelForm):
 
 class AddProductForm(forms.ModelForm):
     description = RichTextUploadingFormField(
+        required=False,
         widget=CKEditorUploadingWidget(attrs={'id': 'id_description'})
     )
     store = forms.ModelChoiceField(
@@ -276,7 +277,7 @@ class AddProductForm(forms.ModelForm):
     )
 
     picture = forms.ImageField(
-        required=True,
+        required=False,
         widget=forms.FileInput(
             attrs={"class": "form-control", "placeholder": "تصویر اصلی"}
         ),
@@ -288,7 +289,7 @@ class AddProductForm(forms.ModelForm):
     )
 
     gallery = MultiImageField(
-        required=True,
+        required=False,
         max_num=10,
         min_num=0,
         widget=MultiUploadMetaInput(

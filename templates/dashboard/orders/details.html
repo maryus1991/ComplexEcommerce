@@ -229,7 +229,7 @@
             <div class="col-span-12">
                 <div class="flex items-center justify-between">
                     <p class="text-lg"> سفارش های من :</p>
-                    {% if  details.exists and not details.first.order.canceled and not details.first.order.is_paid and not details.first.order.canceled  %}
+                    {% if  details.exists and not details.first.order.canceled and not details.first.order.is_paid and not details.first.order.canceled %}
                         {% if details.first.order.address is None %}
                             <button class="p-2 gap-x-1 shadow  rounded-lg dark:bg-gray-700 bg-gray-50 ">
                                 برای درخواست ارسال لطفا ادرسی را انتخاب کنید
@@ -245,9 +245,14 @@
 
                     {% endif %}
                     {% if  details.exists and  details.first.order.is_paid %}
-                        {% if not can_return %}
+                        {% if can_return == False %}
                             <button class="p-2 gap-x-1 shadow  rounded-lg dark:bg-gray-700 bg-gray-50 ">
-مهلت درخواست مرجوعی به پایان رسیده
+                                مهلت درخواست مرجوعی به پایان رسیده
+                            </button>
+                            
+                        {% elif can_return == 2 %}
+                            <button class="p-2 gap-x-1 shadow  rounded-lg dark:bg-gray-700 bg-gray-50 ">
+برای این سفارش قبلا درخواست مرجوعی دادید
                             </button>
                         {% else %}
                             <a href="{% url 'dashboard:return-order'  details.first.order.id %}">
@@ -308,7 +313,8 @@
                                 <th scope="col"
                                     class="px-6 py-3.5 text-right text-xs font-DanaDemiBold text-gray-700 dark:text-gray-200">
                                     تعداد
-                                </th>                                <th scope="col"
+                                </th>
+                                <th scope="col"
                                     class="px-6 py-3.5 text-right text-xs font-DanaDemiBold text-gray-700 dark:text-gray-200">
                                     قیمت کل
                                 </th>

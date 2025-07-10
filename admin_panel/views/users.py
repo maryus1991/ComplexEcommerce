@@ -16,7 +16,50 @@ from auditlog.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
 from utils.send_otp import send_message
 from django.contrib.auth import login
+from sitesetting.models import Newsletter
+
 User = get_user_model()
+
+
+class UsersNewsLetters(AdminUserMixin, View):
+    """for list and send message to news letters phone number"""
+
+    def get(self, request):
+        phones = Newsletter.objects.all()
+        context = {
+            'items': phones,
+        }
+        return render(request, 'admin_panel/users/news-letters.html', context=context)
+
+    def post(self, request):
+        content = request.POST.get('content', '').strip()
+        selected_contacts = request.POST.getlist('selected_contacts')  # استفاده از getlist برای دریافت آرایه
+
+        if not content:
+            messages.error(request, "متن پیام نمی‌تواند خالی باشد")
+            return redirect('admin_panel:user-news-letters')
+
+        if not selected_contacts:
+            messages.error(request, "هیچ مخاطبی انتخاب نشده است")
+            return redirect('admin_panel:user-news-letters')
+
+        try:
+            for contact_id in selected_contacts:
+                # بررسی معتبر بودن ID
+                if not contact_id.isdigit():
+                    continue
+
+                contact = Newsletter.objects.get(id=int(contact_id))
+                phone_number = str(contact).replace(' ', '')
+                send_message(phone_number, content)
+
+            messages.success(request, f"پیام با موفقیت به {len(selected_contacts)} مخاطب ارسال شد")
+        except Newsletter.DoesNotExist:
+            messages.error(request, "یکی از مخاطبین یافت نشد")
+        except Exception as e:
+            messages.error(request, f"خطا در ارسال پیام: {str(e)}")
+
+        return redirect('admin_panel:user-news-letters')
 
 
 class UserSendManyMessage(AdminUserMixin, View):

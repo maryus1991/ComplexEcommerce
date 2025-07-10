@@ -6,6 +6,13 @@ app_name = "store"
 urlpatterns = [
     path("", views.StoreMainPage.as_view(), name="home"),
 
+    # return orders
+    path("return-order/", views.ReturnOrderList.as_view(), name="return-order-list"),
+    path("return-order/details/<int:pk>", views.ReturnOrderDetail.as_view(), name="return-order-details"),
+    path("return-order/accept-by-store/<int:pk>", views.ReturnOrderAcceptByStore.as_view(), name="return-accept-by-store"),
+    path("return-order/send-to-admin/<int:pk>", views.ReturnOrderSendToAdmin.as_view(), name="return-order-send-to-admin"),
+    path("return-order/close/<int:pk>", views.ReturnOrderClose.as_view(), name="return-order-close"),
+
     # order specifics
     path("specifics-order/", views.StoreSpecificsOrdersListView.as_view(), name="specifics-list"),
     path("specifics-order/detials/<int:pk>", views.StoreSpecificsOrdersDetailsView.as_view(), name="specifics-details"),

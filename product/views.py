@@ -42,19 +42,15 @@ class ProductListView(ListView):
         have_filter_url = False
 
         # get the product obj
-        products = (
-            Product.objects.filter(
+        products = Product.objects.filter(
                 is_active=True,
                 store__is_active=True,
                 store__is_verified=True,
                 admin_verified=True,
                 brand__is_active=True,
                 category__is_active=True,
-            )
-            .prefetch_related("features")
-            .prefetch_related("tags")
-            .prefetch_related("specs")
-        )
+            ).prefetch_related("features").prefetch_related("tags").prefetch_related("specs").order_by("-count")
+
 
         if "available" in url_params:
             if url_params["available"] == ["on"]:
@@ -150,13 +146,9 @@ class ProductListView(ListView):
                     sort = int(sort)
                     if 1 <= sort <= 5:
                         if sort == 1:
-                            products = products.order_by("-discount")
+                            products = products.order_by( '-have_discount','-discount')
                         elif sort == 2:
-                            products = (
-                                products.filter(orders__count__gt=0)
-                                .order_by("orders__count")
-                                .distinct()
-                            )
+                            products = products.order_by("orders__count").distinct()
                         elif sort == 3:
                             products = products.order_by("price")
                         elif sort == 4:
@@ -171,7 +163,7 @@ class ProductListView(ListView):
                 sort = None
 
 
-        return products.order_by("-count").all()
+        return products.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

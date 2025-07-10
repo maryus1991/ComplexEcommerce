@@ -367,14 +367,15 @@ class StoreSoldOrders(models.Model):
 
 
 class ReturnsOrders(models.Model):
-    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name="returns")
-    user = models.ForeignKey(User, related_name="returns", on_delete=models.CASCADE)
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name="returns_orders")
+    user = models.ForeignKey(User, related_name="returns_orders", on_delete=models.CASCADE)
     card_number = models.CharField(max_length=500)
     decryption = models.TextField(null=True, blank=True)
     cart_name = models.TextField(null=True, blank=True)
     date_open_request = models.DateTimeField(auto_now_add=True)
     date_close_request = models.DateTimeField(null=True, blank=True)
     accept_by_store = models.BooleanField(default=False)
+    accept_by_admin = models.BooleanField(default=False)
     send_request_to_return_this_order_by_admin = models.BooleanField(default=False)
 
 class SpecificsOrders(models.Model):

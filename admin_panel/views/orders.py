@@ -117,6 +117,7 @@ class SpecificsOrderCreateView(AdminUserMixin, CreateView):
         )
         return super().form_valid(form)
 
+
 class SpecificsOrdersUpdateView(AdminUserMixin, UpdateView):
     """for update the orders"""
 
@@ -166,3 +167,48 @@ class SpecificsOrdersDeleteView(AdminUserMixin, RedirectView):
                 'شما نمی توانید فاکتور پرداخت شده رو پاک کنید'
             )
         return reverse('admin_panel:specifics-list')
+
+# return order
+
+class ReturnOrderList(AdminUserMixin, ListView):
+    """return order list"""
+    model = ReturnsOrders
+    template_name = 'admin_panel/orders/returns/list.html'
+    context_object_name = 'items'
+
+    def get_queryset(self):
+        return super().get_queryset().order_by('-id')
+
+
+class ReturnOrderDetail(AdminUserMixin, DetailView):
+    """return order detail"""
+    model = ReturnsOrders
+    template_name = 'admin_panel/orders/returns/details.html'
+    context_object_name = 'item'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(ReturnsOrders, pk=self.kwargs['pk'])
+
+
+class ReturnOrderAcceptByAdmin(AdminUserMixin, RedirectView):
+    """return order accept by store"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        obj = get_object_or_404(ReturnsOrders, pk=self.kwargs['pk'])
+        if obj.send_request_to_return_this_order_by_admin:
+            obj.date_close_request = now()
+            obj.accept_by_admin = True
+            obj.accept_by_store = True
+            obj.save()
+            messages.success(
+                self.request,
+                'تایید شد و مرجوعی توسط ادمین انجام میشه'
+            )
+        else:
+            messages.error(
+                self.request,
+                'فروشگاه درخواست پرگشتی توسط ادمین را نداده است'
+            )
+        return reverse('admin_panel:return-order-list')
+
+

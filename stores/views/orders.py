@@ -21,7 +21,7 @@ from django.core.exceptions import (
 from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
 from django.core.files.uploadedfile import UploadedFile
-from orders.models import Order, StoreSoldOrders, SpecificsOrders
+from orders.models import Order, StoreSoldOrders, SpecificsOrders, ReturnsOrders
 from stores.models import Store
 from django.utils.dateparse import parse_date
 from stores.forms import OrderFilteringForm
@@ -32,8 +32,113 @@ import jdatetime
 from utils.send_otp import send_message
 from sitesetting.models import SiteSetting
 from admin_panel.forms import SpecificsOrdersModelForm
-
+from django.utils.timezone import now
 # orders
+class ReturnOrderList(UserStoreStaffMixin, ListView):
+    """return order list"""
+    model = ReturnsOrders
+    template_name = 'store/orders/returns/list.html'
+    context_object_name = 'items'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(order__store=self.request.user.store).order_by('-id')
+
+
+class ReturnOrderDetail(UserStoreStaffMixin, DetailView):
+    """return order detail"""
+    model = ReturnsOrders
+    template_name = 'store/orders/returns/details.html'
+    context_object_name = 'item'
+
+    def get_object(self, queryset = None):
+        return get_object_or_404(ReturnsOrders, pk=self.kwargs['pk'], order__store=self.request.user.store)
+
+
+class ReturnOrderAcceptByStore(UserStoreStaffMixin, RedirectView):
+    """return order accept by store"""
+    def get_redirect_url(self, *args, **kwargs):
+        obj = get_object_or_404(ReturnsOrders, pk=self.kwargs['pk'], order__store=self.request.user.store)
+
+        if obj.date_close_request is not None:
+            messages.warning(
+                self.request,'توان تغییر در سفارش بسته شده وجود ندارد'
+            )
+            return reverse('store:return-order-list')
+
+        if obj.accept_by_store :
+            obj.accept_by_store = False
+            obj.save()
+
+            messages.error(
+                self.request,'سفارش توسط فروشگاه لغو شد'
+            )
+
+        else:
+            obj.accept_by_store = True
+            obj.save()
+
+            messages.success(
+                self.request, 'سفارش توسط فروشگاه تایید شد'
+            )
+
+        return reverse('store:return-order-list')
+
+
+class ReturnOrderSendToAdmin(UserStoreStaffMixin, RedirectView):
+    """return order accept by store"""
+    def get_redirect_url(self, *args, **kwargs):
+        obj = get_object_or_404(ReturnsOrders, pk=self.kwargs['pk'], order__store=self.request.user.store)
+
+        if obj.date_close_request is not None:
+            messages.warning(
+                self.request,'توان تغییر در سفارش بسته شده وجود ندارد'
+            )
+            return reverse('store:return-order-list')
+
+
+        order = StoreSoldOrders.objects.filter(order=obj.order, store=self.request.user.store).first()
+        if order.is_returned_by_admin:
+            messages.error(
+                self.request,
+                'این سفارش توسط ادمین تصفیه شده و برای مرجوعی باید توسط فروشگاه انجام بشه'
+            )
+            return reverse('store:return-order-list')
+
+        if obj.send_request_to_return_this_order_by_admin :
+            obj.send_request_to_return_this_order_by_admin = False
+            obj.save()
+
+            messages.error(
+                self.request,"مرجوعی توسط فروشگاه انجام میشود"
+            )
+
+        else:
+            obj.send_request_to_return_this_order_by_admin = True
+            obj.save()
+
+            messages.success(
+                self.request, 'مرجوعی توسط ادمین انجام میشود از طریق زرین پال'
+            )
+
+        return reverse('store:return-order-list')
+
+class ReturnOrderClose(UserStoreStaffMixin, RedirectView):
+    """return order accept by store"""
+    def get_redirect_url(self, *args, **kwargs):
+        obj = get_object_or_404(ReturnsOrders, pk=self.kwargs['pk'], order__store=self.request.user.store)
+
+        if obj.date_close_request is not None:
+            messages.warning(
+                self.request, 'توان تغییر در سفارش بسته شده وجود ندارد'
+            )
+            return reverse('store:return-order-list')
+
+        obj.accept_by_store = True
+        obj.date_close_request=now()
+        obj.save()
+
+
+        return reverse('store:return-order-list')
 
 
 class StoreOrdersView(UserStoreStaffMixin, ListView):
