@@ -310,10 +310,21 @@
                 </div>
 
                 <!-- articles -->
+                            {% if not posts %}
+
+    <div class="flex flex-col items-center justify-center py-16 mt-8 ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h2 class="text-2xl font-medium text-gray-600">پست یافت نشد</h2>
+        <p class="text-gray-500 mt-2">متأسفیم، هیچ پستی مطابق با جستجوی شما وجود ندارد.</p>
+    </div>
+{% endif %}
                 <div
                         class="mt-4 grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-3  gap-6 sm:gap-8 child-hover:-translate-y-2 child:duration-300
                     child:bg-white child:dark:bg-zinc-700  child:rounded-lg child:p-2 child:cursor-pointer child:shadow ">
                     <!-- ITEM -->
+
                     {% for post in posts %}
                         <div class="group">
                             <div class="relative overflow-hidden rounded-lg">

@@ -22,7 +22,8 @@
                         <div>
                             <label for="" class="mb-2"> شماره اقتصادی :</label>
                             {{ legal_person.legal_person_economic_number }}
-                        </div>                        <div>
+                        </div>
+                        <div>
                             <label for="" class="mb-2"> شماره تماس / نمابر :</label>
                             {{ legal_person.legal_person_phone }}
                         </div>
@@ -31,13 +32,14 @@
                             {{ legal_person.legal_person_registration_number }}
                         </div>
 
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-4 sm:gap-10 flex-wrap">
+    <button type="submit" class="main-btn px-4 py-2">ثبت</button>
+    <a href="{% url 'dashboard:orders' %}" class="bg-green-500/20 text-green-500 flex items-center gap-1 rounded-lg px-3 py-2 text-xs lg:text-sm">
+        سفارشات
+        <svg class="w-4 h-4 lg:w-5 lg:h-5"><use href="#chevron-left"></use></svg>
+    </a>
+</div>
 
-                        <div>
-                            <label for="" class="mb-2"><br></label>
-
-                            <button class="main-btn w-[40%] py-2">ثبت</button>
-
-                        </div>
 
 
                     </form>

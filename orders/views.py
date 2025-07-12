@@ -913,9 +913,12 @@ class VerifyPayment(LoginRequiredMixin, View):
                 order.save()
 
 
-                StoreSoldOrders.objects.create(
+                obj = StoreSoldOrders.objects.get_or_create(
                     order=order, price=order.total_price, store=order.store
                 )
+                if not obj[1]:
+                    obj.price = int(obj.price) + int(self.result)
+                    obj.save()
 
                 if self.site.send_message_successful_payment:
                     send_message(

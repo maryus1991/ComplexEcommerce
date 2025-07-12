@@ -126,7 +126,7 @@
     {#    <button onclick="downloadWord()">دانلود Word</button>#}
 </div>
 <div id="invoice">
-    <h2>صورت‌حساب فروش کالا و خدمات</h2>
+    <h2>فاکتور موقت فروش کالا و خدمات</h2>
     <div class="">
         شماره سریال: {{ order.id }}
         <br>
@@ -136,25 +136,15 @@
     <div class="section-title">مشخصات فروشنده</div>
     <table class="info-table">
         <tr>
-            <td>نام شخص حقیقی / حقوقی: {{ order.store.name }}</td>
-            {% if order.official_invoice %}
-                <td> شماره اقتصادی: {{ order.store.economic_number }}</td>
+            <td>نام شخص حقیقی: {{ order.store.name }}</td>
 
-            {% else %}
-                <td> شماره اقتصادی: -</td>
-            {% endif %}
             <td>کد پستی ۱۰ رقمی: {{ order.store.zip_code }}</td>
             <td> استان: {{ order.store.province }}</td>
             <td> شهر: {{ order.store.orgin_city }}</td>
         </tr>
         <tr>
-            {% if order.official_invoice %}
-                <td> شماره ثبت / شماره ملی: {{ order.store.registration_number }}</td>
-            {% else %}
-                <td> شماره ثبت / شماره ملی: -</td>
-            {% endif %}
 
-            <td>شماره تماس / نمابر:
+            <td>شماره تماس:
                 <span dir="ltr">
                     {{ order.store.phone2 }}
                 </span>
@@ -167,32 +157,15 @@
     <div class="section-title">مشخصات خریدار</div>
     <table class="info-table">
         <tr>
-            <td>نام شخص حقیقی / حقوقی: {{ order.user.get_full_name }}</td>
-            {% if order.official_invoice %}
-                <td> شماره اقتصادی: {{ order.user.legal_person_economic_number }}</td>
+            <td>نام : {{ order.user.get_full_name }}</td>
 
-            {% else %}
-                <td> شماره اقتصادی: -</td>
-            {% endif %}
             <td>کد پستی ۱۰ رقمی: {{ order.address.zipcode }}</td>
             <td> استان: {{ order.address.province }}</td>
             <td> شهر: {{ order.address.city }}</td>
         </tr>
         <tr>
-            {% if order.official_invoice %}
-                <td> شماره ثبت / شماره ملی: {{ order.user.legal_person_registration_number }}</td>
-            {% else %}
-                <td> شماره ثبت / شماره ملی: -</td>
-            {% endif %}
-            <td>شماره تماس / نمابر:
-                <span dir="ltr">
-                    {% if order.official_invoice %}
-                        {{ order.user.legal_person_phone }}
-                    {% else %}
-                        {{ order.user.PhoneNumber }}
-                    {% endif %} 
-            </span>
-            </td>
+
+
 
             <td colspan="4">نشانی : {{ order.address.address }}</td>
         </tr>
@@ -216,7 +189,7 @@
             {% if order.official_invoice %}
                 جمع مالیات و عوارض )ریال(
             	{% else %}
-                هزینه های جانبی )ریال(
+                هزینه های جانبی و پست )ریال(
             {% endif %} 
             
             </th>

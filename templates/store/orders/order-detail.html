@@ -131,10 +131,10 @@
                             </td>
                             <td >
                                 {% if order.official_invoice and order.official_invoice_pdf.url is not None %}
-                                    <a href="{{ order.official_invoice_pdf.url }}" class="btn btn-success btn-sm btn-block">مشاهده فاکتور</a>
+                                    <a href="{{ order.official_invoice_pdf.url }}" class="btn btn-success btn-sm btn-block">مشاهده فاکتور رسمی</a>
                                 {% else %}
                                     {% if order.is_paid and not order.canceled %}
-                                        <a href="{% url 'dashboard:order-generate-invoice' order.id %}" class="btn btn-success btn-sm btn-block">مشاهده فاکتور</a>
+                                        <a href="{% url 'dashboard:order-generate-invoice' order.id %}" class="btn btn-success btn-sm btn-block">مشاهده فاکتور موقت</a>
                                     {% elif order.canceled %}
                                         <span class="label label-danger">سفارش کنسل شده</span>
                                     {% else %}

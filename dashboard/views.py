@@ -279,7 +279,7 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
         site = SiteSetting.objects.filter(is_active=True).first()
 
         # Handle official invoice case
-        if obj.official_invoice:
+        if obj.official_invoice and obj.official_invoice_conformed_given_to_user:
 
             if not site.active_receive_official_invoice:
                 messages.warning(request, 'صدور فاکتور رسمی تا اطلاع ثانویه از سمت ادمین سایت غیر فعال شده است')

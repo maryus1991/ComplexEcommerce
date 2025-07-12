@@ -79,6 +79,14 @@ class StoreProductListView(UserStoreStaffMixin, ListView):
             elif is_active == "1":
                 queryset = queryset.filter(is_active=True)
 
+        if cleaned_data.get("admin_verify"):
+            is_active = cleaned_data.get("admin_verify")
+
+            if is_active == "0":
+                queryset = queryset.filter(admin_verified=False)
+            elif is_active == "1":
+                queryset = queryset.filter(admin_verified=True)
+
         if cleaned_data.get("have_discount"):
             have_discount = cleaned_data.get("have_discount")
 

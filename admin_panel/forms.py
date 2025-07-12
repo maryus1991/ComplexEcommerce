@@ -544,6 +544,11 @@ class SiteSettingModelForm(forms.ModelForm):
                     "class": "form-control",
                 }
             ),
+            "difference_between_post_and_tipax_price": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                }
+            ),
             "copy_right_text": forms.TextInput(
                 attrs={
                     "class": "form-control",

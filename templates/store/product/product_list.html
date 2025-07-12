@@ -51,7 +51,7 @@
                                 
                                 <!-- ردیف اول -->
                                 <div class="row">
-                                    <div class="col-sm-6 col-md-6">
+                                    <div class="col-sm-6 col-md-3">
                                         <div class="form-group">
                                             <div class="input-group">
                                                 <span class="input-group-btn">
@@ -69,6 +69,16 @@
                                                     {{ search_form.have_discount.label }}
                                                 </span>
                                                 {{ search_form.have_discount }}
+                                            </div>
+                                        </div>
+                                    </div>                                  
+                                    <div class="col-sm-6 col-md-3">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.admin_verify.label }}
+                                                </span>
+                                                {{ search_form.admin_verify }}
                                             </div>
                                         </div>
                                     </div>

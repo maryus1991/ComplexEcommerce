@@ -20,8 +20,14 @@
                         <svg class="w-4 h-4 lg:w-5 lg:h-5">  <!-- کاهش سایز آیکون در موبایل -->
                             <use href="#add"></use>
                         </svg>
+
                     </button>
+
                 </a>
+                    <a href="{% url 'dashboard:orders' %}" class="bg-green-500/20 text-green-500 flex  items-center gap-1 rounded-lg px-3 py-2 text-xs lg:text-sm">
+        سفارشات
+        <svg class="w-4 h-4 lg:w-5 lg:h-5"><use href="#chevron-left"></use></svg>
+    </a>
             </div>
 
             {% if not addresses %}

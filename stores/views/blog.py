@@ -142,6 +142,11 @@ class StoreBlogListView(UserStoreStaffMixin, ListView):
                 query = query.filter(is_active=True)
             elif is_active == "12":
                 query = query.filter(is_active=False)
+        if is_active := data.get("admin_verified"):
+            if is_active == "11":
+                query = query.filter(admin_verified=True)
+            elif is_active == "12":
+                query = query.filter(admin_verified=False)
 
         if ordering := data.get("ordering"):
             if ordering == "11":  # جدید ترین

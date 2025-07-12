@@ -1,0 +1,192 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    بازیابی فایل های اپلود شده
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">مدیریت</li>
+    <li class="active">بکاپ</li>
+    <li class="active">بازیابی فایل های اپلود شده</li>
+{% endblock %}
+
+{% block body %}
+    <!-- Main content -->
+    <section class="content" style="min-height: 600px; margin-top: 20px;">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- نمایش پیام‌ها -->
+
+                <!-- بخش آپلود فایل -->
+                <div class="box box-danger">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">آپلود فایل بکاپ جدید</h3>
+                    </div>
+                    <div class="box-body">
+                        <form enctype="multipart/form-data" method="post" id="backup-upload-form">
+                            {% csrf_token %}
+                            <div class="alert alert-warning">
+                                <h4><i class="icon fa fa-warning"></i> توجه!</h4>
+                                <p>با آپلود و بازیابی بکاپ، تمام اطلاعات فعلی سیستم جایگزین خواهند شد</p>
+                            </div>
+                            <div class="alert alert-warning">
+                                <h4><i class="icon fa fa-warning"></i> توجه!</h4>
+                                <p>احتمال بروز خطا در زمان اعمال زیاد هست لطفا به ارور ها و خطاها توجه کنید و انهارا حل
+                                    کنید</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="upload">فایل بکاپ (پشتیبان):</label>
+                                <input type="file" name="upload" id="upload-input" class="form-control" required
+                                       accept=".zip">
+
+                                <div class="progress" style="margin-top: 10px; display: none;">
+                                    <div id="upload-progress" class="progress-bar progress-bar-success"
+                                         role="progressbar"
+                                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                                        0%
+                                    </div>
+                                </div>
+
+                                <button type="button" id="pause-btn" class="btn btn-warning btn-block" disabled
+                                        style="margin-top: 10px;">
+                                    <i class="fa fa-pause"></i> وقف آپلود
+                                </button>
+
+                                <button type="submit" class="btn btn-danger btn-block" style="margin-top: 10px;">
+                                    <i class="fa fa-upload"></i> آپلود و ذخیره فایل بکاپ
+                                </button>
+
+                                <input type="hidden" name="backup_name" id="backup-name">
+                            </div>
+
+
+                        </form>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('backup-upload-form');
+  const fileInput = document.getElementById('upload-input');
+  const progressBar = document.getElementById('upload-progress');
+  const progressContainer = document.querySelector('.progress');
+  const pauseBtn = document.getElementById('pause-btn');
+  const backupNameInput = document.getElementById('backup-name');
+
+  let xhr;
+  let isPaused = false;
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('upload', file);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    xhr = new XMLHttpRequest();
+
+    xhr.upload.addEventListener('progress', function (e) {
+      if (e.lengthComputable) {
+        const percent = Math.floor((e.loaded / e.total) * 100);
+        progressBar.style.width = percent + '%';
+        progressBar.textContent = percent + '%';
+        progressBar.setAttribute('aria-valuenow', percent);
+      }
+    });
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        if (response.success) {
+          // مخفی کردن فیلد آپلود و نمایش فقط نام فایل
+          fileInput.value = '';
+          fileInput.style.display = 'none';
+          pauseBtn.style.display = 'none';
+          backupNameInput.value = response.filename;
+          alert('آپلود با موفقیت انجام شد: ' + response.filename);
+          window.location.reload();
+        } else {
+          alert('خطا: ' + response.error);
+        }
+      }
+    };
+
+    xhr.open('POST', '{% url "admin_panel:UploadBackupViewMedia" %}');
+    xhr.send(formData);
+
+    progressContainer.style.display = 'block';
+    pauseBtn.disabled = false;
+  });
+
+  pauseBtn.addEventListener('click', function () {
+    if (xhr) {
+      if (!isPaused) {
+        xhr.abort();
+        isPaused = true;
+        pauseBtn.innerHTML = '<i class="fa fa-play"></i> ادامه آپلود';
+        progressBar.classList.remove('progress-bar-success');
+        progressBar.classList.add('progress-bar-warning');
+      } else {
+        location.reload(); // ساده‌ترین راه ادامه آپلود: ریفرش فرم
+      }
+    }
+  });
+});
+</script>
+                        
+                    </div>
+                </div>
+
+                <!-- لیست بکاپ‌های موجود -->
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">بکاپ‌های موجود</h3>
+                    </div>
+                    <div class="box-body">
+                        {% if backups %}
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>نام فایل</th>
+                                        <th>حجم</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for backup in backups %}
+                                        <tr>
+                                            <td>{{ backup.name }}</td>
+                                            <td>{{ backup.size }}</td>
+                                            <td>
+                                                <form method="post" style="display:inline;" action="">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="backup_name" value="{{ backup.name }}">
+
+                                                    <div class="form-group">
+                                                        <input type="text" name="confirmation" class="form-control"
+                                                               placeholder="عبارت 'تایید' را وارد کنید" required>
+                                                    </div>
+
+                                                    <button type="submit" name="restore" class="btn btn-warning btn-xs">
+                                                        <i class="fa fa-refresh"></i> بازیابی این بکاپ
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                هیچ فایل بکاپی یافت نشد
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

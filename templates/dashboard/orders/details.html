@@ -53,11 +53,7 @@
             <path stroke-linecap="round" stroke-linejoin="round"
                   d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"></path>
         </symbol>
-        <symbol id="moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokewidth="{1.5}"
-                stroke="currentColor">
-            <path strokelinecap="round" strokelinejoin="round"
-                  d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"></path>
-        </symbol>
+
         <symbol id="sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -229,6 +225,11 @@
             <div class="col-span-12">
                 <div class="flex items-center justify-between">
                     <p class="text-lg"> سفارش های من :</p>
+                    <a href="{% url 'product:list' %}">
+                        <button class="main-btn p-2 gap-x-1 shadow bg-green-500 ">
+                            ادامه خرید
+                        </button>
+                    </a>
                     {% if  details.exists and not details.first.order.canceled and not details.first.order.is_paid and not details.first.order.canceled %}
                         {% if details.first.order.address is None %}
                             <button class="p-2 gap-x-1 shadow  rounded-lg dark:bg-gray-700 bg-gray-50 ">
@@ -249,10 +250,10 @@
                             <button class="p-2 gap-x-1 shadow  rounded-lg dark:bg-gray-700 bg-gray-50 ">
                                 مهلت درخواست مرجوعی به پایان رسیده
                             </button>
-                            
+
                         {% elif can_return == 2 %}
                             <button class="p-2 gap-x-1 shadow  rounded-lg dark:bg-gray-700 bg-gray-50 ">
-برای این سفارش قبلا درخواست مرجوعی دادید
+                                برای این سفارش قبلا درخواست مرجوعی دادید
                             </button>
                         {% else %}
                             <a href="{% url 'dashboard:return-order'  details.first.order.id %}">
@@ -560,6 +561,16 @@
                                 <p class="flex items-center gap-2 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors font-DanaMedium">
                                     فاکتور رسمی شما هنوز اماده نشده است
                                 </p>
+                                <a href="{% url 'dashboard:order-generate-invoice' details.first.order.id %}"
+                                   class="flex items-center gap-2 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors font-DanaMedium">
+                                    دریافت فاکتور موقت
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                         viewBox="0 0 24 24"
+                                         stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                    </svg>
+                                </a>
                             {% elif details.first.order.is_paid and details.first.order.official_invoice and details.first.order.official_invoice_conformed_given_to_user %}
                                 <a href="{% url 'dashboard:order-generate-invoice' details.first.order.id %}"
                                    class="flex items-center gap-2 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors font-DanaMedium">
@@ -571,6 +582,7 @@
                                               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                     </svg>
                                 </a>
+
                             {% endif %}
                         </div>
 

@@ -409,7 +409,13 @@ urlpatterns = [
         views.DiscountDeleteView.as_view(),
         name="discount-delete",
     ),
-    # backup
-    path("backup/download/", views.OneClickBackup.as_view(), name="backup"),
-    path("backup/restore/", views.BackupRestoreInOneClickView.as_view(), name="backup-restore"),
+    # db backup
+    path("backup/db/download/", views.OneClickBackup.as_view(), name="backup"),
+    path("backup/db/restore/", views.BackupRestoreInOneClickView.as_view(), name="backup-restore"),
+
+    # media
+    path("backup/media/download/", views.StreamMediaZipView.as_view(), name="backup-media"),
+    path("backup/media/upload", views.UploadBackupView.as_view(), name="UploadBackupViewMedia"),
+    path("backup/media/restore/", views.MediaBackupRestoreInOneClickView.as_view(), name="backup-media-restore"),
+
 ]

@@ -20,11 +20,12 @@
                 <h3 class="panel-title"> سفارش مرجوعی شماره
                     {{ item.id }}</h3>
                 <div class="pull-left">
-                    <a href="{% url 'store:return-order-list' %}"
-                       class="btn btn-sm btn-success"
-                       data-toggle="tooltip">
-                        <i class="fa fa-eye"></i>
-                    </a>
+                            <a href="{% url 'store:orders-detail' item.order.id %}"
+                               class="btn btn-sm btn-success"
+                               data-toggle="tooltip">
+                                سفارش شماره
+                                {{ item.order.id }}
+                            </a>
                     <a href="{% url 'store:return-accept-by-store' item.id %}" class="btn btn-sm btn-info"
                        data-toggle="tooltip" title="قبول کردن">
                         <i class="fa fa-edit"></i>

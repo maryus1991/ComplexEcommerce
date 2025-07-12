@@ -34,7 +34,7 @@ class RegisterStoreMinimalInformationForm(forms.Form):
     phone = PhoneNumberField(
         widget=forms.NumberInput(
             attrs={"class": "tailwind-input col-span-3",
-                   "dir": "rtl",
+                   "dir": "ltr",
                    "placeholder": "شماره همراه"}
         ),
         required=True,
@@ -456,7 +456,7 @@ class TicketFilterForm(forms.Form):
     user_number = PhoneNumberField(
         required=False,
         label="شماره کاربر",
-        widget=forms.NumberInput(attrs={"class": "form-control", "dir": "rtl"}),
+        widget=forms.NumberInput(attrs={"class": "form-control", "dir": "ltr"}),
     )
 
     start_date = JalaliDateField(
@@ -547,6 +547,16 @@ class ProductSearchForm(forms.Form):
     is_active = forms.ChoiceField(
         label="فعال / غیرفعال",
         choices=[("", "-- انتخاب --"), ("1", "فعال"), ("0", "غیرفعال")],
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control",
+            }
+        ),
+    )
+    admin_verify = forms.ChoiceField(
+        label="تایید شده ادمین / تایید نشده ادمین ",
+        choices=[("", "-- انتخاب --"), ("1", "تایید شده"), ("0", "تایید نشده")],
         required=False,
         widget=forms.Select(
             attrs={
@@ -989,7 +999,7 @@ class AddStoreForm(forms.ModelForm):
 
     phone = PhoneNumberField(
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "placeholder": "شماره همراه"}
+            attrs={"class": "form-control", 'dir':'ltr', "placeholder": "شماره همراه"}
         ),
         required=True,
         validators=[validate_phonenumber],
@@ -997,7 +1007,7 @@ class AddStoreForm(forms.ModelForm):
 
     phone2 = PhoneNumberField(
         widget=forms.NumberInput(
-            attrs={"class": "form-control", "placeholder": "شماره تلفن ثابت"}
+            attrs={"class": "form-control", 'dir':'ltr', "placeholder": "شماره تلفن ثابت"}
         ),
         required=True,
         validators=[validate_phonenumber],
@@ -1236,7 +1246,7 @@ class AddStoreUserStaffForm(forms.ModelForm):
                 "class": "form-control",
                 "placeholder": "شماره همراه",
                 "autocomplete": "tel",
-                "dir": "rtl",
+                "dir": "ltr",
             }
         ),
     )
@@ -1320,6 +1330,7 @@ class AddStoreAppForm(forms.ModelForm):
         model = StoreApps
         fields = ("is_active", "name", 'short_description')
         widgets = {
+            "is_active": forms.CheckboxInput(),
             "is_active": forms.CheckboxInput(),
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "نام را وارد کنید"}
@@ -1423,6 +1434,16 @@ class StoreBlogFilteringForm(forms.Form):
             ("", "-- انتخاب --"),
             ("11", "فعال"),
             ("12", "غیر فعال"),
+        ],
+        required=False,
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+    admin_verified = forms.ChoiceField(
+        label="تاییده ادمین",
+        choices=[
+            ("", "-- انتخاب --"),
+            ("11", "تایید شده"),
+            ("12", "تایید نشده"),
         ],
         required=False,
         widget=forms.Select(attrs={"class": "form-control"}),

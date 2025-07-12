@@ -166,7 +166,7 @@
             </div>
 
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         <label class="checkbox-inline">
                             {{ form.is_active.label }}
@@ -176,17 +176,25 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
+                        <label class="checkbox-inline">
+                            {{ form.admin_verified.label }}
+                        </label>
+                        {{ form.admin_verified }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
                         {{ form.ordering.label_tag }}
                         {{ form.ordering }}
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
                         {{ form.title.label_tag }}
                         {{ form.title }}
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <div class="form-group" style="margin-top: 25px;">
                         <button type="submit" class="btn btn-primary btn-block">
                             <i class="fa fa-search"></i> جستجو

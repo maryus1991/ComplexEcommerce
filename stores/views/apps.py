@@ -72,6 +72,11 @@ class StoreAppsView(UserStoreStaffMixin, View):
                 if "on" in is_active:
                     obj = obj.filter(is_active=False)
 
+            if "admin_verified" in data:
+                is_active = data["admin_verified"]
+                if "on" in is_active:
+                    obj = obj.filter(admin_verified=False)
+
             if "search" in data:
                 search = data["search"][0]
                 if search != "" and search is not None:

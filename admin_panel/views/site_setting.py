@@ -143,7 +143,7 @@ class UpdateSiteSettingView(AdminUserMixin, UpdateView):
     success_url = reverse_lazy("admin_panel:update-site-setting")
     context_object_name = "site"
 
-    def get_object(self):
+    def get_object(self, queryset=None):
         site = SiteSetting.objects
         if site.exists() and site.count() == 1:
             return site.first()

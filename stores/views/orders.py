@@ -33,6 +33,8 @@ from utils.send_otp import send_message
 from sitesetting.models import SiteSetting
 from admin_panel.forms import SpecificsOrdersModelForm
 from django.utils.timezone import now
+
+
 # orders
 class ReturnOrderList(UserStoreStaffMixin, ListView):
     """return order list"""
@@ -41,7 +43,14 @@ class ReturnOrderList(UserStoreStaffMixin, ListView):
     context_object_name = 'items'
 
     def get_queryset(self):
-        return super().get_queryset().filter(order__store=self.request.user.store).order_by('-id')
+
+        queryset = super().get_queryset().filter(order__store=self.request.user.store).order_by('-id')
+
+        if number:= self.request.GET.get('number'):
+            number = str(number)
+            queryset = queryset.filter(user__PhoneNumber=number)
+
+        return queryset.order_by('accept_by_store')
 
 
 class ReturnOrderDetail(UserStoreStaffMixin, DetailView):
@@ -50,27 +59,28 @@ class ReturnOrderDetail(UserStoreStaffMixin, DetailView):
     template_name = 'store/orders/returns/details.html'
     context_object_name = 'item'
 
-    def get_object(self, queryset = None):
+    def get_object(self, queryset=None):
         return get_object_or_404(ReturnsOrders, pk=self.kwargs['pk'], order__store=self.request.user.store)
 
 
 class ReturnOrderAcceptByStore(UserStoreStaffMixin, RedirectView):
     """return order accept by store"""
+
     def get_redirect_url(self, *args, **kwargs):
         obj = get_object_or_404(ReturnsOrders, pk=self.kwargs['pk'], order__store=self.request.user.store)
 
         if obj.date_close_request is not None:
             messages.warning(
-                self.request,'توان تغییر در سفارش بسته شده وجود ندارد'
+                self.request, 'توان تغییر در سفارش بسته شده وجود ندارد'
             )
             return reverse('store:return-order-list')
 
-        if obj.accept_by_store :
+        if obj.accept_by_store:
             obj.accept_by_store = False
             obj.save()
 
             messages.error(
-                self.request,'سفارش توسط فروشگاه لغو شد'
+                self.request, 'سفارش توسط فروشگاه لغو شد'
             )
 
         else:
@@ -86,15 +96,15 @@ class ReturnOrderAcceptByStore(UserStoreStaffMixin, RedirectView):
 
 class ReturnOrderSendToAdmin(UserStoreStaffMixin, RedirectView):
     """return order accept by store"""
+
     def get_redirect_url(self, *args, **kwargs):
         obj = get_object_or_404(ReturnsOrders, pk=self.kwargs['pk'], order__store=self.request.user.store)
 
         if obj.date_close_request is not None:
             messages.warning(
-                self.request,'توان تغییر در سفارش بسته شده وجود ندارد'
+                self.request, 'توان تغییر در سفارش بسته شده وجود ندارد'
             )
             return reverse('store:return-order-list')
-
 
         order = StoreSoldOrders.objects.filter(order=obj.order, store=self.request.user.store).first()
         if order.is_returned_by_admin:
@@ -104,12 +114,12 @@ class ReturnOrderSendToAdmin(UserStoreStaffMixin, RedirectView):
             )
             return reverse('store:return-order-list')
 
-        if obj.send_request_to_return_this_order_by_admin :
+        if obj.send_request_to_return_this_order_by_admin:
             obj.send_request_to_return_this_order_by_admin = False
             obj.save()
 
             messages.error(
-                self.request,"مرجوعی توسط فروشگاه انجام میشود"
+                self.request, "مرجوعی توسط فروشگاه انجام میشود"
             )
 
         else:
@@ -122,8 +132,10 @@ class ReturnOrderSendToAdmin(UserStoreStaffMixin, RedirectView):
 
         return reverse('store:return-order-list')
 
+
 class ReturnOrderClose(UserStoreStaffMixin, RedirectView):
     """return order accept by store"""
+
     def get_redirect_url(self, *args, **kwargs):
         obj = get_object_or_404(ReturnsOrders, pk=self.kwargs['pk'], order__store=self.request.user.store)
 
@@ -134,9 +146,8 @@ class ReturnOrderClose(UserStoreStaffMixin, RedirectView):
             return reverse('store:return-order-list')
 
         obj.accept_by_store = True
-        obj.date_close_request=now()
+        obj.date_close_request = now()
         obj.save()
-
 
         return reverse('store:return-order-list')
 
@@ -154,7 +165,8 @@ class StoreOrdersView(UserStoreStaffMixin, ListView):
 
     def get_queryset(self):
         # دریافت کوئری‌ست پایه
-        query = super().get_queryset().filter(store=self.request.user.store)
+        query = super().get_queryset().filter(store=self.request.user.store).exclude(is_paid=False, canceled=False)
+        query = query.order_by('canceled')
 
         # ایجاد فرم فیلتر با داده‌های GET
         form = OrderFilteringForm(self.request.GET)
@@ -457,8 +469,8 @@ class StoreOrderDetailView(UserStoreStaffMixin, DetailView):
         context = super().get_context_data(**kwargs)
         form = SpecificsOrdersModelForm(
             initial={
-                'user':self.object.user,
-                'store':self.request.user.store
+                'user': self.object.user,
+                'store': self.request.user.store
             }
         )
         form.fields['store'].disabled = True
@@ -627,8 +639,8 @@ class StoreSoleOrders(UserStoreStaffMixin, ListView):
     def get_queryset(self):
         return self.model.objects.filter(
             store_id=self.request.user.store.id
-        ).order_by("-id"
-        ).prefetch_related("order")
+        ).order_by("is_returned_by_admin"
+                   ).prefetch_related("order")
 
     def get_context_data(
             self, *, object_list=..., **kwargs
@@ -650,13 +662,21 @@ class StoreSpecificsOrdersListView(UserStoreStaffMixin, ListView):
     context_object_name = "items"
 
     def get_queryset(self):
-        return self.model.objects.filter(store_id=self.request.user.store.id).prefetch_related('user')
+        request = self.request
+        queryset = self.model.objects.filter(store_id=self.request.user.store.id).prefetch_related('user')
+        if number:= request.GET.get('number'):
+            number = str(number)
+            queryset = queryset.filter(user__PhoneNumber=number)
+
+        return queryset.order_by("is_paid")
+
 
 class StoreSpecificsOrdersDetailsView(UserStoreStaffMixin, DetailView):
     """for listing the special orders"""
     model = SpecificsOrders
     context_object_name = "item"
     template_name = "store/orders/specifics/details.html"
+
 
 class StoreSpecificsOrdersCreateView(UserStoreStaffMixin, RedirectView):
     """for listing the special orders"""
@@ -677,6 +697,7 @@ class StoreSpecificsOrdersCreateView(UserStoreStaffMixin, RedirectView):
         )
         return reverse('store:specifics-list')
 
+
 class StoreSpecificsOrdersUpdateView(UserStoreStaffMixin, UpdateView):
     """for listing the special orders"""
     model = SpecificsOrders
@@ -694,7 +715,7 @@ class StoreSpecificsOrdersUpdateView(UserStoreStaffMixin, UpdateView):
             messages.success(self.request, 'ادیت شد')
         else:
             messages.error(
-                self.request,'شما نمی توانید فاکتوری که پرداخت شده رو ادیت کنید'
+                self.request, 'شما نمی توانید فاکتوری که پرداخت شده رو ادیت کنید'
             )
         return redirect(self.get_success_url())
 
@@ -704,6 +725,7 @@ class StoreSpecificsOrdersUpdateView(UserStoreStaffMixin, UpdateView):
             form.errors
         )
         return super().form_invalid(form)
+
 
 class StoreSpecificsOrdersDeleteView(UserStoreStaffMixin, RedirectView):
     """for delete orders"""

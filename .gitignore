@@ -14,9 +14,11 @@ stage.yml
 *.zip
 /static/ckeditor/
 /static/node_modules/*
-*/backups/*
+*/backups/media/*
+*/backups/db/*
 *.psql
 flake8_errors.txt
 *.csv
 *.sql
 data.json
+post_data.json

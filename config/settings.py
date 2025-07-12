@@ -127,23 +127,23 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 #
-DATABASES = {
-    "default": {
-        "ENGINE": os.getenv("POSTGRES_ENGIN", default="django.db.backends.postgresql"),
-        "NAME": os.getenv("POSTGRES_DB"),
-        "USER": os.getenv("POSTGRES_USER"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("POSTGRES_HOST", default="postgres"),
-        "PORT": os.getenv("POSTGRES_PORT", default="5432"),
-    }
-}
-
 # DATABASES = {
 #     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
+#         "ENGINE": os.getenv("POSTGRES_ENGIN", default="django.db.backends.postgresql"),
+#         "NAME": os.getenv("POSTGRES_DB"),
+#         "USER": os.getenv("POSTGRES_USER"),
+#         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+#         "HOST": os.getenv("POSTGRES_HOST", default="postgres"),
+#         "PORT": os.getenv("POSTGRES_PORT", default="5432"),
 #     }
 # }
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -221,7 +221,7 @@ CKEDITOR_CONFIGS = {
              'Styles', 'Format', 'Font', 'FontSize'],
 
         ],
-        'width': '999px',
+        'width': '500px',
         'height': 300,
         'extraPlugins': 'font,colorbutton,justify,iframe',
         'contentsCss': ['/static/fonts/font.css'],
@@ -290,3 +290,12 @@ ZARINPAL_VERIFY_PAYMENT = os.getenv("ZARINPAL_VERIFY_PAYMENT")
 TIPAX_USERNAME = os.getenv("TIPAX_USERNAME")
 TIPAX_PASSWORD = os.getenv("TIPAX_PASSWORD")
 TIPAX_API_KEY = os.getenv("TIPAX_API_KEY")
+
+# catch
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'django_cache',
+    }
+}

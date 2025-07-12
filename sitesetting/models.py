@@ -43,6 +43,8 @@ class SiteSetting(models.Model):
     about_image = models.ImageField(
         upload_to="site/about_image/", null=True, verbose_name="عکس معرفی", blank=True
     )
+    difference_between_post_and_tipax_price = models.PositiveBigIntegerField(default=10,
+               verbose_name='درصد اختلاف تیپاکس و پست')
 
     # delivery options for all website
     active_post_delivery = models.BooleanField(

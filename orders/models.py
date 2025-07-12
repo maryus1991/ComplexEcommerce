@@ -117,27 +117,10 @@ class Order(models.Model):
                 return -1
 
     def calculate_post_price(self):
-        price = DeliveryPrices.objects.filter(
-            is_tipax=False,
-            origin_city_id=self.store.orgin_city_id,
-            destination_city_id=self.address.city_code,
-            date__range=[now() - timedelta(days=3), now()],
-        )
-        if price.exists() and price.count() == 1:
-            return price.first().price
-        else:
-            price = calculate_price_post()
-            if price is not None:
-                DeliveryPrices.objects.create(
-                    is_tipax=False,
-                    origin_city_id=self.store.orgin_city_id,
-                    destination_city_id=self.address.city_code,
-                    date=now(),
-                    price=price,
-                )
-                return price
-            else:
-                return -1
+        tipax_price = self.calculate_tipax_price()
+        site = SiteSetting.objects.first().difference_between_post_and_tipax_price
+        return tipax_price - (tipax_price * (int(site) / 100) )
+
 
 
     def calculate_total_price(self):
@@ -153,6 +136,7 @@ class Order(models.Model):
             return self.total_price
         else:
             return self.total_price
+
 
     def calculate_total_price_with_out_discount(self):
 
