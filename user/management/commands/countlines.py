@@ -20,7 +20,7 @@ class Command(BaseCommand):
                 continue
 
             for file in files:
-                if file.endswith((".py")):
+                if file.endswith((".py",)):
                     try:
                         with open(os.path.join(root, file), "r", encoding="utf-8") as f:
                             lines = len(f.readlines())
