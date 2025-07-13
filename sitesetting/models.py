@@ -26,9 +26,9 @@ class SiteSetting(models.Model):
         max_length=100, default="0", verbose_name="ایدی تلگرام"
     )
 
-    instagram_link = models.URLField(default="0", verbose_name="لینک حساب ایسنتاگرام")
+    instagram_link = models.URLField(default="0", verbose_name="لینک حساب اینستاگرام")
     instagram_ID = models.CharField(
-        max_length=100, default="0", verbose_name="ایدی ایسنتاگرام"
+        max_length=100, default="0", verbose_name="ایدی اینستاگرام"
     )
 
     logo = models.ImageField(
@@ -65,7 +65,7 @@ class SiteSetting(models.Model):
 
     # main page setting
     active_slider_in_main_page = models.BooleanField(
-        default=True, verbose_name="فعال کردن سلایدر ها در صفحه اصلی"
+        default=True, verbose_name="فعال کردن اسلایدر ها در صفحه اصلی"
     )
     active_banner_in_main_page = models.BooleanField(
         default=True, verbose_name="فعال کردن بنر ها در صفحه اصلی"

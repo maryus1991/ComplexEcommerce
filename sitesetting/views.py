@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse, reverse
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, RedirectView, View, ListView
+from django.views.generic import TemplateView, RedirectView, View, ListView, DetailView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.views.generic.edit import FormView
@@ -188,15 +188,25 @@ class AddTONewsLetters(RedirectView):
         return self.request.META.get("HTTP_REFERER", "/")
 
 
+class UsedAppDetailView(DetailView):
+    """
+    for listing the stores apps
+    """
+
+    model = StoreApps
+    context_object_name = "item"
+    template_name = "site/apps/apps-details.html"
+
+
 class UsedAppView(ListView):
     """
     for listing the stores apps
     """
 
     model = StoreApps
-    paginate_by = 20
+    paginate_by = 24
     context_object_name = "apps"
-    template_name = "site/apps.html"
+    template_name = "site/apps/apps.html"
 
     def get_queryset(self):
         query = (
@@ -259,7 +269,7 @@ class DownloadUsedAppView(CustomLoginRequiredMixin, View):
         response["Content-Disposition"] = f'attachment; filename="{file_name}"'
         response["Content-Length"] = file_size
         response["X-Accel-Redirect"] = (
-            f"/protected/{os.path.basename(file_path)}"  # For nginx
+            f"/media/app/{os.path.basename(file_path)}"  # For nginx
         )
 
         return response

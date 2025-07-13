@@ -1,6 +1,9 @@
 {% extends 'Base/Base.html' %}
 {% load static %}
+{% load to_webp %}
 {% load jalali_tags %}
+{% load products_tags %}
+
 
 {% block title %}
     مقالات
@@ -50,54 +53,81 @@
                         </svg>
                     </div>
 
-                    <ul id="blog-categories-filter"
-                        class="accordion-content hidden py-2 mx-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
-                        {% for category in categories %}
-                            <hr>
-                            <li>
-                                <label class="cl-checkbox">
-                                    <input name="category" value="{{ category.id }}" type="checkbox">
-                                    <span></span>
-                                </label>
+                    <ul id="category-accordion" class="accordion-content  hidden py-2 mx-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
+    {% for category in categories|active_category %}
+        <hr>
+        <li data-id="{{ category.id }}">
+            <label class="cl-checkbox">
+                <input name="category" value="{{ category.id }}" type="checkbox" class="category-checkbox" data-id="{{ category.id }}" data-parent="">
+                <span></span>
+            </label>
+            <p>{{ category.name }}</p>
 
-                                <p>{{ category.name }}</p>
+            {% for child in category.children|active_category %}
+                <li data-id="{{ child.id }}" style="padding-right: 2rem;">
+                    <label class="cl-checkbox">
+                        <input name="category" value="{{ child.id }}" type="checkbox" class="category-checkbox" data-id="{{ child.id }}" data-parent="{{ category.id }}">
+                        <span></span>
+                    </label>
+                    <p>{{ child.name }}</p>
+                </li>
 
-                                {% for child in category.children.all %}
+                {% for sub_child in child.children|active_category %}
+                    <li data-id="{{ sub_child.id }}" style="padding-right: 4rem;">
+                        <label class="cl-checkbox">
+                            <input name="category" value="{{ sub_child.id }}" type="checkbox" class="category-checkbox" data-id="{{ sub_child.id }}" data-parent="{{ child.id }}">
+                            <span></span>
+                        </label>
+                        <p>{{ sub_child.name }}</p>
+                    </li>
 
-                                    <li style="padding-right: 2rem; ">
-                                        <label class="cl-checkbox">
-                                            <input name="category" value="{{ child.id }}" type="checkbox">
-                                            <span></span>
-                                        </label>
-                                        <p>{{ child.name }}</p>
-                                    </li>
-                                    {% for sub_child in child.children.all %}
-                                        <li style="padding-right: 4rem; ">
-                                            <label class="cl-checkbox">
-                                                <input name="category" value="{{ sub_child.id }}" type="checkbox">
-                                                <span></span>
-                                            </label>
-                                            <p>{{ sub_child.name }}</p>
-                                        </li>
-                                        {% for sub_sub_child in sub_child.child.all %}
-                                            <li style="padding-right: 6rem; ">
-                                                <label class="cl-checkbox">
-                                                    <input name="category" value="{{ sub_sub_child.id }}"
-                                                           type="checkbox">
-                                                    <span></span>
-                                                </label>
-                                                <p>{{ sub_sub_child.name }}</p>
-                                            </li>
-                                        {% endfor %}
+                    {% for sub_sub_child in sub_child.children|active_category %}
+                        <li data-id="{{ sub_sub_child.id }}" style="padding-right: 6rem;">
+                            <label class="cl-checkbox">
+                                <input name="category" value="{{ sub_sub_child.id }}" type="checkbox" class="category-checkbox" data-id="{{ sub_sub_child.id }}" data-parent="{{ sub_child.id }}">
+                                <span></span>
+                            </label>
+                            <p>{{ sub_sub_child.name }}</p>
+                        </li>
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        </li>
+    {% endfor %}
+</ul>
+                
+                
+                
+                <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkboxes = document.querySelectorAll('.category-checkbox');
 
-                                    {% endfor %}
+        // وقتی روی هر چک‌باکس کلیک شد
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function () {
+                const currentId = this.dataset.id;
+                const isChecked = this.checked;
 
-                                {% endfor %}
+                // تمام چک‌باکس‌هایی که parent آن‌ها این ID باشد را پیدا کن
+                const children = getAllChildren(currentId);
+                children.forEach(child => {
+                    child.checked = isChecked;
+                });
+            });
+        });
 
-                            </li>
-
-                        {% endfor %}
-                    </ul>
+        // بازگشت همه فرزندان یک دسته (به‌صورت بازگشتی)
+        function getAllChildren(parentId) {
+            let result = [];
+            const directChildren = Array.from(document.querySelectorAll(`.category-checkbox[data-parent="${parentId}"]`));
+            result.push(...directChildren);
+            directChildren.forEach(child => {
+                result.push(...getAllChildren(child.dataset.id));
+            });
+            return result;
+        }
+    });
+</script>
 
                 </div>
 
@@ -216,6 +246,19 @@
                             });
                         }
                     }
+                    
+                                        // برای دسته‌بندی‌ها
+                    if (selectedCategories.length > 0) {
+                        // باز کردن آکاردیون دسته‌بندی
+                        document.getElementById('category-accordion').classList.remove('hidden');
+
+                        // علامت‌گذاری تمام دسته‌بندی‌های انتخاب شده
+                        selectedCategories.forEach(catId => {
+                            const checkbox = document.querySelector(`input[name="category"][value="${catId}"]`);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    }
+
 
                     // --- پردازش فروشگاه‌ها (با استفاده از تابع صحیح) ---
                     const selectedStores = getAllParams('store'); // تغییر از getAllQueryParams به getAllParams
@@ -328,8 +371,15 @@
                     {% for post in posts %}
                         <div class="group">
                             <div class="relative overflow-hidden rounded-lg">
-                                <img src="{{ post.image.url }}"
-                                     class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl" alt=""/>
+                                                                                                                        <picture>
+                <source srcset="{{ post.image.url|to_webp }}"
+                        class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
+                        type="image/webp">
+                <img src="{{ post.image.url }}" alt="{{ post.title }}"
+                     class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
+                     loading="lazy">
+            </picture>
+
                                 <div
                                         class="absolute opacity-0 left-0 top-0 bottom-0 right-0 bg-black/60 flex items-center justify-center group-hover:opacity-100 duration-300 transition-all rounded-bl-3xl rounded-tr-3xl">
                                     <a href="{% url 'blog:detail' post.id %}"

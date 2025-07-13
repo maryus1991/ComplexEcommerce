@@ -64,7 +64,9 @@ class AppsCreateView(AdminUserMixin, CreateView):
     success_url = reverse_lazy("admin_panel:apps-list")
 
     def form_valid(self, form):
-        form.instance.store = self.request.user.store
+        if form.cleaned_data.get('store') is None:
+            messages.error(self.request, "قروشکاه رو انتخاب کنید")
+            return redirect(self.request.META.get('HTTP_REFERER'))
 
         uploaded_filename = self.request.POST.get('uploaded_filename')
         if uploaded_filename:
@@ -92,6 +94,11 @@ class AppsUpdateView(AdminUserMixin, UpdateView):
 
 
     def form_valid(self, form):
+
+        if form.cleaned_data.get('store') is None:
+            messages.error(self.request, "قروشکاه رو انتخاب کنید")
+            return redirect(self.request.META.get('HTTP_REFERER'))
+
         uploaded_filename = self.request.POST.get('uploaded_filename')
 
         if uploaded_filename:
@@ -101,7 +108,8 @@ class AppsUpdateView(AdminUserMixin, UpdateView):
                 with open(full_path, 'rb') as f:
                     form.instance.file.save(uploaded_filename, File(f), save=False)
                 os.remove(full_path)  # اختیاری: حذف فایل بعد از attach شدن
-
+        form.instance.is_active = True
+        form.instance.admin_verified = True
         messages.success(self.request, "تغییرات با موفقیت اعمال شد")
         return super().form_valid(form)
 

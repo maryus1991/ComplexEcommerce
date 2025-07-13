@@ -1,8 +1,7 @@
-
 {% extends 'Base/Base.html' %}
-
+{% load to_webp %}
 {% block title %}
-درباره ما
+    درباره ما
 {% endblock %}
 
 {% block breadcrumb %}
@@ -21,7 +20,15 @@
             <div class=" w-full lg:w-2/4">
                 <!-- LOGO -->
                 <a href="/" class="text-green-500 transition-colors w-fit block">
-                    <img src="{{ site.logo.url }}" alt="logo" class="w-24 h-15 " height="6px" width="96px"/>
+                    <picture>
+                        <source srcset="{{ site.logo.url|to_webp }}"
+                                class="w-24 h-15 " height="6px" width="96px"
+                                type="image/webp">
+                        <img src="{{ site.logo.url }}" alt="{{ site.title }}"
+                             class="w-24 h-15 " height="6px" width="96px"
+                             loading="lazy">
+                    </picture>
+
 
                 </a>
 
@@ -37,13 +44,21 @@
                         <img src="/static/Images/svg/instagram.png" class="w-6 h-6" alt="instagram"/>
                     </a>
                     <a href="{{ site.telegram_link }}" class="flex items-center gap-x-2">
-                        <p dir="ltr">{{ site.telegram_ID  }}</p>
+                        <p dir="ltr">{{ site.telegram_ID }}</p>
                         <img src="/static/Images/svg/telegram.png" class="w-6 h-6" alt="instagram"/>
                     </a>
                 </div>
             </div>
             <div class="flex justify-end  w-full lg:w-2/4">
-                <img src="{{ site.about_image.url }}" class="rounded-lg lg:h-[35rem]" alt="">
+                                                                                                        <picture>
+                <source srcset="{{ site.about_image.url|to_webp }}"
+                        class="rounded-lg lg:h-[35rem]"
+                        type="image/webp">
+                <img src="{{ site.about_image.url }}" alt="{{ site.title }}"
+                     class="rounded-lg lg:h-[35rem]"
+                     loading="lazy">
+            </picture>
+                
             </div>
         </section>
     </main>

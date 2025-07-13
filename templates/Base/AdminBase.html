@@ -850,9 +850,49 @@ desired effect
 
 {% endblock %}
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // گرفتن همه inputهای عددی
+const numberInputs = document.querySelectorAll(
+  'input[type="number"], input.number-input-tdc, input[data-numeric-input]'
+);
 
-<!-- Optionally, you can add Slimscroll and FastClick plugins.
-     Both of these plugins are recommended to enhance the
-     user experience. -->
+    numberInputs.forEach(originalInput => {
+        // پنهان کردن input اصلی
+        originalInput.style.display = 'none';
+
+        // ساختن input جایگزین
+        const fakeInput = document.createElement('input');
+        fakeInput.type = 'text';
+        fakeInput.className = originalInput.className + ' visible-number-input';  // حفظ استایل
+        fakeInput.placeholder = originalInput.placeholder || '';
+        fakeInput.style.marginBottom = '4px';
+
+        // مقدار اولیه
+        const initialVal = originalInput.value || '';
+        fakeInput.value = formatWithCommas(initialVal);
+
+        // گذاشتن input جدید جلوی input مخفی
+        originalInput.parentNode.insertBefore(fakeInput, originalInput.nextSibling);
+
+        // هنگام تایپ در input جدید
+        fakeInput.addEventListener('input', function () {
+            // پاک‌سازی کاراکترهای غیرعددی
+            const raw = this.value.replace(/,/g, '').replace(/[^\d]/g, '');
+            // نمایش با کاما
+            this.value = formatWithCommas(raw);
+            // مقدار خام به input اصلی بره
+            originalInput.value = raw;
+        });
+    });
+
+    // تابع فرمت سه‌رقمی
+    function formatWithCommas(val) {
+        if (!val) return '';
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+});
+</script>
+
 </body>
 </html>

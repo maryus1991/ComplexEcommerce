@@ -11,172 +11,11 @@
 {% block body %}
     <div class="row">
         <!-- فرم اضافه کردن برنامه -->
-        <div class="col-md-6">
-            <div class="box box-primary" style="margin-top: 20px;">
-                <div class="box-header with-border">
-                    <h3 class="box-title"><i class="fa fa-plus"></i>اپلود برنامه جدید</h3>
-                </div>
-                <form role="form" method="POST" action="" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="hidden" name="uploaded_filename" id="uploaded_filename">
-
-                    <div class="box-body">
-                        <div class="row">
-                            <div class="col-md-5">
-                                <div class="form-group">
-                                    <label>نام برنامه</label>
-                                    <div class="input-group input-group-sm">
-                                    <span class="input-group-btn">
-                                        <button type="button" class="btn btn-info btn-flat">نام</button>
-                                    </span>
-                                        {{ form.name }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>فایل برنامه</label>
-                                    <div class="input-group input-group-sm">
-                                    <span class="input-group-btn">
-                                        <button type="button" class="btn btn-info btn-flat">فایل</button>
-                                    </span>
-                                        <input type="file" name="file" class="form-control" placeholder="برنامه را وارد کنید" id="id_file">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <br>
-                                    <span class="btn-danger input-group-addon"
-                                          style="background-color: #f56954; color: #FFFFFF">
-                                فعال کردن برای دانلود:
-                                {{ form.is_active }}
-                            </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-
-                            <div class="">
-                                {{ form.short_description }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="box-footer clearfix">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="progress" style="margin-bottom: 2px; height: 18px;">
-                                    <div class="progress-bar progress-bar-success progress-bar-striped active"
-                                         id="progress-bar"
-                                         role="progressbar"
-                                         style="width: 0%; line-height: 20px;">
-                                        0%
-                                    </div>
-                                </div>
-                                <div id="upload-speed" class="text-muted small" style="margin-bottom: 0px;"></div>
-                            </div>
-
-                            <div class="col-md-4 text-left">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-success" onclick="startUpload()">
-                                        <i class="fa fa-upload"></i> آپلود
-                                    </button>
-                                    <button type="button" class="btn btn-warning" onclick="pauseUpload()">
-                                        <i class="fa fa-pause"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-primary" onclick="resumeUpload()">
-                                        <i class="fa fa-play"></i>
-                                    </button>
-                                    <button type="submit" class="btn btn-info">
-                                        <i class="fa fa-save"></i> ثبت
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </form>
-            </div>
-        </div>
-        <script>
-            let uploadPaused = false;
-            let currentChunk = 0;
-            let totalChunks = 0;
-            let chunkSize = 1024 * 1024; // 1MB
-            let file = null;
-            let startTime = null;
-
-            function startUpload() {
-                file = document.getElementById('id_file').files[0];
-                if (!file) {
-                    alert("لطفاً یک فایل انتخاب کنید.");
-                    return;
-                }
-                document.getElementById('uploaded_filename').value = file.name;
-                totalChunks = Math.ceil(file.size / chunkSize);
-                currentChunk = 0;
-                uploadPaused = false;
-                startTime = Date.now();
-                uploadNextChunk();
-            }
-
-            function pauseUpload() {
-                uploadPaused = true;
-            }
-
-            function resumeUpload() {
-                if (uploadPaused) {
-                    uploadPaused = false;
-                    uploadNextChunk();
-                }
-            }
-
-            function uploadNextChunk() {
-                if (uploadPaused || currentChunk >= totalChunks) return;
-
-                const chunk = file.slice(currentChunk * chunkSize, (currentChunk + 1) * chunkSize);
-                const formData = new FormData();
-                formData.append('file', chunk);
-                formData.append('chunkNumber', currentChunk + 1);
-                formData.append('totalChunks', totalChunks);
-                formData.append('filename', file.name);
-
-                const start = Date.now();
-
-                fetch("{% url 'store:app-upload-app' %}", {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: formData
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        const now = Date.now();
-                        const elapsed = (now - start) / 1000;
-                        const speed = (chunk.size / 1024 / 1024 / elapsed).toFixed(2);
-                        const percent = Math.round(((currentChunk + 1) / totalChunks) * 100);
-
-                        document.getElementById('progress-bar').style.width = percent + '%';
-                        document.getElementById('progress-bar').innerText = percent + '%';
-                        document.getElementById('upload-speed').innerText = `سرعت: ${speed} مگابایت بر ثانیه`;
-
-                        if (percent === 100) {
-                            document.getElementById('id_file').remove();
-                        }
-
-                        currentChunk++;
-                        uploadNextChunk();  // ادامه آپلود chunk بعدی
-                    })
-                    .catch(error => {
-                        console.error('خطا در chunk:', error);
-                    });
-            }
-        </script>
+ 
 
 
         <!-- فرم جستجو -->
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="box box-primary" style="margin-top: 20px;">
                 <div class="box-header with-border">
                     <h3 class="box-title"><i class="fa fa-search"></i> فرم جستجو</h3>
@@ -224,6 +63,7 @@
                     <h3 class="box-title"><i class="fa fa-list"></i> لیست برنامه‌ها</h3>
                     <div class="box-tools pull-right">
                         <span class="badge bg-green">{{ items.count }} برنامه</span>
+                        <a href="{% url 'store:app-create' %}" class="badge bg-info   ">اپلود برنامه چدید</a>
                     </div>
                 </div>
                 <div class="box-body table-responsive">
@@ -234,7 +74,6 @@
 
                             <th width="5%">وضعیت</th>
                             <th width="10%">عملیات</th>
-                            <th width="45%">توضیحات</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -253,8 +92,11 @@
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        <a href="{% url 'site:apps-list' %}" class="btn btn-sm btn-info" title="مشاهده">
+                                        <a href="{{ item.get_absolute_url }}" class="btn btn-sm btn-success" title="مشاهده">
                                             <i class="fa fa-eye"></i>
+                                        </a>                                
+                                        <a href="{% url 'store:app-update' item.pk %}" class="btn btn-sm btn-info" title="بروزرسانی">
+                                            <i class="fa fa-edit"></i>
                                         </a>
                                         <a href="{% url 'store:remove-active-deactive' item.pk %}"
                                            class="btn btn-sm {% if item.is_active %}btn-warning{% else %}btn-success{% endif %}"
@@ -270,9 +112,7 @@
                                         </form>
                                     </div>
                                 </td>
-                                <td>
-                                    {{ item.short_description }}
-                                </td>
+
                             </tr>
                         {% empty %}
                             <tr>

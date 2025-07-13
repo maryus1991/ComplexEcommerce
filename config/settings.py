@@ -71,7 +71,7 @@ INSTALLED_APPS = [
     "django_user_agents",
     "multiupload",
     "auditlog",
-    #"dbbackup",
+    # "cachalot",
     # installed apps
     "user",
     "product",
@@ -221,7 +221,7 @@ CKEDITOR_CONFIGS = {
              'Styles', 'Format', 'Font', 'FontSize'],
 
         ],
-        'width': '500px',
+        'width': '750px',
         'height': 300,
         'extraPlugins': 'font,colorbutton,justify,iframe',
         'contentsCss': ['/static/fonts/font.css'],
@@ -293,9 +293,68 @@ TIPAX_API_KEY = os.getenv("TIPAX_API_KEY")
 
 # catch
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'django_cache',
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+#         'LOCATION': 'django_cache',
+#     }
+# }
+# CACHALOT_TIMEOUT = 300
+#
+# CACHALOT_ONLY_CACHABLE_APPS = [
+#     'blog',
+#     'product',
+#     'sitesetting',
+#     'stores',
+# ]
+# CACHALOT_UNCACHABLE_TABLES = [
+#     'auditlog_logentry',
+#     'auth_group',
+#     'auth_group_permissions',
+#     'auth_permission',
+#     'django_admin_log',
+#     'django_cache',
+#     'django_content_type',
+#     'django_migrations',
+#     'django_session',
+#     'user_user',
+#     'user_user_groups',
+#     'user_user_user_permissions',
+#     'dashboard_ticket',
+#     'dashboard_ticketconversation',
+#     'dashboard_useraddress',
+#     'dashboard_userip',
+#     'orders_deliveryprices',
+#     'orders_discount',
+#     'orders_discount_order',
+#     'orders_discount_product',
+#     'orders_discount_store',
+#     'orders_discount_user',
+#     'orders_order',
+#     'orders_orderdetail',
+#     'orders_returnsorders',
+#     'orders_specificsorders',
+#     'orders_storesoldorders',
+#     'product_notificationuserforproductavailability',
+#     'product_productcomment',
+#     'product_productcommentlikeanddislike',
+#     'product_userfavorite',
+#     'stores_storecomment',
+# ]
+
+# loging
+
+# LOGGING = {
+#     'version': 1,
+#     'handlers': {
+#         'console':{
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',  # کوئری‌های SQL چاپ میشن
+#         },
+#     },
+# }

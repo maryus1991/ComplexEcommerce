@@ -1,0 +1,78 @@
+{% extends 'Base/Base.html' %}
+{% load to_webp %}
+
+{% block title %}
+
+    {{ item.name }}
+
+{% endblock %}
+
+{% block breadcrumb %}
+
+    <li class="flex items-center gap-x-2">
+
+        <span>برنامه ها</span>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>
+    <li class="flex items-center gap-x-2">
+
+        <span class="">{{ item.name }}</span>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <main class="container child:mt-8">
+
+
+        <!-- app  -->
+        <section
+                class="w-full lg:w-3/4 flex flex-col lg:flex-row gap-4 p-5 rounded-lg shadow bg-white dark:bg-zinc-700">
+            <div class=" w-full ">
+                <!-- LOGO -->
+                <span class="text-green-500 transition-colors w-fit  block">
+                    {% if item.image %}
+                        <picture>
+                <source srcset="{{ item.image.url|to_webp }}"
+                        class="w-24 h-24 rounded-full "  height="6px"
+                             width="96px"
+                        type="image/webp">
+                <img src="{{ item.image.url }}" alt="{{ item.name }}"
+                     class="w-24 h-24 rounded-full " height="6px"
+                             width="96px"
+                     loading="lazy">
+            </picture>
+
+                    {% endif %}
+
+                </span>
+                <h1>
+                    {{ item.name }}
+                </h1>
+
+                {{ item.short_description|safe }}
+
+
+                <br>
+                <hr>
+                <br>
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-4 sm:gap-10 flex-wrap">
+                    <a href="{% url 'site:apps-download' item.id %}"
+                       class="flex items-center justify-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-DanaMedium rounded-lg transition-colors">
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        دانلود
+                    </a>
+
+
+                </div>
+            </div>
+
+        </section>
+    </main>
+{% endblock %}
+

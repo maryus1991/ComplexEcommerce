@@ -1,7 +1,7 @@
 {% extends 'Base/AdminBase.html' %}
 
 {% block title %}
-    بروز رسانی یا ساخت برنامه جدید
+    بروز رسانی یا اپلود برنامه جدید
 {% endblock %}
 
 {% block header_reference %}
@@ -65,7 +65,7 @@
     <li class="active">برنامه ها
 
     </li>
-    <li class="active"> بروز رسانی یا ساخت برنامه
+    <li class="active"> بروز رسانی یا اپلود برنامه
         جدید
 
     </li>
@@ -109,7 +109,7 @@
             display: none;
         }
     </style>
-    
+
 
     <!-- Main content -->
     <section class="content" style="min-height: 600px; margin-top: 20px;">
@@ -118,7 +118,7 @@
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title">
-                            <i class="fa fa-plus-circle"></i> بروز رسانی یا ساخت برنامه جدید
+                            <i class="fa fa-plus-circle"></i> بروز رسانی یا اپلود برنامه جدید
                         </h3>
 
                         {% if item %}
@@ -149,12 +149,12 @@
                         <form enctype="multipart/form-data" method="post" action="" class="form-horizontal">
                             {% csrf_token %}
                             <input type="hidden" name="uploaded_filename" id="uploaded_filename">
-                            
+
                             <div class="form-section">
                                 <h4 class="form-header"><i class="fa fa-info-circle"></i> اطلاعات پایه</h4>
 
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label class="control-label col-md-4">{{ form.name.label }}</label>
                                             <div class="col-md-8">
@@ -164,21 +164,31 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
-                                            <label class="control-label col-md-4">{{ form.store.label }}</label>
+                                            <label class="control-label col-md-4">فروشگاه</label>
                                             <div class="col-md-8">
                                                 {{ form.store }}
                                                 <span class="help-block">فروشگاه برنامه را انتخاب کنید</span>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
-                                            <label class="control-label col-md-4">{{ form.file.label }}</label>
+                                            <label class="control-label col-md-4">عکس</label>
                                             <div class="col-md-8">
-                                                <input type="file" name="file" class="form-control" placeholder="برنامه را وارد کنید" id="id_file">
+                                                {{ form.image }}
+                                                <span class="help-block">عکس برنامه را انتخاب کنید</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4">فایل</label>
+                                            <div class="col-md-8">
+                                                <input type="file" name="file" class="form-control"
+                                                       placeholder="برنامه را وارد کنید" id="id_file">
                                                 <div class="progress-container" id="progress-wrapper">
                                                     <div class="progress">
                                                         <div class="progress-bar progress-bar-success progress-bar-striped active"
@@ -212,11 +222,11 @@
                             </div>
 
                             <div class="form-section">
-                                <h4 class="form-header"><i class="fa fa-align-left"></i> توضیحات کوتاه</h4>
+                                <h4 class="form-header"><i class="fa fa-align-left"></i> توضیحات </h4>
                                 <div class="form-group">
                                     <div class="col-md-12">
                                         {{ form.short_description }}
-                                        <span class="help-block">توضیح مختصری درباره برنامه وارد کنید</span>
+                                        {{ form.media }}
                                     </div>
                                 </div>
                             </div>
@@ -228,6 +238,10 @@
                                     </button>
                                 </div>
                             </div>
+
+                            {% if item and item.image %}
+                                <img src="{{ item.image.url }}" height="200px" width="200px" alt="">
+                            {% endif %}
                         </form>
                     </div>
                 </div>
@@ -297,11 +311,11 @@
                     document.getElementById('progress-bar').style.width = percent + '%';
                     document.getElementById('progress-bar').innerText = percent + '%';
                     document.getElementById('upload-speed').innerText = `سرعت: ${speed} مگابایت بر ثانیه`;
-                    
+
                     if (percent === 100) {
                         document.getElementById('id_file').remove();
                     }
-                    
+
                     currentChunk++;
                     uploadNextChunk();  // ادامه آپلود chunk بعدی
                 })
@@ -309,6 +323,52 @@
                     console.error('خطا در chunk:', error);
                 });
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const id = 'id_short_description';
+            const el = document.getElementById(id);
+            if (el) {
+                fetch('{% url "admin_panel:font_list_json" %}')
+                    .then(response => response.json())
+                    .then(fontList => {
+                        const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
+
+                        // نابود کردن اگر قبلاً auto-init شده باشه
+                        if (CKEDITOR.instances[id]) {
+                            CKEDITOR.instances[id].destroy(true);
+                        }
+
+                        CKEDITOR.replace(id, {
+                            toolbar: [
+                                ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
+                                    'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
+                                    'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
+                                    'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
+                                    'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
+                                    'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
+                                    'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
+                                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
+                                    'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
+                                    'Styles', 'Format', 'Font', 'FontSize'],
+
+                            ],
+                            width: 750,
+                            height: 200,
+                            skin: 'moono',
+                            extraPlugins: 'font',
+                            contentsCss: ['{% url "admin_panel:fonts.css" %}'],
+                            font_names: fontNamesStr +
+                                'Arial/Arial, Helvetica, sans-serif;' +
+                                'Courier New/Courier New, Courier, monospace;' +
+                                'Georgia/Georgia, serif;' +
+                                'Tahoma/Tahoma, Geneva, sans-serif;' +
+                                'Times New Roman/Times New Roman, Times, serif;' +
+                                'Verdana/Verdana, Geneva, sans-serif;'
+                        });
+                    });
+            }
+        });
+
     </script>
 
 {% endblock %}

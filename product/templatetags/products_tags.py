@@ -76,7 +76,7 @@ def order_by(orm, sort):
 
 @register.filter
 def active_category(orm):
-    if orm.exists():
+    if orm and orm.exists():
         return orm.filter(is_active=True).all()
     else:
         return None

@@ -1,4 +1,5 @@
 {% extends 'Base/Base.html' %}
+{% load to_webp %}
 
 {% block title %}
 
@@ -30,7 +31,15 @@
             <div class=" w-full lg:w-2/4">
                 <!-- LOGO -->
                 <a href="/" class="text-green-500 transition-colors w-fit block">
-                    <img src="{{ item.logo.url }}" alt="logo" class="w-24 h-15 " height="6px" width="96px"/>
+                    <picture>
+                        <source srcset="{{ item.logo.url|to_webp }}" class="w-24 h-15 " height="6px" width="96px"
+ 
+                                type="image/webp">
+                        <img src="{{ item.logo.url }}" alt="{{ item.name }}"
+                             class="w-24 h-15 " height="6px" width="96px"
+                             loading="lazy">
+                    </picture>
+                    
 
                 </a>
 
@@ -73,7 +82,7 @@
                                 <use href="#chevron-left"></use>
                             </svg>
                         </a>
-                    {% endif %}                    
+                    {% endif %}
                     {% if item.blogs.count > 0 %}
                         <a href="{% url 'blog:list' %}?store={{ item.id }}"
                            class="flex items-center gap-x-2 bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-600 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
@@ -86,7 +95,15 @@
                 </div>
             </div>
             <div class="flex justify-end  w-full lg:w-2/4">
-                <img src="{{ item.about_image.url }}" class="rounded-lg lg:h-[35rem]" alt="">
+                <picture>
+                    <source srcset="{{ item.about_image.url|to_webp }}"
+                            class="rounded-lg lg:h-[35rem]"
+                            type="image/webp">
+                    <img src="{{ item.about_image.url }}" alt="{{ item.name }}"
+                         class="rounded-lg lg:h-[35rem]"
+                         loading="lazy">
+                </picture>
+
             </div>
         </section>
     </main>

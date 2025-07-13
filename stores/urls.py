@@ -131,6 +131,8 @@ urlpatterns = [
     ),
     # store apps
     path("app/list/", views.StoreAppsView.as_view(), name="app-list"),
+    path("app/create/", views.AppsCreateView.as_view(), name="app-create"),
+    path("app/update/<int:pk>", views.AppsUpdateView.as_view(), name="app-update"),
     path("app/upload-chunk-file/", views.ChunkedFileUploadView.as_view(), name="app-upload-app"),
     path(
         "app/remove-active-deactive/<int:pk>",

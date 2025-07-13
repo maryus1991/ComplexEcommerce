@@ -207,6 +207,9 @@ class StoreAddProduct(UserStoreStaffMixin, FormView):
             discount=form.cleaned_data["discount"],
             picture=form.cleaned_data["picture"],
             count=form.cleaned_data["count"],
+            length=form.cleaned_data["length"],
+            width=form.cleaned_data["width"],
+            height=form.cleaned_data["height"],
             weight=form.cleaned_data["weight"],
             brand=form.cleaned_data["brand"],
             category=form.cleaned_data["category"],
@@ -357,6 +360,9 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
         product.weight = form.cleaned_data["weight"]
         product.brand = form.cleaned_data["brand"]
         product.category = form.cleaned_data["category"]
+        product.length = form.cleaned_data["length"]
+        product.width = form.cleaned_data["width"]
+        product.height = form.cleaned_data["height"]
 
         if form.cleaned_data["picture"]:  # اگر تصویر جدید ارسال شده است
             product.picture = form.cleaned_data["picture"]

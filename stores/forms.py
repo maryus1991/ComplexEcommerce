@@ -33,7 +33,7 @@ class RegisterStoreMinimalInformationForm(forms.Form):
     )
     phone = PhoneNumberField(
         widget=forms.NumberInput(
-            attrs={"class": "tailwind-input col-span-3",
+            attrs={"class": "tailwind-input col-span-3 ",
                    "dir": "ltr",
                    "placeholder": "شماره همراه"}
         ),
@@ -77,7 +77,7 @@ class RegisterStoreMinimalInformationForm(forms.Form):
         required=True,
         widget=forms.TextInput(
             attrs={
-                "class": "tailwind-input col-span-3",
+                "class": "tailwind-input col-span-3 number-input-tdc",
                 "placeholder": "شماره کارت",
             }
         ))
@@ -85,7 +85,7 @@ class RegisterStoreMinimalInformationForm(forms.Form):
         required=True,
         widget=forms.TextInput(
             attrs={
-                "class": "tailwind-input col-span-6",
+                "class": "tailwind-input col-span-6 number-input-tdc",
                 "placeholder": "شماره شبا",
             }
         ))
@@ -102,7 +102,7 @@ class RegisterStoreMinimalInformationForm(forms.Form):
         required=True,
         widget=forms.TextInput(
             attrs={
-                "class": "tailwind-input col-span-6",
+                "class": "tailwind-input col-span-6 number-input-tdc",
                 "placeholder": "شماره اقتصادی",
             }
         ))
@@ -110,7 +110,7 @@ class RegisterStoreMinimalInformationForm(forms.Form):
         required=True,
         widget=forms.TextInput(
             attrs={
-                "class": "tailwind-input col-span-6",
+                "class": "tailwind-input col-span-6 number-input-tdc",
                 "placeholder": "شماره ثبت",
             }
         ))
@@ -118,7 +118,7 @@ class RegisterStoreMinimalInformationForm(forms.Form):
         required=True,
         widget=forms.TextInput(
             attrs={
-                "class": "tailwind-input col-span-6",
+                "class": "tailwind-input col-span-6 number-input-tdc",
                 "placeholder": "نامبر / تلفن ثابت",
             }
         ))
@@ -206,18 +206,18 @@ class OrderFilteringForm(forms.Form):
     sending_id = forms.CharField(
         required=False,
         label="کد پیگیری ارسال",
-        widget=forms.TextInput(attrs={"class": "form-control"}),
+        widget=forms.TextInput(attrs={"class": "form-control number-input-tdc"}),
     )
 
     cart = forms.CharField(
         required=False,
         label="شماره کارت",
-        widget=forms.TextInput(attrs={"class": "form-control"}),
+        widget=forms.TextInput(attrs={"class": "form-control "}),
     )
     payment_id = forms.CharField(
         required=False,
         label="کد پیگیری پرداخت",
-        widget=forms.TextInput(attrs={"class": "form-control"}),
+        widget=forms.TextInput(attrs={"class": "form-control number-input-tdc" }),
     )
 
     start_date = JalaliDateField(
@@ -886,7 +886,7 @@ class AddProductForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "عنوان"}
             ),
             "price": forms.NumberInput(
-                attrs={"class": "form-control", "placeholder": "قیمت"}
+                attrs={"class": "form-control number-input", "placeholder": "قیمت"}
             ),
             "length": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "ارتفاع"}
@@ -1066,13 +1066,13 @@ class AddStoreForm(forms.ModelForm):
             ),
             "card": forms.TextInput(
                 attrs={
-                    "class": "form-control",
+                    "class": "form-control number-input-tdc",
                     "placeholder": "شماره کارت",
                 }
             ),
             "card_shaba": forms.TextInput(
                 attrs={
-                    "class": "form-control",
+                    "class": "form-control number-input-tdc",
                     "placeholder": "شبا کارت",
                 }
             ),
@@ -1116,7 +1116,7 @@ class AddStoreForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "ادرس فرشگاه"}
             ),
             "zip_code": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "کد پستی فرشگاه"}
+                attrs={"class": "form-control number-input-tdc", "placeholder": "کد پستی فرشگاه"}
             ),
             "province": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "استان فرشگاه"}
@@ -1146,14 +1146,14 @@ class AddStoreForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "درصد برای صدور فاکتور رسمی"}
             ),
             "economic_number": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "شماره اقتصادی"}
+                attrs={"class": "form-control number-input-tdc", "placeholder": "شماره اقتصادی"}
             ),
             "registration_number": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "شماره ثبت"}
+                attrs={"class": "form-control number-input-tdc", "placeholder": "شماره ثبت"}
             ),
             "official_invoice_phone_number": forms.TextInput(
                 attrs={
-                    "class": "form-control",
+                    "class": "form-control number-input-tdc",
                     "placeholder": "شماره تلفن یا نامبر جهت صدور فاکتور رسمی",
                 }
             ),
@@ -1330,7 +1330,6 @@ class AddStoreAppForm(forms.ModelForm):
         model = StoreApps
         fields = ("is_active", "name", 'short_description')
         widgets = {
-            "is_active": forms.CheckboxInput(),
             "is_active": forms.CheckboxInput(),
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "نام را وارد کنید"}

@@ -87,17 +87,19 @@ class StoreApps(models.Model):
     file = models.FileField(upload_to="app/", verbose_name="فایل")
     name = models.CharField(max_length=100, verbose_name="نام")
     is_active = models.BooleanField(default=False, verbose_name="فعال / غیر فعال")
-    short_description = models.CharField(
-        max_length=321,null=True,
-        blank=True,verbose_name='توضیحات کوتاه'
+    short_description = RichTextUploadingField(null=True,
+        blank=True,verbose_name='توضیحات'
     )
     admin_verified = models.BooleanField(default=True)
+    image = models.ImageField(
+        upload_to="site/apps/logo/", null=True, verbose_name="عکس", blank=True
+    )
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("site:apps-list") + f"?q={self.name}"
+        return reverse("site:apps-details", kwargs={"pk": self.pk})
 
 
 class StoreComment(models.Model):

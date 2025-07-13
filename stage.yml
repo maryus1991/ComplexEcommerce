@@ -26,6 +26,7 @@ services:
       - ./admin_panel/backups:/app/admin_panel/backups/
       - ./media:/app/media
       - ./static:/app/static
+      - ./media/app:/media/app/
 
     env_file:
       - .envs
@@ -39,13 +40,9 @@ services:
   nginx:
 
     image: nginx
-
     container_name: nginx
-
     restart: always
-
     ports:
-
       - "80:80"
       - "443:443"
 
@@ -57,6 +54,7 @@ services:
       - ./admin_panel/backups:/home/app/admin_panel/backups/
       - ./media:/home/app/media
       - ./static:/home/app/static
+      - ./media/app:/home/app/media/app/
 
 
 volumes:

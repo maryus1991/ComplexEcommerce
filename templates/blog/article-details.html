@@ -1,6 +1,7 @@
 {% extends 'Base/Base.html' %}
 
 {% load jalali_tags %}
+{% load to_webp %}
 
 {% block title %}
     لیست مقالات
@@ -61,7 +62,15 @@
                 </div>
                 <!-- ARTICLE MAIN -->
                 <div>
-                    <img class="rounded-lg" src="{{ post.image.url }}" alt="">
+                    <picture>
+                        <source srcset="{{ post.image.url|to_webp }}"
+                                class="rounded-lg "
+                                type="image/webp">
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}"
+                             class="rounded-lg "
+                             loading="lazy">
+                    </picture>
+
                     <p class="mt-3 leading-10 text-gray-600 dark:text-gray-300">
                         {{ post.content|safe }}
                     </p>
@@ -76,7 +85,15 @@
                     <ul class="w-full child:flex child:items-center child:gap-x-2 child:cursor-pointer space-y-4 ">
                         {% for last_post in last_posts %}
                             <li>
-                                <img class="w-24 h-16 object-cover rounded-lg" src="{{ last_post.image.url }}" alt="">
+                                                                                                                    <picture>
+                <source srcset="{{ last_post.image.url|to_webp }}"
+                        class="w-24 h-16 object-cover rounded-lg"
+                        type="image/webp">
+                <img src="{{ last_post.image.url }}" alt="{{ last_post.title }}"
+                     class="w-24 h-16 object-cover rounded-lg"
+                     loading="lazy">
+            </picture>
+
                                 <a href="{% url 'blog:detail' last_post.id %}" class="flex flex-col gap-y-2 ">
                                     <p class="line-clamp-1">{{ last_post.title }}</p>
                                     <span class="flex items-center gap-x-1 text-sm text-gray-400">
@@ -103,17 +120,17 @@
 
 
                             <li class="group">
-                                <a href="{% url 'blog:list' %}" 
-                                        class="flex items-center justify-center gap-x-1 group-hover:pr-2 duration-300 transition-all group-hover:text-green-500">
+                                <a href="{% url 'blog:list' %}"
+                                   class="flex items-center justify-center gap-x-1 group-hover:pr-2 duration-300 transition-all group-hover:text-green-500">
                                     <p>{{ category.name }}</p>
                                     <svg class="w-4 h-4">
                                         <use href="#chevron-left"></use>
                                     </svg>
                                 </a>
-                                    <span
-                                            class="w-5 h-5 flex items-center justify-center rounded-lg text-white bg-green-500 text-xs">{{ category.post_count }}</span>
+                                <span
+                                        class="w-5 h-5 flex items-center justify-center rounded-lg text-white bg-green-500 text-xs">{{ category.post_count }}</span>
                             </li>
-                                
+
                         {% endfor %}
                     </ul>
                 </div>

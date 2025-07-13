@@ -11,7 +11,7 @@ from .views import (
     UsedAppView,
     DownloadUsedAppView,
     dynamic_favicon,
-SiteLawListView
+SiteLawListView, UsedAppDetailView
 )
 from .sitemap import StaticSitemap, UsedAppSiteMap
 from admin_panel.views import dynamic_fonts_css
@@ -27,6 +27,7 @@ urlpatterns = [
     path("contact-us", ContactUs.as_view(), name="contact-us"),
     path("add-to-news-letters", AddTONewsLetters.as_view(), name="add-to-news-letters"),
     path("apps/", UsedAppView.as_view(), name="apps-list"),
+    path("apps/<int:pk>", UsedAppDetailView.as_view(), name="apps-details"),
     path("apps/download/<int:pk>", DownloadUsedAppView.as_view(), name="apps-download"),
     path("partial/header/", header_render_partial, name="partial-header"),
     path("partial/footer/", footer_render_partial, name="partial-footer"),

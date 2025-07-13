@@ -1,6 +1,8 @@
 {% extends 'Base/Base.html' %}
 {% load products_tags %}
 {% load jalali_tags %}
+{% load to_webp %}
+
 {% block title %}
     لیست محصولات
 {% endblock %}
@@ -262,14 +264,27 @@
                     <div class="swiper mt-2 w-full porduct-details-slider rounded-lg">
                         <div class="swiper-wrapper">
                             <div class="swiper-slide">
-                                <img src="{{ product.picture.url }}"
-                                     class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
-                                     alt="{{ product.name }}">
+                                <picture>
+                                    <source srcset="{{ product.picture.url|to_webp }}"
+                                            class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
+                                            type="image/webp">
+                                    <img src="{{ product.picture.url }}" alt="{{ product.name }}"
+                                         class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
+                                         loading="lazy">
+                                </picture>
+
                             </div>
                             {% for img in product.gallery.all %}
                                 <div class="swiper-slide">
-                                    <img src="{{ img.image.url }}"
-                                         class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit" alt="{{ product.name }}">
+                                    <picture>
+                                        <source srcset="{{ img.image.url|to_webp }}"
+                                                class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
+                                                type="image/webp">
+                                        <img src="{{ img.image.url }}" alt="{{ product.name }}"
+                                             class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
+                                             loading="lazy">
+                                    </picture>
+
                                 </div>
                             {% endfor %}
                         </div>
@@ -730,8 +745,15 @@
 
                         <!-- PRODUCT IMGAE -->
                         <a href="{% url 'product:detail' product.id %}">
-                            <img src="{{ product.picture.url }}" alt="product-1"
-                                 class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3">
+                            <picture>
+                                <source srcset="{{ product.picture.url|to_webp }}"
+                                        class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
+                                        type="image/webp">
+                                <img src="{{ product.picture.url }}" alt="{{ product.name }}"
+                                     class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
+                                     loading="lazy">
+                            </picture>
+
                         </a>
                         <!-- PRODUCT MAIN -->
                         <div class="px-2 lg:px-4 mb-3">

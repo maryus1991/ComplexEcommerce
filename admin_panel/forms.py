@@ -460,10 +460,10 @@ class AddUserModelForm(forms.ModelForm):
             "first_name": forms.TextInput(attrs={"class": "form-control"}),
             "last_name": forms.TextInput(attrs={"class": "form-control"}),
             "legal_person_economic_number": forms.TextInput(
-                attrs={"class": "form-control"}
+                attrs={"class": "form-control number-input-tdc"}
             ),
             "legal_person_registration_number": forms.TextInput(
-                attrs={"class": "form-control"}
+                attrs={"class": "form-control number-input-tdc"}
             ),
             "legal_person_phone": forms.TextInput(attrs={"class": "form-control"}),
             "is_active": forms.CheckboxInput(),
@@ -691,8 +691,24 @@ class QuestionAndAnswerModelForm(forms.ModelForm):
 
 
 class UsedAppModelForm(forms.ModelForm):
+    short_description = RichTextUploadingFormField(
+        required=False,
+    )
 
-
+    image = forms.ImageField(
+        required=False,
+        label="عکس",
+        widget=forms.FileInput(
+            attrs={
+                "class": "form-control",
+            }
+        ),
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
+    )
 
     store = forms.ModelChoiceField(
         queryset=Store.objects.filter(is_active=True, is_verified=True).all(),
@@ -706,6 +722,7 @@ class UsedAppModelForm(forms.ModelForm):
             }
         ),
         empty_label="فروشگاه را انتخاب کنید",
+        required=False,
     )
 
 
@@ -719,10 +736,6 @@ class UsedAppModelForm(forms.ModelForm):
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "نام را وارد کنید"}
             ),
-            "short_description": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "توضیحات کوتاه ... "}
-            ),
-
         }
 
 
@@ -840,7 +853,7 @@ class AddBlogCategoryModelForm(forms.ModelForm):
 
     class Meta:
         model = BlogCategory
-        fields = "__all__"
+        fields = ('parent','image','name', 'is_active')
         widgets = {
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "نام"}

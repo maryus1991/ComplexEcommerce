@@ -1,7 +1,7 @@
 # store apps
 from django.views.generic import (
     RedirectView,
-    View,
+    View,CreateView, UpdateView
 )
 from django.shortcuts import (
     get_object_or_404,
@@ -10,6 +10,7 @@ from django.shortcuts import (
     redirect,
     get_list_or_404,
 )
+from admin_panel.forms import UsedAppModelForm
 from django.contrib import messages
 from stores.models import StoreApps
 from stores.forms import AddStoreAppForm
@@ -21,6 +22,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.core.files.storage import default_storage
 import os
+from django.urls import reverse_lazy
 import shutil
 from django.core.files import File
 
@@ -173,3 +175,69 @@ class RemoveAppsOrActiveOrDeactivateAppsView(UserStoreStaffMixin, View):
                 "ادمین سایت این برنامه را غیر فعال کرده است برای فعال کردن ان و انتشار ان با ادمین سایت در ارتباط باشید",
             )
         return redirect("store:app-list")
+
+
+class AppsCreateView(UserStoreStaffMixin, CreateView):
+    """
+    for creating a apps
+    """
+
+    form_class = UsedAppModelForm
+    template_name = "store/apps/create.html"
+    success_url = reverse_lazy("store:app-list")
+
+
+    def form_valid(self, form):
+        form.instance.store = self.request.user.store
+
+        uploaded_filename = self.request.POST.get('uploaded_filename')
+        if uploaded_filename:
+            full_path = os.path.join(settings.MEDIA_ROOT, 'app', uploaded_filename)
+            if os.path.exists(full_path):
+                with open(full_path, 'rb') as f:
+                    form.instance.file.save(uploaded_filename, File(f), save=False)
+                os.remove(full_path)
+
+        form.instance.admin_verified = True
+        messages.success(self.request, "برنامه مورد نظر با موفقیت افزوده شد")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+        return super().form_invalid(form)
+
+
+class AppsUpdateView(UserStoreStaffMixin, UpdateView):
+    """for updating a apps"""
+
+    model = StoreApps
+    form_class = UsedAppModelForm
+    template_name = "store/apps/create.html"
+    success_url = reverse_lazy("store:app-list")
+    context_object_name = "item"
+
+
+    def form_valid(self, form):
+        form.instance.store = self.request.user.store
+
+        uploaded_filename = self.request.POST.get('uploaded_filename')
+
+        if uploaded_filename:
+            full_path = os.path.join(settings.MEDIA_ROOT, 'app', uploaded_filename)
+            if os.path.exists(full_path):
+                with open(full_path, 'rb') as f:
+                    form.instance.file.save(uploaded_filename, File(f), save=False)
+                os.remove(full_path)
+
+
+        form.instance.is_active = True
+
+        if super().get_object().admin_verified:
+            form.instance.admin_verified = True
+
+        messages.success(self.request, "تغییرات با موفقیت اعمال شد")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+        return super().form_invalid(form)

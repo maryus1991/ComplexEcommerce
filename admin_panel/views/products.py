@@ -63,6 +63,9 @@ class ProductCreateView(AdminUserMixin, CreateView):
             weight=form.cleaned_data["weight"],
             brand=form.cleaned_data["brand"],
             category=form.cleaned_data["category"],
+            length=form.cleaned_data["length"],
+            width=form.cleaned_data["width"],
+            height=form.cleaned_data["height"],
         )
         tags = form.cleaned_data["tags"].split("**")
         features = form.cleaned_data["features"].split("**")
@@ -187,6 +190,7 @@ class ProductUpdateView(AdminUserMixin, UpdateView):
         return queryset
 
     def form_valid(self, form):
+
         store = self.request.user.store
         product = Product.objects.get(pk=self.kwargs.get("pk"), store=store)
         product.name = form.cleaned_data["name"]
@@ -198,6 +202,10 @@ class ProductUpdateView(AdminUserMixin, UpdateView):
         product.weight = form.cleaned_data["weight"]
         product.brand = form.cleaned_data["brand"]
         product.category = form.cleaned_data["category"]
+
+        product.length=int(form.cleaned_data.get("length"))
+        product.width=int(form.cleaned_data.get("width"))
+        product.height=int(form.cleaned_data.get("height"))
 
         if form.cleaned_data["picture"]:  # اگر تصویر جدید ارسال شده است
             product.picture = form.cleaned_data["picture"]
