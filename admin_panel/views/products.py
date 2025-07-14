@@ -21,6 +21,39 @@ UserFavorite
 
 # product
 
+class ProductSetSortNumber(AdminUserMixin, RedirectView):
+    """for set sort number"""
+    def get_redirect_url(self, *args, **kwargs):
+        pk = self.kwargs['pk']
+        obj = get_object_or_404(Product, pk=pk)
+        sort_num = self.request.POST.get(f'{obj.pk}')
+
+        try:
+            sort_num = int(sort_num)
+        except  Exception as e:
+            messages.error(
+                self.request,
+                'عدد وارد شده باید بین 0 تا 100,000,000 باشد'
+            )
+            return self.request.META.get('HTTP_REFERER')
+
+
+        if 0 <= sort_num <= 100_000_000:
+            obj.sort_number = sort_num
+            obj.save()
+
+            messages.success(
+                self.request,
+                'ترتیب اعمال شد'
+            )
+        else:
+            messages.error(
+                self.request,
+                'عدد وارد شده باید بین 0 تا 100,000,000 باشد'
+            )
+
+        return self.request.META.get('HTTP_REFERER')
+
 
 class ProductListView(AdminUserMixin, ListView):
     """for listing products"""
@@ -66,6 +99,10 @@ class ProductCreateView(AdminUserMixin, CreateView):
             length=form.cleaned_data["length"],
             width=form.cleaned_data["width"],
             height=form.cleaned_data["height"],
+            sort_number=form.cleaned_data["sort_number"],
+            sort_number_newest_products=form.cleaned_data["sort_number_newest_products"],
+            sort_number_most_sell=form.cleaned_data["sort_number_most_sell"],
+            sort_number_discount=form.cleaned_data["sort_number_discount"],
         )
         tags = form.cleaned_data["tags"].split("**")
         features = form.cleaned_data["features"].split("**")
@@ -206,6 +243,10 @@ class ProductUpdateView(AdminUserMixin, UpdateView):
         product.length=int(form.cleaned_data.get("length"))
         product.width=int(form.cleaned_data.get("width"))
         product.height=int(form.cleaned_data.get("height"))
+        product.sort_number=int(form.cleaned_data.get("sort_number"))
+        product.sort_number_newest_products=int(form.cleaned_data.get("sort_number_newest_products"))
+        product.sort_number_most_sell=int(form.cleaned_data.get("sort_number_most_sell"))
+        product.sort_number_discount=int(form.cleaned_data.get("sort_number_discount"))
 
         if form.cleaned_data["picture"]:  # اگر تصویر جدید ارسال شده است
             product.picture = form.cleaned_data["picture"]

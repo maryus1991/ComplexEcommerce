@@ -296,6 +296,7 @@ urlpatterns = [
     path("users/delete/<int:pk>", views.UserDeleteView.as_view(), name="user-delete"),
     # product
     path("product/", views.ProductListView.as_view(), name="product-list"),
+    path("product/set-sort-number/<int:pk>", views.ProductSetSortNumber.as_view(), name="product-set-sort-number"),
     path("product/create/", views.ProductCreateView.as_view(), name="product-create"),
     path(
         "product/<int:pk>/remove-image-from-gallery/<int:img_id>",

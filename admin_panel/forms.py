@@ -366,6 +366,11 @@ class AddProductForm(forms.ModelForm):
             "width",
             "height",
             "specs",
+            'sort_number',
+            'sort_number_newest_products',
+            'sort_number_most_sell',
+            'sort_number_discount',
+
         )
         widgets = {
             "name": forms.TextInput(
@@ -377,6 +382,7 @@ class AddProductForm(forms.ModelForm):
             "length": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "ارتفاع"}
             ),
+
             "width": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "طول"}
             ),
@@ -391,6 +397,18 @@ class AddProductForm(forms.ModelForm):
             ),
             "weight": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "وزن (گرم)"}
+            ),
+            "sort_number": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "ترتیب محصول در صفحه محصولات (0 تا 100,000,000)"}
+            ),
+            "sort_number_newest_products": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "ترتیب محصول در جدیدترین محصولات صفحه اصلی (0 تا 10)"}
+            ),
+            "sort_number_most_sell": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "ترتیب محصول در پرفروش ترین محصولات صفحه اصلی (0 تا 10)"}
+            ),
+            "sort_number_discount": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "ترتیب محصول در بیشترین محصولات صفحه اصلی (0 تا 100)"}
             ),
         }
 
@@ -535,6 +553,10 @@ class SiteSettingModelForm(forms.ModelForm):
                 }
             ),
             "tax": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                }
+            ),            "minute_for_clean_order_detail_product": forms.NumberInput(
                 attrs={
                     "class": "form-control",
                 }

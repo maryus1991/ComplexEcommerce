@@ -83,7 +83,7 @@ class Main(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        products = Product.objects.filter(is_active=True)
+        products = Product.objects.filter(is_active=True, count__gt=0)
 
         context["categories"] = (
             ProductCategory.objects.filter(is_active=True)
@@ -100,10 +100,10 @@ class Main(TemplateView):
             .order_by("-sort_number")
             .all()[0:5]
         )
-        context["products_newst"] = products.order_by("-id").all()
-        context["products_most_selled"] = products.filter().all()
+        context["products_newst"] = products.order_by("-id").order_by('-sort_number_newest_products').all()[0:10]
+        context["products_most_selled"] = products.order_by('-sort_number_most_sell').all()[0:10]
         context["products_most_discount"] = (
-            products.filter(have_discount=True).order_by("-discount").all()
+            products.filter(have_discount=True).order_by("-discount").order_by('-sort_number_discount').all()[0:20]
         )
 
         context["blogs"] = Blog.objects.filter(is_active=True).all()[0:4]

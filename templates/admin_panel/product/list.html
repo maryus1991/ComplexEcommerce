@@ -143,15 +143,16 @@
                 <thead>
                 <tr class="bg-primary">
                     <th class="text-center" width="2%">#</th>
-                    <th class="text-center" width="10%">نام</th>
-                    <th class="text-center" width="8%">فروشگاه</th>
+                    <th class="text-center" width="5%">نام</th>
+                    <th class="text-center" width="5%">فروشگاه</th>
                     <th class="text-center" width="5%">قیمت نهایی</th>
-                    <th class="text-center" width="5%">بازدید</th>
-                    <th class="text-center" width="5%">وزن (گرم)</th>
-                    <th class="text-center" width="5%">تعداد</th>
+                    <th class="text-center" width="2%">بازدید</th>
+                    <th class="text-center" width="2%">وزن (گرم)</th>
+                    <th class="text-center" width="2%">تعداد</th>
+                    <th class="text-center" width="5%">تیرتیب</th>
                     <th class="text-center" width="5%">دسته</th>
                     <th class="text-center" width="5%">برند</th>
-                    <th class="text-center" width="5%">تخفیف</th>
+                    <th class="text-center" width="2%">تخفیف</th>
                     <th class="text-center" width="5%">وضعیت</th>
                     <th class="text-center" width="5%">تاییده ادمین</th>
                     <th colspan="5" class="text-center" width="5%">عملیات</th>
@@ -187,6 +188,36 @@
                                 <span class="label label-warning">{{ item.count }}</span>
                             </strong>
                         </td>
+                        <td class="text-center" style="min-width: 200px;">
+                            <form action="{% url 'admin_panel:product-set-sort-number' item.id %}" method="POST"
+                                  class="form-inline">
+                                {% csrf_token %}
+                                <div class="input-group input-group-sm">
+                                    <input type="text"
+                                           value="{{ item.sort_number }}"
+                                           name="{{ item.id }}"
+                                           id="input_{{ item.id }}"
+                                           class="form-control input-sm "
+                                           style="width: 120px; display: inline-block;">
+
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default btn-sm sort-up"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-up"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm sort-down"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-down"></i>
+                                        </button>
+                                        <button type="submit" class="btn btn-success btn-sm sort-down">
+                                            <i class="fa fa-hand-pointer-o"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </td>
+
 
                         <td class="text-center">
                             <strong>{{ item.category.name }}</strong>
@@ -272,6 +303,42 @@
                 </tbody>
             </table>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+
+                function getInput(button) {
+                    const inputId = 'input_' + button.getAttribute('data-id');
+                    return document.getElementById(inputId);
+                }
+
+                function parseInputValue(input) {
+                    const value = parseInt(input.value);
+                    return isNaN(value) ? 0 : value;
+                }
+
+                // دکمه افزایش
+                document.querySelectorAll('.sort-up').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        const input = getInput(this);
+                        let value = parseInputValue(input);
+                        input.value = value + 1;
+                    });
+                });
+
+                // دکمه کاهش
+                document.querySelectorAll('.sort-down').forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        const input = getInput(this);
+                        let value = parseInputValue(input);
+                        if (value > 0) {
+                            input.value = value - 1;
+                        }
+                    });
+                });
+
+            });
+        </script>
+
 
         <div class="panel-footer">
             <div class="row">

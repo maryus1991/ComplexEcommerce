@@ -209,6 +209,7 @@ class OTP(LoginRequiredMixin, View):
             request.user.otp_expiry_date is None or
                 request.user.otp_expiry_date <= timezone.now()
         ):
+            print('12345')
             otp = request.user.set_otp()
             messages.success(request, "برای شما کد ارسال شد")
 
@@ -278,7 +279,7 @@ class ForgotPassword(View):
                     user.set_otp()
                     user.save()
 
-                    send_message(
+                    send_message.delay(
                         phone_number,
                         "کاربر گرامی بازیابی رمز عبور شما با موفقیت انجام گردید اگر شما این درخواست را ندادید لطفا با ورد به صفحه بازیابی رمز عبور  خود را تغییر دهید",
                     )

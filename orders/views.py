@@ -108,6 +108,7 @@ class SpecificsOrdersView(LoginRequiredMixin, View):
                 {"error": error_message, "order": order, "date": now(), 'specifics_order':True},
             )
 
+
 class SpecificsOrdersVerifyPayment(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
@@ -166,6 +167,7 @@ class SpecificsOrdersVerifyPayment(LoginRequiredMixin, View):
                 {"error": error_message, "date": now(), "order": order, 'specifics_order':True},
             )
 
+
 class AddOrder(LoginRequiredMixin, RedirectView):
     """
     for add product to order db
@@ -175,10 +177,10 @@ class AddOrder(LoginRequiredMixin, RedirectView):
         num: str = self.request.GET.get("count") or "1"
 
         # add some filters for count that get it from url
-        if not num.isdigit() and num:
+        if num and not num.isdigit() :
             return Http404()
         else:
-            # todo fix this section
+
             if int(num) < 0:
                 return Http404()
 
@@ -214,7 +216,6 @@ class AddOrder(LoginRequiredMixin, RedirectView):
             return request.META.get("HTTP_REFERER", "/")
 
         if not detail[1]:
-
             if int(num) > 0:
                 detail[0].count = int(num)
             else:
@@ -921,7 +922,7 @@ class VerifyPayment(LoginRequiredMixin, View):
                     obj.save()
 
                 if self.site.send_message_successful_payment:
-                    send_message(
+                    send_message.delay(
                         str(order.user.PhoneNumber).replace(" ", ""),
                         """
                         از اینکه ما رو انتخاب کردید متشکریم 

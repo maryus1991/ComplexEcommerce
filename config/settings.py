@@ -62,16 +62,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.admin",
     "django.contrib.sitemaps",
-    # third party apps
-    "phonenumber_field",
-    "ckeditor",
-    "ckeditor_uploader",
-    "jalali_date",
-    "django_render_partial",
-    "django_user_agents",
-    "multiupload",
-    "auditlog",
-    # "cachalot",
+
     # installed apps
     "user",
     "product",
@@ -81,6 +72,20 @@ INSTALLED_APPS = [
     "orders",
     "blog",
     "admin_panel",
+
+    # third party apps
+    "phonenumber_field",
+    "ckeditor",
+    "ckeditor_uploader",
+    "jalali_date",
+    "django_render_partial",
+    "django_user_agents",
+    "multiupload",
+    "auditlog",
+    "django_celery_beat",
+    "cachalot",
+
+
 ]
 
 # auditlog config
@@ -127,23 +132,23 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 #
-# DATABASES = {
-#     "default": {
-#         "ENGINE": os.getenv("POSTGRES_ENGIN", default="django.db.backends.postgresql"),
-#         "NAME": os.getenv("POSTGRES_DB"),
-#         "USER": os.getenv("POSTGRES_USER"),
-#         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-#         "HOST": os.getenv("POSTGRES_HOST", default="postgres"),
-#         "PORT": os.getenv("POSTGRES_PORT", default="5432"),
-#     }
-# }
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": os.getenv("POSTGRES_ENGIN", default="django.db.backends.postgresql"),
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST", default="postgres"),
+        "PORT": os.getenv("POSTGRES_PORT", default="5432"),
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -293,68 +298,71 @@ TIPAX_API_KEY = os.getenv("TIPAX_API_KEY")
 
 # catch
 
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-#         'LOCATION': 'django_cache',
-#     }
-# }
-# CACHALOT_TIMEOUT = 300
-#
-# CACHALOT_ONLY_CACHABLE_APPS = [
-#     'blog',
-#     'product',
-#     'sitesetting',
-#     'stores',
-# ]
-# CACHALOT_UNCACHABLE_TABLES = [
-#     'auditlog_logentry',
-#     'auth_group',
-#     'auth_group_permissions',
-#     'auth_permission',
-#     'django_admin_log',
-#     'django_cache',
-#     'django_content_type',
-#     'django_migrations',
-#     'django_session',
-#     'user_user',
-#     'user_user_groups',
-#     'user_user_user_permissions',
-#     'dashboard_ticket',
-#     'dashboard_ticketconversation',
-#     'dashboard_useraddress',
-#     'dashboard_userip',
-#     'orders_deliveryprices',
-#     'orders_discount',
-#     'orders_discount_order',
-#     'orders_discount_product',
-#     'orders_discount_store',
-#     'orders_discount_user',
-#     'orders_order',
-#     'orders_orderdetail',
-#     'orders_returnsorders',
-#     'orders_specificsorders',
-#     'orders_storesoldorders',
-#     'product_notificationuserforproductavailability',
-#     'product_productcomment',
-#     'product_productcommentlikeanddislike',
-#     'product_userfavorite',
-#     'stores_storecomment',
-# ]
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379/0",
+    }
+}
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
-# loging
+CACHALOT_TIMEOUT = 60 * 60 * 24
 
-# LOGGING = {
-#     'version': 1,
-#     'handlers': {
-#         'console':{
-#             'class': 'logging.StreamHandler',
-#         },
-#     },
-#     'loggers': {
-#         'django.db.backends': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG',  # کوئری‌های SQL چاپ میشن
-#         },
-#     },
-# }
+CACHALOT_ONLY_CACHABLE_APPS = [
+    'blog',
+    'product',
+    'sitesetting',
+    'stores',
+]
+CACHALOT_UNCACHABLE_TABLES = [
+    'auditlog_logentry',
+    'auth_group',
+    'auth_group_permissions',
+    'auth_permission',
+    'django_admin_log',
+    'django_cache',
+    'django_content_type',
+    'django_migrations',
+    'django_session',
+    'user_user',
+    'user_user_groups',
+    'user_user_user_permissions',
+    'dashboard_ticket',
+    'dashboard_ticketconversation',
+    'dashboard_useraddress',
+    'dashboard_userip',
+    'orders_deliveryprices',
+    'orders_discount',
+    'orders_discount_order',
+    'orders_discount_product',
+    'orders_discount_store',
+    'orders_discount_user',
+    'orders_order',
+    'orders_orderdetail',
+    'orders_returnsorders',
+    'orders_specificsorders',
+    'orders_storesoldorders',
+    'product_notificationuserforproductavailability',
+    'product_productcomment',
+    'product_productcommentlikeanddislike',
+    'product_userfavorite',
+    'stores_storecomment',
+]
+
+# celery
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/2'
+
+from kombu import Queue
+
+CELERY_TASK_QUEUES = [
+    Queue('details', routing_key='details'),
+    Queue('sms', routing_key='sms'),
+]
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_TASK_ROUTES = {
+    'orders.tasks.clean_expired_details': {'queue': 'details', 'routing_key': 'details'},
+    'utils.send_otp.send_message': {'queue': 'sms', 'routing_key': 'sms'},
+}

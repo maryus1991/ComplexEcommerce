@@ -588,7 +588,7 @@ class AddOfficialInvoiceView(UserStoreStaffMixin, View):
         messages.success(request, "فاکتور رسمی با موفقیت برای کاربر ارسال شد")
 
         if SiteSetting.objects.first().send_message_official_invoice_upload:
-            send_message(
+            send_message.delay(
                 str(order.user.PhoneNumber).replace(" ", ""),
                 """
                    فاکتور رسمی شما اپلود شد با مراجعه به قسمت حساب کاربری سفارشات  و بعد با انتخاب سفارش مورد نظر ان را دانلود نمایید
@@ -615,7 +615,7 @@ class ChangeStatusToDeliveredToUser(UserStoreStaffMixin, RedirectView):
             messages.success(self.request, "تغییرات ثبت شد")
 
             if SiteSetting.objects.first().send_message_when_set_sending_id:
-                send_message(
+                send_message.delay(
                     str(order.user.PhoneNumber).replace(" ", ""),
                     f"""محموله شما ارسال شد 
                     code:{order.sending_id}

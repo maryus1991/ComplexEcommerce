@@ -36,6 +36,15 @@ services:
 
     depends_on:
       - postgres
+      - redis
+
+
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
 
   nginx:
 
@@ -55,6 +64,18 @@ services:
       - ./media:/home/app/media
       - ./static:/home/app/static
       - ./media/app:/home/app/media/app/
+
+  celery-worker:
+    build: .
+    command: celery -A config worker -B -l info
+    volumes:
+      - ./:/app
+    depends_on:
+      - redis
+      - app
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings
+
 
 
 volumes:

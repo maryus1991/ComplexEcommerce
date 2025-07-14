@@ -71,6 +71,11 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=False)
     admin_verified = models.BooleanField(default=True)
+    displacement_unit = models.PositiveSmallIntegerField(default=1)
+    sort_number = models.PositiveBigIntegerField(default=0)
+    sort_number_newest_products = models.PositiveSmallIntegerField(default=0)
+    sort_number_most_sell = models.PositiveSmallIntegerField(default=0)
+    sort_number_discount = models.PositiveSmallIntegerField(default=0)
 
 
     def __str__(self):

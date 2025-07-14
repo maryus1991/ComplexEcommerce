@@ -280,7 +280,7 @@ class OrderDetail(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     price = models.PositiveBigIntegerField(default=0)
     count = models.PositiveBigIntegerField(default=1)
-
+    added_date = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
     def get_item_price(self):

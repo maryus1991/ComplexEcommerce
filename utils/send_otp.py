@@ -1,4 +1,5 @@
 from zeep import Client
+from celery import shared_task
 from pathlib import Path
 from dotenv import load_dotenv
 from os import path
@@ -23,7 +24,7 @@ melipayamak_from_number = os.getenv("melipayamak_panel_from_number")
 
 # todo : add celery shared task
 
-
+@shared_task(bind=True, queue='sms')
 def send_message(
         to,
         text,
@@ -32,18 +33,20 @@ def send_message(
         _from=melipayamak_from_number,
 ):
 
+    print('sending message')
+
     try:
         api = Api(username, password)
         result = api.sms("soap").send(to, _from, text)
         result = int(result)
+        print(result, '1kkk')
         if 0 <= result <= 35:
             print(result, 23242)
             raise Exception
-
-        print(result)
         return result
 
-    except Exception:
+    except Exception as e:
+        print(e)
         client = Client("https://api.payamak-panel.com/post/Smartsms.asmx?wsdl")
         data = {
             "username": melipayamak_username,
@@ -52,10 +55,8 @@ def send_message(
             "from": melipayamak_from_number,
             "text": text + " لغو 11",
         }
-
         result = client.service.SendSmartSMS(**data)
-
-        print(result)
+        print(result, '2kkk')
         return result
 
 # client = Client("https://api.payamak-panel.com/post/Smartsms.asmx?wsdl")

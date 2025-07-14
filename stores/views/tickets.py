@@ -517,7 +517,7 @@ class StoreResponseToUsersTicketView(UserStoreStaffMixin, View):
 
         if SiteSetting.objects.first().send_message_response_to_ticket:
 
-            send_message(
+            send_message.delay(
                 str(obj.user.PhoneNumber).replace(" ", ""),
                 "به تیکیت شما پاسخ داده شد با مراجعه به قسمت کاربری ان را مشاهده کنید",
             )

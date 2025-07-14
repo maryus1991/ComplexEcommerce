@@ -49,7 +49,7 @@ class ProductListView(ListView):
                 admin_verified=True,
                 brand__is_active=True,
                 category__is_active=True,
-            ).prefetch_related("features").prefetch_related("tags").prefetch_related("specs").order_by("-count")
+            ).prefetch_related("features").prefetch_related("tags").prefetch_related("specs").order_by("-count").order_by("-sort_number")
 
 
         if "available" in url_params:

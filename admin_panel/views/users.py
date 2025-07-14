@@ -125,7 +125,7 @@ class UserSendManyMessage(AdminUserMixin, View):
                 user_object = user_object.filter(store__isnull=False ,store__is_verified=True)
 
             for user in user_object:
-                send_message(
+                send_message.delay(
                     str(user.PhoneNumber).replace(" ", ""),
                     content
                 )

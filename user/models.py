@@ -56,14 +56,12 @@ class User(AbstractUser):
         self.save()
 
         # send message
-        message_id = send_message(
+        print('send message')
+        send_message.delay(
             str(self.PhoneNumber).replace(" ", ""),
-            f"""
-            جهت حفظ امنیت حساب کابری شما از دادن این کد در دست دیگران خوداری فرمایید
-             کد تایید شما
+            f"""            جهت حفظ امنیت حساب کابری شما از دادن این کد در دست دیگران خوداری فرمایید کد تایید شما
               code: {self.otp}
-                """,
-        )
+                """)
 
         return otp
 

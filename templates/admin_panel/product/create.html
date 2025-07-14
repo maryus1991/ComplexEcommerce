@@ -165,8 +165,7 @@
                 <div class="box box-info">
                     <div class="box-header">
                         <h3 class="box-title">اضافه کردن محصول</h3>
-                    
-                    
+
 
                         <div class="pull-right box-tools">
                             <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
@@ -219,7 +218,7 @@
                         <span style="font-size: smaller" class="text-muted">
                         نام و تگ ها و مشخصات و ویژگی های محصول نباید بیشتر از 1000 کاراکتر باشد در غیر این صورت محصول شما سیو نخواهد شد
                     </span>
-                                           <br>
+                        <br>
                         <span style="font-size: smaller" class="text-muted">
 فیلد های اجباری برای ثبت اولیه محصول عنوان  دسته و برند تعداد و وزن می باشد حال پیشنهاد می شود که اول موارد ضروری پر بشه و محصول به صورت اولیه ثبت بشه و بعد در مراحل بعدی اقدام به ثبت توضیحات و عکس و گالری بشه
                     </span>
@@ -312,7 +311,7 @@
 
                             <!-- ردیف سوم فرم محصول -->
                             <div class="row form-group">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="input-group">
                             <span class="input-group-btn">
                                 <span class="btn btn-flat"
@@ -321,7 +320,7 @@
                                         {{ form.count }}
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="input-group">
                             <span class="input-group-btn">
                                 <span class="btn btn-flat"
@@ -329,8 +328,26 @@
                             </span>
                                         {{ form.weight }}
                                     </div>
-                                </div>
-                            </div>
+                                </div>                              
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat"
+                                      style="background-color: #726204; color: white;">ترتیب (0 تا 100,000,000):</span>
+                            </span>
+                                        {{ form.sort_number }}
+                                    </div>
+                                </div>                       
+{#                                <div class="col-md-4">#}
+{#                                    <div class="input-group">#}
+{#                            <span class="input-group-btn">#}
+{#                                <span class="btn btn-flat"#}
+{#                                      style="background-color: #726204; color: white;">تعداد در بسته:</span>#}
+{#                            </span>#}
+{#                                        {{ form.displacement_unit }}#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
 
                             <!-- ردیف چهارم فرم محصول -->
                             <div class="row form-group">
@@ -356,6 +373,36 @@
                                 <span class="btn btn-flat" style="background-color: #726204; color: white;">عرض (سانتی متر):</span>
                             </span>
                                         {{ form.height }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #f56954; color: white;">ترتیب جدیدترین در صغحه اصلی (0 تا 10):</span>
+                            </span>
+                                        {{ form.sort_number_newest_products }}
+                                        
+
+
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #726204; color: white;">ترتیب پرفروش ترین در صغحه اصلی (0 تا 10):</span>
+                            </span>
+                                        {{ form.sort_number_most_sell }}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #726204; color: white;">ترتیب پرتخیف ترین در صغحه اصلی (0 تا 100):</span>
+                            </span>
+                                        {{ form.sort_number_discount }}
                                     </div>
                                 </div>
                             </div>
@@ -919,10 +966,11 @@
                                     <div class="col-md-3">
                                         <h6>عکس اصلی محصول:</h6>
                                         {% if product.picture %}
-                                        <img src="{{ product.picture.url }}" alt="" class="img-thumbnail img-responsive"
-                                             style="height: 250px; width: 250px;">	
-                                        {% endif %} 
-                                        
+                                            <img src="{{ product.picture.url }}" alt=""
+                                                 class="img-thumbnail img-responsive"
+                                                 style="height: 250px; width: 250px;">
+                                        {% endif %}
+
                                     </div>
                                     <div class="col-md-9">
                                         <h6>گالری محصول:</h6>

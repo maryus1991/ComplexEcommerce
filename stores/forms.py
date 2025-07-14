@@ -880,6 +880,7 @@ class AddProductForm(forms.ModelForm):
             "width",
             "height",
             "specs",
+
         )
         widgets = {
             "name": forms.TextInput(
@@ -897,6 +898,7 @@ class AddProductForm(forms.ModelForm):
             "height": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "عرض"}
             ),
+
             "discount": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "تخفیف", "value": 0},
             ),
