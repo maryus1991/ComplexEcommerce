@@ -130,6 +130,66 @@
 
 
 {% block body %}
+            <div class="col-md-12" style="margin-top: 20px;">
+            {# Advanced Product Search Form - Moved to the top for prominence #}
+            <div class="panel panel-primary">
+                <div class="box-header with-border panel-heading">
+                    <h3 class="box-title panel-title text-center"> جستجو</h3>
+                </div>
+                <div id="searchCollapse" class="panel-body collapse in">
+                    <form method="GET" action="" class="form-horizontal">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-warning btn-flat">{{ form.name.label }}</span>
+                                </span>
+                                    {{ form.name }}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-warning btn-flat">{{ form.category_parent.label }}</span>
+                                </span>
+                                    {{ form.category_parent }}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-warning btn-flat">{{ form.is_active.label }}</span>
+                                </span>
+                                    {{ form.is_active }}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-warning btn-flat">{{ form.ordering.label }}</span>
+                                </span>
+                                    {{ form.ordering }}
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row clearfix">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-search"></i> جستجو
+                                </button>
+                                <button type="reset" class="btn btn-default">
+                                    <i class="fa fa-undo"></i> بازنشانی
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    <div class="col-md-12">
     <div class="panel box box-primary panel-default" style="margin-top: 20px;">
         <div class="panel-heading clearfix">
             <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست دسته بندی های محصولات </h3>
@@ -282,7 +342,7 @@
             </div>
         </div>
     </div>
-
+</div>
     <script>
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip({

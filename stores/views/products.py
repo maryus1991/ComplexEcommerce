@@ -60,7 +60,7 @@ class StoreProductListView(UserStoreStaffMixin, ListView):
 
         queryset = Product.objects.filter(
             store=self.request.user.store
-        ).prefetch_related("comments", "views").order_by('-id')
+        ).prefetch_related("category", 'comments' ,"brand", "store", "views", 'features', 'tags', 'specs').order_by('-id')
 
         # Process search parameters if form is valid
         params = ProductSearchForm(self.request.GET or None)
@@ -634,9 +634,6 @@ class StoreListCategoryView(UserStoreStaffMixin, ListView):
     paginate_by = 25
     context_object_name = "categories"
 
-    def dispatch(self, request, *args, **kwargs):
-        messages.success(request, '')
-        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         query = (

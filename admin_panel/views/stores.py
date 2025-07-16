@@ -198,7 +198,6 @@ class StoreUpdateView(AdminUserMixin, UpdateView):
                 return redirect(self.request.META.get("HTTP_REFERER", "/"))
 
         messages.success(self.request, "اطلاعات شما با موقیت ثبت شد")
-        form.instance.is_verified = False
 
         return super().form_valid(form)
 

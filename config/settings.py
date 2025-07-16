@@ -37,9 +37,9 @@ DEBUG = bool(int(os.getenv("DJANGO_DEBUG", default="0")))
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="*").split(",")
 
-CSRF_COOKIE_SECURE = True  # ارسال کوکی CSRF فقط از طریق HTTPS
-SESSION_COOKIE_SECURE = True  # ارسال کوکی session فقط از طریق HTTPS
-CSRF_COOKIE_HTTPONLY = True  # جلوگیری از دسترسی JavaScript به کوکی C
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
 
 CSRF_TRUSTED_ORIGINS = [
     "https://amvajsarmad.com",
@@ -143,12 +143,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -296,6 +290,14 @@ TIPAX_USERNAME = os.getenv("TIPAX_USERNAME")
 TIPAX_PASSWORD = os.getenv("TIPAX_PASSWORD")
 TIPAX_API_KEY = os.getenv("TIPAX_API_KEY")
 
+# session
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+SESSION_COOKIE_AGE = 60 * 60 * 2
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_CACHE_ALIAS = "default"
+
 # catch
 
 CACHES = {
@@ -304,8 +306,6 @@ CACHES = {
         "LOCATION": "redis://redis:6379/0",
     }
 }
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-SESSION_CACHE_ALIAS = "default"
 
 CACHALOT_TIMEOUT = 60 * 60 * 24
 

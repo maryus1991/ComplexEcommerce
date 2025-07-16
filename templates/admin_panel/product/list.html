@@ -131,239 +131,551 @@
 
 
 {% block body %}
-    <div class="panel box box-primary panel-default" style="margin-top: 20px;">
-        <div class="panel-heading clearfix">
-            <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست محصولات </h3>
-            <a href="{% url 'admin_panel:product-create' %}" class="pull-left btn btn-success">
-                ساخت محصول جدید</a>
-        </div>
+    <div class="col-md-12" style="margin-top: 20px">
+        <div class="box box-primary collapsed-box">
+            <div class="box-header with-border panel-heading">
+                <h3 class="box-title text-center">فرم جستجوی پیشرفته سفارشات</h3>
+                <div class="pull-right box-tools">
+                    <button type="button" class="btn btn-info" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover table-bordered table-striped">
-                <thead>
-                <tr class="bg-primary">
-                    <th class="text-center" width="2%">#</th>
-                    <th class="text-center" width="5%">نام</th>
-                    <th class="text-center" width="5%">فروشگاه</th>
-                    <th class="text-center" width="5%">قیمت نهایی</th>
-                    <th class="text-center" width="2%">بازدید</th>
-                    <th class="text-center" width="2%">وزن (گرم)</th>
-                    <th class="text-center" width="2%">تعداد</th>
-                    <th class="text-center" width="5%">تیرتیب</th>
-                    <th class="text-center" width="5%">دسته</th>
-                    <th class="text-center" width="5%">برند</th>
-                    <th class="text-center" width="2%">تخفیف</th>
-                    <th class="text-center" width="5%">وضعیت</th>
-                    <th class="text-center" width="5%">تاییده ادمین</th>
-                    <th colspan="5" class="text-center" width="5%">عملیات</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in items %}
-                    <tr>
-                        <td class="text-center">{{ item.id }}
-                        </td>
-
-                        <td class="text-center">
-                            <strong>{{ item.name }}</strong>
-                        </td>
-                        <td class="text-center">
-                            <strong>{{ item.store.name }}</strong>
-                        </td>
-                        <td class="text-center">
-                            <strong>{{ item.calc_discount|tdc }}</strong>
-                        </td>
-                        <td class="text-center">
-                            <strong>
-                                <span class="label label-success">{{ item.views.count }}</span>
-                            </strong>
-                        </td>
-                        <td class="text-center">
-                            <strong>
-                                <span class="label label-info">{{ item.weight }}</span>
-                            </strong>
-                        </td>
-                        <td class="text-center">
-                            <strong>
-                                <span class="label label-warning">{{ item.count }}</span>
-                            </strong>
-                        </td>
-                        <td class="text-center" style="min-width: 200px;">
-                            <form action="{% url 'admin_panel:product-set-sort-number' item.id %}" method="POST"
-                                  class="form-inline">
+            <div class="box-body" style="display: none;">
+                                    <form class="form-horizontal" method="GET" enctype="multipart/form-data">
+                        <div class="panel panel-primary">
+                            <div class="panel-body">
                                 {% csrf_token %}
-                                <div class="input-group input-group-sm">
-                                    <input type="text"
-                                           value="{{ item.sort_number }}"
-                                           name="{{ item.id }}"
-                                           id="input_{{ item.id }}"
-                                           class="form-control input-sm "
-                                           style="width: 120px; display: inline-block;">
-
-                                    <div class="input-group-btn">
-                                        <button type="button" class="btn btn-default btn-sm sort-up"
-                                                data-id="{{ item.id }}">
-                                            <i class="fa fa-caret-up"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-default btn-sm sort-down"
-                                                data-id="{{ item.id }}">
-                                            <i class="fa fa-caret-down"></i>
-                                        </button>
-                                        <button type="submit" class="btn btn-success btn-sm sort-down">
-                                            <i class="fa fa-hand-pointer-o"></i>
-                                        </button>
+                                
+                                <!-- ردیف اول -->
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-3">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-warning btn-flat">{{ search_form.name.label }}</span>
+                                                </span>
+                                                {{ search_form.name }}
+                                            </div>
+                                        </div>
                                     </div>
-
+                                    
+                                    <div class="col-sm-6 col-md-3">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.have_discount.label }}
+                                                </span>
+                                                {{ search_form.have_discount }}
+                                            </div>
+                                        </div>
+                                    </div>                                  
+                                    <div class="col-sm-6 col-md-3">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.admin_verify.label }}
+                                                </span>
+                                                {{ search_form.admin_verify }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-6 col-md-3">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.is_active.label }}
+                                                </span>
+                                                {{ search_form.is_active }}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </form>
-                        </td>
+                                
+                                <!-- ردیف دوم - تخفیف -->
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.discount_min.label }}
+                                                </span>
+                                                {{ search_form.discount_min }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.discount_max.label }}
+                                                </span>
+                                                {{ search_form.discount_max }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ردیف سوم - دسته‌بندی و برند -->
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #ed59f4; color: white;">
+                                                    {{ search_form.category.label }}
+                                                </span>
+                                                {{ search_form.category }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-6 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #0000ff; color: white;">
+                                                    {{ search_form.brand.label }}
+                                                </span>
+                                                {{ search_form.brand }}
+                                            </div>
+                                        </div>
+                                    </div>                        
+                                    <div class="col-sm-6 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #0000ff; color: white;">
+                                                    {{ search_form.store.label }}
+                                                </span>
+                                                {{ search_form.store }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ردیف چهارم - تعداد -->
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.count_min.label }}
+                                                </span>
+                                                {{ search_form.count_min }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.count_max.label }}
+                                                </span>
+                                                {{ search_form.count_max }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ردیف پنجم - وزن -->
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #726204; color: white;">
+                                                    {{ search_form.weight_min.label }}
+                                                </span>
+                                                {{ search_form.weight_min }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #726204; color: white;">
+                                                    {{ search_form.weight_max.label }}
+                                                </span>
+                                                {{ search_form.weight_max }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ردیف ششم - قیمت -->
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="btn btn-info input-group-addon btn-flat">
+                                                    {{ search_form.price_min.label }}
+                                                </span>
+                                                {{ search_form.price_min }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-success btn-flat">
+                                                    {{ search_form.price_max.label }}
+                                                </span>
+                                                {{ search_form.price_max }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ردیف هفتم - ابعاد -->
+                                <div class="row">
+                                    <div class="col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.height_min.label }}
+                                                </span>
+                                                {{ search_form.height_min }}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #f56954; color: white;">
+                                                    {{ search_form.height_max.label }}
+                                                </span>
+                                                {{ search_form.height_max }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #726204; color: white;">
+                                                    {{ search_form.length_min.label }}
+                                                </span>
+                                                {{ search_form.length_min }}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #726204; color: white;">
+                                                    {{ search_form.length_max.label }}
+                                                </span>
+                                                {{ search_form.length_max }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #726204; color: white;">
+                                                    {{ search_form.width_min.label }}
+                                                </span>
+                                                {{ search_form.width_min }}
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat" style="background-color: #726204; color: white;">
+                                                    {{ search_form.width_max.label }}
+                                                </span>
+                                                {{ search_form.width_max }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- ردیف هشتم - ویژگی‌ها -->
+                                <div class="row">
+                                    <div class="col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-warning btn-flat">{{ search_form.feature.label }}</span>
+                                                </span>
+                                                {{ search_form.feature }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-warning btn-flat">{{ search_form.tag.label }}</span>
+                                                </span>
+                                                {{ search_form.tag }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-warning btn-flat">{{ search_form.ordering.label }}</span>
+                                                </span>
+                                                {{ search_form.ordering }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="panel-footer text-center">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    جستجوی محصول
+                                </button>
+                                <button type="reset" class="btn btn-warning btn-lg">
+                                    حذف
+                                </button>
+                            </div>
+                        </div>
+                    </form>
 
-
-                        <td class="text-center">
-                            <strong>{{ item.category.name }}</strong>
-                        </td>
-                        <td class="text-center">
-                            <strong>{{ item.brand.name }}</strong>
-                        </td>
-                        <td class="text-center">
-                            {% if item.have_discount %}
-                                <span class="label label-success">
-                                    %{{ item.discount }}
-                                    </span>
-                            {% else %}
-                                <span class="label label-default">
-                                    ندارد
-                                    </span>
-                            {% endif %}
-                        </td>
-
-                        <td class="text-center">
-                            <strong>
-                                {% if item.is_active %}
-                                    <span class="label label-success">
-                                    فعال
-                                    </span>
-                                {% else %}
-                                    <span class="label label-danger">
-                                    غیر فعال
-                                    </span>
-                                {% endif %}
-                            </strong>
-                        </td>
-                        <td class="text-center">
-                            <strong>
-                                {% if item.admin_verified %}
-                                    <span class="label label-success">
-                                        تایید شده
-                                    </span>
-                                {% else %}
-                                    <span class="label label-danger">
-                                        تایید نشده
-                                    </span>
-                                {% endif %}
-                            </strong>
-                        </td>
-
-                        <td class="text-center">
-                            <a href="{% url 'product:detail' item.id %}" class="btn btn-sm btn-success"
-                               data-toggle="tooltip" title="مشاهده">
-                                <i class="fa fa-eye"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:product-update' item.id %}" class="btn btn-sm btn-info"
-                               data-toggle="tooltip" title="ویرایش">
-                                <i class="fa fa-edit"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:product-active-deactivate' item.id %}"
-                               class="btn btn-sm btn-warning"
-                               data-toggle="tooltip"
-                               title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
-                                <i class="fa fa-power-off"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:product-verify' item.id %}"
-                               class="btn btn-sm btn-info"
-                               data-toggle="tooltip"
-                               title="{% if item.is_active %}تایید نکردن اطلاعات{% else %}تایید کردن اطلاعات{% endif %}">
-                                <i class="fa fa-key"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:product-delete' item.id %}" class="btn btn-sm btn-danger"
-                               data-toggle="tooltip" title="حذف">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-
-                function getInput(button) {
-                    const inputId = 'input_' + button.getAttribute('data-id');
-                    return document.getElementById(inputId);
-                }
-
-                function parseInputValue(input) {
-                    const value = parseInt(input.value);
-                    return isNaN(value) ? 0 : value;
-                }
-
-                // دکمه افزایش
-                document.querySelectorAll('.sort-up').forEach(function (button) {
-                    button.addEventListener('click', function () {
-                        const input = getInput(this);
-                        let value = parseInputValue(input);
-                        input.value = value + 1;
-                    });
-                });
-
-                // دکمه کاهش
-                document.querySelectorAll('.sort-down').forEach(function (button) {
-                    button.addEventListener('click', function () {
-                        const input = getInput(this);
-                        let value = parseInputValue(input);
-                        if (value > 0) {
-                            input.value = value - 1;
-                        }
-                    });
-                });
-
-            });
-        </script>
-
-
-        <div class="panel-footer">
-            <div class="row">
-                <div class="col-md-6">
-                    <small class="text-muted">تعداد کل ایتم ها: {{ items.count }}</small>
-                </div>
-                <div class="col-md-6 text-left">
-                    <ul class="pagination pagination-sm no-margin">
-                        {% if page_obj.has_previous %}
-                            <li><a href="?page={{ page_obj.previous_page_number }}">&raquo;</a></li>
-                        {% endif %}
-                        {% for page_number in page_obj.paginator.page_range %}
-                            <li {% if page_number == page_obj.number %}class="active" {% endif %}>
-                                <a href="?page={{ page_number }}">{{ page_number }}</a>
-                            </li>
-                        {% endfor %}
-                        {% if page_obj.has_next %}
-                            <li><a href="?page={{ page_obj.next_page_number }}">&laquo;</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
 
+    <div class="col-md-12">
+        <div class="panel box box-primary panel-default" style="">
+            <div class="panel-heading clearfix">
+                <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست محصولات </h3>
+                <a href="{% url 'admin_panel:product-create' %}" class="pull-left btn btn-success">
+                    ساخت محصول جدید</a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered table-striped">
+                    <thead>
+                    <tr class="bg-primary">
+                        <th class="text-center" width="2%">#</th>
+                        <th class="text-center" width="5%">نام</th>
+                        <th class="text-center" width="5%">فروشگاه</th>
+                        <th class="text-center" width="5%">قیمت نهایی</th>
+                        <th class="text-center" width="2%">بازدید</th>
+                        <th class="text-center" width="2%">وزن (گرم)</th>
+                        <th class="text-center" width="2%">تعداد</th>
+                        <th class="text-center" width="5%">تیرتیب</th>
+                        <th class="text-center" width="5%">ترتیب</th>
+                        <th class="text-center" width="5%">برند</th>
+                        <th class="text-center" width="2%">تخفیف</th>
+                        <th class="text-center" width="5%">وضعیت</th>
+                        <th class="text-center" width="5%">تاییده ادمین</th>
+                        <th colspan="5" class="text-center" width="5%">عملیات</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td class="text-center">{{ item.id }}
+                            </td>
+
+                            <td class="text-center">
+                                <strong>{{ item.name }}</strong>
+                            </td>
+                            <td class="text-center">
+                                <strong>{{ item.store.name }}</strong>
+                            </td>
+                            <td class="text-center">
+                                <strong>{{ item.calc_discount|tdc }}</strong>
+                            </td>
+                            <td class="text-center">
+                                <strong>
+                                    <span class="label label-success">{{ item.views.count }}</span>
+                                </strong>
+                            </td>
+                            <td class="text-center">
+                                <strong>
+                                    <span class="label label-info">{{ item.weight }}</span>
+                                </strong>
+                            </td>
+                            <td class="text-center">
+                                <strong>
+                                    <span class="label label-warning">{{ item.count }}</span>
+                                </strong>
+                            </td>
+                            <td class="text-center" style="min-width: 200px;">
+                                <form action="{% url 'admin_panel:product-set-sort-number' item.id %}" method="POST"
+                                      class="form-inline">
+                                    {% csrf_token %}
+                                    <div class="input-group input-group-sm">
+                                        <input type="text"
+                                               value="{{ item.sort_number }}"
+                                               name="{{ item.id }}"
+                                               id="input_{{ item.id }}"
+                                               class="form-control input-sm "
+                                               style="width: 120px; display: inline-block;">
+
+                                        <div class="input-group-btn">
+                                            <button type="button" class="btn btn-default btn-sm sort-up"
+                                                    data-id="{{ item.id }}">
+                                                <i class="fa fa-caret-up"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-default btn-sm sort-down"
+                                                    data-id="{{ item.id }}">
+                                                <i class="fa fa-caret-down"></i>
+                                            </button>
+                                            <button type="submit" class="btn btn-success btn-sm sort-down">
+                                                <i class="fa fa-hand-pointer-o"></i>
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </td>
+
+
+                            <td class="text-center">
+                                <strong>{{ item.category.name }}</strong>
+                            </td>
+                            <td class="text-center">
+                                <strong>{{ item.brand.name }}</strong>
+                            </td>
+                            <td class="text-center">
+                                {% if item.have_discount %}
+                                    <span class="label label-success">
+                                    %{{ item.discount }}
+                                    </span>
+                                {% else %}
+                                    <span class="label label-default">
+                                    ندارد
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">
+                                <strong>
+                                    {% if item.is_active %}
+                                        <span class="label label-success">
+                                    فعال
+                                    </span>
+                                    {% else %}
+                                        <span class="label label-danger">
+                                    غیر فعال
+                                    </span>
+                                    {% endif %}
+                                </strong>
+                            </td>
+                            <td class="text-center">
+                                <strong>
+                                    {% if item.admin_verified %}
+                                        <span class="label label-success">
+                                        تایید شده
+                                    </span>
+                                    {% else %}
+                                        <span class="label label-danger">
+                                        تایید نشده
+                                    </span>
+                                    {% endif %}
+                                </strong>
+                            </td>
+
+                            <td class="text-center">
+                                <a href="{% url 'product:detail' item.id %}" class="btn btn-sm btn-success"
+                                   data-toggle="tooltip" title="مشاهده">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:product-update' item.id %}" class="btn btn-sm btn-info"
+                                   data-toggle="tooltip" title="ویرایش">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:product-active-deactivate' item.id %}"
+                                   class="btn btn-sm btn-warning"
+                                   data-toggle="tooltip"
+                                   title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                    <i class="fa fa-power-off"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:product-verify' item.id %}"
+                                   class="btn btn-sm btn-info"
+                                   data-toggle="tooltip"
+                                   title="{% if item.is_active %}تایید نکردن اطلاعات{% else %}تایید کردن اطلاعات{% endif %}">
+                                    <i class="fa fa-key"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:product-delete' item.id %}" class="btn btn-sm btn-danger"
+                                   data-toggle="tooltip" title="حذف">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+
+                    function getInput(button) {
+                        const inputId = 'input_' + button.getAttribute('data-id');
+                        return document.getElementById(inputId);
+                    }
+
+                    function parseInputValue(input) {
+                        const value = parseInt(input.value);
+                        return isNaN(value) ? 0 : value;
+                    }
+
+                    // دکمه افزایش
+                    document.querySelectorAll('.sort-up').forEach(function (button) {
+                        button.addEventListener('click', function () {
+                            const input = getInput(this);
+                            let value = parseInputValue(input);
+                            input.value = value + 1;
+                        });
+                    });
+
+                    // دکمه کاهش
+                    document.querySelectorAll('.sort-down').forEach(function (button) {
+                        button.addEventListener('click', function () {
+                            const input = getInput(this);
+                            let value = parseInputValue(input);
+                            if (value > 0) {
+                                input.value = value - 1;
+                            }
+                        });
+                    });
+
+                });
+            </script>
+
+
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <small class="text-muted">تعداد کل ایتم ها: {{ items.count }}</small>
+                    </div>
+                    <div class="col-md-6 text-left">
+                        <ul class="pagination pagination-sm no-margin">
+                            {% if page_obj.has_previous %}
+                                <li><a href="?page={{ page_obj.previous_page_number }}">&raquo;</a></li>
+                            {% endif %}
+                            {% for page_number in page_obj.paginator.page_range %}
+                                <li {% if page_number == page_obj.number %}class="active" {% endif %}>
+                                    <a href="?page={{ page_number }}">{{ page_number }}</a>
+                                </li>
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li><a href="?page={{ page_obj.next_page_number }}">&laquo;</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
     <script>
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip({
