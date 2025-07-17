@@ -150,6 +150,15 @@
                         </svg>
                         <p class="font-DanaMedium ">فیلتر ها</p>
                     </span>
+                    {% if request.user_agent.is_mobile %}
+                        <span class="flex items-center gap-x-1">
+                        <a href="#products-list">
+                            <svg class="w-8 h-8">
+                                <use href="#arrow-down-circle"></use>
+                            </svg>
+</a>
+                        </span>
+                    {% endif %}
 
                 </div>
 
@@ -169,44 +178,49 @@
                             <hr>
                             <li data-id="{{ category.id }}">
                                 <label class="cl-checkbox">
-                                    <input name="category" value="{{ category.id }}" type="checkbox"
+                                    <input name="category" value="{{ category.id }}"
+                                           type="checkbox"
                                            class="category-checkbox" data-id="{{ category.id }}" data-parent="">
                                     <span></span>
                                 </label>
-                                <p>{{ category.name }}</p>
+                                <p onclick="selctions({{ category.id }})">{{ category.name }}</p>
 
                                 {% for child in category.child|active_category %}
                                     <li data-id="{{ child.id }}" style="padding-right: 2rem;">
                                         <label class="cl-checkbox">
-                                            <input name="category" value="{{ child.id }}" type="checkbox"
+                                            <input name="category" value="{{ child.id }}"
+                                                   type="checkbox"
                                                    class="category-checkbox" data-id="{{ child.id }}"
                                                    data-parent="{{ category.id }}">
                                             <span></span>
                                         </label>
-                                        <p>{{ child.name }}</p>
+                                        <p onclick="selctions({{ child.id }})" class="text-sm">{{ child.name }}</p>
                                     </li>
 
                                     {% for sub_child in child.child|active_category %}
                                         <li data-id="{{ sub_child.id }}" style="padding-right: 4rem;">
                                             <label class="cl-checkbox">
-                                                <input name="category" value="{{ sub_child.id }}" type="checkbox"
+                                                <input id="c{{ sub_child.id }}" name="category"
+                                                       value="{{ sub_child.id }}" type="checkbox"
                                                        class="category-checkbox" data-id="{{ sub_child.id }}"
                                                        data-parent="{{ child.id }}">
                                                 <span></span>
                                             </label>
-                                            <p>{{ sub_child.name }}</p>
+                                            <p class="text-xs">{{ sub_child.name }}</p>
                                         </li>
 
                                         {% for sub_sub_child in sub_child.child|active_category %}
                                             <li data-id="{{ sub_sub_child.id }}" style="padding-right: 6rem;">
                                                 <label class="cl-checkbox">
-                                                    <input name="category" value="{{ sub_sub_child.id }}"
+                                                    <input name="category"
+                                                           value="{{ sub_sub_child.id }}"
                                                            type="checkbox" class="category-checkbox"
                                                            data-id="{{ sub_sub_child.id }}"
                                                            data-parent="{{ sub_child.id }}">
                                                     <span></span>
                                                 </label>
-                                                <p>{{ sub_sub_child.name }}</p>
+                                                <p
+                                                        class="text-xs">{{ sub_sub_child.name }}</p>
                                             </li>
                                         {% endfor %}
                                     {% endfor %}
@@ -218,6 +232,7 @@
 
                     <script>
                         document.addEventListener("DOMContentLoaded", function () {
+
                             const checkboxes = document.querySelectorAll('.category-checkbox');
 
                             // وقتی روی هر چک‌باکس کلیک شد
@@ -336,6 +351,18 @@
                 </div>
             </form>
             <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    // برای تمام تگ‌های <p> داخل لیست‌ها
+                    document.querySelectorAll('ul li p').forEach(function (pTag) {
+                        pTag.addEventListener('click', function () {
+                            const checkbox = this.closest('li').querySelector('input[type="checkbox"]');
+                            if (checkbox) {
+                                checkbox.checked = !checkbox.checked;
+                                checkbox.dispatchEvent(new Event('change')); // اگر نیاز به واکنش به تغییر هست
+                            }
+                        });
+                    });
+                });
                 document.addEventListener('DOMContentLoaded', function () {
                     // تابع برای گرفتن تمام مقادیر یک پارامتر از URL (به صورت آرایه)
                     function getAllQueryParams(paramName) {
@@ -457,8 +484,8 @@
                     <p class="text-gray-500 mt-2">متأسفیم، هیچ محصولی مطابق با جستجوی شما وجود ندارد.</p>
                 </div>
             {% endif %}
-            <div
-                    class="mt-4 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 xs:gap-6 sm:gap-7 child:cursor-pointer child:overflow-hidden child:rounded-lg child:bg-white child:dark:bg-zinc-700 child:shadow lg:child:w-56 child:relative">
+            <div id="products-list"
+                 class="mt-4 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 xs:gap-6 sm:gap-7 child:cursor-pointer child:overflow-hidden child:rounded-lg child:bg-white child:dark:bg-zinc-700 child:shadow lg:child:w-56 child:relative">
                 <!-- PRODUCT ITEM -->
 
                 {% for product in products %}
@@ -470,15 +497,15 @@
                         {% endif %}
                             <picture>
                                 {% if product.picture %}
-                                	
-                                <source srcset="{{ product.picture.url|to_webp }}" height="192px" width="192px"
-                                        class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
-                                        type="image/webp">
-                                <img src="{{ product.picture.url }}" alt="{{ product.name }}" height="192px"
-                                     width="192px"
-                                     class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
-                                     loading="lazy">
-                                {% endif %} 
+
+                                    <source srcset="{{ product.picture.url|to_webp }}" height="192px" width="192px"
+                                            class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
+                                            type="image/webp">
+                                    <img src="{{ product.picture.url }}" alt="{{ product.name }}" height="192px"
+                                         width="192px"
+                                         class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
+                                         loading="lazy">
+                                {% endif %}
                             </picture>
                             {#                            <img src="{{ product.picture.url }}" height="192px" width="192px" alt="{{ product.name }}"#}
                             {#                                 class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"/>#}

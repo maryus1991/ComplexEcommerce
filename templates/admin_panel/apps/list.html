@@ -206,7 +206,7 @@
                 <div class="col-md-6 text-left">
                     <ul class="pagination pagination-sm no-margin">
                         {% if page_obj.has_previous %}
-                            <li><a href="?page={{ page_obj.previous_page_number }}">&raquo;</a></li>
+                            <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
                         {% endif %}
                         {% for page_number in page_obj.paginator.page_range %}
                             <li {% if page_number == page_obj.number %}class="active" {% endif %}>
@@ -214,7 +214,7 @@
                             </li>
                         {% endfor %}
                         {% if page_obj.has_next %}
-                            <li><a href="?page={{ page_obj.next_page_number }}">&laquo;</a></li>
+                            <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
                         {% endif %}
                     </ul>
                 </div>

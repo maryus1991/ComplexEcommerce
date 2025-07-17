@@ -45,7 +45,9 @@
                             آدرس ایمیل :
                         </span>
                         <p class="text-lg  text-green-500 mt-1.5">
-                            {{ site.email }}
+                            <a href="mailto:{{ site.email }}">
+                                  {{ site.email }}
+                            </a>
                         </p>
                     </li>
                     <li>
@@ -55,8 +57,12 @@
                             </svg>
                             تلفن :
                         </span>
-                        <p dir="ltr" class="text-lg  text-green-500 mt-1.5">
-                            {{ site.phone}}                        </p>
+                        <p  class="text-lg  text-green-500 mt-1.5">
+                            <a dir="ltr" href="tel:{{ site.phone }}">
+                                {{ site.phone}}
+                            </a>
+                            
+                        </p>
                     </li>
                     <li>
                         <span class="flex items-center gap-x-2 font-DanaMedium dark:text-gray-200 text-gray-500">

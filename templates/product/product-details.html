@@ -277,7 +277,7 @@
                                 </picture>
 
                             </div>
-                            {% for img in product.gallery.all %}
+                            {% for img in product.gallery|sort_number %}
                                 <div class="swiper-slide">
                                     <picture>
                                         <source srcset="{{ img.image.url|to_webp }}"

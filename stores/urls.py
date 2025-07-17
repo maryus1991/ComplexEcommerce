@@ -23,6 +23,8 @@ urlpatterns = [
     # product
     path("product/add/", views.StoreAddProduct.as_view(), name="add-product"),
     path("product/", views.StoreProductListView.as_view(), name="list-product"),
+    path("product/gallery/<int:pk>", views.ListProductGallery.as_view(), name="list-gallery-images-product"),
+    path("product/gallery/<int:pk>/<int:ipk>", views.SetSortNumberForProductGallery.as_view(), name="set-sort-number-for-gallery-product"),
     path(
         "product/edit/<int:pk>/",
         views.StoreEditProductView.as_view(),

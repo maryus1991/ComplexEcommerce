@@ -79,7 +79,7 @@ class Product(models.Model):
 
 
     def __str__(self):
-        return f"{self.name}-{self.id}-{self.count}"
+        return f"{self.id}-|-{self.name}"
 
     def calc_discount(self):
 
@@ -107,6 +107,7 @@ class ProductGallery(models.Model):
         Product, on_delete=models.CASCADE, related_name="gallery"
     )
     image = models.ImageField(upload_to=photo_path_upload_to)
+    sort_number = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
         return f"{self.product.name}-{self.id}"

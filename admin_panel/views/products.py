@@ -61,7 +61,7 @@ class ProductListView(AdminUserMixin, ListView):
 
     model = Product
     context_object_name = "items"
-    paginate_by = 35
+    paginate_by = 100
     template_name = "admin_panel/product/list.html"
     ordering = ["-id"]
 
@@ -199,6 +199,7 @@ class ProductListView(AdminUserMixin, ListView):
         context['search_form'] = ProductSearchForm()
         return context
 
+
 class ProductCreateView(AdminUserMixin, CreateView):
     """
     for creating a products
@@ -319,7 +320,7 @@ class ProductCreateView(AdminUserMixin, CreateView):
 
         messages.success(self.request, "محصول شما با موفقیت ساخته شد")
         product.save()
-        return redirect(self.success_url)
+        return redirect(reverse("admin_panel:product-update", kwargs={'pk': product.id}))
     
     def form_invalid(self, form):
         messages.error(self.request, form.errors)
@@ -472,7 +473,7 @@ class ProductUpdateView(AdminUserMixin, UpdateView):
 
         messages.success(self.request, "تغییرات با موفقیت ثبت شد")
         product.save()
-        return redirect(self.success_url)
+        return redirect(reverse("admin_panel:product-update", kwargs={'pk': product.id}))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

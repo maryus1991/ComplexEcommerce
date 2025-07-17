@@ -5,6 +5,7 @@ from django.views.generic import (
     UpdateView,
     RedirectView,
     View,
+DetailView
 )
 from django.db.models import Q
 from django.db.models.aggregates import Count
@@ -43,6 +44,42 @@ from orders.models import OrderDetail
 
 from user.mixins.logins import UserStoreStaffMixin, StoreAdminUserStaff
 
+
+class ListProductGallery(UserStoreStaffMixin, DetailView):
+    """
+    for list and set sort number for product
+    """
+    model = Product
+    context_object_name = 'product'
+    template_name = 'store/product/gallery.html'
+
+    def dispatch(self, *args, **kwargs):
+        get_object_or_404(Product, pk=self.kwargs['pk'], store=self.request.user.store)
+        return super().dispatch(*args, **kwargs)
+
+
+class SetSortNumberForProductGallery(UserStoreStaffMixin, RedirectView):
+    """for set sort number for product"""
+    def get_redirect_url(self, *args, **kwargs):
+
+        product_id = self.kwargs['pk']
+        image_id = self.kwargs['ipk']
+        sort_number = self.request.POST.get(f'{image_id}')
+        print(sort_number, image_id, product_id)
+
+        try:
+            sort_number = int(sort_number)
+            image = ProductGallery.objects.get(pk=image_id, product_id=product_id, product__store=self.request.user.store)
+            image.sort_number = sort_number
+            image.save()
+            messages.success(
+                self.request,
+                'ثبت شد'
+            )
+        except Exception as e:
+            messages.error(self.request, 'لطفا در وارد کردن عدد دقت فرمایید')
+
+        return self.request.META.get('HTTP_REFERER')
 
 
 class StoreProductListView(UserStoreStaffMixin, ListView):
@@ -303,7 +340,7 @@ class StoreAddProduct(UserStoreStaffMixin, FormView):
 
         messages.success(self.request, "محصول شما با موفقیت ذخیره شد")
         product.save()
-        return redirect("store:list-product")
+        return redirect(reverse("store:edit-product", kwargs={'pk': product.id}))
 
 
     def form_invalid(self, form):
@@ -460,7 +497,7 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
 
         messages.success(self.request, "تغییرات با موفقیت ثبت شد")
         product.save()
-        return redirect("store:list-product")
+        return redirect(reverse("store:edit-product", kwargs={'pk': product.id}))
 
 
 class StoreEditProductRemoveImg(UserStoreStaffMixin, RedirectView):
@@ -631,7 +668,7 @@ class StoreListCategoryView(UserStoreStaffMixin, ListView):
 
     model = ProductCategory
     template_name = "store/product/category/list_category.html"
-    paginate_by = 25
+    paginate_by = 50
     context_object_name = "categories"
 
 

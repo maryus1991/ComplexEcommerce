@@ -124,7 +124,7 @@ class Order(models.Model):
 
 
     def calculate_total_price(self):
-        if not self.is_paid or not self.canceled:
+        if not self.is_paid and not self.canceled:
             details = self.details.all()
             total_price = 0
 
@@ -149,7 +149,7 @@ class Order(models.Model):
         return self.total_price
 
     def get_total_weight(self):
-        if not self.is_paid or not self.canceled:
+        if not self.is_paid and not self.canceled:
             details = self.details.all()
             total_weight = 0
 
@@ -163,7 +163,7 @@ class Order(models.Model):
             return self.total_weight
 
     def get_total_length(self):
-        if not self.is_paid or not self.canceled:
+        if not self.is_paid and not self.canceled:
             details = self.details.all()
             total_length = 0
 
@@ -177,7 +177,7 @@ class Order(models.Model):
             return self.total_length
 
     def get_total_width(self):
-        if not self.is_paid or not self.canceled:
+        if not self.is_paid and not self.canceled:
             details = self.details.all()
             total_width = 0
 
@@ -191,7 +191,7 @@ class Order(models.Model):
             return self.total_width
 
     def get_total_height(self):
-        if not self.is_paid or not self.canceled:
+        if not self.is_paid and not self.canceled:
             details = self.details.all()
             total_height = 0
 
@@ -222,39 +222,44 @@ class Order(models.Model):
         return result_amount
 
     def get_payment_price(self):
-        site = SiteSetting.objects.first()
 
-        total_amount_of_items = self.calculate_total_price()
+        if not self.is_paid and not self.canceled:
+            site = SiteSetting.objects.first()
 
-        total_payment_price = (
-            total_amount_of_items + self.delivery_price - self.get_total_discount_amount()
-        )
+            total_amount_of_items = self.calculate_total_price()
 
-        # store
-
-        if (
-            self.official_invoice and
-                self.store.have_official_invoice and
-                site.active_receive_official_invoice
-        ):
-            total_payment_price += total_amount_of_items * (
-                self.store.official_invoice_price / 100
+            total_payment_price = (
+                total_amount_of_items + self.delivery_price - self.get_total_discount_amount()
             )
 
-        if self.store.additional_price:
-            total_payment_price += self.store.additional_price
+            # store
 
-        if self.store.additional_tax:
-            total_payment_price += total_amount_of_items * (
-                self.store.additional_tax / 100
-            )
+            if (
+                self.official_invoice and
+                    self.store.have_official_invoice and
+                    site.active_receive_official_invoice
+            ):
+                total_payment_price += total_amount_of_items * (
+                    self.store.official_invoice_price / 100
+                )
 
-        # site
-        total_payment_price += total_amount_of_items * (site.tax / 100)
+            if self.store.additional_price:
+                total_payment_price += self.store.additional_price
 
-        self.total_price = total_payment_price
-        self.save()
-        return total_payment_price
+            if self.store.additional_tax:
+                total_payment_price += total_amount_of_items * (
+                    self.store.additional_tax / 100
+                )
+
+            # site
+            total_payment_price += total_amount_of_items * (site.tax / 100)
+
+            self.total_price = total_payment_price
+            self.save()
+            return total_payment_price
+        else:
+
+            return self.total_price
 
     def check_count_of_products(self):
         return all(
@@ -283,20 +288,22 @@ class OrderDetail(models.Model):
     added_date = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
-    def get_item_price(self):
-        product = self.product.calc_discount()
-        price = product * self.count
 
-        self.price = price
-        self.save()
-        return price
+    def get_item_price(self):
+        if not self.order.is_paid and not self.order.canceled:
+            product = self.product.calc_discount()
+            price = product * self.count
+
+            self.price = price
+            self.save()
+            return price
+        else:
+            return self.price
 
     def get_item_price_without_discount(self):
         product = self.product.price
         price = product * self.count
 
-        self.price = price
-        self.save()
         return price
 
     def get_item_discount(self):

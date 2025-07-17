@@ -191,6 +191,7 @@
                 <table class="table table-hover table-bordered ">
                     <thead>
                         <tr class="info">
+                            <th>کد</th>
                             <th>محصول</th>
                             <th>تعداد</th>
                             <th>قیمت پایه</th>
@@ -200,16 +201,21 @@
                     </thead>
                     <tbody>
                         {% for detail in order.details.all %}
-                        <tr >
-                            <td  >
+                        <tr>
+                        <td>
+                            <a href="{% url 'store:edit-product' detail.product.id  %}">
+                                 {{ detail.product.id }}
+                            </a>
+                        </td>
+                            <td>
                                 <a href="{% url 'product:detail' detail.product.id %}">
                                     {{ detail.product.name }}
                                 </a>
                             </td>
-                            <td >{{ detail.count }}</td>
-                            <td >{{ detail.product.price|tdc }}</td>
-                            <td >{{ detail.date|to_jalali:' %H/%M - %Y/%m/%d ' }}</td>
-                            <td ><span class="text-success">{{ detail.get_item_price|tdc }}</span></td>
+                            <td>{{ detail.count }}</td>
+                            <td>{{ detail.product.price|tdc }}</td>
+                            <td>{{ detail.date|to_jalali:' %H/%M - %Y/%m/%d ' }}</td>
+                            <td><span class="text-success">{{ detail.get_item_price|tdc }}</span></td>
                         </tr>
                         {% endfor %}
                     </tbody>

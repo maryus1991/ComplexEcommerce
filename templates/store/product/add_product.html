@@ -166,6 +166,9 @@
                             {% if product %}
                                 <a class="btn btn-sm btn-success" href="{% url 'product:detail' product.id %}">
                                     مشاهده
+                                </a>                          
+                                <a class="btn btn-sm btn-warning" href="{% url 'store:list-gallery-images-product' product.id %}">
+                                    ترتیب گالری
                                 </a>
                                 <a class="btn btn-sm btn-purple"
                                    href="{% url 'store:active-deactivate-product' product.id %}">

@@ -345,6 +345,7 @@
                         <table class="table table-bordered table-hover">
                             <thead>
                                 <tr>
+                                    <th>کد محصول</th>
                                     <th>نام محصول</th>
                                     <th>وزن(گرم)</th>
                                     <th>تعداد</th>
@@ -362,6 +363,7 @@
                             <tbody>
                                 {% for product in products %}
                                 <tr>
+                                    <td>{{ product.id }}</td>
                                     <td>{{ product.name }}</td>
                                     <td>{{ product.weight }}</td>
                                     <td>{{ product.count }}</td>
@@ -454,7 +456,8 @@
             </div>
         </div>
     </div>
-</section>{% endblock %}
+</section>
+{% endblock %}
 
 {% block footer_reference %}
     <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
