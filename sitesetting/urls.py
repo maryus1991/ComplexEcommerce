@@ -1,5 +1,5 @@
 from django.urls import path
-
+from django.utils.crypto import get_random_string
 from .views import (
     Main,
     QuestionsPageView,
@@ -12,6 +12,7 @@ from .views import (
     DownloadUsedAppView,
     dynamic_favicon,
 SiteLawListView, UsedAppDetailView
+,ValidateRecaptchaView
 )
 from .sitemap import StaticSitemap, UsedAppSiteMap
 from admin_panel.views import dynamic_fonts_css
@@ -32,6 +33,7 @@ urlpatterns = [
     path("partial/header/", header_render_partial, name="partial-header"),
     path("partial/footer/", footer_render_partial, name="partial-footer"),
     path('fonts/fonts.css', dynamic_fonts_css, name='fonts.css'),
+    path(f"{get_random_string(100)}", ValidateRecaptchaView.as_view(), name='validate-recaptcha-v3'),
 
 ]
 

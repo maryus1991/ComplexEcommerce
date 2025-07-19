@@ -599,7 +599,13 @@ desired effect
                                 <a href="{% url 'admin_panel:site-law-list' %}"><i class="fa fa-link"></i>
                                     <span>قوانین</span>
                                 </a>
-                            </li>                            <li class="link-activator">
+                            </li>                           
+                                                <li class="link-activator"><a href="{% url 'admin_panel:fast-links-list' %}"><i
+                            class="fa fa-link"></i> <span>
+                        لینک های سریع
+                    </span></a>
+                    </li>
+                            <li class="link-activator">
                                 <a href="{% url 'admin_panel:backup-media-restore' %}"><i class="fa fa-link"></i>
                                     <span>برگردانن  فایل های اپلود شده</span>
                                 </a>
@@ -734,11 +740,7 @@ desired effect
                         </a>
                     </li>
 
-                    <li class="link-activator"><a href="{% url 'admin_panel:fast-links-list' %}"><i
-                            class="fa fa-link"></i> <span>
-                        لینک های سریع
-                    </span></a>
-                    </li>
+
 
                     <li class="link-activator"><a href="{% url 'admin_panel:store-list' %}"><i
                             class="fa fa-link"></i> <span>

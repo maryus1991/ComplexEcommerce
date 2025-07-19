@@ -66,7 +66,7 @@
                                         </a>
                                     </td>
                                     <td class="px-6 py-5">
-                                        {{ order.calculate_total_price|tdc }} تومان
+                                        {{ order.get_payment_price|tdc }} تومان
                                     </td>
                                     <td class="px-6 py-5">
                                         {{ order.date|to_jalali:'%Y/%m/%d' }}

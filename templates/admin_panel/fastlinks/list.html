@@ -145,6 +145,7 @@
                     <th class="text-center" width="5%">#</th>
                     <th width="25%">عنوان لینک</th>
                     <th class="text-center" width="10%"> لینک</th>
+                    <th class="text-center" width="10%"> ترتیب</th>
                     <th colspan="4" class="text-center" width="35%">عملیات</th>
                 </tr>
                 </thead>
@@ -163,6 +164,35 @@
 
                         <td>
                             <strong><a class="btn btn-info" href="{{ item.link }}">لینک</a></strong>
+                        </td>
+                        <td class="text-center" style="min-width: 200px;">
+                            <form action="{% url 'admin_panel:fast-links-set-sort-number' item.id %}" method="post"
+                                  class="form-inline">
+                                {% csrf_token %}
+                                <div class="input-group input-group-sm">
+                                    <input type="text"
+                                           value="{{ item.sort_number }}"
+                                           name="{{ item.id }}"
+                                           id="input_{{ item.id }}"
+                                           class="form-control input-sm "
+                                           style="width: 120px; display: inline-block;">
+
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default btn-sm sort-up"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-up"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm sort-down"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-down"></i>
+                                        </button>
+                                        <button type="submit" class="btn btn-success btn-sm sort-down">
+                                            <i class="fa fa-hand-pointer-o"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </form>
                         </td>
 
                         <td class="text-center">
@@ -220,6 +250,41 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            function getInput(button) {
+                const inputId = 'input_' + button.getAttribute('data-id');
+                return document.getElementById(inputId);
+            }
+
+            function parseInputValue(input) {
+                const value = parseInt(input.value);
+                return isNaN(value) ? 0 : value;
+            }
+
+            // دکمه افزایش
+            document.querySelectorAll('.sort-up').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const input = getInput(this);
+                    let value = parseInputValue(input);
+                    input.value = value + 1;
+                });
+            });
+
+            // دکمه کاهش
+            document.querySelectorAll('.sort-down').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const input = getInput(this);
+                    let value = parseInputValue(input);
+                    if (value > 0) {
+                        input.value = value - 1;
+                    }
+                });
+            });
+
+        });
+    </script>
 
     <script>
         $(document).ready(function () {

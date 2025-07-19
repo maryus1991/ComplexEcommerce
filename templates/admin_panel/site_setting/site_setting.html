@@ -742,6 +742,45 @@
 
                                 </div>
                             </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                              {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}>
+                                          <span>
+
+                                            {{ form.active_google_reCAPTCHA.label }}:
+
+                                            {{ form.active_google_reCAPTCHA }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 no-padding" dir="rtl">
+                                        <div class="input-group">
+
+                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                style="background-color: #3DA0DB; color: white;">
+
+                                            {{ form.force_users_to_login_for_download_apps.label }}:
+
+                                            {{ form.force_users_to_login_for_download_apps }}
+
+                                        </span>
+
+                                        </div>
+
+                                    </div>
+
+
+  
+
+
+                                </div>
+                            </div>
 
 
 

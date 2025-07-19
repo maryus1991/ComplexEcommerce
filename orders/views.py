@@ -1,35 +1,28 @@
 from django.shortcuts import reverse, Http404, get_object_or_404, render, redirect
-
+from django.db import transaction
 from urllib.parse import urljoin
-
 from django.http import HttpResponseRedirect
 from django.views.generic import DetailView, ListView, RedirectView, View
 from user.mixins.logins import CustomLoginRequiredMixin as LoginRequiredMixin
 from django.utils import timezone
 from django.conf import settings
 from django.contrib import messages
-
 import json
 import uuid
 import requests
-
 from product.models import Product
 from sitesetting.models import SiteSetting
 from .models import Order, OrderDetail, Discount, StoreSoldOrders, SpecificsOrders
-
 from config.settings import (
     MERCHANT_ID,
     ZARINPAL_SEND_DATA_URL,
     ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE,
     ZARINPAL_VERIFY_PAYMENT,
 )
-
 from django.utils.timezone import now
-
 from stores.models import Store
 from dashboard.models import UserAddress
 from utils.tipax_price_calc import calculate_price
-
 from utils.send_otp import send_message
 
 
@@ -170,21 +163,18 @@ class SpecificsOrdersVerifyPayment(LoginRequiredMixin, View):
 
 class AddOrder(LoginRequiredMixin, RedirectView):
     """
-    for add product to order db
+    اضافه‌کردن محصول به سبد خرید یا بروزرسانی آن
     """
 
     def get_redirect_url(self, *args, **kwargs):
-        num: str = self.request.GET.get("count") or "1"
-
-        # add some filters for count that get it from url
-        if num and not num.isdigit() :
-            return Http404()
-        else:
-
-            if int(num) < 0:
-                return Http404()
-
         request = self.request
+        referer = request.META.get("HTTP_REFERER", "/")
+        num_str = request.GET.get("count") or "1"
+
+        if not num_str.isdigit() or int(num_str) < 0:
+            raise Http404()
+
+        num = int(num_str)
         product_id = kwargs.get("pk")
         product = get_object_or_404(Product,
                                     pk=product_id,
@@ -193,50 +183,61 @@ class AddOrder(LoginRequiredMixin, RedirectView):
                                     store__is_verified=True,
                                     admin_verified=True,
                                     brand__is_active=True,
-                                    category__is_active=True,
-                                    )
+                                    category__is_active=True)
 
-        order = Order.objects.get_or_create(
+        order, _ = Order.objects.get_or_create(
             user=request.user,
             store=product.store,
             is_active=True,
             canceled=False,
             is_paid=False,
-        )[0]
+        )
 
-        detail = OrderDetail.objects.get_or_create(order=order, product=product)
+        order_detail, created = OrderDetail.objects.get_or_create(
+            order=order, product=product
+        )
 
-        if product.count <= 0:
-            messages.error(request, "موجودی کالا تموم شده است")
-            detail[0].delete()
-            return request.META.get("HTTP_REFERER", "/")
+        current_count = order_detail.count if not created else 0
+        new_count = num
+        difference = new_count - current_count
 
-        if int(num) > product.count:
-            messages.error(request, "تعداد درخواستی شما از موجودی کلا بیشتر می باشد")
-            return request.META.get("HTTP_REFERER", "/")
+        if product.count + (current_count if not created else 0) <= 0:
+            messages.error(request, "موجودی کالا تمام شده است.")
+            if not created:
+                order_detail.delete()
+            return referer
 
-        if not detail[1]:
-            if int(num) > 0:
-                detail[0].count = int(num)
-            else:
-                detail[0].delete()
-                messages.info(request, "محصول با موقیت از سبد خرید شما حذف شد")
+        if difference > 0 and difference > product.count:
+            messages.error(request, "تعداد درخواستی از موجودی کالا بیشتر است.")
+            return referer
 
-                return request.META.get("HTTP_REFERER", "/")
+        if new_count == 0:
+            order_detail.delete()
+            messages.info(request, "محصول با موفقیت از سبد خرید حذف شد.")
+            return referer
 
-        else:
+        try:
+            with transaction.atomic():
+                if difference > 0:
+                    # کاهش موجودی
+                    product.count -= difference
+                elif difference < 0:
+                    # افزایش موجودی
+                    product.count += abs(difference)
+                product.save()
 
-            detail[0].count = int(num)
+                order_detail.count = new_count
+                order_detail.get_item_price()
+                order_detail.save()
 
-        detail[0].get_item_price()
-        detail[0].save()
+                order.calculate_total_price()
+                order.save()
+        except Exception as e:
+            messages.error(request, "خطایی در افزودن محصول به سبد خرید رخ داد.")
+            return referer
 
-        order.calculate_total_price()
-        order.save()
-
-        messages.success(request, "محصول با موفقیت به سبد خرید شما اضافه شد")
-
-        return request.META.get("HTTP_REFERER", "/")
+        messages.success(request, "محصول با موفقیت به سبد خرید شما اضافه شد.")
+        return referer
 
 
 class CancelingOrder(LoginRequiredMixin, RedirectView):
@@ -255,15 +256,19 @@ class CancelingOrder(LoginRequiredMixin, RedirectView):
             is_paid=False,
             user=self.request.user,
         )
+
+        # بازگرداندن موجودی محصولات
+        for detail in order.details.all():
+            detail.product.count += detail.count
+            detail.product.save()
+
         order.canceled = True
         order.is_active = False
         order.second_date = timezone.now()
         order.save()
         messages.info(self.request, "سبد خرید شما با موفقیت کنسل شد")
 
-        return reverse(
-            "dashboard:orders",
-        )
+        return reverse("dashboard:orders")
 
 
 class RemoveItemFromOrder(LoginRequiredMixin, RedirectView):
@@ -272,7 +277,7 @@ class RemoveItemFromOrder(LoginRequiredMixin, RedirectView):
     """
 
     def get_redirect_url(self, *args, **kwargs):
-        doid = kwargs.get("pk")  # get the detail of order id for verify and delete it
+        doid = kwargs.get("pk")
         obj = get_object_or_404(
             OrderDetail,
             pk=doid,
@@ -282,12 +287,15 @@ class RemoveItemFromOrder(LoginRequiredMixin, RedirectView):
             order__is_paid=False,
         )
 
+        # بازگرداندن موجودی محصول
+        obj.product.count += obj.count
+        obj.product.save()
+
+        obj.delete()
         obj.order.calculate_total_price()
         obj.order.save()
-        oid = obj.order.id
-        obj.delete()
-        messages.info(self.request, "ایتم مورد نظر با موفقیت حذف شد از سبد خرید شما")
 
+        messages.info(self.request, "ایتم مورد نظر با موفقیت حذف شد از سبد خرید شما")
         return self.request.META.get("HTTP_REFERER", "/")
 
 
@@ -297,9 +305,7 @@ class RemoveProductFromOrder(LoginRequiredMixin, RedirectView):
     """
 
     def get_redirect_url(self, *args, **kwargs):
-        doid = kwargs.get(
-            "pk"
-        )  # get the product id for verify and delete the detail order of  it
+        doid = kwargs.get("pk")
         obj = get_object_or_404(Product, pk=doid)
 
         order = OrderDetail.objects.filter(
@@ -312,10 +318,15 @@ class RemoveProductFromOrder(LoginRequiredMixin, RedirectView):
         )
 
         if order.exists() and order.count() == 1:
-            order = order.first()
-            order.delete()
+            order_detail = order.first()
+
+            # بازگرداندن موجودی محصول
+            obj.count += order_detail.count
+            obj.save()
+
+            order_detail.delete()
         else:
-            return Http404()
+            raise Http404()
 
         messages.info(self.request, "ایتم مورد نظر با موفقیت حذف شد از سبد خرید شما")
         return self.request.META.get("HTTP_REFERER", "/")
@@ -388,11 +399,17 @@ class ChangeInvoiceToOfficial(LoginRequiredMixin, RedirectView):
             store_id=store_id,
         )
 
-        if order_obj.official_invoice:
+        if order_obj.official_invoice :
             order_obj.official_invoice = False
             order_obj.save()
 
             messages.warning(self.request, "دریافت فاکتور رسمی برای شما غیر فعال شد ")
+
+        if not order_obj.store.have_official_invoice :
+            order_obj.official_invoice = False
+            order_obj.save()
+            messages.warning(self.request, "دریافت فاکتور رسمی برای این فروشگاه غیر فعال هست ")
+
 
         else:
             site = SiteSetting.objects.first()
@@ -402,7 +419,7 @@ class ChangeInvoiceToOfficial(LoginRequiredMixin, RedirectView):
 
                 messages.success(
                     self.request,
-                    "دریافت فاکتور رسمی برای شما فعال شد بعد از اتمام پرداخت و اماده شدن و صادر شدن و ان برای دریافت  به صفحه سفارشات در داشبور خود مراجعه کنید ",
+                    "دریافت فاکتور رسمی برای شما فعال شد بعد از اتمام پرداخت و اماده و صادر شدن ان برای دریافت  به صفحه سفارشات در داشبور خود مراجعه کنید ",
                 )
 
         return self.request.META.get("HTTP_REFERER", "/")
@@ -532,7 +549,7 @@ class OrderSetDiscount(LoginRequiredMixin, RedirectView):
 
                                 discount_price = discount_obj.price
 
-                            if obj.calculate_total_price() < discount_obj.min_price:
+                            if discount_obj.min_price is not None and order_total_price < discount_obj.min_price:
                                 messages.error(
                                     self.request,
                                     f' حد اقل خرید برای کد تخفیف باید  {discount_obj.min_price} تومان باشد',
@@ -548,7 +565,7 @@ class OrderSetDiscount(LoginRequiredMixin, RedirectView):
 
                             messages.success(
                                 self.request,
-                                f"مبلق {discount_price} از خرید شما کم شد",
+                                f"مبلغ {discount_price} از خرید شما کم شد",
                             )
 
 
@@ -709,47 +726,51 @@ class ConformPayment(LoginRequiredMixin, View):
     """
 
     def dispatch(self, request, *args, **kwargs):
-        self.pk = kwargs.get("pk")
-        self.order = get_object_or_404(
-            Order,
-            pk=self.pk,
-            user=request.user,
-            is_paid=False,
-            is_active=True,
-            canceled=False,
-        )
-        self.site = SiteSetting.objects.first()
-        self.result = self.order.get_payment_price()
+        try:
+            self.pk = kwargs.get("pk")
+            self.order = get_object_or_404(
+                Order,
+                pk=self.pk,
+                user=request.user,
+                is_paid=False,
+                is_active=True,
+                canceled=False,
+            )
+            self.site = SiteSetting.objects.first()
+            self.result = self.order.get_payment_price()
 
-        self.site = SiteSetting.objects.first()
+            self.site = SiteSetting.objects.first()
 
-        if self.order.is_paid:
-            messages.warning(request, "این سفارش پرداخت شده است")
-            return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
+            if self.order.is_paid:
+                messages.warning(request, "این سفارش پرداخت شده است")
+                return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
 
-        elif self.order.canceled:
-            messages.warning(request, "این سفارش کنسل شده است")
-            return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
+            elif self.order.canceled:
+                messages.warning(request, "این سفارش کنسل شده است")
+                return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
 
-        if self.order.address is None:
-            messages.warning(request, "لطفا ادرس خود را ثبت کنید")
-            return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
+            if self.order.address is None:
+                messages.warning(request, "لطفا ادرس خود را ثبت کنید")
+                return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
 
-        if self.order.details.exists():
-            if self.order.check_count_of_products() is True:
-                return super().dispatch(request, *args, **kwargs)
-            else:
+            if not self.order.details.exists():
+                messages.warning(request, "سبد شما خالی می‌باشد")
+                return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
+
+            if not self.order.check_count_of_products():
                 messages.error(
                     request,
-                    "یکی از محصولات تعداد درخواستی از موجودی ان محصول بیشتر می باشد",
+                    "تعداد درخواستی یکی از محصولات از موجودی آن بیشتر است.",
                 )
-                return redirect(
-                    reverse("dashboard:order_detail", kwargs={"pk": self.pk})
-                )
+                return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
 
-        else:
-            messages.warning(request, "سبد شما خالی می باشد")
-            return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
+            return super().dispatch(request, *args, **kwargs)
+        except Exception:
+            messages.error(
+                request,
+                'در ثبت سفارش شما به مشکل برخردیم در صورت تکرار با پشتیبانی سایت تماس بگیرید یا سفارش فعلی خود را کنسل و دوباره سفارش دهید'
+            )
+            return redirect('/')
 
     def get(self, request, *args, **kwargs):
 
@@ -909,8 +930,6 @@ class VerifyPayment(LoginRequiredMixin, View):
                 order.is_paid = True
                 order.sending = True
                 order.second_date = now()
-
-                order.mines_order_detail_count_from_products_count()
                 order.save()
 
 

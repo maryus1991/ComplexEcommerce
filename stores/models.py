@@ -4,7 +4,7 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.shortcuts import reverse
-
+from django.contrib.auth import get_user_model
 
 class Store(models.Model):
     name = models.CharField(max_length=100)
@@ -100,6 +100,15 @@ class StoreApps(models.Model):
 
     def get_absolute_url(self):
         return reverse("site:apps-details", kwargs={"pk": self.pk})
+
+
+
+class UsedAppView(models.Model):
+    app = models.ForeignKey(StoreApps, on_delete=models.CASCADE, related_name='views')
+    ip = models.GenericIPAddressField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    count = models.PositiveSmallIntegerField(default=0)
+    user = models.ForeignKey('user.User', on_delete=models.CASCADE, null=True, blank=True)
 
 
 class StoreComment(models.Model):

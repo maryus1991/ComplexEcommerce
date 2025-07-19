@@ -121,6 +121,7 @@ urlpatterns = [
     ),
     # fast-links
     path("fast-links/", views.FastLinksListView.as_view(), name="fast-links-list"),
+    path("fast-links/sort-number/<int:pk>/", views.FasLinksSetSortNumber.as_view(), name="fast-links-set-sort-number"),
     path(
         "fast-links/create/",
         views.FastLinksCreateView.as_view(),
@@ -184,6 +185,7 @@ urlpatterns = [
     ),
     # blog
     path("blog/", views.BlogListView.as_view(), name="blog-list"),
+    path("blog/set-sort-number/<int:pk>", views.BlogSetSortNumber.as_view(), name="blog-set-sort-number"),
     path("blog/create/", views.BlogCreate.as_view(), name="blog-create"),
     path("blog/update/<int:pk>", views.BlogUpdate.as_view(), name="blog-update"),
     path(

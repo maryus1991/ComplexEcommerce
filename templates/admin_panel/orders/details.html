@@ -196,7 +196,7 @@
                                 </a>
                             </td>
                             <td>{{ detail.count }}</td>
-                            <td>{{ detail.product.price|tdc }}</td>
+                            <td>{{ detail.get_price|tdc }}</td>
                             <td>{{ detail.date|to_jalali:' %H/%M - %Y/%m/%d ' }}</td>
                             <td><span class="text-success">{{ detail.get_item_price|tdc }}</span></td>
                         </tr>

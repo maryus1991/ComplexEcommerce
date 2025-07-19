@@ -610,285 +610,215 @@
                                         min-width: 100px;
                                     }
                                 </style>
+<script>
+    // حذف تگ
+    function removeTag(wrapper) {
+        wrapper.remove();
+    }
 
-                                <script>
-                                    // تابع عمومی برای حذف تگ‌ها
-                                    function removeTag(element) {
-                                        element.remove();
-                                    }
+    // ویرایش تگ
+    function editTag(tagElement) {
+        if (tagElement.classList.contains('editing')) return;
 
-                                    // تابع ویرایش تگ
-                                    function editTag(element) {
-                                        if (element.classList.contains('editing')) return;
+        const originalText = tagElement.dataset.original || tagElement.textContent.trim();
+        tagElement.classList.add('editing');
+        tagElement.setAttribute('data-original', originalText);
+        tagElement.innerText = originalText;
+        tagElement.contentEditable = true;
+        tagElement.focus();
 
-                                        const originalText = element.textContent.replace('×', '').trim();
-                                        element.classList.add('editing');
-                                        element.setAttribute('data-original', originalText);
-                                        element.contentEditable = true;
-                                        element.innerText = originalText;
-                                        element.focus();
+        // انتخاب متن
+        const range = document.createRange();
+        range.selectNodeContents(tagElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
 
-                                        // انتخاب کل متن
-                                        const range = document.createRange();
-                                        range.selectNodeContents(element);
-                                        const selection = window.getSelection();
-                                        selection.removeAllRanges();
-                                        selection.addRange(range);
+        // ذخیره با Enter
+        tagElement.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveEdit(tagElement);
+            }
+        });
 
-                                        // ذخیره تغییرات با Enter
-                                        element.addEventListener('keypress', function (e) {
-                                            if (e.key === 'Enter') {
-                                                e.preventDefault();
-                                                saveEdit(element);
-                                            }
-                                        });
+        // لغو با Escape
+        tagElement.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                cancelEdit(tagElement);
+            }
+        });
 
-                                        // لغو با Escape
-                                        element.addEventListener('keydown', function (e) {
-                                            if (e.key === 'Escape') {
-                                                e.preventDefault();
-                                                cancelEdit(element);
-                                            }
-                                        });
+        // ذخیره با blur
+        tagElement.addEventListener('blur', function () {
+            saveEdit(tagElement);
+        });
+    }
 
-                                        // ذخیره با از دست دادن فوکوس
-                                        element.addEventListener('blur', function () {
-                                            saveEdit(element);
-                                        });
-                                    }
+    function saveEdit(tagElement) {
+        const newText = tagElement.textContent.trim();
+        tagElement.classList.remove('editing');
+        tagElement.contentEditable = false;
 
-                                    function saveEdit(element) {
-                                        const newText = element.textContent.trim();
-                                        element.classList.remove('editing');
-                                        element.contentEditable = false;
+        if (newText !== '') {
+            tagElement.dataset.original = newText;
+            tagElement.innerText = newText;
+            addDeleteButton(tagElement);
+        } else {
+            cancelEdit(tagElement);
+        }
+    }
 
-                                        if (newText && newText !== '') {
-                                            element.innerHTML = newText + '<button class="tag-delete" onclick="removeTag(this.parentElement.parentElement)" title="حذف">×</button>';
-                                        } else {
-                                            cancelEdit(element);
-                                        }
-                                    }
+    function cancelEdit(tagElement) {
+        const originalText = tagElement.getAttribute('data-original');
+        tagElement.classList.remove('editing');
+        tagElement.contentEditable = false;
+        tagElement.innerText = originalText;
+        addDeleteButton(tagElement);
+    }
 
-                                    function cancelEdit(element) {
-                                        const originalText = element.getAttribute('data-original');
-                                        element.classList.remove('editing');
-                                        element.contentEditable = false;
-                                        element.innerHTML = originalText + '<button class="tag-delete" onclick="removeTag(this.parentElement.parentElement)" title="حذف">×</button>';
-                                    }
+    function addDeleteButton(tagElement) {
+        const wrapper = tagElement.parentElement;
+        let delBtn = wrapper.querySelector('.tag-delete');
 
-                                    // افزودن ویژگی
-                                    function addFeature() {
-                                        const input = document.getElementById("id_features");
-                                        const container = document.getElementById("features-container");
+        if (!delBtn) {
+            delBtn = document.createElement('button');
+            delBtn.className = 'tag-delete';
+            delBtn.innerText = '×';
+            delBtn.title = 'حذف';
+            delBtn.onclick = function () {
+                removeTag(wrapper);
+            };
+            wrapper.appendChild(delBtn);
+        }
+    }
 
-                                        if (input.value.trim() !== "") {
-                                            const wrapper = document.createElement("span");
-                                            wrapper.className = "tag-wrapper";
-                                            wrapper.draggable = true;
-                                            wrapper.ondragstart = handleDragStart;
-                                            wrapper.ondragover = handleDragOver;
-                                            wrapper.ondrop = handleDrop;
-                                            wrapper.ondragend = handleDragEnd;
+    // افزودن تگ عمومی (برای ویژگی، مشخصه، تگ)
+    function addTagGeneric(inputId, containerId, tagClass) {
+        const input = document.getElementById(inputId);
+        const container = document.getElementById(containerId);
 
-                                            const newTag = document.createElement("span");
-                                            newTag.className = "btn btn-default form-group feature-tag tag-item";
-                                            newTag.innerHTML = input.value + '<button class="tag-delete" onclick="removeTag(this.parentElement.parentElement)" title="حذف">×</button>';
-                                            newTag.ondblclick = function () {
-                                                editTag(this);
-                                            };
-                                            newTag.setAttribute('data-original', input.value);
+        if (input.value.trim() !== "") {
+            const wrapper = document.createElement("span");
+            wrapper.className = "tag-wrapper";
+            wrapper.draggable = true;
+            wrapper.ondragstart = handleDragStart;
+            wrapper.ondragover = handleDragOver;
+            wrapper.ondrop = handleDrop;
+            wrapper.ondragend = handleDragEnd;
 
-                                            wrapper.appendChild(newTag);
-                                            container.appendChild(wrapper);
-                                            input.value = "";
-                                        }
-                                    }
+            const newTag = document.createElement("span");
+            newTag.className = `btn btn-default form-group tag-item ${tagClass}`;
+            newTag.innerText = input.value;
+            newTag.setAttribute('data-original', input.value);
+            newTag.ondblclick = function () {
+                editTag(this);
+            };
 
-                                    // افزودن مشخصه فنی
-                                    function addSpec() {
-                                        const input = document.getElementById("id_specs");
-                                        const container = document.getElementById("specs-container");
+            wrapper.appendChild(newTag);
+            container.appendChild(wrapper);
+            addDeleteButton(newTag);
+            input.value = "";
+        }
+    }
 
-                                        if (input.value.trim() !== "") {
-                                            const wrapper = document.createElement("span");
-                                            wrapper.className = "tag-wrapper";
-                                            wrapper.draggable = true;
-                                            wrapper.ondragstart = handleDragStart;
-                                            wrapper.ondragover = handleDragOver;
-                                            wrapper.ondrop = handleDrop;
-                                            wrapper.ondragend = handleDragEnd;
+    // توابع اختصاصی
+    function addFeature() {
+        addTagGeneric("id_features", "features-container", "feature-tag");
+    }
 
-                                            const newTag = document.createElement("span");
-                                            newTag.className = "btn btn-default form-group spec-tag tag-item";
-                                            newTag.innerHTML = input.value + '<button class="tag-delete" onclick="removeTag(this.parentElement.parentElement)" title="حذف">×</button>';
-                                            newTag.ondblclick = function () {
-                                                editTag(this);
-                                            };
-                                            newTag.setAttribute('data-original', input.value);
+    function addSpec() {
+        addTagGeneric("id_specs", "specs-container", "spec-tag");
+    }
 
-                                            wrapper.appendChild(newTag);
-                                            container.appendChild(wrapper);
-                                            input.value = "";
-                                        }
-                                    }
+    function addTag() {
+        addTagGeneric("id_tags", "tags-container", "tag");
+    }
 
-                                    // افزودن تگ
-                                    function addTag() {
-                                        const input = document.getElementById("id_tags");
-                                        const container = document.getElementById("tags-container");
+    // قابلیت دراگ
+    let draggedElement = null;
+    let placeholder = null;
 
-                                        if (input.value.trim() !== "") {
-                                            const wrapper = document.createElement("span");
-                                            wrapper.className = "tag-wrapper";
-                                            wrapper.draggable = true;
-                                            wrapper.ondragstart = handleDragStart;
-                                            wrapper.ondragover = handleDragOver;
-                                            wrapper.ondrop = handleDrop;
-                                            wrapper.ondragend = handleDragEnd;
+    function handleDragStart(e) {
+        draggedElement = e.target.closest(".tag-wrapper");
+        draggedElement.classList.add("dragging");
+        e.dataTransfer.effectAllowed = "move";
+    }
 
-                                            const newTag = document.createElement("span");
-                                            newTag.className = "btn btn-default form-group tag tag-item";
-                                            newTag.innerHTML = input.value + '<button class="tag-delete" onclick="removeTag(this.parentElement.parentElement)" title="حذف">×</button>';
-                                            newTag.ondblclick = function () {
-                                                editTag(this);
-                                            };
-                                            newTag.setAttribute('data-original', input.value);
+    function handleDragOver(e) {
+        e.preventDefault();
+        const container = e.target.closest(".container-sortable");
+        if (!container) return;
 
-                                            wrapper.appendChild(newTag);
-                                            container.appendChild(wrapper);
-                                            input.value = "";
-                                        }
-                                    }
+        const afterElement = getDragAfterElement(container, e.clientX);
+        if (!placeholder) {
+            placeholder = document.createElement("span");
+            placeholder.className = "sort-placeholder";
+            placeholder.style.width = draggedElement.offsetWidth + "px";
+            placeholder.style.height = draggedElement.offsetHeight + "px";
+        }
 
-                                    // متغیرهای Drag & Drop
-                                    let draggedElement = null;
-                                    let placeholder = null;
+        if (afterElement == null) {
+            container.appendChild(placeholder);
+        } else {
+            container.insertBefore(placeholder, afterElement);
+        }
+    }
 
-                                    // شروع کشیدن
-                                    function handleDragStart(e) {
-                                        draggedElement = e.target;
-                                        draggedElement.classList.add('dragging');
-                                        e.dataTransfer.effectAllowed = 'move';
-                                        e.dataTransfer.setData('text/html', draggedElement.outerHTML);
+    function handleDrop(e) {
+        e.preventDefault();
+        const container = e.target.closest(".container-sortable");
+        if (!container) return;
 
-                                        // ایجاد placeholder
-                                        placeholder = document.createElement('span');
-                                        placeholder.className = 'sort-placeholder';
-                                        placeholder.style.display = 'none';
-                                    }
+        if (draggedElement && placeholder) {
+            container.insertBefore(draggedElement, placeholder);
+            placeholder.remove();
+            placeholder = null;
+        }
+        draggedElement.classList.remove("dragging");
+        draggedElement = null;
+    }
 
-                                    // هنگام عبور از روی element
-                                    function handleDragOver(e) {
-                                        if (e.preventDefault) {
-                                            e.preventDefault();
-                                        }
+    function handleDragEnd() {
+        if (draggedElement) draggedElement.classList.remove("dragging");
+        if (placeholder && placeholder.parentNode) placeholder.remove();
+        draggedElement = null;
+        placeholder = null;
+    }
 
-                                        const container = e.target.closest('.container-sortable');
-                                        if (!container) return;
+    function getDragAfterElement(container, x) {
+        const elements = [...container.querySelectorAll('.tag-wrapper:not(.dragging)')];
+        return elements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = x - box.left - box.width / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return {offset: offset, element: child};
+            } else {
+                return closest;
+            }
+        }, {offset: Number.NEGATIVE_INFINITY}).element;
+    }
 
-                                        container.classList.add('drag-over');
+    // آماده سازی قبل از ارسال فرم
+    function prepareFormData() {
+        ['features', 'tags', 'specs'].forEach(field => {
+            const container = document.getElementById(`${field}-container`);
+            const input = document.getElementById(`id_${field}`);
+            const values = [...container.querySelectorAll(`.${field === 'features' ? 'feature-tag' : field === 'specs' ? 'spec-tag' : 'tag'}`)]
+                .map(el => el.dataset.original || el.textContent.trim());
+            input.value = values.join('**');
+        });
+    }
 
-                                        const afterElement = getDragAfterElement(container, e.clientX);
-                                        if (afterElement == null) {
-                                            container.appendChild(placeholder);
-                                        } else {
-                                            container.insertBefore(placeholder, afterElement);
-                                        }
-
-                                        placeholder.style.display = 'inline-block';
-                                        e.dataTransfer.dropEffect = 'move';
-                                        return false;
-                                    }
-
-                                    // رها کردن element
-                                    function handleDrop(e) {
-                                        if (e.stopPropagation) {
-                                            e.stopPropagation();
-                                        }
-
-                                        const container = e.target.closest('.container-sortable');
-                                        if (!container) return;
-
-                                        if (draggedElement && placeholder && placeholder.parentNode) {
-                                            placeholder.parentNode.insertBefore(draggedElement, placeholder);
-                                            placeholder.remove();
-                                        }
-
-                                        container.classList.remove('drag-over');
-                                        return false;
-                                    }
-
-                                    // پایان کشیدن
-                                    function handleDragEnd(e) {
-                                        if (draggedElement) {
-                                            draggedElement.classList.remove('dragging');
-                                        }
-
-                                        // پاک کردن placeholder
-                                        if (placeholder && placeholder.parentNode) {
-                                            placeholder.remove();
-                                        }
-
-                                        // پاک کردن drag-over class از همه containers
-                                        document.querySelectorAll('.container-sortable').forEach(container => {
-                                            container.classList.remove('drag-over');
-                                        });
-
-                                        draggedElement = null;
-                                        placeholder = null;
-                                    }
-
-                                    // پیدا کردن موقعیت مناسب برای drop
-                                    function getDragAfterElement(container, x) {
-                                        const draggableElements = [...container.querySelectorAll('.tag-wrapper:not(.dragging)')];
-
-                                        return draggableElements.reduce((closest, child) => {
-                                            const box = child.getBoundingClientRect();
-                                            const offset = x - box.left - box.width / 2;
-
-                                            if (offset < 0 && offset > closest.offset) {
-                                                return {offset: offset, element: child};
-                                            } else {
-                                                return closest;
-                                            }
-                                        }, {offset: Number.NEGATIVE_INFINITY}).element;
-                                    }
-
-                                    // اضافه کردن event listeners برای containers
-                                    document.addEventListener('DOMContentLoaded', function () {
-                                        const containers = document.querySelectorAll('.container-sortable');
-                                        containers.forEach(container => {
-                                            container.addEventListener('dragover', handleDragOver);
-                                            container.addEventListener('drop', handleDrop);
-                                            container.addEventListener('dragleave', function (e) {
-                                                if (!e.relatedTarget || !container.contains(e.relatedTarget)) {
-                                                    container.classList.remove('drag-over');
-                                                    if (placeholder && placeholder.parentNode === container) {
-                                                        placeholder.style.display = 'none';
-                                                    }
-                                                }
-                                            });
-                                        });
-                                    });
-
-                                    // آماده‌سازی داده‌های فرم قبل از ارسال
-                                    function prepareFormData() {
-                                        // ویژگی‌ها
-                                        const features = document.querySelectorAll('#features-container .feature-tag');
-                                        const featuresInput = document.getElementById('id_features');
-                                        featuresInput.value = Array.from(features).map(tag => tag.textContent.replace('×', '').trim()).join('**');
-
-                                        // تگ‌ها
-                                        const tags = document.querySelectorAll('#tags-container .tag');
-                                        const tagsInput = document.getElementById('id_tags');
-                                        tagsInput.value = Array.from(tags).map(tag => tag.textContent.replace('×', '').trim()).join('**');
-
-                                        // مشخصات فنی
-                                        const specs = document.querySelectorAll('#specs-container .spec-tag');
-                                        const specsInput = document.getElementById('id_specs');
-                                        specsInput.value = Array.from(specs).map(tag => tag.textContent.replace('×', '').trim()).join('**');
-                                    }
-                                </script>
+    // فعال‌سازی رویدادهای دراپ
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.container-sortable').forEach(container => {
+            container.addEventListener('dragover', handleDragOver);
+            container.addEventListener('drop', handleDrop);
+        });
+    });
+</script>
 
 
                                 <!-- توضیحات محصول -->

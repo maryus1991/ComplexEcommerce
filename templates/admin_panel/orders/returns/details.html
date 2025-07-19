@@ -42,7 +42,7 @@
                                 فروشگاه:</strong> {{ item.order.store.name }}
                             </td>
                             <td class="col-md-3 col-sm-6 col-xs-12"><strong>قیمت :</strong> <span
-                                    class="text-success">{{ item.order.total_price|tdc }}</span></td>
+                                    class="text-success">{{ item.order.get_payment_price|tdc }}</span></td>
 
 
                         </tr>

@@ -146,6 +146,7 @@
                     <th width="10%">نویسنده</th>
                     <th width="12%">تاریخ انتشار</th>
                     <th width="8%">دسته</th>
+                    <th width="8%">ترتیب</th>
                     <th colspan="4" class="text-center" width="35%">عملیات</th>
                 </tr>
                 </thead>
@@ -161,17 +162,45 @@
                         </td>
                         <td><strong>{{ item.store.name }}</strong></td>
                         <td dir="ltr"><strong>{{ item.user.PhoneNumber }}</strong></td>
-                        <td >
+                        <td>
                             {% if item.is_active %}
                                 <strong dir="ltr">{{ item.updated_at|to_jalali:'%Y/%m/%d - %H:%M' }}</strong>
-                                {% else %}
+                            {% else %}
                                 <p class="label label-warning">
-                                منتشر نشده توسط فروشگاه
+                                    منتشر نشده توسط فروشگاه
                                 </p>
                             {% endif %}
                         </td>
                         <td><strong>{{ item.category.name }}</strong></td>
+                        <td class="text-center" style="min-width: 200px;">
+                            <form action="{% url 'admin_panel:blog-set-sort-number' item.id %}" method="POST"
+                                  class="form-inline">
+                                {% csrf_token %}
+                                <div class="input-group input-group-sm">
+                                    <input type="text"
+                                           value="{{ item.sort_number }}"
+                                           name="{{ item.id }}"
+                                           id="input_{{ item.id }}"
+                                           class="form-control input-sm "
+                                           style="width: 120px; display: inline-block;">
 
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default btn-sm sort-up"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-up"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm sort-down"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-down"></i>
+                                        </button>
+                                        <button type="submit" class="btn btn-success btn-sm sort-down">
+                                            <i class="fa fa-hand-pointer-o"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </td>
 
                         <td class="text-center">
                             <a href="{% url 'blog:detail' item.id %}" class="btn btn-sm btn-success"
@@ -249,4 +278,40 @@
             });
         });
     </script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+
+                    function getInput(button) {
+                        const inputId = 'input_' + button.getAttribute('data-id');
+                        return document.getElementById(inputId);
+                    }
+
+                    function parseInputValue(input) {
+                        const value = parseInt(input.value);
+                        return isNaN(value) ? 0 : value;
+                    }
+
+                    // دکمه افزایش
+                    document.querySelectorAll('.sort-up').forEach(function (button) {
+                        button.addEventListener('click', function () {
+                            const input = getInput(this);
+                            let value = parseInputValue(input);
+                            input.value = value + 1;
+                        });
+                    });
+
+                    // دکمه کاهش
+                    document.querySelectorAll('.sort-down').forEach(function (button) {
+                        button.addEventListener('click', function () {
+                            const input = getInput(this);
+                            let value = parseInputValue(input);
+                            if (value > 0) {
+                                input.value = value - 1;
+                            }
+                        });
+                    });
+
+                });
+            </script>
+    
 {% endblock %}

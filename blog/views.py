@@ -37,7 +37,7 @@ class ListArticlesView(ListView):
                 store__is_active=True,
                 store__is_verified=True
             )
-            .annotate(view_count=Count("views"))
+            .annotate(view_count=Count("views")).order_by('-sort_number')
         )
 
         url_params = dict(self.request.GET.lists())

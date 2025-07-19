@@ -19,7 +19,7 @@ UserFavorite
 )
 from admin_panel.search_forms import ProductSearchForm
 from stores.forms import BrandAndCategorySearchForm
-
+from django.db.models import Q
 # product
 
 class ProductSetSortNumber(AdminUserMixin, RedirectView):
@@ -174,7 +174,9 @@ class ProductListView(AdminUserMixin, ListView):
             elif ordering == "12":
                 queryset = queryset.annotate(views_count=Count("views")).order_by(
                     "views_count"
-                )  # کمترین بازدید
+                )
+            elif ordering == "19":
+                queryset = queryset.order_by('-sort_number')
             elif ordering == "21":
                 queryset = queryset.order_by("-price")  # بیشترین قیمت
             elif ordering == "22":

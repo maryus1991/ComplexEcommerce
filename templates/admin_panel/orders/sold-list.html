@@ -298,7 +298,7 @@
                                     <span class="label label-default">باز</span>
                                 {% endif %}
                             </td>
-                            <td class="text-center">{{ order.price|tdc }}</td>
+                            <td class="text-center">{{ order.get_payment_price|tdc }}</td>
                             <td class="text-center">
                                 {% if item.sending %}
                                     <span class="label label-warning"> درحال ارسال </span>

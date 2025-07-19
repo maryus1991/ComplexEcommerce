@@ -63,6 +63,7 @@ class Blog(models.Model):
     admin_verified = models.BooleanField(
         default=True, verbose_name="فعال / غیر فعال توسط ادمین"
     )
+    sort_number = models.PositiveBigIntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -83,6 +84,7 @@ class BlogView(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name="views")
     ip = models.GenericIPAddressField()
     count = models.IntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.ip

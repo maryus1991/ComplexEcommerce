@@ -269,8 +269,10 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
             Order, is_paid=True, is_active=True, canceled=False, id=order_id
         )
 
-        if (obj.user != self.request.user):
-            return HttpResponseForbidden()
+        if not request.user.is_superuser:
+            if obj.store != request.user.store:
+                if (obj.user != self.request.user) :
+                    return HttpResponseForbidden()
 
         if obj.address is None:
             messages.warning(request, "برای دریافت فاکتور لطفا ادرس انتخاب کنید")

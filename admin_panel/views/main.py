@@ -19,7 +19,7 @@ from orders.models import Order, StoreSoldOrders
 from django.db.models import Count, Sum, Case, When, IntegerField
 from django.utils.timezone import timedelta, now
 from django.db.models.functions import TruncDate, Coalesce
-
+from admin_panel.models import DailyViewCount
 
 
 class StatsApi(AdminUserMixin, View):
@@ -55,6 +55,24 @@ class HomePageView(AdminUserMixin, TemplateView):
         context['last_product'] = last_product
         context['views'] = views
         context['total_view'] = views.aggregate(total=Sum('views_count')).get('total')
+
+        today = now().date()
+        yesterday = today - timedelta(days=1)
+        total_view = context['total_view']
+
+        view_daily_count, _ = DailyViewCount.objects.get_or_create(date=today)
+        view_daily_count.count = total_view
+        view_daily_count.save()
+
+        yesterday_view = DailyViewCount.objects.filter(date=yesterday).first()
+        yesterday_count = yesterday_view.count if yesterday_view else 0
+
+        if yesterday_count > 0:
+            percentage_change = ((total_view - yesterday_count) / yesterday_count) * 100
+        else:
+            percentage_change = 100 if total_view > 0 else 0
+
+        context['view_percentage_change'] = round(percentage_change, 2)
 
         context['orders'] = Order.objects.order_by('-id').all()[0:6]
 
@@ -97,6 +115,46 @@ class FastLinksListView(AdminUserMixin, ListView):
     paginate_by = 25
     context_object_name = "items"
     template_name = "admin_panel/fastlinks/list.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        messages.warning(
+            self.request,
+            'توجه داشته باشید که طبق قالب 8 لینک اول نمایش خواهند شد'
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+
+class FasLinksSetSortNumber(AdminUserMixin, RedirectView):
+    """
+    for set sort number for links
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+
+        pk = kwargs.get('pk')
+        sort_number = self.request.POST.get(f'{pk}')
+
+        try:
+            sort_number = int(sort_number)
+            if 100 >= sort_number >= 0:
+                post = get_object_or_404(FastLinks, pk=pk)
+                post.sort_number = sort_number
+                post.save()
+                messages.success(self.request,'ثبت شد')
+            else:
+                messages.error(
+                    self.request,
+                    'عدد وارد شده باید بین 0 تا 100 باشد'
+                )
+
+        except Exception as e:
+            messages.error(
+                self.request,
+                'لطفا در وارد کردن عدد دقت فرمایید'
+            )
+
+        return self.request.META.get('HTTP_REFERER')
+
 
 
 class FastLinksCreateView(AdminUserMixin, CreateView):

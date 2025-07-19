@@ -489,7 +489,7 @@
                         <svg onclick="handle_input('+')" class="w-6 h-6 shrink-0 text-green-600">
                             <use href="#plus"></use>
                         </svg>
-                        <input type="number" name="count" id="customInput" min="0" value="{{ user_order_detail.count }}"
+                        <input type="number" name="count" id="customInput" min="0" value="{{ user_order_detail.count|default:1 }}"
                                class="custom-input mx-4 w-10 text-lg bg-transparent text-center flex-1">
                         <svg onclick="handle_input('-')" class="w-6 h-6 shrink-0  text-red-500">
                             <use href="#minus"></use>

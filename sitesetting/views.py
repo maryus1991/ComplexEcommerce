@@ -20,13 +20,24 @@ from .models import (
     Banners,
 SiteLaw
 )
-from stores.models import StoreApps
+from ipware import get_client_ip
+from stores.models import StoreApps, UsedAppView
 from user.mixins.logins import CustomLoginRequiredMixin
 from config.settings import BASE_DIR
 from user.forms import ActiveAccountForm as NumberForAddToLettersForm
-
+from urllib.parse import quote
 from product.models import Product, ProductCategory, ProductBrand
 from blog.models import Blog, BlogCategory
+import json
+import requests
+from django.conf import settings
+from django.http import JsonResponse, Http404
+from django.views import View
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+import uuid
+from django.core.cache import cache
+from datetime import timedelta
 
 
 class SiteLawListView(ListView):
@@ -73,6 +84,7 @@ def dynamic_favicon(request):
         with open(BASE_DIR / '1111.jpg', 'rb') as f:
             return HttpResponse(f.read(), content_type="image/png")
 
+
 class Main(TemplateView):
     """
     main page
@@ -106,7 +118,7 @@ class Main(TemplateView):
             products.filter(have_discount=True).order_by("-discount").order_by('-sort_number_discount').all()[0:20]
         )
 
-        context["blogs"] = Blog.objects.filter(is_active=True).all()[0:4]
+        context["blogs"] = Blog.objects.filter(is_active=True).order_by('-sort_number').all()[0:4]
         context["site"] = SiteSetting.objects.filter(is_active=True).first()
         if self.request.user_agent.is_mobile:
 
@@ -197,6 +209,15 @@ class UsedAppDetailView(DetailView):
     context_object_name = "item"
     template_name = "site/apps/apps-details.html"
 
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        context["site"] = SiteSetting.objects.filter(is_active=True).first()
+        context['GOOGLE_RECAPTCHA_SITE_KEY'] = settings.GOOGLE_RECAPTCHA_SITE_KEY
+
+        return context
+
 
 class UsedAppView(ListView):
     """
@@ -233,14 +254,83 @@ class UsedAppView(ListView):
 
         return query
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-class DownloadUsedAppView(CustomLoginRequiredMixin, View):
-    """
-    for downloading the stores apps
-    """
+        context["site"] = SiteSetting.objects.filter(is_active=True).first()
+        context['GOOGLE_RECAPTCHA_SITE_KEY'] = settings.GOOGLE_RECAPTCHA_SITE_KEY
+
+        return context
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class ValidateRecaptchaView(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            token = data.get("token")
+            action = data.get("action", "submit")
+        except Exception:
+            return JsonResponse({"success": False, "error": "Invalid JSON"}, status=400)
+
+        if not token:
+            return JsonResponse({"success": False, "error": "Missing token"}, status=400)
+
+        response = requests.post(
+            "https://www.google.com/recaptcha/api/siteverify",
+            data={
+                "secret": settings.GOOGLE_RECAPTCHA_SECRET_KEY,
+                "response": token,
+                "remoteip": request.META.get("REMOTE_ADDR"),
+            },
+        )
+
+        result = response.json()
+
+        if result.get("success") and result.get("action") == action and result.get("score", 0) > 0.5:
+            download_token = str(uuid.uuid4())
+            cache.set(f"download_token:{download_token}", True, timeout=60)
+
+            return JsonResponse({
+                "success": True,
+                "token": download_token,
+                "score": result.get("score"),
+                "action": result.get("action"),
+            })
+        else:
+            return JsonResponse({
+                "success": False,
+                "score": result.get("score"),
+                "action": result.get("action"),
+                "error": result.get("error-codes"),
+            }, status=403)
+
+
+
+
+class DownloadUsedAppView(View):
+    def dispatch(self, request, *args, **kwargs):
+        self.site = SiteSetting.objects.filter(is_active=True).first()
+        site = self.site
+        if site and site.force_users_to_login_for_download_apps:
+            if not request.user.is_authenticated or not request.user.is_verified :
+                messages.warning(
+                    request,
+                    'ابتدا وارد حساب خود شوید'
+                )
+                return redirect("user:login")
+        return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        # Get the app with all necessary validations
+
+        if self.site.active_google_reCAPTCHA:
+            dl_token = request.GET.get("dl_token")
+            if not dl_token or not cache.get(f"download_token:{dl_token}"):
+                raise Http404('token not found')
+
+            # حذف توکن برای جلوگیری از استفاده مجدد
+            cache.delete(f"download_token:{dl_token}")
+
         app = get_object_or_404(
             StoreApps,
             pk=self.kwargs.get("pk"),
@@ -250,27 +340,46 @@ class DownloadUsedAppView(CustomLoginRequiredMixin, View):
             admin_verified=True,
         )
 
-        # Serve the file securely
+        try:
+            ip, is_rout = get_client_ip(request)
+            app_view_object = UsedAppView.objects.get_or_create(
+                user=request.user if request.user.is_authenticated else None,
+                app=app,
+                ip=ip,
+            )
+            if not app_view_object[1]:
+                app_view_object[0].count += 1
+                app_view_object[0].save()
+
+            if app_view_object[0].count == 0:
+                app_view_object[0].count = 1
+                app_view_object[0].save()
+
+        except Exception as e:
+            pass
+
         return self.serve_file(app)
 
     def serve_file(self, app):
-        """Securely serve the file with proper headers"""
         if not app.file or not os.path.exists(app.file.path):
             raise Http404("File not available")
 
         file_path = app.file.path
-        file_name = f"{app.name}"
-        file_size = os.path.getsize(file_path)
+        file_ext = os.path.splitext(app.file.name)[1]
+        file_name = f"{app.name}{file_ext}"
+
+        quoted_file_name = quote(file_name)
 
         response = HttpResponse(
             FileWrapper(open(file_path, "rb")), content_type=guess_type(file_path)[0]
         )
 
-        response["Content-Disposition"] = f'attachment; filename="{file_name}"'
-        response["Content-Length"] = file_size
-        response["X-Accel-Redirect"] = (
-            f"/media/app/{os.path.basename(file_path)}"  # For nginx
+        response["Content-Disposition"] = (
+            f'attachment; filename="download{file_ext}"; filename*=UTF-8\'\'{quoted_file_name}'
         )
+
+        response["Content-Length"] = os.path.getsize(file_path)
+        response["X-Accel-Redirect"] = f"/media/app/{os.path.basename(file_path)}"
 
         return response
 
@@ -298,7 +407,7 @@ def header_render_partial(request, title=None):
 
 def footer_render_partial(request):
     site = SiteSetting.objects.filter(is_active=True).first()
-    links = FastLinks.objects.all().filter(is_active=True).order_by("-id")
+    links = FastLinks.objects.all().filter(is_active=True).order_by("-sort_number")
     return render(
         request,
         "Base/Footer/Footer.html",

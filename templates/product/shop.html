@@ -183,7 +183,7 @@
                                            class="category-checkbox" data-id="{{ category.id }}" data-parent="">
                                     <span></span>
                                 </label>
-                                <p onclick="selctions({{ category.id }})">{{ category.name }}</p>
+                                <p >{{ category.name }}</p>
 
                                 {% for child in category.child|active_category %}
                                     <li data-id="{{ child.id }}" style="padding-right: 2rem;">
@@ -194,7 +194,7 @@
                                                    data-parent="{{ category.id }}">
                                             <span></span>
                                         </label>
-                                        <p onclick="selctions({{ child.id }})" class="text-sm">{{ child.name }}</p>
+                                        <p  class="text-sm">{{ child.name }}</p>
                                     </li>
 
                                     {% for sub_child in child.child|active_category %}
@@ -219,8 +219,7 @@
                                                            data-parent="{{ sub_child.id }}">
                                                     <span></span>
                                                 </label>
-                                                <p
-                                                        class="text-xs">{{ sub_sub_child.name }}</p>
+                                                <p  class="text-xs">{{ sub_sub_child.name }}</p>
                                             </li>
                                         {% endfor %}
                                     {% endfor %}

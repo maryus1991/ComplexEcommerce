@@ -98,10 +98,10 @@
 
                         <!-- Row 5 -->
                         <tr>
-                            <td  ><strong>وزن کل:</strong> {{ order.total_weight }}</td>
-                            <td  ><strong>ارتفاع کل:</strong> {{ order.total_length }}</td>
-                            <td  ><strong>طول کل:</strong> {{ order.total_width }}</td>
-                            <td  ><strong>عرض کل:</strong> {{ order.total_height }}</td>
+                            <td  ><strong>وزن کل:</strong> {{ order.get_total_weight }}</td>
+                            <td  ><strong>ارتفاع کل:</strong> {{ order.get_total_length }}</td>
+                            <td  ><strong>طول کل:</strong> {{ order.get_total_width }}</td>
+                            <td  ><strong>عرض کل:</strong> {{ order.get_total_height }}</td>
                         </tr>
 
                         <!-- Row 6 -->
@@ -213,7 +213,7 @@
                                 </a>
                             </td>
                             <td>{{ detail.count }}</td>
-                            <td>{{ detail.product.price|tdc }}</td>
+                            <td>{{ detail.get_price|tdc }}</td>
                             <td>{{ detail.date|to_jalali:' %H/%M - %Y/%m/%d ' }}</td>
                             <td><span class="text-success">{{ detail.get_item_price|tdc }}</span></td>
                         </tr>

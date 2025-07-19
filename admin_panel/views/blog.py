@@ -6,6 +6,36 @@ from django.shortcuts import get_object_or_404, redirect, reverse, render
 from blog.models import Blog, BlogCategory
 from admin_panel.forms import AddBlogCategoryModelForm, AddBlogModelForm
 
+class BlogSetSortNumber(AdminUserMixin, RedirectView):
+    """
+    set sort number for blog
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        sort_number = self.request.POST.get(f'{pk}')
+
+        try:
+            sort_number = int(sort_number)
+            if 100000000 >= sort_number >= 0:
+                post = get_object_or_404(Blog, pk=pk)
+                post.sort_number = sort_number
+                post.save()
+                messages.success(self.request,'ثبت شد')
+            else:
+                messages.error(
+                    self.request,
+                    'عدد وارد شده باید بین 0 تا  100,000,000 باشد'
+                )
+
+        except Exception as e:
+            messages.error(
+                self.request,
+                'لطفا در وارد کردن عدد دقت فرمایید'
+            )
+
+        return reverse('admin_panel:blog-list')
+
 
 class BlogListView(AdminUserMixin, ListView):
     """

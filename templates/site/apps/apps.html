@@ -90,7 +90,7 @@
                                         <div class="flex-shrink-0 mr-4 px-4 ">
                                             {% if app.image %}
                                                 <picture>
-                        
+
                                                     <img src="{{ app.image.url }}" alt="{{ app.name }}"
                                                          class="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:border-gray-600"
                                                          loading="lazy">
@@ -140,17 +140,19 @@
                                             {% endif %}
                                         </div>
 
-                                        <a href="{% url 'site:apps-download' app.id %}"
-                                           class="bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-1.5 lg:p-2">
-                                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor"
-                                                 viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                            </svg>
-                                            <p class="text-xs lg:text-sm">دانلود</p>
+
+<a {% if not site.active_google_reCAPTCHA %} href="{% url 'site:apps-download' app.id %}" {% else %} href="#" {% endif %}
+   data-download-url="{% url 'site:apps-download' app.id %}"
+   class="download-button bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-1.5 lg:p-2">
+    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+    </svg>
+    دانلود
+</a>
 
 
-                                        </a>
+
 
                                         <a href="{% url 'site:apps-details' app.pk %}"
                                            class="bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-1.5 lg:p-2 ">
@@ -165,6 +167,50 @@
                         </div>
                     {% endfor %}
                 </div>
+{% if site.active_google_reCAPTCHA %}
+
+
+    <script src="https://www.google.com/recaptcha/api.js?render={{ GOOGLE_RECAPTCHA_SITE_KEY }}"></script>
+
+            <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const buttons = document.querySelectorAll(".download-button");
+
+    buttons.forEach(button => {
+        button.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            grecaptcha.ready(function () {
+                grecaptcha.execute("{{ GOOGLE_RECAPTCHA_SITE_KEY }}", { action: "download" }).then(function (token) {
+                    fetch("{% url 'site:validate-recaptcha-v3' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            token: token,
+                            action: "download"
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success && data.score > 0.5) {
+                            window.location.href = button.dataset.downloadUrl + "?dl_token=" + data.token;
+                        } else {
+                            alert("شناسایی ربات یا امتیاز پایین reCAPTCHA.");
+                        }
+                    })
+                    .catch(err => {
+                        console.error("reCAPTCHA validation error:", err);
+                        alert("خطا در بررسی reCAPTCHA");
+                    });
+                });
+            });
+        });
+    });
+});
+</script>
+{% endif %}
 
                 <!-- PAGINATION -->
                 {% if page_obj.paginator.num_pages > 1 %}

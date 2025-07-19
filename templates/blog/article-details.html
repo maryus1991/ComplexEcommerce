@@ -4,7 +4,7 @@
 {% load to_webp %}
 
 {% block title %}
-    لیست مقالات
+    {{ post.title }}
 {% endblock %}
 
 {% block breadcrumb %}
@@ -32,13 +32,28 @@
                 <div class="w-full flex flex-col gap-y-6 ">
                     <div class="flex flex-col lg:flex-row gap-y-3 lg:items-center lg:justify-between">
                         <h2 class="font-MorabbaMedium text-lg lg:text-2xl">{{ post.title }}</h2>
-                        <span class="flex items-center gap-x-1 text-green-500 cursor-pointer">
-                            <svg class="w-4 h-4">
-                                <use href="#share"></use>
-                            </svg>
-                            <p class="font-DanaMedium">اشتراک گذاری</p>
-                        </span>
+                        <span id="share-button" class="flex items-center gap-x-1 text-green-500 cursor-pointer">
+    <p class="font-DanaMedium">اشتراک گذاری</p>
+
+</span>
                     </div>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const shareButton = document.getElementById("share-button");
+
+                            shareButton.addEventListener("click", function () {
+                                const url = window.location.href;
+
+                                // استفاده از Clipboard API
+                                navigator.clipboard.writeText(url).then(function () {
+                                    alert("لینک صفحه کپی شد ✅");
+                                }, function (err) {
+                                    console.error("خطا در کپی کردن لینک:", err);
+                                    alert("خطایی در کپی کردن لینک رخ داد.");
+                                });
+                            });
+                        });
+                    </script>
                     <div class="flex flex-wrap  items-center gap-y-3 gap-x-8 text-sm">
                         <span class="flex items-center gap-x-1 text-gray-400 ">
                             <svg class="w-4 h-4">
@@ -85,15 +100,16 @@
                     <ul class="w-full child:flex child:items-center child:gap-x-2 child:cursor-pointer space-y-4 ">
                         {% for last_post in last_posts %}
                             <li>
-                                                                                                                    <picture>
-                <source srcset="{{ last_post.image.url|to_webp }}"
-                        class="w-24 h-16 object-cover rounded-lg"
-                        type="image/webp">
-                <img src="{{ last_post.image.url }}" alt="{{ last_post.title }}"
-                     class="w-24 h-16 object-cover rounded-lg"
-                     loading="lazy">
-            </picture>
-
+                                <a href="{% url 'blog:detail' last_post.id %}">
+                                    <picture>
+                                        <source srcset="{{ last_post.image.url|to_webp }}"
+                                                class="w-24 h-16 object-cover rounded-lg"
+                                                type="image/webp">
+                                        <img src="{{ last_post.image.url }}" alt="{{ last_post.title }}"
+                                             class="w-24 h-16 object-cover rounded-lg"
+                                             loading="lazy">
+                                    </picture>
+                                </a>
                                 <a href="{% url 'blog:detail' last_post.id %}" class="flex flex-col gap-y-2 ">
                                     <p class="line-clamp-1">{{ last_post.title }}</p>
                                     <span class="flex items-center gap-x-1 text-sm text-gray-400">
@@ -120,7 +136,7 @@
 
 
                             <li class="group">
-                                <a href="{% url 'blog:list' %}"
+                                <a href="{% url 'blog:list' %}?category={{ category.id }}"
                                    class="flex items-center justify-center gap-x-1 group-hover:pr-2 duration-300 transition-all group-hover:text-green-500">
                                     <p>{{ category.name }}</p>
                                     <svg class="w-4 h-4">

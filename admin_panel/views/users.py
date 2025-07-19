@@ -51,7 +51,7 @@ class UsersNewsLetters(AdminUserMixin, View):
 
                 contact = Newsletter.objects.get(id=int(contact_id))
                 phone_number = str(contact).replace(' ', '')
-                send_message(phone_number, content)
+                send_message.delay(phone_number, content)
 
             messages.success(request, f"پیام با موفقیت به {len(selected_contacts)} مخاطب ارسال شد")
         except Newsletter.DoesNotExist:

@@ -628,6 +628,8 @@ class SiteSettingModelForm(forms.ModelForm):
             "active_brands_in_main_page": forms.CheckboxInput(),
             "active_blog_categories_in_main_page": forms.CheckboxInput(),
             "active_fast_links_in_footer_page": forms.CheckboxInput(),
+            "active_google_reCAPTCHA": forms.CheckboxInput(),
+            "force_users_to_login_for_download_apps": forms.CheckboxInput(),
         }
 
 

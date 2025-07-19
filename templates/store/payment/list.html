@@ -46,119 +46,119 @@
                 <tbody>
                 {% for order in items %}
                     {% if order.order %}
-                    {% with order.order as item %}
+                        {% with order.order as item %}
 
-                        <tr>
-                            <td class="text-center">{{ item.id }}</td>
-                            <td class="text-center">                            {% if order.is_returned_by_admin %}
-                                <span class="label label-success">تصفیه شده</span>
-                            {% else %}
-                                <span class="label label-danger">تصفیه نشده</span>
-                            {% endif %}
-                            </td>
-
-                            <td class="text-center">{{ order.paid_by_admin_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
-                            <td class="text-center">{{ item.store.name }}</td>
-                            <td class="text-center" dir="ltr">{{ item.user.PhoneNumber }}</td>
-                            <td class="text-center">
-                                {% if item.official_invoice %}
-                                    <span class="label label-success">فاکتور رسمی</span>
+                            <tr>
+                                <td class="text-center">{{ item.id }}</td>
+                                <td class="text-center">                            {% if order.is_returned_by_admin %}
+                                    <span class="label label-success">تصفیه شده</span>
                                 {% else %}
-                                    <span class="label label-default">فاکتور عادی</span>
+                                    <span class="label label-danger">تصفیه نشده</span>
                                 {% endif %}
-                            </td>
-                            <td class="text-center">
-                                {% if item.is_paid %}
-                                    <span class="label label-success">پرداخت شده</span>
-                                {% elif item.canceled %}
-                                    <span class="label label-danger">کنسل شده</span>
+                                </td>
+
+                                <td class="text-center">{{ order.paid_by_admin_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                                <td class="text-center">{{ item.store.name }}</td>
+                                <td class="text-center" dir="ltr">{{ item.user.PhoneNumber }}</td>
+                                <td class="text-center">
+                                    {% if item.official_invoice %}
+                                        <span class="label label-success">فاکتور رسمی</span>
+                                    {% else %}
+                                        <span class="label label-default">فاکتور عادی</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if item.is_paid %}
+                                        <span class="label label-success">پرداخت شده</span>
+                                    {% elif item.canceled %}
+                                        <span class="label label-danger">کنسل شده</span>
+                                    {% else %}
+                                        <span class="label label-default">باز</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{ order.get_payment_price|tdc }}</td>
+                                <td class="text-center">
+                                    {% if item.sending %}
+                                        <span class="label label-warning"> درحال ارسال </span>
+                                    {% elif item.delivered_to_user %}
+                                        <span class="label label-success">تحویل شده</span>
+                                    {% else %}
+                                        <span class="label label-danger">ارسال نشده</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if item.vip_post %}
+                                        <span class="label label-success">ارسال با پست</span>
+                                    {% elif item.tipax_post_delivery %}
+                                        <span class="label label-success">ارسال با تیپاکس</span>
+                                    {% elif item.in_city_delivery %}
+                                        <span class="label label-success">ارسال درون شهری</span>
+                                    {% elif item.physical_delivery %}
+                                        <span class="label label-success">تحویل حضوری</span>
+
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{ item.second_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                                <td class="text-center">
+                                    <a href="{% url 'store:orders-detail' item.id %}"
+                                       class="btn btn-sm btn-success"
+                                       data-toggle="tooltip"
+                                       title="مشاهده جزییات">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </td>
+
+                            </tr>
+                        {% endwith %}
+
+                    {% elif order.specifics_order %}
+                        {% with order.specifics_order as item %}
+
+                            <tr>
+                                <td class="text-center">{{ item.id }}</td>
+                                <td class="text-center">                            {% if order.is_returned_by_admin %}
+                                    <span class="label label-success">تصفیه شده</span>
                                 {% else %}
-                                    <span class="label label-default">باز</span>
+                                    <span class="label label-danger">تصفیه نشده</span>
                                 {% endif %}
-                            </td>
-                            <td class="text-center">{{ order.price|tdc }}</td>
-                            <td class="text-center">
-                                {% if item.sending %}
-                                    <span class="label label-warning"> درحال ارسال </span>
-                                {% elif item.delivered_to_user %}
-                                    <span class="label label-success">تحویل شده</span>
-                                {% else %}
-                                    <span class="label label-danger">ارسال نشده</span>
-                                {% endif %}
-                            </td>
-                            <td class="text-center">
-                                {% if item.vip_post %}
-                                    <span class="label label-success">ارسال با پست</span>
-                                {% elif item.tipax_post_delivery %}
-                                    <span class="label label-success">ارسال با تیپاکس</span>
-                                {% elif item.in_city_delivery %}
-                                    <span class="label label-success">ارسال درون شهری</span>
-                                {% elif item.physical_delivery %}
-                                    <span class="label label-success">تحویل حضوری</span>
+                                </td>
 
-                                {% endif %}
-                            </td>
-                            <td class="text-center">{{ item.second_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
-                            <td class="text-center">
-                                <a href="{% url 'store:orders-detail' item.id %}"
-                                   class="btn btn-sm btn-success"
-                                   data-toggle="tooltip"
-                                   title="مشاهده جزییات">
-                                    <i class="fa fa-eye"></i>
-                                </a>
-                            </td>
-
-                        </tr>
-                    {% endwith %}
-
-                        {% elif order.specifics_order %}
-                    {% with order.specifics_order as item %}
-
-                        <tr>
-                            <td class="text-center">{{ item.id }}</td>
-                            <td class="text-center">                            {% if order.is_returned_by_admin %}
-                                <span class="label label-success">تصفیه شده</span>
-                            {% else %}
-                                <span class="label label-danger">تصفیه نشده</span>
-                            {% endif %}
-                            </td>
-
-                            <td class="text-center">{{ order.paid_by_admin_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
-                            <td class="text-center">{{ item.store.name }}</td>
-                            <td class="text-center" dir="ltr">{{ item.user.PhoneNumber }}</td>
-                            <td class="text-center">
+                                <td class="text-center">{{ order.paid_by_admin_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                                <td class="text-center">{{ item.store.name }}</td>
+                                <td class="text-center" dir="ltr">{{ item.user.PhoneNumber }}</td>
+                                <td class="text-center">
 
                                     <span class="label label-success">فاکتور خاص</span>
 
-                            </td>
-                            <td class="text-center">
-                                {% if item.is_paid %}
-                                    <span class="label label-success">پرداخت شده</span>
-                                {% elif item.canceled %}
-                                    <span class="label label-danger">کنسل شده</span>
-                                {% else %}
-                                    <span class="label label-default">باز</span>
-                                {% endif %}
-                            </td>
-                            <td class="text-center">{{ order.price|tdc }}</td>
-                            <td class="text-center">
-    فاکتور خاص
-                            </td>
-                            <td class="text-center">
-فاکتور خاص
-                            </td>
-                            <td class="text-center">{{ item.second_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
-                            <td class="text-center">
-                                <a href="{% url 'store:specifics-details' item.id %}"
-                                   class="btn btn-sm btn-success"
-                                   data-toggle="tooltip"
-                                   title="مشاهده جزییات">
-                                    <i class="fa fa-eye"></i>
-                                </a>
-                            </td>
+                                </td>
+                                <td class="text-center">
+                                    {% if item.is_paid %}
+                                        <span class="label label-success">پرداخت شده</span>
+                                    {% elif item.canceled %}
+                                        <span class="label label-danger">کنسل شده</span>
+                                    {% else %}
+                                        <span class="label label-default">باز</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{ order.price|tdc }}</td>
+                                <td class="text-center">
+                                    فاکتور خاص
+                                </td>
+                                <td class="text-center">
+                                    فاکتور خاص
+                                </td>
+                                <td class="text-center">{{ item.second_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                                <td class="text-center">
+                                    <a href="{% url 'store:specifics-details' item.id %}"
+                                       class="btn btn-sm btn-success"
+                                       data-toggle="tooltip"
+                                       title="مشاهده جزییات">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </td>
 
-                        </tr>
-                    {% endwith %}
+                            </tr>
+                        {% endwith %}
 
                     {% endif %}
 

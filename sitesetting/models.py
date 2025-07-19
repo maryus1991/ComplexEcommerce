@@ -13,7 +13,7 @@ class SiteSetting(models.Model):
     title = models.CharField(max_length=100, default="0", verbose_name="عنوان سایت")
     tax = models.FloatField(default=1, verbose_name="مالیات زیر ساخت")
     min_payment = models.PositiveBigIntegerField(default=1000, verbose_name="حداقل مبلغ سبد خرید")
-    minute_for_clean_order_detail_product = models.PositiveBigIntegerField(default=15, verbose_name="مدت زمان (دقیقه) برای پاک کردن محصول از سبد خرید کاربر")
+    minute_for_clean_order_detail_product = models.PositiveBigIntegerField(default=15, verbose_name="(دقیقه)برای پاک کردن محصول از سبد خرید")
     copy_right_text = models.CharField(
         max_length=250, default="0", verbose_name="متن کپی رایت سایت"
     )
@@ -95,10 +95,16 @@ class SiteSetting(models.Model):
     active_most_read_posts_in_main_page = models.BooleanField(
         default=True, verbose_name="فعال کردن مطالب خواندنی در صفحه اصلی"
     )
+    active_google_reCAPTCHA = models.BooleanField(
+        default=True, verbose_name="فعال کردن افزونه ضد ربات گوگل google reCAPTCHA v3"
+    )
 
     # user login setting
     force_user_to_verify_with_message = models.BooleanField(
         default=True, verbose_name="اجبار کاربران برای تایید حساب با ارسال پیامک"
+    )
+    force_users_to_login_for_download_apps = models.BooleanField(
+        default=True,verbose_name='اجبار کاربران برای ورود به سایت جهت دانلود برنامه ها'
     )
     store_users_staff_logins = models.BooleanField(
         default=True, verbose_name="ورود کارمندان فروشگاها"
@@ -144,6 +150,7 @@ class FastLinks(models.Model):
     )
 
     is_active = models.BooleanField(default=True, verbose_name="فعال یا غیر فعال")
+    sort_number = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title

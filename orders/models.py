@@ -30,6 +30,7 @@ class DeliveryPrices(models.Model):
     origin_city_id = models.PositiveIntegerField()
     destination_city_id = models.PositiveIntegerField()
     date = models.DateField()
+    weight = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f'{self.origin_city_id}-{self.destination_city_id}-{self.price}-{"tipax" if self.is_tipax else "post"} '
@@ -76,6 +77,7 @@ class Order(models.Model):
     )
 
     total_price = models.PositiveBigIntegerField(default=0)
+    total_payment_price = models.PositiveBigIntegerField(default=0)
     total_weight = models.PositiveBigIntegerField(default=0)
     total_length = models.PositiveBigIntegerField(default=0)
     total_width = models.PositiveBigIntegerField(default=0)
@@ -94,33 +96,37 @@ class Order(models.Model):
     additional_descriptions = models.TextField(null=True, blank=True)
 
     def calculate_tipax_price(self):
-        price = DeliveryPrices.objects.filter(
+        weight = self.get_total_weight()
+
+        price_qs = DeliveryPrices.objects.filter(
             is_tipax=True,
             origin_city_id=self.store.orgin_city_id,
             destination_city_id=self.address.city_code,
             date__range=[now() - timedelta(days=3), now()],
-        )
-        if price.exists() and price.count() == 1:
-            return price.first().price
-        else:
-            price = calculate_price_tipax(self)
-            if price is not None:
-                DeliveryPrices.objects.create(
-                    is_tipax=True,
-                    origin_city_id=self.store.orgin_city_id,
-                    destination_city_id=self.address.city_code,
-                    date=now(),
-                    price=price,
-                )
-                return price
-            else:
-                return -1
+            weight=weight,
+        ).order_by("-date")
+
+        if price_qs.exists():
+            return price_qs.first().price
+
+        calculated_price = calculate_price_tipax(self)
+        if calculated_price is not None:
+            DeliveryPrices.objects.create(
+                is_tipax=True,
+                origin_city_id=self.store.orgin_city_id,
+                destination_city_id=self.address.city_code,
+                date=now(),
+                price=calculated_price,
+                weight=weight,
+            )
+            return calculated_price
+
+        return -1
 
     def calculate_post_price(self):
         tipax_price = self.calculate_tipax_price()
         site = SiteSetting.objects.first().difference_between_post_and_tipax_price
         return tipax_price - (tipax_price * (int(site) / 100) )
-
 
 
     def calculate_total_price(self):
@@ -158,7 +164,7 @@ class Order(models.Model):
 
             self.total_weight = total_weight
             self.save()
-            return self.total_weight
+            return total_weight
         else:
             return self.total_weight
 
@@ -172,7 +178,7 @@ class Order(models.Model):
 
             self.total_length = total_length
             self.save()
-            return self.total_length
+            return total_length
         else:
             return self.total_length
 
@@ -186,7 +192,7 @@ class Order(models.Model):
 
             self.total_width = total_width
             self.save()
-            return self.total_width
+            return total_width
         else:
             return self.total_width
 
@@ -200,7 +206,7 @@ class Order(models.Model):
 
             self.total_height = total_height
             self.save()
-            return self.total_height
+            return total_height
         else:
             return self.total_height
 
@@ -216,7 +222,7 @@ class Order(models.Model):
         item_discount_amount = self.get_items_discount_amount()
         result_amount = item_discount_amount
 
-        if self.use_discount_code:
+        if self.use_discount_code and self.discount:
             result_amount += self.discount_code_price
 
         return result_amount
@@ -254,16 +260,16 @@ class Order(models.Model):
             # site
             total_payment_price += total_amount_of_items * (site.tax / 100)
 
-            self.total_price = total_payment_price
+            self.total_payment_price = total_payment_price
             self.save()
             return total_payment_price
         else:
 
-            return self.total_price
+            return self.total_payment_price
 
     def check_count_of_products(self):
         return all(
-            item.count <= item.product.count
+            item.product.count >= 0
             for item in self.details.select_related("product")
         )
 
@@ -281,6 +287,8 @@ class OrderDetail(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="orders"
     )
+    product_price = models.PositiveBigIntegerField(default=0)
+    product_price_without_discount = models.PositiveBigIntegerField(default=0)
 
     date = models.DateTimeField(auto_now_add=True)
     price = models.PositiveBigIntegerField(default=0)
@@ -288,6 +296,37 @@ class OrderDetail(models.Model):
     added_date = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
+    def get_price(self):
+        if not self.order.is_paid and not self.order.canceled:
+            self.product_price = self.product.calc_discount()
+            self.save()
+            return self.product.calc_discount()
+        else:
+            return self.product_price
+
+    def get_price_without_discount(self):
+        if not self.order.is_paid and not self.order.canceled:
+            self.product_price_without_discount = self.product.price
+            self.save()
+            return self.product.price
+        else:
+            return self.product_price_without_discount
+
+    def decrease_product_stock_by_order(self):
+        if not self.order.is_paid and not self.order.canceled:
+            if self.product.count >= self.count:
+                self.product.count -= self.count
+                self.product.save()
+                return True
+        return False
+
+    def increase_product_stock_by_order(self):
+        if not self.order.is_paid and not self.order.canceled:
+            self.product.count += self.count
+            self.product.save()
+            return True
+
+        return False
 
     def get_item_price(self):
         if not self.order.is_paid and not self.order.canceled:
@@ -295,20 +334,21 @@ class OrderDetail(models.Model):
             price = product * self.count
 
             self.price = price
+            self.product_price = product
             self.save()
             return price
         else:
             return self.price
 
     def get_item_price_without_discount(self):
-        product = self.product.price
+        product = self.get_price()
         price = product * self.count
 
         return price
 
     def get_item_discount(self):
-        product_discount = self.product.calc_discount() * self.count
-        product_real_price = self.product.price * self.count
+        product_discount = self.get_price() * self.count
+        product_real_price = self.get_price_without_discount() * self.count
 
         return product_real_price - product_discount
 
@@ -321,12 +361,12 @@ class Discount(models.Model):
     product = models.ManyToManyField(Product, related_name="discounts", blank=True)
     store = models.ManyToManyField(Store, blank=True, related_name="discounts")
     order = models.ManyToManyField(Order, related_name="discounts", blank=True)
-    min_price = models.PositiveBigIntegerField(null=True, blank=True)
+    min_price = models.PositiveBigIntegerField(default=0)
     end_date_discount = models.DateTimeField(null=True, blank=True)
     count = models.PositiveBigIntegerField(default=0)
     percentage_discount = models.BooleanField(default=False)
-    percent = models.PositiveBigIntegerField(null=True, blank=True)
-    price = models.PositiveBigIntegerField(null=True, blank=True)
+    percent = models.PositiveBigIntegerField(default=0)
+    price = models.PositiveBigIntegerField(default=0)
     name = models.CharField(
         max_length=100, null=True, blank=True, unique=True, db_index=True
     )

@@ -376,7 +376,7 @@
                                         {{ item.date|to_jalali:'%Y/%m/%d' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-DanaDemiBold text-gray-900 dark:text-white">
-                                        {{ item.product.price|tdc }} <span class="text-xs font-DanaLight">تومان</span>
+                                        {{ item.get_price|tdc }} <span class="text-xs font-DanaLight">تومان</span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap border-0">
                                         <form action="{% url 'orders:add' item.product.id %}" method="GET"

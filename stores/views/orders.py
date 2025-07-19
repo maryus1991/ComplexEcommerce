@@ -22,6 +22,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
 from django.core.files.uploadedfile import UploadedFile
 from orders.models import Order, StoreSoldOrders, SpecificsOrders, ReturnsOrders
+from product.models import Product
 from stores.models import Store
 from django.utils.dateparse import parse_date
 from stores.forms import OrderFilteringForm
@@ -148,6 +149,13 @@ class ReturnOrderClose(UserStoreStaffMixin, RedirectView):
         obj.accept_by_store = True
         obj.date_close_request = now()
         obj.save()
+
+        for item in obj.order.details.all():
+            product = item.product
+            count = item.count
+
+            product.count += count
+            product.save()
 
         return reverse('store:return-order-list')
 
