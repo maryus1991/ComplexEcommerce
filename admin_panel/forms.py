@@ -160,7 +160,7 @@ class MessagingUserForm(forms.Form):
     )
 
 class ExcludeUserFromMessagingForm(forms.Form):
-    user = forms.ModelMultipleChoiceField(
+    exclude_user = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),
         required=False,
         widget=forms.SelectMultiple(
@@ -174,40 +174,40 @@ class ExcludeUserFromMessagingForm(forms.Form):
         )
     )
 
-    is_verified = forms.BooleanField(
+    exclude_is_verified = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput()
     )
-    is_store_admin = forms.BooleanField(
+    exclude_is_store_admin = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput()
     )
-    message_verified = forms.BooleanField(
+    exclude_message_verified = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput()
     )
-    not_message_verified = forms.BooleanField(
+    exclude_not_message_verified = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput()
     )
-    legal_person = forms.BooleanField(
+    exclude_legal_person = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput()
     )
-    is_staff = forms.BooleanField(
+    exclude_is_staff = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput()
     )
-    is_superuser = forms.BooleanField(
+    exclude_is_superuser = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput()
     )
-    is_active = forms.BooleanField(
+    exclude_is_active = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput()
     )
 
-    store = forms.ModelMultipleChoiceField(
+    exclude_store = forms.ModelMultipleChoiceField(
         queryset=Store.objects.all(),
         required=False,
         widget=forms.SelectMultiple(
@@ -221,11 +221,11 @@ class ExcludeUserFromMessagingForm(forms.Form):
             }
         )
     )
-    store_is_active = forms.BooleanField(
+    exclude_store_is_active = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput()
     )
-    store_is_verified = forms.BooleanField(
+    exclude_store_is_verified = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput()
     )

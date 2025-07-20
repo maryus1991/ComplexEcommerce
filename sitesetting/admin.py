@@ -9,6 +9,7 @@ from .models import (
     ContactUs,
     Slider,
     Banners,
+SendMessageHistory
 )
 
 admin.site.register(SiteSetting)
@@ -17,6 +18,7 @@ admin.site.register(ContactUs)
 admin.site.register(FastLinks)
 admin.site.register(Slider)
 admin.site.register(Banners)
+admin.site.register(SendMessageHistory)
 
 
 auditlog.register(SiteSetting)
@@ -26,3 +28,4 @@ auditlog.register(QuestionAndAnswer)
 auditlog.register(ContactUs)
 auditlog.register(Slider)
 auditlog.register(Banners)
+auditlog.register(SendMessageHistory)

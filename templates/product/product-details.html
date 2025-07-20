@@ -266,14 +266,14 @@
                             <div class="swiper-slide">
                                 <picture>
                                     {% if product.picture %}
-                                    	
-                                    <source srcset="{{ product.picture.url|to_webp }}"
-                                            class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
-                                            type="image/webp">
-                                    <img src="{{ product.picture.url }}" alt="{{ product.name }}"
-                                         class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
-                                         loading="lazy">
-                                    {% endif %} 
+
+                                        <source srcset="{{ product.picture.url|to_webp }}"
+                                                class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
+                                                type="image/webp">
+                                        <img src="{{ product.picture.url }}" alt="{{ product.name }}"
+                                             class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
+                                             loading="lazy">
+                                    {% endif %}
                                 </picture>
 
                             </div>
@@ -489,7 +489,8 @@
                         <svg onclick="handle_input('+')" class="w-6 h-6 shrink-0 text-green-600">
                             <use href="#plus"></use>
                         </svg>
-                        <input type="number" name="count" id="customInput" min="0" value="{{ user_order_detail.count|default:1 }}"
+                        <input type="number" name="count" id="customInput" min="0"
+                               value="{{ user_order_detail.count|default:1 }}"
                                class="custom-input mx-4 w-10 text-lg bg-transparent text-center flex-1">
                         <svg onclick="handle_input('-')" class="w-6 h-6 shrink-0  text-red-500">
                             <use href="#minus"></use>
@@ -570,6 +571,10 @@
                 </p>
             {% endif %}
         </div>
+    
+    
+    
+
     </section>
 
     <!-- COMMENTS -->
@@ -750,14 +755,14 @@
                         <a href="{% url 'product:detail' product.id %}">
                             <picture>
                                 {% if product.picture %}
-                                	
-                                <source srcset="{{ product.picture.url|to_webp }}"
-                                        class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
-                                        type="image/webp">
-                                <img src="{{ product.picture.url }}" alt="{{ product.name }}"
-                                     class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
-                                     loading="lazy">
-                                {% endif %} 
+
+                                    <source srcset="{{ product.picture.url|to_webp }}"
+                                            class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
+                                            type="image/webp">
+                                    <img src="{{ product.picture.url }}" alt="{{ product.name }}"
+                                         class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
+                                         loading="lazy">
+                                {% endif %}
                             </picture>
 
                         </a>
@@ -816,4 +821,7 @@
             </div>
             <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
     </section>
+
+
+
 {% endblock %}

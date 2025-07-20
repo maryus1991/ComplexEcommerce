@@ -128,9 +128,8 @@
                 نمایش {{ page_obj.start_index }} تا {{ page_obj.end_index }} از {{ page_obj.paginator.count }}
             </span>
             </div>
-            <br>
-            <br>
-            <ul class="pagination pagination-sm no-margin">
+
+            <ul class="pagination pull-left pagination-sm no-margin">
                 {% if page_obj.has_previous %}
                     <li>
                         <a href="?page=

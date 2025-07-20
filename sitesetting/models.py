@@ -167,7 +167,7 @@ class SendMessageHistory(models.Model):
     phone_numbers = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     message = models.TextField()
-    not_news_level = models.BooleanField(default=False)
+    news_letter = models.BooleanField(default=True)
 
 
 class QuestionAndAnswer(models.Model):

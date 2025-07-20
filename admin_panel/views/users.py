@@ -33,7 +33,9 @@ class NumberNewsLetterDelete(AdminUserMixin, RedirectView):
 class ListSendMessageHistory(AdminUserMixin, ListView):
     model = SendMessageHistory
     context_object_name = 'items'
-    template_name = ''
+    template_name = 'admin_panel/users/messaging_history.html'
+    ordering = '-id'
+    paginate_by = 100
 
 
 class UsersNewsLetters(AdminUserMixin, View):
@@ -69,10 +71,13 @@ class UsersNewsLetters(AdminUserMixin, View):
                 if not contact_id.isdigit():
                     continue
 
-                contact = Newsletter.objects.get(id=int(contact_id))
-                phone_number = str(contact).replace(' ', '')
-                numbers.append(phone_number)
-                send_message.delay(phone_number, content)
+                try:
+                    contact = Newsletter.objects.get(id=int(contact_id))
+                    phone_number = str(contact).replace(' ', '')
+                    numbers.append(phone_number)
+                    send_message.delay(phone_number, content)
+                except Exception as e:
+                    pass
 
             messages.success(request, f"پیام با موفقیت به {len(selected_contacts)} مخاطب ارسال شد")
             SendMessageHistory.objects.create(
@@ -98,72 +103,96 @@ class UserSendManyMessage(AdminUserMixin, View):
 
     def post(self, request):
         form = MessagingUserForm(request.POST)
+        exclude_form = ExcludeUserFromMessagingForm(request.POST)
 
-        if form.is_valid():
-            user = form.cleaned_data.get('user')
-            is_verified = form.cleaned_data.get('is_verified')
-            is_store_admin = form.cleaned_data.get('is_store_admin')
-            message_verified = form.cleaned_data.get('message_verified')
-            legal_person = form.cleaned_data.get('legal_person')
-            is_staff = form.cleaned_data.get('is_staff')
-            is_superuser = form.cleaned_data.get('is_superuser')
-            is_active = form.cleaned_data.get('is_active')
-            store = form.cleaned_data.get('store')
-            store_is_active = form.cleaned_data.get('store_is_active')
-            store_is_verified = form.cleaned_data.get('store_is_verified')
-            not_message_verified = form.cleaned_data.get('not_message_verified')
-            content = form.cleaned_data.get('content')
+        if not form.is_valid():
+            messages.error(request, 'فرم اصلی معتبر نیست')
+            return redirect(request.META.get('HTTP_REFERER', '/'))
 
-            if user.exists():
-                user_object = user
-            else:
-                user_object = User.objects
+        cleaned_data = form.cleaned_data
+        user_field = cleaned_data.get('user')
+        content = cleaned_data.get('content')
 
-            if store.exists():
-                user_object = user_object.filter(store__isnull=False, store__in=store.all())
+        # 1. ابتدا: پایه کاربران
+        if user_field:
+            user_object = user_field.all()
+        else:
+            user_object = User.objects.all()
 
-            if is_verified:
-                user_object = user_object.filter(is_verified=True)
+        # 2. فیلترهای فرم اصلی
+        filter_mapping = {
+            'is_verified': True,
+            'is_store_admin': True,
+            'message_verified': True,
+            'not_message_verified': False,
+            'legal_person': True,
+            'is_staff': True,
+            'is_superuser': True,
+            'is_active': True,
+        }
 
-            if is_store_admin:
-                user_object = user_object.filter(is_store_admin=True)
+        for field, value in filter_mapping.items():
+            if cleaned_data.get(field):
+                field_name = field.replace('not_', '')
+                user_object = user_object.filter(**{field_name: value})
 
-            if not_message_verified:
-                user_object = user_object.filter(message_verified=False)
+        # فیلتر فروشگاه
+        if cleaned_data.get('store'):
+            user_object = user_object.filter(store__in=cleaned_data['store'].all())
+        if cleaned_data.get('store_is_active'):
+            user_object = user_object.filter(store__is_active=True)
+        if cleaned_data.get('store_is_verified'):
+            user_object = user_object.filter(store__is_verified=True)
 
-            if message_verified:
-                user_object = user_object.filter(message_verified=True)
+        # 3. اعمال فرم استثناها اگر معتبر بود
+        if exclude_form.is_valid():
+            exclude_data = exclude_form.cleaned_data
 
-            if legal_person:
-                user_object = user_object.filter(legal_person=True)
+            if exclude_data.get('exclude_user'):
+                user_object = user_object.exclude(pk__in=exclude_data['exclude_user'].values_list('pk', flat=True))
 
-            if is_staff:
-                user_object = user_object.filter(is_staff=True)
+            exclude_fields = {
+                'exclude_is_verified': 'is_verified',
+                'exclude_is_store_admin': 'is_store_admin',
+                'exclude_message_verified': 'message_verified',
+                'exclude_not_message_verified': 'message_verified',
+                'exclude_legal_person': 'legal_person',
+                'exclude_is_staff': 'is_staff',
+                'exclude_is_superuser': 'is_superuser',
+                'exclude_is_active': 'is_active',
+            }
 
-            if is_superuser:
-                user_object = user_object.filter(is_superuser=True)
+            for field, model_field in exclude_fields.items():
+                if exclude_data.get(field):
+                    user_object = user_object.exclude(**{
+                        model_field: not field.startswith('exclude_not_')  # if not_, then exclude False
+                    })
 
-            if is_active:
-                user_object = user_object.filter(is_active=True)
+            if exclude_data.get('exclude_store'):
+                user_object = user_object.exclude(store__in=exclude_data['exclude_store'].all())
 
-            if store_is_active:
-                user_object = user_object.filter(store__isnull=False ,store__is_active=True)
+            if exclude_data.get('exclude_store_is_active'):
+                user_object = user_object.exclude(store__is_active=True)
+            if exclude_data.get('exclude_store_is_verified'):
+                user_object = user_object.exclude(store__is_verified=True)
 
-            if store_is_verified:
-                user_object = user_object.filter(store__isnull=False ,store__is_verified=True)
+        # 4. ارسال پیام
+        if not user_object.exists():
+            messages.warning(request, 'هیچ کاربری برای ارسال پیام پیدا نشد.')
+            return redirect(request.META.get('HTTP_REFERER', '/'))
 
-            for user in user_object:
-                send_message.delay(
-                    str(user.PhoneNumber).replace(" ", ""),
-                    content
-                )
+        user_list = []
+        for user in user_object:
+            user_list.append(str(user.PhoneNumber).replace(" ", ""))
+            send_message.delay(str(user.PhoneNumber).replace(" ", ""), content)
 
-            messages.success(
-                request,
-                'پیام شما ارسال شد'
-            )
-
-            return redirect(request.META.get('HTTP_REFERER'))
+        messages.success(request, 'پیام شما با موفقیت ارسال شد')
+        SendMessageHistory.objects.create(
+            phone_numbers=''.join(str(item) + ' , ' for item in user_list),
+            message=str(content),
+            news_letter=False,
+        )
+        return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 class AdminLoginToOtherUsersAccounts(AdminUserMixin, RedirectView):

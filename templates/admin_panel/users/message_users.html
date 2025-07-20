@@ -10,168 +10,302 @@
 {% endblock %}
 
 {% block body %}
-<div class="panel panel-primary" style="margin-top:40px">
-    <div class="panel-heading">
-        <h3 class="panel-title">ارسال پیام خدماتی انبوه</h3>
+    <div class="panel panel-primary" style="margin-top:40px">
+        <div class="panel-heading">
+            <h3 class="panel-title">ارسال پیام خدماتی انبوه</h3>
+        </div>
+
+        <form role="form" method='POST' action='' class="panel-body" enctype='multipart/form-data'>
+            {% csrf_token %}
+
+            <!-- First Row -->
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">حساب های تایید شده:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ form.is_verified }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">مدیران فروشگاها:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ form.is_store_admin }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">کاربران تایید شده با پیامک:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ form.message_verified }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">کاربران با حساب رسمی:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ form.legal_person }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Row -->
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">کارمندان فروشگاه:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ form.is_staff }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">مدیران سایت:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ form.is_superuser }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">کاربران فعال:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ form.is_active }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">انتخاب کاربران فروشگاه:</label>
+                        {{ form.store }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Third Row -->
+            <div class="row">
+                <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label class="control-label">کاربران:</label>
+                        {{ form.user }}
+                    </div>
+                </div>
+
+                <div class="col-md-2 col-sm-5">
+                    <div class="form-group">
+                        <label class="control-label">فروشگاهای فعال/غیرفعال:</label>
+
+                        <div class="checkbox">
+                            <label>
+                                {{ form.store_is_active }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-5">
+                    <div class="form-group">
+                        <label class="control-label">کاربران تایید نشده با پیامک :</label>
+
+                        <div class="checkbox">
+                            <label>
+                                {{ form.not_message_verified }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2 col-sm-5">
+                    <div class="form-group">
+                        <label class="control-label">فروشگاه تایید شده:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ form.store_is_verified }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">استثناء حساب های تایید شده:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ exclude_form.exclude_is_verified }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">استثناء مدیران فروشگاها:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ exclude_form.exclude_is_store_admin }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">استثناء کاربران تایید شده با پیامک:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ exclude_form.exclude_message_verified }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">استثناء کاربران با حساب رسمی:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ exclude_form.exclude_legal_person }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Row -->
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">استثناء کارمندان فروشگاه:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ exclude_form.exclude_is_staff }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">استثناء مدیران سایت:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ exclude_form.exclude_is_superuser }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label">استثناء کاربران فعال:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ exclude_form.exclude_is_active }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 col-sm-6">
+                    <div class="form-group">
+                        <label class="control-label"> استثناء انتخاب کاربران فروشگاه:</label>
+                        {{ exclude_form.exclude_store }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Third Row -->
+            <div class="row">
+                <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label class="control-label">استثناء کاربران:</label>
+                        {{ exclude_form.exclude_user }}
+                    </div>
+                </div>
+
+                <div class="col-md-2 col-sm-5">
+                    <div class="form-group">
+                        <label class="control-label">استثناء فروشگاهای فعال/غیرفعال:</label>
+
+                        <div class="checkbox">
+                            <label>
+                                {{ exclude_form.exclude_store_is_active }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-sm-5">
+                    <div class="form-group">
+                        <label class="control-label">استثناء کاربران تایید نشده با پیامک :</label>
+
+                        <div class="checkbox">
+                            <label>
+                                {{ exclude_form.exclude_not_message_verified }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2 col-sm-5">
+                    <div class="form-group">
+                        <label class="control-label">استثناء فروشگاه تایید شده:</label>
+                        <div class="checkbox">
+                            <label>
+                                {{ exclude_form.exclude_store_is_verified }} فعال / غیر فعال
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        <div class="row">
+                <div class="col-md-12 col-sm-12">
+
+                    <div class="form-group">
+                        {{ form.content }}
+
+                    </div>
+                </div>
+
+            </div>
+            {{ form.media }}
+
+            <!-- Submit Button -->
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fa fa-send"></i> ارسال پیام
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
-
-    <form role="form" method='POST' action='' class="panel-body" enctype='multipart/form-data'>
-        {% csrf_token %}
-
-        <!-- First Row -->
-        <div class="row">
-            <div class="col-md-3 col-sm-6">
-                <div class="form-group">
-                    <label class="control-label">حساب های تایید شده:</label>
-                    <div class="checkbox">
-                        <label>
-                            {{ form.is_verified }}  فعال / غیر فعال
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6">
-                <div class="form-group">
-                    <label class="control-label">مدیران فروشگاها:</label>
-                    <div class="checkbox">
-                        <label>
-                            {{ form.is_store_admin }}  فعال / غیر فعال
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6">
-                <div class="form-group">
-                    <label class="control-label">کاربران تایید شده با پیامک:</label>
-                    <div class="checkbox">
-                        <label>
-                            {{ form.message_verified }}  فعال / غیر فعال
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6">
-                <div class="form-group">
-                    <label class="control-label">کاربران با حساب رسمی:</label>
-                    <div class="checkbox">
-                        <label>
-                            {{ form.legal_person }}  فعال / غیر فعال
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Second Row -->
-        <div class="row">
-            <div class="col-md-3 col-sm-6">
-                <div class="form-group">
-                    <label class="control-label">کارمندان فروشگاه:</label>
-                    <div class="checkbox">
-                        <label>
-                            {{ form.is_staff }}  فعال / غیر فعال
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6">
-                <div class="form-group">
-                    <label class="control-label">مدیران سایت:</label>
-                    <div class="checkbox">
-                        <label>
-                            {{ form.is_superuser }}  فعال / غیر فعال
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6">
-                <div class="form-group">
-                    <label class="control-label">کاربران فعال:</label>
-                    <div class="checkbox">
-                        <label>
-                            {{ form.is_active }}  فعال / غیر فعال
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6">
-                <div class="form-group">
-                    <label class="control-label">انتخاب کاربران فروشگاه:</label>
-                    {{ form.store }}
-                </div>
-            </div>
-        </div>
-
-        <!-- Third Row -->
-        <div class="row">
-            <div class="col-md-6 col-sm-12">
-                <div class="form-group">
-                    <label class="control-label">کاربران:</label>
-                    {{ form.user }}
-                </div>
-            </div>
-
-            <div class="col-md-2 col-sm-5">
-                <div class="form-group">
-                    <label class="control-label">فروشگاهای فعال/غیرفعال:</label>
-
-                    <div class="checkbox">
-                        <label>
-                            {{ form.store_is_active }}  فعال / غیر فعال
-                        </label>
-                    </div>
-                </div>
-            </div>            
-            <div class="col-md-2 col-sm-5">
-                <div class="form-group">
-                    <label class="control-label">کاربران تایید نشده با پیامک :</label>
-
-                    <div class="checkbox">
-                        <label>
-                            {{ form.not_message_verified }}  فعال / غیر فعال
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-2 col-sm-5">
-                <div class="form-group">
-                    <label class="control-label">فروشگاه تایید شده:</label>
-                    <div class="checkbox">
-                        <label>
-                            {{ form.store_is_verified }} فعال / غیر فعال
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 col-sm-12">
-
-            <div class="form-group">
-            {{ form.content }}
-
-            </div>
-            </div>
-
-        </div>
-
-        <!-- Submit Button -->
-        <div class="row">
-            <div class="col-md-12">
-                <button type="submit" class="btn btn-primary btn-block">
-                    <i class="fa fa-send"></i> ارسال پیام
-                </button>
-            </div>
-        </div>
-    </form>
-</div>
 {% endblock %}
 
 

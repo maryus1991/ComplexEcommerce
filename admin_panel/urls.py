@@ -278,6 +278,7 @@ urlpatterns = [
     ),
     # users
     path("users/", views.UserListView.as_view(), name="user-list"),
+    path("users/message-history/", views.ListSendMessageHistory.as_view(), name="user-list-message-history"),
     path("users/news-letters/", views.UsersNewsLetters.as_view(), name="user-news-letters"),
     path("users/news-letters/delete/<int:pk>", views.NumberNewsLetterDelete.as_view(), name="user-news-letters-delete"),
     path("users/send-messages", views.UserSendManyMessage.as_view(), name="user-send-message"),
