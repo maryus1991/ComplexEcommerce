@@ -71,6 +71,7 @@ from django.contrib.contenttypes.models import ContentType
 from user.mixins.logins import UserStoreStaffMixin, AdminUserMixin, StoreAdminUserStaff
 from dashboard.forms import TicketConversationForm
 import jdatetime
+from django.db.models import Count, Q
 
 from stores.validators import is_valid_message
 
@@ -295,33 +296,30 @@ class StoreBlogListCategories(UserStoreStaffMixin, ListView):
     model = BlogCategory
     template_name = "store/blog/category/list.html"
     context_object_name = "categories"
-    paginate_by = 25
+    paginate_by = 100
 
-    from django.db.models import Count, Q
 
     def get_queryset(self):
-        # دریافت کوئری‌ست پایه با prefetch_related برای بهینه‌سازی
+ 
         query = super().get_queryset().prefetch_related("blogs")
-
-        # دریافت پارامترهای فیلتر از request
+ 
         search = self.request.GET.get("search")
         status = self.request.GET.get("status")
         views = self.request.GET.get("views")
         posts = self.request.GET.get("posts")
 
-        # فیلتر بر اساس جستجو (نام یا توضیحات)
+ 
         if search:
             query = query.filter(name__icontains=search)
 
-        # فیلتر بر اساس وضعیت فعال/غیرفعال
+ 
         if status == "active":
             query = query.filter(is_active=True)
         elif status == "inactive":
             query = query.filter(is_active=False)
 
-        # فیلتر بر اساس تعداد پست‌ها
         if posts:
-            # ابتدا تعداد پست‌ها را annotate کنیم
+
             query = query.annotate(posts_count=Count("blogs"))
 
             if posts == "most_posts":
@@ -329,7 +327,7 @@ class StoreBlogListCategories(UserStoreStaffMixin, ListView):
             elif posts == "least_posts":
                 query = query.order_by("posts_count")
             elif posts.isdigit():
-                # فیلتر بر اساس تعداد دقیق پست‌ها
+
                 query = query.filter(posts_count=int(posts))
 
         return query.distinct()

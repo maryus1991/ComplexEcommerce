@@ -55,9 +55,35 @@ class AppsListView(AdminUserMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return super().get_queryset().prefetch_related(
+        obj = super().get_queryset().prefetch_related(
             'store', 'views'
         ).annotate(views_count=Count('views')).order_by('-id')
+
+        request = self.request
+
+        if request.method == "GET":
+            data = dict(request.GET.copy())
+            if "is_active" in data:
+                is_active = data["is_active"]
+                if "on" in is_active:
+                    obj = obj.filter(is_active=True)
+
+            if "not_active" in data:
+                is_active = data["not_active"]
+                if "on" in is_active:
+                    obj = obj.filter(is_active=False)
+
+            if "admin_verified" in data:
+                is_active = data["admin_verified"]
+                if "on" in is_active:
+                    obj = obj.filter(admin_verified=False)
+
+            if "search" in data:
+                search = data["search"][0]
+                if search != "" and search is not None:
+                    obj = obj.filter(name__icontains=search)
+
+        return obj    
 
 class AppsCreateView(AdminUserMixin, CreateView):
     """

@@ -130,6 +130,96 @@
 
 
 {% block body %}
+    <div class="well box box-primary" style="margin-top: 20px;">
+
+        <form method="get" class="form-horizontal">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form.user_number.label_tag }}
+                        {{ form.user_number }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form.start_date.label_tag }}
+                        <div class="input-group">
+                            {{ form.start_date }}
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form.end_date.label_tag }}
+                        <div class="input-group">
+                            {{ form.end_date }}
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form.category.label_tag }}
+                        {{ form.category }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="checkbox-inline">
+                            {{ form.is_active.label }}
+                        </label>
+                        {{ form.is_active }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="checkbox-inline">
+                            {{ form.admin_verified.label }}
+                        </label>
+                        {{ form.admin_verified }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form.ordering.label_tag }}
+                        {{ form.ordering }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form.title.label_tag }}
+                        {{ form.title }}
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                                        <div class="form-group">
+                        {{ form.store.label_tag }}
+                        {{ form.store }}
+                    </div>
+
+                </div>
+                    <div class="col-md-6">
+                                    
+                    <div class="form-group" style="margin-top: 25px;">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fa fa-search"></i> جستجو
+                        </button>
+                    
+                </div>
+            </div>
+            {{ form.media }}
+        </form>
+    </div>
+
     <div class="panel box box-primary panel-default" style="margin-top: 20px;">
         <div class="panel-heading clearfix">
             <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست پست ها </h3>

@@ -45,7 +45,7 @@ class ReturnOrderList(UserStoreStaffMixin, ListView):
 
     def get_queryset(self):
 
-        queryset = super().get_queryset().filter(order__store=self.request.user.store).order_by('-id')
+        queryset = super().get_queryset().filter(order__store=self.request.user.store).prefetch_related('order', 'user').order_by('-id')
 
         if number:= self.request.GET.get('number'):
             number = str(number)
@@ -172,11 +172,9 @@ class StoreOrdersView(UserStoreStaffMixin, ListView):
     paginate_by = 25
 
     def get_queryset(self):
-        # دریافت کوئری‌ست پایه
-        query = super().get_queryset().filter(store=self.request.user.store).exclude(is_paid=False, canceled=False)
+        query = super().get_queryset().prefetch_related('address', 'user').filter(store=self.request.user.store).exclude(is_paid=False, canceled=False)
         query = query.order_by('canceled')
 
-        # ایجاد فرم فیلتر با داده‌های GET
         form = OrderFilteringForm(self.request.GET)
 
         if not form.is_valid():
@@ -663,7 +661,7 @@ class StoreSpecificsOrdersListView(UserStoreStaffMixin, ListView):
     """for listing the special orders"""
 
     model = SpecificsOrders
-    paginate_by = 25
+    paginate_by = 100
     template_name = "store/orders/specifics/list.html"
     context_object_name = "items"
 

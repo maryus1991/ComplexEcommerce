@@ -1,11 +1,12 @@
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.urls import reverse_lazy
 from django.views.generic import ListView, RedirectView, UpdateView, View, CreateView
 from django.contrib import messages
 from user.mixins.logins import AdminUserMixin
 from django.shortcuts import get_object_or_404, redirect, reverse, render
 from blog.models import Blog, BlogCategory
-from admin_panel.forms import AddBlogCategoryModelForm, AddBlogModelForm
+from admin_panel.forms import AddBlogCategoryModelForm, AddBlogModelForm, AdminBlogFilteringForm
+
 
 class BlogSetSortNumber(AdminUserMixin, RedirectView):
     """
@@ -52,6 +53,66 @@ class BlogListView(AdminUserMixin, ListView):
         return super().get_queryset().prefetch_related(
             'views', 'store' , 'category'
         ).annotate(views_count=Count('views')).order_by('-id')
+    
+    def get_queryset(self):
+        query = super().get_queryset().prefetch_related('views', 'store' , 'category'
+        ).annotate(views_count=Count('views')).order_by('-id')
+
+        form = AdminBlogFilteringForm(self.request.GET)
+
+        if not form.is_valid():
+            return query
+
+        data = form.cleaned_data
+
+        if store := data.get("store"):
+            query = query.filter(store=store)
+        if user_number := data.get("user_number"):
+            query = query.filter(user__PhoneNumber=user_number)
+        if start_date := data.get("start_date"):
+            query = query.filter(updated_at__gte=start_date, is_active=True)
+        if end_date := data.get("end_date"):
+            query = query.filter(updated_at__lte=end_date, is_active=True)
+        if category := data.get("category"):
+            query = query.filter(category=category)
+        if is_active := data.get("is_active"):
+            if is_active == "11":
+                query = query.filter(is_active=True)
+            elif is_active == "12":
+                query = query.filter(is_active=False)
+        if is_active := data.get("admin_verified"):
+            if is_active == "11":
+                query = query.filter(admin_verified=True)
+            elif is_active == "12":
+                query = query.filter(admin_verified=False)
+
+        if ordering := data.get("ordering"):
+            if ordering == "11":  # جدید ترین
+                query = query.order_by("-id")
+            elif ordering == "12":  # قدیمی ترین
+                query = query.order_by("id")
+            elif ordering == "21":  # بیشترین بازدید
+                query = query.annotate(view_count=Count("views")).order_by(
+                    "-view_count"
+                )
+            elif ordering == "22":  # کمترین بازید
+                query = query.annotate(view_count=Count("views")).order_by("view_count")        
+            elif ordering == "23":  # کمترین بازید
+                query = query.order_by("-sort_number")
+
+        if title := data.get("title"):
+            query = query.filter(
+                Q(title__icontains=title) | Q(content__icontains=title)
+            )
+
+        return query
+    
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data["form"] = AdminBlogFilteringForm()
+        return data
+    
 
 class BlogCreate(AdminUserMixin, CreateView):
     """for creating the post"""
@@ -190,13 +251,42 @@ class BlogCategoryListView(AdminUserMixin, ListView):
     context_object_name = "items"
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .prefetch_related("children")
-            .prefetch_related("parent")
-            .prefetch_related("blogs")
-        )
+ 
+        query = super().get_queryset().prefetch_related("children","parent","blogs")
+ 
+        search = self.request.GET.get("search")
+        status = self.request.GET.get("status")
+        views = self.request.GET.get("views")
+        posts = self.request.GET.get("posts")
+
+ 
+        if search:
+            query = query.filter(name__icontains=search)
+
+ 
+        if status == "active":
+            query = query.filter(is_active=True)
+        elif status == "inactive":
+            query = query.filter(is_active=False)
+
+
+        if posts:
+
+            query = query.annotate(posts_count=Count("blogs"))
+
+            if posts == "most_posts":
+                query = query.order_by("-posts_count")
+            elif posts == "least_posts":
+                query = query.order_by("posts_count")
+            elif status == "sort_number_ac":
+                query = query.order_by('-sort_number')
+            elif status == "sort_number_disac":
+                query = query.order_by('sort_number')
+            elif posts.isdigit():
+                query = query.filter(posts_count=int(posts))
+
+        return query.distinct()
+
 
 
 class BlogCategoryChangeSortNumber(AdminUserMixin, RedirectView):

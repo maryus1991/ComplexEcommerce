@@ -11,9 +11,6 @@
 {% block body %}
     <div class="row">
         <!-- فرم اضافه کردن برنامه -->
- 
-
-
         <!-- فرم جستجو -->
         <div class="col-md-12">
             <div class="box box-primary" style="margin-top: 20px;">
@@ -43,6 +40,7 @@
                                 غیرفعال شده توسط ادمین   :
                                 <input type="checkbox" name="admin_verified" id="id_is_active">
 
+
                             </span>
                             </div>
                         </div>
@@ -70,6 +68,7 @@
                     <table class="table table-hover table-bordered">
                         <thead>
                         <tr class="bg-light-blue">
+                            <th width="5%">#</th>
                             <th width="25%">نام برنامه</th>
                             <th width="5%">تعداد دانلود ها</th>
 
@@ -80,6 +79,7 @@
                         <tbody>
                         {% for item in items %}
                             <tr>
+                                <td>{{ item.id }}</td>
                                 <td>{{ item.name }}</td>
                                 <td><span class="badge bg-blue">{{ item.views_count }}</span></td>
 

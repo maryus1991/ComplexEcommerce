@@ -131,6 +131,440 @@
 
 
 {% block body %}
+<div class="row">
+    <div class="col-md-12" style="margin-top: 20px">
+        <div class="box box-primary collapsed-box">
+            <div class="box-header with-border panel-heading">
+                <h3 class="box-title text-center">فرم جستجوی پیشرفته سفارشات</h3>
+                <div class="pull-right box-tools">
+                    <button type="button" class="btn btn-info" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="box-body" style="display: none;">
+                <form method="get" class="form-horizontal">
+                    <div class="">
+                        <div class="panel-body">
+                            {% csrf_token %}
+
+                            <!-- ردیف اول -->
+                            <div class="row">
+                                <!-- شماره کاربر -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.store.label }}
+                                        </label>
+                                        {{ form.store }}
+                                    </div>
+                                </div>                                
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.product_search.label }}
+                                        </label>
+                                        {{ form.product_search }}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.product_features_search.label }}
+                                        </label>
+                                        {{ form.product_features_search }}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.product_tags_search.label }}
+                                        </label>
+                                        {{ form.product_tags_search }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.brands.label }}
+                                        </label>
+                                        {{ form.brands }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.category.label }}
+                                        </label>
+                                        {{ form.category }}
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <!-- شماره کاربر -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.discount.label }}
+                                        </label>
+                                        {{ form.discount }}
+                                    </div>
+                                </div>
+
+
+                                <!-- آدرس -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.address_search.label }}</label>
+                                        {{ form.address_search }}
+                                    </div>
+                                </div>
+
+
+                                <!-- کد پیگیری ارسال -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.user_phone_number.label }}</label>
+                                        {{ form.user_phone_number }}
+                                    </div>
+                                </div>
+
+
+                                <!-- شماره کارت -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.sending_id.label }}</label>
+                                        {{ form.sending_id }}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- ردیف دوم -->
+                            <div class="row">
+                                <!-- کد پیگیری پرداخت -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.cart.label }}</label>
+                                        {{ form.cart }}
+                                    </div>
+                                </div>
+
+
+                                <!-- کد تخفیف -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.payment_id.label }}</label>
+                                        {{ form.payment_id }}
+                                    </div>
+                                </div>
+
+
+                                <!-- وضعیت تخفیف -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.start_date.label }}</label>
+                                        {{ form.start_date }}
+                                    </div>
+                                </div>
+
+
+                                <!-- نحوه ارسال -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.end_date.label }}</label>
+                                        {{ form.end_date }}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- ردیف سوم -->
+                            <div class="row">
+                                <!-- وضعیت پرداخت -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.start_second_date.label }}</label>
+                                        {{ form.start_second_date }}
+                                    </div>
+                                </div>
+
+
+                                <!-- وضعیت کلی -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.end_second_date.label }}</label>
+                                        {{ form.end_second_date }}
+                                    </div>
+                                </div>
+
+
+                                <!-- وضعیت فاکتور -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.deliver_status.label }}</label>
+                                        {{ form.deliver_status }}
+                                    </div>
+                                </div>
+
+
+                                <!-- وضعیت فاکتور رسمی -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.payment_status.label }}</label>
+                                        {{ form.payment_status }}
+                                    </div>
+                                </div>
+
+                            </div>
+                            {{ form.media }}
+
+                            <!-- ردیف چهارم - تاریخ‌ها -->
+                            <div class="row">
+                                <!-- از تاریخ باز شدن سفارش -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.official_status.label }}</label>
+                                        {{ form.official_status }}
+                                    </div>
+                                </div>
+
+
+                                <!-- تا تاریخ باز شدن سفارش -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.invoice_status.label }}</label>
+                                        {{ form.invoice_status }}
+                                    </div>
+                                </div>
+
+
+                                <!-- از تاریخ پرداخت/کنسل -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.invoice_status_ready_pdf.label }}</label>
+                                        {{ form.invoice_status_ready_pdf }}
+                                    </div>
+                                </div>
+
+
+                                <!-- تا تاریخ پرداخت/کنسل -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.use_discount_code.label }}</label>
+                                        {{ form.use_discount_code }}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- ردیف پنجم - محدوده قیمت و وزن -->
+                            <div class="row">
+                                <!-- کمترین قیمت کل -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.min_total_price.label }}
+                                        </label>
+                                        {{ form.min_total_price }}
+                                    </div>
+                                </div>
+
+
+                                <!-- بیشترین قیمت کل -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>{{ form.max_total_price.label }}
+                                        </label>
+                                        {{ form.max_total_price }}
+                                    </div>
+                                </div>
+
+
+                                <!-- کمترین وزن -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.min_total_weight.label }}
+                                        </label>
+                                        {{ form.min_total_weight }}
+                                    </div>
+                                </div>
+
+
+                                <!-- بیشترین وزن -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.max_total_weight.label }}
+                                        </label>
+                                        {{ form.max_total_weight }}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- ردیف ششم - ابعاد -->
+                            <div class="row">
+                                <!-- کمترین ارتفاع -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.min_total_length.label }}
+                                        </label>
+                                        {{ form.min_total_length }}
+                                    </div>
+                                </div>
+
+
+                                <!-- بیشترین ارتفاع -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.max_total_length.label }}
+                                        </label>
+                                        {{ form.max_total_length }}
+                                    </div>
+                                </div>
+
+
+                                <!-- کمترین طول -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.min_total_width.label }}
+                                        </label>
+                                        {{ form.min_total_width }}
+                                    </div>
+                                </div>
+
+
+                                <!-- بیشترین طول -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.max_total_width.label }}
+                                        </label>
+                                        {{ form.max_total_width }}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- ردیف هفتم - ابعاد و قیمت تخفیف -->
+                            <div class="row">
+                                <!-- کمترین عرض -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.min_total_height.label }}
+                                        </label>
+                                        {{ form.min_total_height }}
+                                    </div>
+                                </div>
+
+
+                                <!-- بیشترین عرض -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.max_total_height.label }}
+                                        </label>
+                                        {{ form.max_total_height }}
+                                    </div>
+                                </div>
+
+
+                                <!-- کمترین قیمت تخفیف -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.min_discount_code_price.label }}
+                                        </label>
+                                        {{ form.min_discount_code_price }}
+
+                                    </div>
+                                </div>
+
+
+                                <!-- بیشترین قیمت تخفیف -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.max_discount_code_price.label }}
+                                        </label>
+                                        {{ form.max_discount_code_price }}
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- ردیف هشتم - قیمت ارسال و تعداد کالا -->
+                            <div class="row">
+                                <!-- کمترین قیمت ارسال -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.min_delivery_price.label }}
+                                        </label>
+                                        {{ form.min_delivery_price }}
+                                    </div>
+                                </div>
+
+
+                                <!-- بیشترین قیمت ارسال -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.max_delivery_price.label }}
+                                        </label>
+                                        {{ form.max_delivery_price }}
+                                    </div>
+                                </div>
+
+
+                                <!-- کمترین تعداد کالا -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.min_count_of_product.label }}
+                                        </label>
+                                        {{ form.min_count_of_product }}
+                                    </div>
+                                </div>
+
+
+                                <!-- بیشترین تعداد کالا -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>
+                                            {{ form.max_count_of_product.label }}
+                                        </label>
+                                        {{ form.max_count_of_product }}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="panel-footer text-center">
+                            <button type="submit" class="btn btn-success btn">جستجو</button>
+                            <a href="?" class="btn btn-warning btn">حذف فیلتر</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
     <div class="panel box box-primary panel-default" style="margin-top: 20px;">
         <div class="panel-heading clearfix">
             <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست سفارشات </h3>
@@ -252,6 +686,8 @@
             </div>
         </div>
     </div>
+
+</div>
 
     <script>
         $(document).ready(function () {

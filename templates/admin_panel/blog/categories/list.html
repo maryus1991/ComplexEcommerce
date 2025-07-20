@@ -133,7 +133,7 @@
     <div class="panel box box-primary panel-default" style="margin-top: 20px;">
         <div class="panel-heading clearfix">
             <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست دسته بندی های بلاگ </h3>
-            <a href="{% url 'admin_panel:blog-category-create' %}" class="pull-left btn btn-success">ساختن دسته جدید</a>
+            <a href="{% url 'admin_panel:blog-category-create' %}" class="pull-left btn btn-sm btn-success">ساختن دسته جدید</a>
                             <form method="get" class="form-inline pull-left">
                     <!-- Search Box -->
                     <div class="input-group input-group-sm" style="width: 180px; margin-left: 5px;">
@@ -161,12 +161,18 @@
                     <!-- Posts Count Filter -->
                     <div class="form-group" style="margin-left: 5px;">
                         <select name="posts" class="form-control input-sm">
-                            <option value="">تعداد پست ها</option>
+                            <option value="">ترتیب</option>
                             <option value="most_posts" {% if request.GET.posts == 'most_posts' %}selected{% endif %}>
-                                بیشترین
+                                بیشترین پست ها
                             </option>
                             <option value="least_posts" {% if request.GET.posts == 'least_posts' %}selected{% endif %}>
-                                کمترین
+                                کمترین پست ها
+                            </option>
+                            <option value="sort_number_ac" {% if request.GET.posts == 'sort_number_ac' %}selected{% endif %}>
+                                بیشترین اهمیت
+                            </option>                           
+                             <option value="sort_number_disac" {% if request.GET.posts == 'sort_number_disac' %}selected{% endif %}>
+                                کمترین اهمیت
                             </option>
                         </select>
                     </div>
