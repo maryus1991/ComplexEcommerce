@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect, reverse, render, Http404
 from django.urls import reverse_lazy
 from user.mixins.logins import AdminUserMixin
-from admin_panel.forms import AddUserModelForm, MessagingUserForm
+from admin_panel.forms import AddUserModelForm, MessagingUserForm, ExcludeUserFromMessagingForm
 from auditlog.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
 from utils.send_otp import send_message
@@ -91,7 +91,10 @@ class UserSendManyMessage(AdminUserMixin, View):
     """for message the many users"""
 
     def get(self, request):
-        return render(request, 'admin_panel/users/message_users.html', {'form':MessagingUserForm()})
+        return render(request, 'admin_panel/users/message_users.html',
+                      {'form':MessagingUserForm(),
+                                'exclude_form':ExcludeUserFromMessagingForm()
+                       })
 
     def post(self, request):
         form = MessagingUserForm(request.POST)
