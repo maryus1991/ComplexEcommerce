@@ -16,9 +16,24 @@ from auditlog.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
 from utils.send_otp import send_message
 from django.contrib.auth import login
-from sitesetting.models import Newsletter
+from sitesetting.models import Newsletter, SendMessageHistory
 
 User = get_user_model()
+
+class NumberNewsLetterDelete(AdminUserMixin, RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        obj = get_object_or_404(Newsletter, pk=self.kwargs['pk'])
+        obj.delete()
+        messages.success(
+            self.request,
+            'حذف شد'
+        )
+        return self.request.META['HTTP_REFERER']
+
+class ListSendMessageHistory(AdminUserMixin, ListView):
+    model = SendMessageHistory
+    context_object_name = 'items'
+    template_name = ''
 
 
 class UsersNewsLetters(AdminUserMixin, View):
@@ -26,6 +41,11 @@ class UsersNewsLetters(AdminUserMixin, View):
 
     def get(self, request):
         phones = Newsletter.objects.all()
+
+        if num := self.request.GET.get('search'):
+            num = str(num).replace(' ', '')
+            phones = phones.filter(phone_number__icontains=num).all()
+
         context = {
             'items': phones,
         }
@@ -44,16 +64,21 @@ class UsersNewsLetters(AdminUserMixin, View):
             return redirect('admin_panel:user-news-letters')
 
         try:
+            numbers = []
             for contact_id in selected_contacts:
-                # بررسی معتبر بودن ID
                 if not contact_id.isdigit():
                     continue
 
                 contact = Newsletter.objects.get(id=int(contact_id))
                 phone_number = str(contact).replace(' ', '')
+                numbers.append(phone_number)
                 send_message.delay(phone_number, content)
 
             messages.success(request, f"پیام با موفقیت به {len(selected_contacts)} مخاطب ارسال شد")
+            SendMessageHistory.objects.create(
+                phone_numbers=''.join(str(item) + ' , ' for item in numbers),
+                message=str(content),
+            )
         except Newsletter.DoesNotExist:
             messages.error(request, "یکی از مخاطبین یافت نشد")
         except Exception as e:

@@ -380,6 +380,53 @@
                         <!-- /.box -->
                     </div>
                     <!-- /.col -->
+                </div>             
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">گزارش بازدید </h3>
+
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                            class="fa fa-minus"></i>
+                                    </button>
+
+                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i
+                                            class="fa fa-times"></i></button>
+                                </div>
+                            </div>
+                            <!-- /.box-header -->
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+
+                                        <div class="chart">
+                                            <!-- Sales Chart Canvas -->
+                                            <canvas id="viewChart" style="height: 300px;"></canvas>
+                                        </div>
+
+                                        <!-- /.chart-responsive -->
+                                    </div>
+                                
+                                    <div style="display: none" id="chart_div_daily_view">
+                                        {% for item in views_list_by_date %}
+                                            <input type="hidden" data-date="{{ item.date|to_jalali:'%Y/%m/%d' }}"
+                                                   data-price="{{ item.count }}" class="date-picker"/>
+                                        {% endfor %}
+
+                                    </div>
+                                    <!-- /.col -->
+                                    <!-- /.col -->
+                                </div>
+                                <!-- /.row -->
+                            </div>
+                            <!-- ./box-body -->
+                            <!-- /.box-footer -->
+                        </div>
+                        <!-- /.box -->
+                    </div>
+                    <!-- /.col -->
                 </div>
                 <!-- /.row -->
 
@@ -656,65 +703,74 @@ var pieChart = new Chart(pieChartCanvas, {
 }
 });
 
-// نمودار خطی (Sales Chart)
-var salesChartCanvas = document.getElementById('salesChart').getContext('2d');
-var chart_div_daily_sales = document.getElementById('chart_div_daily_sales').children;
+    function drawLineChart(canvasId, dataDivId, label) {
+        const canvas = document.getElementById(canvasId)?.getContext('2d');
+        const dataDiv = document.getElementById(dataDivId)?.children;
 
-const dates_list = [];
-const price_list = [];
+        if (!canvas || !dataDiv) return;
 
-for (var item of chart_div_daily_sales) {
-    dates_list.push(item.getAttribute('data-date'));
-    price_list.push(parseInt(item.getAttribute('data-price')));
-}
+        const dates_list = [];
+        const price_list = [];
 
-var salesChart = new Chart(salesChartCanvas, {
-    type: 'line',
-    data: {
-        labels: dates_list,
-        datasets: [{
-            label: 'فروش',
-            data: price_list,
-            backgroundColor: 'rgba(230, 255, 0, 0.2)',
-            borderColor: 'rgba(171, 60, 188, 0.8)',
-            pointBackgroundColor: '#b2ba3b',
-            pointBorderColor: 'rgb(60, 244, 54)',
-            pointHoverBackgroundColor: '#f10909',
-            pointHoverBorderColor: 'rgb(60, 244, 54)',
-            borderWidth: 2,
-            tension: 0.1
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                display: true,
-                position: 'top',
-                rtl: true
+        for (let item of dataDiv) {
+            dates_list.push(item.getAttribute('data-date'));
+            price_list.push(parseInt(item.getAttribute('data-price')));
+        }
+
+        new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: dates_list,
+                datasets: [{
+                    label: label,
+                    data: price_list,
+                    backgroundColor: 'rgba(230, 255, 0, 0.2)',
+                    borderColor: 'rgba(171, 60, 188, 0.8)',
+                    pointBackgroundColor: '#b2ba3b',
+                    pointBorderColor: 'rgb(60, 244, 54)',
+                    pointHoverBackgroundColor: '#f10909',
+                    pointHoverBorderColor: 'rgb(60, 244, 54)',
+                    borderWidth: 2,
+                    tension: 0.1
+                }]
             },
-            tooltip: {
-                mode: 'index',
-                intersect: false
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    callback: function(value) {
-                        return value.toLocaleString() + ' تومان';
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        rtl: true
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString() + ' تومان';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
                     }
                 }
-            },
-            x: {
-                grid: {
-                    display: false
-                }
             }
-        }
+        });
     }
-});
+
+    // اجرای نمودارها
+    drawLineChart('salesChart', 'chart_div_daily_sales', 'فروش');
+    drawLineChart('viewChart', 'chart_div_daily_view', 'بازدید');
+
+
 
 
     </script>

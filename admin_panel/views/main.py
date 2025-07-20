@@ -39,30 +39,37 @@ class StatsApi(AdminUserMixin, View):
 class HomePageView(AdminUserMixin, TemplateView):
     template_name = "admin_panel/index2.html"
 
+    from django.db.models import Count, Sum, Case, When, IntegerField
+    from django.db.models.functions import TruncDate
+    from datetime import timedelta
+    from django.utils.timezone import now
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        views = Product.objects
-        last_product = views.order_by('-id').all()[0:6]
-        views = views.annotate(
+        context['last_product'] = Product.objects.order_by('-id')[:6]
+
+        views_qs = Product.objects.annotate(
             views_count=Count('views')
         ).filter(
             views_count__gt=0
         ).order_by(
             '-views_count'
-        ).distinct().values('name', 'views_count')
+        ).values('name', 'views_count')
 
-        context['last_product'] = last_product
-        context['views'] = views
-        context['total_view'] = views.aggregate(total=Sum('views_count')).get('total')
+        context['views'] = views_qs
+        total_view = views_qs.aggregate(total=Sum('views_count'))['total'] or 0
+        context['total_view'] = total_view
 
         today = now().date()
         yesterday = today - timedelta(days=1)
-        total_view = context['total_view']
 
-        view_daily_count, _ = DailyViewCount.objects.get_or_create(date=today)
-        view_daily_count.count = total_view
-        view_daily_count.save()
+        DailyViewCount.objects.update_or_create(date=today,
+                                                defaults={
+                                                    'count':
+                                                        total_view - DailyViewCount.objects.filter(date=today - timedelta(days=1)
+                                                       ).first().count
+                                                })
 
         yesterday_view = DailyViewCount.objects.filter(date=yesterday).first()
         yesterday_count = yesterday_view.count if yesterday_view else 0
@@ -74,36 +81,47 @@ class HomePageView(AdminUserMixin, TemplateView):
 
         context['view_percentage_change'] = round(percentage_change, 2)
 
-        context['orders'] = Order.objects.order_by('-id').all()[0:6]
+        start_date = today - timedelta(days=29)
+        existing_dates = set(
+            DailyViewCount.objects.filter(date__gte=start_date).values_list('date', flat=True)
+        )
+        missing_dates = [start_date + timedelta(days=i) for i in range(30) if
+                         (start_date + timedelta(days=i)) not in existing_dates]
+        if missing_dates:
+            DailyViewCount.objects.bulk_create([DailyViewCount(date=d, count=0) for d in missing_dates])
+
+
+        context['views_list_by_date'] = DailyViewCount.objects.order_by('date')
+
+        context['orders'] = Order.objects.order_by('-id')[:6]
 
         item = StoreSoldOrders.objects
 
-        context['total_price_not_returned_from_admin'] = sum(list(
-            item.filter(is_returned_by_admin=False).values_list("price", flat=True)
-        ))
+        context['total_price_not_returned_from_admin'] = item.filter(
+            is_returned_by_admin=False
+        ).aggregate(total=Sum('price'))['total'] or 0
 
-        context['total_price'] = sum(list(
-            item.values_list("price", flat=True)
-        ))
+        context['total_price'] = item.aggregate(total=Sum('price'))['total'] or 0
 
-        daily_sales = (
-            item.filter(
-                open_date__date__gte=now().date() - timedelta(days=30),
-            )
-            .annotate(
-                sale_date=TruncDate("open_date"),
-                valid_sale=Case(
-                    When(price__gt=0, then="price"),  # فقط قیمت‌های مثبت
-                    default=0,
-                    output_field=IntegerField(),
-                ),
-            )
-            .values("sale_date")
-            .annotate(daily_total=Sum("valid_sale"))
-        )
+        daily_sales_qs = item.filter(
+            open_date__date__gte=start_date,
+        ).annotate(
+            sale_date=TruncDate("open_date"),
+            valid_sale=Case(
+                When(price__gt=0, then="price"),
+                default=0,
+                output_field=IntegerField(),
+            ),
+        ).values("sale_date").annotate(daily_total=Sum("valid_sale"))
 
-        context['daily_sales'] = [{"date": d, "total": dict(map(lambda x: (x['sale_date'], x['daily_total']),
-         daily_sales)).get(d, 0) } for d in [(now().date() - timedelta(days=30)) + timedelta(days=x) for x in range(30)]]
+        sales_map = {entry['sale_date']: entry['daily_total'] for entry in daily_sales_qs}
+
+        context['daily_sales'] = [
+            {
+                "date": start_date + timedelta(days=i),
+                "total": sales_map.get(start_date + timedelta(days=i), 0)
+            } for i in range(30)
+        ]
 
         return context
 

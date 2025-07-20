@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.urls import reverse_lazy
 from django.views.generic import ListView, RedirectView, UpdateView, View, CreateView
 from django.contrib import messages
@@ -44,8 +45,13 @@ class BlogListView(AdminUserMixin, ListView):
 
     model = Blog
     template_name = "admin_panel/blog/list.html"
-    paginate_by = 25
+    paginate_by = 100
     context_object_name = "items"
+
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related(
+            'views', 'store' , 'category'
+        ).annotate(views_count=Count('views')).order_by('-id')
 
 class BlogCreate(AdminUserMixin, CreateView):
     """for creating the post"""

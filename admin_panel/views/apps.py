@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.views.generic import RedirectView, CreateView, UpdateView, ListView, View
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404, render, redirect
@@ -53,6 +54,10 @@ class AppsListView(AdminUserMixin, ListView):
     template_name = "admin_panel/apps/list.html"
     paginate_by = 20
 
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related(
+            'store', 'views'
+        ).annotate(views_count=Count('views')).order_by('-id')
 
 class AppsCreateView(AdminUserMixin, CreateView):
     """

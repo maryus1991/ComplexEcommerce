@@ -147,7 +147,8 @@
                     <th width="12%">تاریخ انتشار</th>
                     <th width="8%">دسته</th>
                     <th width="8%">ترتیب</th>
-                    <th colspan="4" class="text-center" width="35%">عملیات</th>
+                    <th class="text-center" width="5%">بازدید ها</th>
+                    <th colspan="4" class="text-center" width="30%">عملیات</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -202,6 +203,9 @@
                             </form>
                         </td>
 
+                        <td class="text-center">
+<span class="badge bg-blue">{{ item.views_count }}</span>
+                        </td>
                         <td class="text-center">
                             <a href="{% url 'blog:detail' item.id %}" class="btn btn-sm btn-success"
                                data-toggle="tooltip" title="مشاهده">
@@ -278,40 +282,40 @@
             });
         });
     </script>
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
 
-                    function getInput(button) {
-                        const inputId = 'input_' + button.getAttribute('data-id');
-                        return document.getElementById(inputId);
-                    }
+            function getInput(button) {
+                const inputId = 'input_' + button.getAttribute('data-id');
+                return document.getElementById(inputId);
+            }
 
-                    function parseInputValue(input) {
-                        const value = parseInt(input.value);
-                        return isNaN(value) ? 0 : value;
-                    }
+            function parseInputValue(input) {
+                const value = parseInt(input.value);
+                return isNaN(value) ? 0 : value;
+            }
 
-                    // دکمه افزایش
-                    document.querySelectorAll('.sort-up').forEach(function (button) {
-                        button.addEventListener('click', function () {
-                            const input = getInput(this);
-                            let value = parseInputValue(input);
-                            input.value = value + 1;
-                        });
-                    });
-
-                    // دکمه کاهش
-                    document.querySelectorAll('.sort-down').forEach(function (button) {
-                        button.addEventListener('click', function () {
-                            const input = getInput(this);
-                            let value = parseInputValue(input);
-                            if (value > 0) {
-                                input.value = value - 1;
-                            }
-                        });
-                    });
-
+            // دکمه افزایش
+            document.querySelectorAll('.sort-up').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const input = getInput(this);
+                    let value = parseInputValue(input);
+                    input.value = value + 1;
                 });
-            </script>
-    
+            });
+
+            // دکمه کاهش
+            document.querySelectorAll('.sort-down').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const input = getInput(this);
+                    let value = parseInputValue(input);
+                    if (value > 0) {
+                        input.value = value - 1;
+                    }
+                });
+            });
+
+        });
+    </script>
+
 {% endblock %}

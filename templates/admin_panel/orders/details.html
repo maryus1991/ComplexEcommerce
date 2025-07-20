@@ -148,6 +148,18 @@
                             {% endif %}
                         </td>
                     </tr>
+                        <tr>
+                            <td colspan="4" data-title="ثبت کد پیگیری">
+                                <form action="{% url 'admin_panel:orders-set-send-id' order.id %}" method="GET" class="form-inline">
+                                    <div class="input-group">
+                                        <input type="text" placeholder="کد پیگیری" class="form-control input-sm" name="sending_id">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-sm btn-success" type="submit">ثبت کد پیگیری</button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
                     <tr>
                         <td colspan="4" class="col-xs-12"><strong>توضیحات:</strong> {{ order.additional_descriptions }}</td>
                     </tr>

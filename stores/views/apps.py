@@ -1,4 +1,5 @@
 # store apps
+from django.db.models import Count
 from django.views.generic import (
     RedirectView,
     View,CreateView, UpdateView
@@ -60,7 +61,9 @@ class StoreAppsView(UserStoreStaffMixin, View):
 
     def get(self, request, *args, **kwargs):
         store = request.user.store
-        obj = StoreApps.objects.filter(store=store)
+        obj = StoreApps.objects.filter(store=store).prefetch_related(
+            'views'
+        ).annotate(views_count=Count('views'))
 
         if request.method == "GET":
             data = dict(request.GET.copy())

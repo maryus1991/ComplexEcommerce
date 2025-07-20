@@ -617,8 +617,8 @@ class ChangeStatusToDeliveredToUser(UserStoreStaffMixin, RedirectView):
 
         order.delivered_to_user = True
         send_id = self.request.GET.get("sending_id")
-        if send_id != "" and send_id is not None and not send_id.isspace():
-            order.sending_id = self.request.GET.get("sending_id")
+        if True:
+            order.sending_id = send_id if send_id else 'تحویل شده به کاربر'
             order.save()
             messages.success(self.request, "تغییرات ثبت شد")
 
@@ -630,8 +630,6 @@ class ChangeStatusToDeliveredToUser(UserStoreStaffMixin, RedirectView):
                     """,  # noqa
                 )
 
-        else:
-            messages.warning(self.request, "در وارد کردن کد ارسال دقت کنید")
 
         return self.request.META.get("HTTP_REFERER")
 

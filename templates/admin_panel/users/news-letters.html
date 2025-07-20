@@ -12,10 +12,23 @@
 {% block body %}
     <div class="panel panel-primary" style="margin-top:40px">
         <div class="panel-heading">
-            <h3 class="panel-title">ارسال پیام به شماره های خبرنامه</h3>
+            <h3 class="panel-title ">ارسال پیام به شماره های خبرنامه</h3>
+            <span class="pull-left">
+                <form action="" method="get" class="form-inline">
+                    {% csrf_token %}
+                    <input type="text" placeholder="شماره ..." name="search" class="form-control">
+                    <button type="submit" class="btn btn-success btn-sm sort-down">
+                                                <i class="fa fa-hand-pointer-o"></i>
+                                            </button>
+                </form>
+            </span>
         </div>
 
+
         <form role="form" method="POST" action="" class="panel-body" enctype="multipart/form-data">
+            <span class="text-xs text-muted">
+                توجه که شماره هایی که در خبر نامه هستن به احتمال زیاد حساب کاربری در سایت شما ندارن
+            </span>
             {% csrf_token %}
 
             <div class="card mb-4">
@@ -31,9 +44,16 @@
                         <small class="text-muted">سعی کنید متن پیام مختصر و مفید باشد</small>
                     </div>
 
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                            <i class="fa fa-paper-plane"></i> ارسال پیام
+                        </button>
+                    </div>
+
                     <!-- Contact Selection -->
                     <div class="form-group mb-4">
                         <label class="form-label">انتخاب مخاطبین</label>
+
 
                         <div class="contact-selection-box p-3 border rounded">
                             <!-- Select All Button -->
@@ -46,6 +66,7 @@
                                 </button>
                             </div>
 
+
                             <!-- Contacts List -->
                             <div class="row contacts-list">
                                 {% for item in items %}
@@ -55,6 +76,9 @@
                                                    name="selected_contacts" value="{{ item.id }}"
                                                    id="contact_{{ item.id }}">
                                             <label class="form-check-label" for="contact_{{ item.id }}" dir="ltr">
+                                                <a href="{% url 'admin_panel:user-news-letters-delete' item.id  %}" class="btn btn-warning btn-sm sort-down">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
                                                 {{ item.phone_number }}
                                             </label>
                                         </div>
@@ -65,11 +89,7 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <div class="form-group mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg btn-block">
-                            <i class="fa fa-paper-plane"></i> ارسال پیام
-                        </button>
-                    </div>
+
                 </div>
             </div>
         </form>

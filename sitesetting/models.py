@@ -163,6 +163,13 @@ class Newsletter(models.Model):
         return str(self.phone_number).replace(' ','')
 
 
+class SendMessageHistory(models.Model):
+    phone_numbers = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+    message = models.TextField()
+    not_news_level = models.BooleanField(default=False)
+
+
 class QuestionAndAnswer(models.Model):
     question = models.TextField(verbose_name="سوال")
     answer = models.TextField(verbose_name="جواب")

@@ -7,6 +7,37 @@ from user.mixins.logins import AdminUserMixin
 from django.db.models.aggregates import Count
 from django.utils.timezone import now
 from admin_panel.forms import SpecificsOrdersModelForm
+from sitesetting.models import SiteSetting
+from utils.send_otp import send_message
+
+
+class ChangeStatusToDeliveredToUser(AdminUserMixin, RedirectView):
+    """for set sending id and change status to DeliveredToUser"""
+
+    def get_redirect_url(self, *args, **kwargs):
+
+        order = get_object_or_404(
+            Order, pk=self.kwargs["pk"]
+        )
+
+        order.delivered_to_user = True
+        send_id = self.request.GET.get("sending_id")
+
+        order.sending_id = send_id if send_id else 'تحویل شده به کاربر'
+        order.save()
+        messages.success(self.request, "تغییرات ثبت شد")
+
+        if SiteSetting.objects.first().send_message_when_set_sending_id:
+            send_message.delay(
+                str(order.user.PhoneNumber).replace(" ", ""),
+                f"""محموله شما ارسال شد 
+                code:{order.sending_id}
+                """,  # noqa
+            )
+
+
+        return self.request.META.get("HTTP_REFERER")
+
 
 class OrderListView(AdminUserMixin, ListView):
     """for listing the orders"""

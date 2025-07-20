@@ -279,6 +279,7 @@ urlpatterns = [
     # users
     path("users/", views.UserListView.as_view(), name="user-list"),
     path("users/news-letters/", views.UsersNewsLetters.as_view(), name="user-news-letters"),
+    path("users/news-letters/delete/<int:pk>", views.NumberNewsLetterDelete.as_view(), name="user-news-letters-delete"),
     path("users/send-messages", views.UserSendManyMessage.as_view(), name="user-send-message"),
     path("users/create/", views.UserCreateView.as_view(), name="user-create"),
     path("users/update/<int:pk>", views.UserUpdateView.as_view(), name="user-update"),
@@ -389,6 +390,7 @@ urlpatterns = [
     ),
     # orders
     path("order/", views.OrderListView.as_view(), name="orders-list"),
+    path("order/set-send-id/<int:pk>", views.ChangeStatusToDeliveredToUser.as_view(), name="orders-set-send-id"),
     path("order/sold/", views.OrderSoldListView.as_view(), name="orders-sold-list"),
     path("order/<int:pk>", views.OrderDetailView.as_view(), name="orders-detail"),
     path("order/sold/<int:pk>", views.OrderSoledChangeStatus.as_view(), name="orders-change-sold-list-status"),

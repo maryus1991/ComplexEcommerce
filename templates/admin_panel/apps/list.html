@@ -142,7 +142,8 @@
                 <thead>
                 <tr class="bg-primary">
                     <th class="text-center" width="5%">#</th>
-                    <th width="25%">عنوان برنامه</th>
+                    <th width="20%">عنوان برنامه</th>
+                    <th width="5%">تعداد دانلود ها</th>
 
                     <th class="text-center" width="10%">فروشگاه</th>
                     <th colspan="4" class="text-center" width="35%">عملیات</th>
@@ -160,6 +161,9 @@
                                 <span class="label label-default pull-left">غیر فعال</span>
                             {% endif %}
                         </td>
+                    <td>
+                        <span class="badge bg-blue">{{ item.views_count }}</span>
+                    </td>
 
 
                         <td>

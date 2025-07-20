@@ -71,6 +71,7 @@
                         <thead>
                         <tr class="bg-light-blue">
                             <th width="25%">نام برنامه</th>
+                            <th width="5%">تعداد دانلود ها</th>
 
                             <th width="5%">وضعیت</th>
                             <th width="10%">عملیات</th>
@@ -80,6 +81,7 @@
                         {% for item in items %}
                             <tr>
                                 <td>{{ item.name }}</td>
+                                <td><span class="badge bg-blue">{{ item.views_count }}</span></td>
 
                                 <td>
                                     {% if item.is_active and item.admin_verified %}
