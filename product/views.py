@@ -130,9 +130,7 @@ class ProductListView(ListView):
         if have_search_query and search is not None:
             products = products.filter(
                 Q(name__icontains=search) |
-                Q(description__icontains=search) |
-                Q(category__name__icontains=search) |
-                Q(brand__name__icontains=search) |
+                Q(specs__name__icontains=search) |
                 Q(tags__name__icontains=search) |
                 Q(features__title__icontains=search)
             )
@@ -163,7 +161,7 @@ class ProductListView(ListView):
                 sort = None
 
 
-        return products.all()
+        return products.distinct().all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

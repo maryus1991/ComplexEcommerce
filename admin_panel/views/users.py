@@ -11,14 +11,16 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect, reverse, render, Http404
 from django.urls import reverse_lazy
 from user.mixins.logins import AdminUserMixin
-from admin_panel.forms import AddUserModelForm, MessagingUserForm, ExcludeUserFromMessagingForm
+from admin_panel.forms import AddUserModelForm, MessagingUserForm, ExcludeUserFromMessagingForm, AdminUsersFilteringForm
 from auditlog.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
 from utils.send_otp import send_message
 from django.contrib.auth import login
 from sitesetting.models import Newsletter, SendMessageHistory
+from django.db.models import Q
 
 User = get_user_model()
+
 
 class NumberNewsLetterDelete(AdminUserMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
@@ -29,6 +31,7 @@ class NumberNewsLetterDelete(AdminUserMixin, RedirectView):
             'حذف شد'
         )
         return self.request.META['HTTP_REFERER']
+
 
 class ListSendMessageHistory(AdminUserMixin, ListView):
     model = SendMessageHistory
@@ -97,8 +100,8 @@ class UserSendManyMessage(AdminUserMixin, View):
 
     def get(self, request):
         return render(request, 'admin_panel/users/message_users.html',
-                      {'form':MessagingUserForm(),
-                                'exclude_form':ExcludeUserFromMessagingForm()
+                      {'form': MessagingUserForm(),
+                       'exclude_form': ExcludeUserFromMessagingForm()
                        })
 
     def post(self, request):
@@ -230,7 +233,147 @@ class UserListView(AdminUserMixin, ListView):
     model = User
     context_object_name = "items"
     template_name = "admin_panel/users/list.html"
-    paginate_by = 25
+    paginate_by = 100
+
+    def get_queryset(self):
+        query = super().get_queryset().prefetch_related('store', 'address')
+
+        form = AdminUsersFilteringForm(self.request.GET or None)
+
+        if form.is_valid():
+            if user_PhoneNumber := form.cleaned_data.get('user_PhoneNumber'):
+                query = query.filter(PhoneNumber=str(user_PhoneNumber).replace(' ', ''))
+            if store := form.cleaned_data.get('store'):
+                query = query.filter(store=store)
+            if user_email := form.cleaned_data.get('user_email'):
+                query = query.filter(email=str(user_email).replace(' ', ''))
+            if user_name := form.cleaned_data.get('user_name'):
+                query = query.filter(Q(first_name=str(user_name)) | Q(last_name=str(user_name)))
+            if user_is_store_admin := form.cleaned_data.get('user_is_store_admin'):
+                if user_is_store_admin == '11':
+                    query = query.filter(is_store_admin=True)
+                elif user_is_store_admin == '12':
+                    query = query.filter(is_store_admin=False)
+            if user_verify_account := form.cleaned_data.get('user_verify_account'):
+                if user_verify_account == '11':
+                    query = query.filter(is_verified=True)
+                elif user_verify_account == '12':
+                    query = query.filter(is_verified=False)
+            if user_is_active := form.cleaned_data.get('user_is_active'):
+                if user_is_active == '11':
+                    query = query.filter(is_active=True)
+                elif user_is_active == '12':
+                    query = query.filter(is_active=False)
+            if start_date_joined := form.cleaned_data.get('start_date_joined'):
+                parts = str(start_date_joined).split("-")
+
+                if len(parts) != 3:
+                    messages.error(
+                        self.request,
+                        "لطفاً تاریخ  را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                    )
+
+                year, month, day = map(int, parts)
+
+                jalali_date = parse_date(
+                    jdatetime.date(year, month, day).strftime("%Y-%m-%d")
+                )
+
+                query = query.filter(date_joined__gte=jalali_date)
+            if end_date_joined := form.cleaned_data.get('end_date_joined'):
+                parts = str(end_date_joined).split("-")
+
+                if len(parts) != 3:
+                    messages.error(
+                        self.request,
+                        "لطفاً تاریخ  را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                    )
+
+                year, month, day = map(int, parts)
+
+                jalali_date = parse_date(
+                    jdatetime.date(year, month, day).strftime("%Y-%m-%d")
+                )
+
+                query = query.filter(date_joined__lte=jalali_date)
+            if start_last_login := form.cleaned_data.get('start_last_login'):
+                parts = str(start_last_login).split("-")
+
+                if len(parts) != 3:
+                    messages.error(
+                        self.request,
+                        "لطفاً تاریخ  را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                    )
+
+                year, month, day = map(int, parts)
+
+                jalali_date = parse_date(
+                    jdatetime.date(year, month, day).strftime("%Y-%m-%d")
+                )
+
+                query = query.filter(last_login__gte=jalali_date)
+            if end_last_login := form.cleaned_data.get('end_last_login'):
+                parts = str(end_last_login).split("-")
+
+                if len(parts) != 3:
+                    messages.error(
+                        self.request,
+                        "لطفاً تاریخ  را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                    )
+
+                year, month, day = map(int, parts)
+
+                jalali_date = parse_date(
+                    jdatetime.date(year, month, day).strftime("%Y-%m-%d")
+                )
+
+                query = query.filter(date_joined__lte=jalali_date)
+
+            if message_verified := form.cleaned_data.get('message_verified'):
+                if message_verified == '11':
+                    query = query.filter(message_verified=True)
+                elif message_verified == '12':
+                    query = query.filter(message_verified=False)
+
+            if legal_person := form.cleaned_data.get('legal_person'):
+                if legal_person == '11':
+                    query = query.filter(legal_person=True)
+                elif legal_person == '12':
+                    query = query.filter(legal_person=False)
+
+            if is_super_user := form.cleaned_data.get('is_super_user'):
+                if is_super_user == '11':
+                    query = query.filter(is_superuser=True)
+                elif is_super_user == '12':
+                    query = query.filter(is_superuser=False)
+
+            if legal_person_economic_number := form.cleaned_data.get('legal_person_economic_number'):
+                query = query.filter(legal_person_economic_number=str(legal_person_economic_number))
+
+            if legal_person_registration_number := form.cleaned_data.get('legal_person_registration_number'):
+                query = query.filter(legal_person_registration_number=str(legal_person_registration_number))
+
+            if legal_person_phone := form.cleaned_data.get('legal_person_phone'):
+                query = query.filter(legal_person_phone=str(legal_person_phone))
+
+            if address := form.cleaned_data.get('address'):
+                query = query.filter(Q(address__name=str(address)),
+                                     Q(address__last_name=str(address)), Q(address__province=str(address)),
+                                     Q(address__city=str(address)), Q(address__address=str(address)),
+                                     Q(address__phone=str(address)), Q(address__zipcode=str(address)),
+                                     Q(address__additional_decryption=str(address)))
+
+        return query
+
+    def get_context_data(
+            self, *, object_list=..., **kwargs
+    ):
+
+        context = super().get_context_data(**kwargs)
+
+        context['form'] = AdminUsersFilteringForm()
+
+        return context
 
 
 class UserCreateView(AdminUserMixin, CreateView):
@@ -280,7 +423,7 @@ class UserCreateView(AdminUserMixin, CreateView):
 
         if legal_person:
             if (
-                legal_person_economic_number is None or
+                    legal_person_economic_number is None or
                     legal_person_registration_number is None or
                     legal_person_phone is None
             ):
@@ -388,7 +531,7 @@ class UserUpdateView(AdminUserMixin, UpdateView):
 
         if legal_person:
             if (
-                legal_person_economic_number is None or
+                    legal_person_economic_number is None or
                     legal_person_registration_number is None or
                     legal_person_phone is None
             ):
@@ -432,7 +575,6 @@ class UserUpdateView(AdminUserMixin, UpdateView):
             return redirect(reverse("admin_panel:user-list"))
         else:
             return redirect('/')
-
 
     def form_invalid(self, form):
         messages.error(self.request, form.errors)

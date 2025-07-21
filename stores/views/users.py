@@ -1,77 +1,30 @@
 from django.views.generic import (
-    DetailView,
     ListView,
-    TemplateView,
-    CreateView,
     FormView,
     UpdateView,
     RedirectView,
     View,
 )
 from django.db.models import Q
-from django.db.models.aggregates import Count
 from django.shortcuts import (
     get_object_or_404,
-    reverse,
     render,
     redirect,
-    get_list_or_404,
 )
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
 from django.contrib import messages
-from django.utils.timezone import now
 from phonenumbers.phonenumber import PhoneNumber
-from django.db import transaction
-from django.core.exceptions import (
-    PermissionDenied,
-    SuspiciousOperation,
-    ValidationError,
-)
-from django.views.decorators.http import require_http_methods
-from django.utils.decorators import method_decorator
-from django.core.files.uploadedfile import UploadedFile
-from orders.models import Order
-from stores.models import Store, StoreApps
-from dashboard.models import Ticket, TicketConversation
+from stores.models import Store
 from django.utils.dateparse import parse_date
 from stores.forms import (
-    AddProductForm,
-    AddBrandForm,
-    AddCategoryForm,
-    AddStoreForm,
-    StoreSendTicketForm,
     AddStoreUserStaffForm,
-    AddStoreAppForm,
-    AddStoreBlogForm,
-    AddStoreBlogCategoryForm,
-    ProductSearchForm,
-    BrandAndCategorySearchForm,
-    TicketFilterForm,
-    OrderFilteringForm,
-    StoreBlogFilteringForm,
     StoreUsersStaffFilteringForm,
 )
-from product.models import (
-    Product,
-    ProductTag,
-    ProductFeature,
-    ProductGallery,
-    ProductBrand,
-    ProductCategory,
-)
-
-from django.db.models import Value
-from django.db.models.functions import Concat
-from blog.models import Blog, BlogCategory
 from auditlog.models import LogEntry
-from django.contrib.contenttypes.models import ContentType
-
-from user.mixins.logins import UserStoreStaffMixin, AdminUserMixin, StoreAdminUserStaff
-from dashboard.forms import TicketConversationForm
+from user.mixins.logins import StoreAdminUserStaff
 import jdatetime
-
-from stores.validators import is_valid_message
+from django.utils.dateparse import parse_date
 from utils.tipax_price_calc import validate_city
 
 User = get_user_model()
@@ -90,13 +43,101 @@ class StoreUserListView(StoreAdminUserStaff, ListView):
         query = get_object_or_404(
             Store,
             pk=self.request.user.store.id,
-        ).users.all()
+        ).users
 
-        return query
+        form = StoreUsersStaffFilteringForm(self.request.GET or None)
+        if form.is_valid():
+            if user_PhoneNumber := form.cleaned_data.get('user_PhoneNumber'):
+                query = query.filter(PhoneNumber=str(user_PhoneNumber).replace(' ',''))
+            if user_email := form.cleaned_data.get('user_email'):
+                query = query.filter(email=str(user_email).replace(' ',''))
+            if user_name := form.cleaned_data.get('user_name'):
+                query = query.filter(Q(first_name=str(user_name)) | Q(last_name=str(user_name)))
+            if user_is_store_admin := form.cleaned_data.get('user_is_store_admin'):
+                if user_is_store_admin == '11':
+                    query = query.filter(is_store_admin=True)
+                elif user_is_store_admin == '12':
+                    query = query.filter(is_store_admin=False)
+            if user_verify_account := form.cleaned_data.get('user_verify_account'):
+                if user_verify_account == '11':
+                    query = query.filter(is_verified=True)
+                elif user_verify_account == '12':
+                    query = query.filter(is_verified=False)
+            if user_is_active := form.cleaned_data.get('user_is_active'):
+                if user_is_active == '11':
+                    query = query.filter(is_active=True)
+                elif user_is_active == '12':
+                    query = query.filter(is_active=False)
+            if start_date_joined := form.cleaned_data.get('start_date_joined'):
+                parts = str(start_date_joined).split("-")
+
+                if len(parts) != 3:
+                    messages.error(
+                        self.request,
+                        "لطفاً تاریخ  را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                    )
+
+                year, month, day = map(int, parts)
+
+                jalali_date = parse_date(
+                    jdatetime.date(year, month, day).strftime("%Y-%m-%d")
+                )
+
+                query = query.filter(date_joined__gte=jalali_date)
+            if end_date_joined := form.cleaned_data.get('end_date_joined'):
+                parts = str(end_date_joined).split("-")
+
+                if len(parts) != 3:
+                    messages.error(
+                        self.request,
+                        "لطفاً تاریخ  را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                    )
+
+                year, month, day = map(int, parts)
+
+                jalali_date = parse_date(
+                    jdatetime.date(year, month, day).strftime("%Y-%m-%d")
+                )
+
+                query = query.filter(date_joined__lte=jalali_date)
+            if start_last_login := form.cleaned_data.get('start_last_login'):
+                parts = str(start_last_login).split("-")
+
+                if len(parts) != 3:
+                    messages.error(
+                        self.request,
+                        "لطفاً تاریخ  را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                    )
+
+                year, month, day = map(int, parts)
+
+                jalali_date = parse_date(
+                    jdatetime.date(year, month, day).strftime("%Y-%m-%d")
+                )
+
+                query = query.filter(last_login__gte=jalali_date)
+            if end_last_login := form.cleaned_data.get('end_last_login'):
+                parts = str(end_last_login).split("-")
+
+                if len(parts) != 3:
+                    messages.error(
+                        self.request,
+                        "لطفاً تاریخ  را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                    )
+
+                year, month, day = map(int, parts)
+
+                jalali_date = parse_date(
+                    jdatetime.date(year, month, day).strftime("%Y-%m-%d")
+                )
+
+                query = query.filter(date_joined__lte=jalali_date)
+
+        return query.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = StoreUsersStaffFilteringForm()
+        context["form"] = StoreUsersStaffFilteringForm(self.request.GET or None)
         return context
 
 

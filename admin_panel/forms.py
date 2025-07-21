@@ -28,7 +28,7 @@ from jalali_date.widgets import AdminJalaliDateWidget
 User = get_user_model()
 
 
-class AdminUsersStaffFilteringForm(forms.Form):
+class AdminUsersFilteringForm(forms.Form):
     user_PhoneNumber = PhoneNumberField(
         required=False,
         label="شماره کاربر ",
@@ -185,11 +185,7 @@ class AdminUsersStaffFilteringForm(forms.Form):
         label="تلفن یا نامبر شخص (رسمی)",
         widget=forms.TextInput(attrs={"class": "form-control"}),
     )
-    address  = forms.CharField(
-        required=False,
-        label="ادرس",
-        widget=forms.TextInput(attrs={"class": "form-control"}),
-    )
+
     
 
 class AdminOrderFilteringForm(forms.Form):
