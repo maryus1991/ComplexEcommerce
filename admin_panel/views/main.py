@@ -61,14 +61,16 @@ class HomePageView(AdminUserMixin, TemplateView):
         total_view = views_qs.aggregate(total=Sum('views_count'))['total'] or 0
         context['total_view'] = total_view
 
+
         today = now().date()
         yesterday = today - timedelta(days=1)
+
+        total_view = total_view - DailyViewCount.objects.get_or_create(date=today - timedelta(days=1))[0].count
 
         DailyViewCount.objects.update_or_create(date=today,
                                                 defaults={
                                                     'count':
-                                                        total_view - DailyViewCount.objects.filter(date=today - timedelta(days=1)
-                                                       ).first().count
+                                                        total_view
                                                 })
 
         yesterday_view = DailyViewCount.objects.filter(date=yesterday).first()

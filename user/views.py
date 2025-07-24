@@ -280,7 +280,7 @@ class ForgotPassword(View):
                     user.save()
 
                     send_message.delay(
-                        phone_number,
+                        str(phone_number).replace(" ", ""),
                         "کاربر گرامی بازیابی رمز عبور شما با موفقیت انجام گردید اگر شما این درخواست را ندادید لطفا با ورد به صفحه بازیابی رمز عبور  خود را تغییر دهید",
                     )
 

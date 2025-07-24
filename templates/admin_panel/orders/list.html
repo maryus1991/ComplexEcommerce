@@ -613,9 +613,9 @@
                         </td>
                         <td class="text-center">{{ item.get_payment_price|tdc }}</td>
                         <td class="text-center">
-                            {% if item.sending %}
+                            {% if  item.delivered_to_user %}
                                 <span class="label label-warning"> درحال ارسال </span>
-                            {% elif item.delivered_to_user %}
+                            {% elif item.sending %}
                                 <span class="label label-success">تحویل شده</span>
                             {% else %}
                                 <span class="label label-danger">ارسال نشده</span>

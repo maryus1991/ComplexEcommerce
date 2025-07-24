@@ -376,3 +376,13 @@ CELERY_TASK_ROUTES = {
     'orders.tasks.clean_expired_details': {'queue': 'details', 'routing_key': 'details'},
     'utils.send_otp.send_message': {'queue': 'sms', 'routing_key': 'sms'},
 }
+
+
+# email config
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS") == "True"
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")

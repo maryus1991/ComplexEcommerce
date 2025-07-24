@@ -125,7 +125,7 @@
                             {% endif %}
                         </td>
                         <td class="col-md-6 col-sm-12 col-xs-12" colspan="2">
-                            {% if order.official_invoice and order.official_invoice_pdf is not None %}
+                            {% if order.official_invoice and order.official_invoice_pdf is not None and order.official_invoice_conformed_given_to_user %}
                                 <a href="{{ order.official_invoice_pdf.url }}" class="btn btn-success btn-block">
                                     مشاهده فاکتور رسمی
                                 </a>

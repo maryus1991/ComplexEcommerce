@@ -23,6 +23,7 @@ melipayamak_from_number = os.getenv("melipayamak_panel_from_number")
 
 
 # todo : add celery shared task
+from config import settings
 
 @shared_task(bind=True, queue='sms')
 def send_message(

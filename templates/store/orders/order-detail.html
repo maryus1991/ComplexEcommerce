@@ -130,7 +130,7 @@
                                 {% endif %}
                             </td>
                             <td >
-                                {% if order.official_invoice and order.official_invoice_pdf.url is not None %}
+                                {% if order.official_invoice and order.official_invoice_pdf.url is not None and order.official_invoice_conformed_given_to_user %}
                                     <a href="{{ order.official_invoice_pdf.url }}" class="btn btn-success btn-sm btn-block">مشاهده فاکتور رسمی</a>
                                 {% else %}
                                     {% if order.is_paid and not order.canceled %}

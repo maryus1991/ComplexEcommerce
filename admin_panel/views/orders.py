@@ -54,7 +54,7 @@ class OrderListView(AdminUserMixin, ListView):
     def get_queryset(self):
         query = super().get_queryset().prefetch_related(
             'address', 'user', 'store'
-            ).filter(store=self.request.user.store)
+            ).order_by('canceled')
         
         query = query.order_by('canceled')
 

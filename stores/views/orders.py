@@ -169,7 +169,7 @@ class StoreOrdersView(UserStoreStaffMixin, ListView):
     template_name = "store/orders/orders-list.html"
     context_object_name = "orders"
     ordering = "-id"
-    paginate_by = 25
+    paginate_by = 100
 
     def get_queryset(self):
         query = super().get_queryset().prefetch_related('address', 'user').filter(store=self.request.user.store).exclude(is_paid=False, canceled=False)

@@ -112,7 +112,7 @@ class ProductListView(AdminUserMixin, ListView):
         # Text search
         if name := cleaned_data.get("name"):
             queryset = queryset.filter(
-                Q(name__icontains=name) | Q(description__icontains=name)
+                Q(name__icontains=name)
             )
 
         # Numeric range filters

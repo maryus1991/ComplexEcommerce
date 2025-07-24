@@ -399,21 +399,19 @@ class ChangeInvoiceToOfficial(LoginRequiredMixin, RedirectView):
             store_id=store_id,
         )
 
-        if order_obj.official_invoice :
-            order_obj.official_invoice = False
-            order_obj.save()
-
-            messages.warning(self.request, "دریافت فاکتور رسمی برای شما غیر فعال شد ")
-
         if not order_obj.store.have_official_invoice :
             order_obj.official_invoice = False
             order_obj.save()
             messages.warning(self.request, "دریافت فاکتور رسمی برای این فروشگاه غیر فعال هست ")
 
+        site = SiteSetting.objects.first()
+        if site.active_receive_official_invoice:
+            if order_obj.official_invoice:
+                order_obj.official_invoice = False
+                order_obj.save()
 
-        else:
-            site = SiteSetting.objects.first()
-            if site.active_receive_official_invoice:
+                messages.warning(self.request, "دریافت فاکتور رسمی برای شما غیر فعال شد ")#
+            else :
                 order_obj.official_invoice = True
                 order_obj.save()
 
@@ -421,6 +419,8 @@ class ChangeInvoiceToOfficial(LoginRequiredMixin, RedirectView):
                     self.request,
                     "دریافت فاکتور رسمی برای شما فعال شد بعد از اتمام پرداخت و اماده و صادر شدن ان برای دریافت  به صفحه سفارشات در داشبور خود مراجعه کنید ",
                 )
+        else:
+            messages.warning(self.request, "دریافت فاکتور رسمی توسط ادمین سایت غیر فعال شده است ")
 
         return self.request.META.get("HTTP_REFERER", "/")
 

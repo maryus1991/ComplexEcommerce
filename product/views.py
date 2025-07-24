@@ -129,10 +129,7 @@ class ProductListView(ListView):
 
         if have_search_query and search is not None:
             products = products.filter(
-                Q(name__icontains=search) |
-                Q(specs__name__icontains=search) |
-                Q(tags__name__icontains=search) |
-                Q(features__title__icontains=search)
+                Q(name__icontains=search)
             )
 
         sort = None
@@ -174,7 +171,7 @@ class ProductListView(ListView):
         )
 
         context["stores"] = (
-            Store.objects.filter(is_active=True, products__count__gt=0, is_verified=True)
+            Store.objects.filter(is_active=True, is_verified=True)
             .order_by("-sort_number").distinct()
             .all()
         )
