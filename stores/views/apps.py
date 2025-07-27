@@ -30,29 +30,32 @@ from django.core.files import File
 @method_decorator(csrf_exempt, name='dispatch')
 class ChunkedFileUploadView(UserStoreStaffMixin, View):
     def post(self, request):
-        chunk = request.FILES.get('file')
-        chunk_number = int(request.POST.get('chunkNumber'))
-        total_chunks = int(request.POST.get('totalChunks'))
-        filename = request.POST.get('filename')
+        if request.user.store.can_store_add_apps :
+            chunk = request.FILES.get('file')
+            chunk_number = int(request.POST.get('chunkNumber'))
+            total_chunks = int(request.POST.get('totalChunks'))
+            filename = request.POST.get('filename')
 
-        tmp_dir = f'media/uploads/tmp/{filename}'
-        os.makedirs(tmp_dir, exist_ok=True)
-        chunk_path = os.path.join(tmp_dir, f'chunk_{chunk_number}')
+            tmp_dir = f'media/uploads/tmp/{filename}'
+            os.makedirs(tmp_dir, exist_ok=True)
+            chunk_path = os.path.join(tmp_dir, f'chunk_{chunk_number}')
 
-        with open(chunk_path, 'wb+') as f:
-            for part in chunk.chunks():
-                f.write(part)
+            with open(chunk_path, 'wb+') as f:
+                for part in chunk.chunks():
+                    f.write(part)
 
-        if chunk_number == total_chunks:
-            final_path = f'media/app/{filename}'
-            with open(final_path, 'wb+') as final_file:
-                for i in range(1, total_chunks + 1):
-                    chunk_file = os.path.join(tmp_dir, f'chunk_{i}')
-                    with open(chunk_file, 'rb') as part:
-                        final_file.write(part.read())
-            shutil.rmtree(tmp_dir)
+            if chunk_number == total_chunks:
+                final_path = f'media/app/{filename}'
+                with open(final_path, 'wb+') as final_file:
+                    for i in range(1, total_chunks + 1):
+                        chunk_file = os.path.join(tmp_dir, f'chunk_{i}')
+                        with open(chunk_file, 'rb') as part:
+                            final_file.write(part.read())
+                shutil.rmtree(tmp_dir)
 
-        return JsonResponse({'status': 'ok'})
+            return JsonResponse({'status': 'ok'})
+        else:
+            return JsonResponse({'status': 'error'})
 
 class StoreAppsView(UserStoreStaffMixin, View):
     """
@@ -93,21 +96,17 @@ class StoreAppsView(UserStoreStaffMixin, View):
             {"items": obj.all(), "form": AddStoreAppForm()},
         )
 
-    from django.core.files import File
 
     def post(self, request, *args, **kwargs):
         store = request.user.store
         uploaded_filename = request.POST.get('uploaded_filename')
 
-        # کپی گرفتن از POST و FILES
         post_data = request.POST.copy()
         files_data = request.FILES.copy()
 
-        # اگه فایل قبلاً آپلود شده، فایل جدید رو نادیده بگیر
         if uploaded_filename:
             files_data.pop('file', None)
 
-        # ساخت فرم بدون فایل جدید
         form = AddStoreAppForm(post_data, files_data)
 
         if form.is_valid():
@@ -119,12 +118,24 @@ class StoreAppsView(UserStoreStaffMixin, View):
                     with open(full_path, 'rb') as f:
                         form.instance.file.save(uploaded_filename, File(f), save=False)
 
-                    os.remove(full_path)  # اختیاری
+                    os.remove(full_path)
 
-            form.save()
-            messages.success(request, "فایل شما با موفقیت ذخیره شد.")
+            if request.user.store.store.can_store_add_apps:
+
+                if request.user.store.allowed_to_add_and_edit_apps_with_out_admin_per:
+                    form.instance.is_active = True
+                    form.instance.admin_verified = True
+                else:
+                    form.instance.is_active = False
+                    form.instance.admin_verified = False
+
+                form.save()
+                messages.success(request, "فایل شما با موفقیت ذخیره شد.")
+            else:
+                messages.success(request, "دسترسی ندارید")
+
         else:
-            messages.error(request, form.errors)
+            messages.error(request, form.errors.as_text())
 
         return redirect("store:app-list")
 
@@ -192,6 +203,7 @@ class AppsCreateView(UserStoreStaffMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.store = self.request.user.store
+        request = self.request
 
         uploaded_filename = self.request.POST.get('uploaded_filename')
         if uploaded_filename:
@@ -201,12 +213,26 @@ class AppsCreateView(UserStoreStaffMixin, CreateView):
                     form.instance.file.save(uploaded_filename, File(f), save=False)
                 os.remove(full_path)
 
-        form.instance.admin_verified = True
-        messages.success(self.request, "برنامه مورد نظر با موفقیت افزوده شد")
-        return super().form_valid(form)
+            if request.user.store.store.can_store_add_apps:
+
+                if request.user.store.allowed_to_add_and_edit_apps_with_out_admin_per:
+                    form.instance.is_active = True
+                    form.instance.admin_verified = True
+                else:
+                    form.instance.is_active = False
+                    form.instance.admin_verified = False
+
+                messages.success(self.request, "فایل شما با موفقیت ذخیره شد.")
+            else:
+                messages.success(self.request, "دسترسی ندارید")
+
+        else:
+            messages.success(self.request, "فایل اپلود شده پیدا نشد")
+
+        return redirect("store:app-list")
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
 
@@ -222,6 +248,7 @@ class AppsUpdateView(UserStoreStaffMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.store = self.request.user.store
+        request = self.request
 
         uploaded_filename = self.request.POST.get('uploaded_filename')
 
@@ -232,15 +259,25 @@ class AppsUpdateView(UserStoreStaffMixin, UpdateView):
                     form.instance.file.save(uploaded_filename, File(f), save=False)
                 os.remove(full_path)
 
+            if request.user.store.can_store_add_apps:
 
-        form.instance.is_active = True
+                if request.user.store.allowed_to_add_and_edit_apps_with_out_admin_per:
+                    form.instance.is_active = True
+                    form.instance.admin_verified = True
+                else:
+                    form.instance.is_active = False
+                    form.instance.admin_verified = False
 
-        if super().get_object().admin_verified:
-            form.instance.admin_verified = True
+                form.save()
+                messages.success(self.request, "فایل شما با موفقیت ذخیره شد.")
+            else:
+                messages.success(self.request, "دسترسی ندارید")
 
-        messages.success(self.request, "تغییرات با موفقیت اعمال شد")
-        return super().form_valid(form)
+        else:
+            messages.warning(self.request, "فایل اپلود شده پیدا نشد")
+
+        return redirect("store:app-list")
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)

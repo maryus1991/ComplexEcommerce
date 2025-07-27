@@ -1,7 +1,7 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor_uploader.fields import RichTextUploadingField
-
+from stores.models import Store
 from django.utils.crypto import get_random_string
 
 
@@ -138,6 +138,7 @@ class SiteSetting(models.Model):
     send_message_when_set_sending_id = models.BooleanField(
         default=True, verbose_name="ارسال پیام هنگام قرار دادن کد پیگیری ارسال"
     )
+
 
     def __str__(self):
         return self.title

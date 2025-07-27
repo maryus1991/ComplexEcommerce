@@ -1,6 +1,6 @@
 from attr.filters import exclude
-from django.http import FileResponse, Http404, HttpResponseServerError, JsonResponse
-from django.views.generic import View
+from django.http import FileResponse, Http404, HttpResponseServerError, JsonResponse, StreamingHttpResponse
+from django.views.generic import View, RedirectView
 import os
 from django.core.files.storage import default_storage
 from pathlib import Path
@@ -18,45 +18,44 @@ import shutil
 from contextlib import redirect_stdout
 import sys
 from django.utils.text import get_valid_filename
+from admin_panel.tasks import clean_temp_files
+from zipfly import ZipFly
 
 
-class StreamMediaZipView(View):
+class StreamMediaZipView(AdminUserMixin, View):
     def get(self, request, *args, **kwargs):
-        # ساخت یه مسیر موقت برای ذخیره zip
-        temp_dir = tempfile.mkdtemp()
-        archive_name = 'media_' + str(now().strftime("%Y%m%d%H%M%S")) + '.zip'
-        archive_path = os.path.join(temp_dir, archive_name)
+        media_root = settings.MEDIA_ROOT
+        if not os.path.exists(media_root):
+            raise Http404("مسیر media وجود ندارد.")
 
-        # ساخت فایل zip از پوشه MEDIA_ROOT
-        shutil.make_archive(base_name=archive_path.replace('.zip', ''),
-                            format='zip',
-                            root_dir=settings.MEDIA_ROOT)
+        files = []
+        for root, _, filenames in os.walk(media_root):
+            for filename in filenames:
+                full_path = os.path.join(root, filename)
+                rel_path = os.path.relpath(full_path, media_root)
+                files.append({"fs": full_path, "n": rel_path})
 
-        # بررسی وجود فایل
-        if not os.path.exists(archive_path):
-            raise Http404("فایل زیپ ساخته نشد.")
+        if not files:
+            raise Http404("فایلی برای زیپ کردن پیدا نشد.")
 
-        # ارسال فایل به کاربر
-        response = FileResponse(open(archive_path, 'rb'), as_attachment=True, filename=archive_name)
+        zfly = ZipFly(paths=files, chunksize=1024)
 
-        # پاک‌سازی بعد از ارسال (زمانی که فایل کامل ارسال شد)
-        def cleanup(file_path, dir_path):
-            try:
-                os.remove(file_path)
-                shutil.rmtree(dir_path)
-            except Exception as e:
-                print("خطا در پاک‌سازی:", e)
+        archive_name = 'media_backups_at_' + str(now().strftime("%Y-%m-%d--%H:%M:%S")) + '.zip'
 
-        # اضافه کردن هوک به close برای حذف فایل
-        original_close = response.close
-
-        def custom_close():
-            cleanup(archive_path, temp_dir)
-            original_close()
-
-        response.close = custom_close
+        response = StreamingHttpResponse(zfly.generator(), content_type='application/zip')
+        response['Content-Disposition'] = f'attachment; filename="{archive_name}"'
 
         return response
+
+
+class CleanTMPFiles(AdminUserMixin, RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        clean_temp_files.delay()
+        messages.success(
+            self.request,
+            'درخواست پاک سازی به صف افزوده شد و به زودی شروع خواهد شد'
+        )
+        return  self.request.META.get('HTTP_REFERER')
 
 
 class OneClickBackup(AdminUserMixin, View):

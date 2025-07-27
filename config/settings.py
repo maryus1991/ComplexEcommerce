@@ -370,11 +370,13 @@ from kombu import Queue
 CELERY_TASK_QUEUES = [
     Queue('details', routing_key='details'),
     Queue('sms', routing_key='sms'),
+    Queue('clean', routing_key='clean'),
 ]
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_TASK_ROUTES = {
     'orders.tasks.clean_expired_details': {'queue': 'details', 'routing_key': 'details'},
     'utils.send_otp.send_message': {'queue': 'sms', 'routing_key': 'sms'},
+    'admin_panel.tasks.clean_temp_files': {'queue': 'clean', 'routing_key': 'clean'},
 }
 
 

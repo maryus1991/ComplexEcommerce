@@ -155,7 +155,7 @@ class ReturnOrderView(LoginRequiredMixin, View):
 
         else:
             messages.error(
-                request, form.errors
+                request, form.errors.as_text()
             )
         return redirect('dashboard:orders-returns-list')
 
@@ -439,7 +439,7 @@ class CreateUserAddress(LoginRequiredMixin, FormView):
 
     def form_invalid(self, form):
         messages.error(
-            self.request, form.errors,
+            self.request, form.errors.as_text(),
         )
         return super().form_invalid(form)
 
@@ -607,7 +607,7 @@ class UserTicketConversation(LoginRequiredMixin, View):
             else:
                 messages.error(self.request, "مشکلی پیش امده لطفا دوباره امتحان کننید")
         else:
-            messages.error(self.request, form.errors)
+            messages.error(self.request, form.errors.as_text())
         return redirect(
             reverse("dashboard:tickets-conversation", kwargs={"pk": ticket_id})
         )

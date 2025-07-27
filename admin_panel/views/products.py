@@ -20,6 +20,8 @@ UserFavorite
 from admin_panel.search_forms import ProductSearchForm
 from stores.forms import BrandAndCategorySearchForm
 from django.db.models import Q
+
+
 # product
 
 class ProductSetSortNumber(AdminUserMixin, RedirectView):
@@ -199,6 +201,7 @@ class ProductListView(AdminUserMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['search_form'] = ProductSearchForm()
+        context['product_count'] = self.get_queryset().count
         return context
 
 
@@ -325,7 +328,7 @@ class ProductCreateView(AdminUserMixin, CreateView):
         return redirect(reverse("admin_panel:product-update", kwargs={'pk': product.id}))
     
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -494,6 +497,12 @@ class ProductActiveAndDeactivateView(AdminUserMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         product_id = kwargs.get("pk")
         product = get_object_or_404(Product, pk=product_id)
+
+        if product.picture is None:
+            messages.warning(
+                self.request,'برای فعال سازی اپتدا باید عکس اصلی محصول گذاشته بشه')
+            return reverse_lazy("admin_panel:product-list")
+
         if product.is_active:
             product.is_active = False
             product.save()
@@ -700,7 +709,7 @@ class ProductCategoryCreateView(AdminUserMixin, CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
 
@@ -720,7 +729,7 @@ class ProductCategoryUpdateView(AdminUserMixin, UpdateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
 
@@ -874,7 +883,7 @@ class ProductBrandCreateView(AdminUserMixin, CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request,form.errors.as_text())
         return super().form_invalid(form)
 
 
@@ -894,7 +903,7 @@ class ProductBrandUpdateView(AdminUserMixin, UpdateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
 

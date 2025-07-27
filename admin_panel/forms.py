@@ -13,7 +13,7 @@ from sitesetting.models import (
     FastLinks,
     QuestionAndAnswer,
     ContactUs,
-SiteLaw
+    SiteLaw
 )
 from stores.forms import MultiImageField, MultiUploadMetaInput
 from stores.models import StoreApps, Store
@@ -26,6 +26,41 @@ from jalali_date.fields import JalaliDateField
 from jalali_date.widgets import AdminJalaliDateWidget
 
 User = get_user_model()
+
+
+class StorePermissions(forms.ModelForm):
+    class Meta:
+        model = Store
+        fields = (
+            'can_stores_add_product_category',
+            'can_stores_add_product_brand',
+            'can_stores_add_product',
+            'can_store_add_blog_category',
+            'can_store_add_blog_post',
+            'can_store_add_apps',
+            'can_store_add_users',
+            'allowed_to_add_and_edit_products_with_out_admin_per',
+            'allowed_to_add_and_edit_apps_with_out_admin_per',
+            'allowed_to_add_and_edit_posts_with_out_admin_per',
+            'allowed_to_activate_product_categories_with_out_admin_per',
+            'allowed_to_activate_product_brand_with_out_admin_per',
+            'allowed_to_activate_post_categories_with_out_admin_per',
+        )
+        widgets = {
+            'can_stores_add_product_category': forms.CheckboxInput(),
+            'can_stores_add_product_brand': forms.CheckboxInput(),
+            'can_stores_add_product': forms.CheckboxInput(),
+            'can_store_add_blog_category': forms.CheckboxInput(),
+            'can_store_add_blog_post': forms.CheckboxInput(),
+            'can_store_add_apps': forms.CheckboxInput(),
+            'can_store_add_users': forms.CheckboxInput(),
+            'allowed_to_add_and_edit_products_with_out_admin_per': forms.CheckboxInput(),
+            'allowed_to_add_and_edit_apps_with_out_admin_per': forms.CheckboxInput(),
+            'allowed_to_add_and_edit_posts_with_out_admin_per': forms.CheckboxInput(),
+            'allowed_to_activate_product_categories_with_out_admin_per': forms.CheckboxInput(),
+            'allowed_to_activate_product_brand_with_out_admin_per': forms.CheckboxInput(),
+            'allowed_to_activate_post_categories_with_out_admin_per': forms.CheckboxInput(),
+        }
 
 
 class AdminUsersFilteringForm(forms.Form):
@@ -169,7 +204,6 @@ class AdminUsersFilteringForm(forms.Form):
         widget=forms.Select(attrs={"class": "form-control"}),
     )
 
-
     legal_person_economic_number = forms.CharField(
         required=False,
         label="شماره اقتصادی (رسمی)",
@@ -186,7 +220,6 @@ class AdminUsersFilteringForm(forms.Form):
         widget=forms.TextInput(attrs={"class": "form-control"}),
     )
 
-    
 
 class AdminOrderFilteringForm(forms.Form):
     discount = forms.ModelChoiceField(
@@ -295,7 +328,7 @@ class AdminOrderFilteringForm(forms.Form):
     payment_id = forms.CharField(
         required=False,
         label="کد پیگیری پرداخت",
-        widget=forms.TextInput(attrs={"class": "form-control number-input-tdc" }),
+        widget=forms.TextInput(attrs={"class": "form-control number-input-tdc"}),
     )
 
     start_date = JalaliDateField(
@@ -610,7 +643,6 @@ class AdminBlogFilteringForm(forms.Form):
         return items
 
 
-
 class SpecificsOrdersModelForm(forms.ModelForm):
     user = forms.ModelChoiceField(
         queryset=User.objects.all(),
@@ -653,6 +685,7 @@ class SiteLawModelForm(forms.ModelForm):
     description = forms.CharField(
         widget=CKEditorUploadingWidget(attrs={'id': 'id_description'})
     )
+
     class Meta:
         model = SiteLaw
         fields = ('name', 'description', 'is_active')
@@ -737,10 +770,11 @@ class MessagingUserForm(forms.Form):
         widget=forms.Textarea(
             attrs={
                 'class': 'form-control',
-                'placeholder':'متن پیام ( سعی کنید که زیاد نباشد ) ...'
+                'placeholder': 'متن پیام ( سعی کنید که زیاد نباشد ) ...'
             }
         ),
     )
+
 
 class ExcludeUserFromMessagingForm(forms.Form):
     exclude_user = forms.ModelMultipleChoiceField(
@@ -1210,7 +1244,7 @@ class SiteSettingModelForm(forms.ModelForm):
                 attrs={
                     "class": "form-control",
                 }
-            ),            "minute_for_clean_order_detail_product": forms.NumberInput(
+            ), "minute_for_clean_order_detail_product": forms.NumberInput(
                 attrs={
                     "class": "form-control",
                 }
@@ -1396,13 +1430,12 @@ class UsedAppModelForm(forms.ModelForm):
                 "style": "width: 100%;",
                 "tabindex": "-1",
                 "aria-hidden ": "true",
-                'dir':'rtl'
+                'dir': 'rtl'
             }
         ),
         empty_label="فروشگاه را انتخاب کنید",
         required=False,
     )
-
 
     class Meta:
         model = StoreApps
@@ -1531,7 +1564,7 @@ class AddBlogCategoryModelForm(forms.ModelForm):
 
     class Meta:
         model = BlogCategory
-        fields = ('parent','image','name', 'is_active')
+        fields = ('parent', 'image', 'name', 'is_active')
         widgets = {
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "نام"}

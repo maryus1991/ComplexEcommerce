@@ -40,7 +40,7 @@ class SendTicketCreateView(AdminUserMixin, CreateView):
         return redirect(self.success_url)
 
     def form_invalid(self, form):
-        messages.warning(self.request, form.errors)
+        messages.warning(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
 

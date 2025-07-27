@@ -764,7 +764,7 @@ class AddProductForm(forms.ModelForm):
     )
 
     category = forms.ModelChoiceField(
-        queryset=ProductCategory.objects.filter(is_active=True).all(),
+        queryset=ProductCategory.objects.all(),
         required=True,
         empty_label="دسته بندی مربوطه را انتخاب کنید",
         widget=forms.Select(
@@ -778,7 +778,7 @@ class AddProductForm(forms.ModelForm):
         ),
     )
     brand = forms.ModelChoiceField(
-        queryset=ProductBrand.objects.filter(is_active=True).all(),
+        queryset=ProductBrand.objects.all(),
         required=True,
         empty_label="برند مربوطه را انتخاب کنید",
         widget=forms.Select(

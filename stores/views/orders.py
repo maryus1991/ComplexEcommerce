@@ -173,7 +173,7 @@ class StoreOrdersView(UserStoreStaffMixin, ListView):
 
     def get_queryset(self):
         query = super().get_queryset().prefetch_related('address', 'user').filter(store=self.request.user.store).exclude(is_paid=False, canceled=False)
-        query = query.order_by('canceled')
+        query = query.exclude(canceled=True).order_by('-second_date')
 
         form = OrderFilteringForm(self.request.GET)
 
@@ -726,7 +726,7 @@ class StoreSpecificsOrdersUpdateView(UserStoreStaffMixin, UpdateView):
     def form_invalid(self, form):
         messages.error(
             self.request,
-            form.errors
+            form.errors.as_text()
         )
         return super().form_invalid(form)
 

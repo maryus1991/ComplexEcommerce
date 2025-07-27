@@ -362,33 +362,112 @@ desired effect
                 {#                <li class="header">تیتر</li>#}
 
                 {% if user.is_staff and user.store and 'store' in request.path and 'admin' not in request.path %}
-                    <li class="treeview">
-                        <a><i class="fa fa-link"></i> <span>محصولات</span>
-                            <span class="pull-left-container">
+                    {% if user.store.can_stores_add_product_category or user.store.can_stores_add_product_brand or user.store.can_stores_add_product %}
+                        <li class="treeview">
+                            <a><i class="fa fa-link"></i> <span>محصولات</span>
+                                <span class="pull-left-container">
                             <i class="fa fa-angle-right pull-left"></i>
                           </span>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li class="link-activator"><a href="{% url 'store:list-product' %}"><i
-                                    class="fa fa-link"></i>
-                                <span> محصولات</span></a>
-                            </li>
-                            <li class="link-activator"><a href="{% url 'store:add-product' %}"><i
-                                    class="fa fa-link"></i>
-                                <span>اضافه کردن محصول</span></a></li>
-                            <li class="link-activator"><a href="{% url 'store:list-brands' %}"><i
-                                    class="fa fa-link"></i>
-                                <span>لیست برندها</span></a></li>
-                            <li class="link-activator"><a href="{% url 'store:add-brands' %}"><i class="fa fa-link"></i>
-                                <span>اضافه کردن برند</span></a></li>
-                            <li class="link-activator"><a href="{% url 'store:list-category' %}"><i
-                                    class="fa fa-link"></i>
-                                <span>لیست دسته بندی های موجود</span></a></li>
-                            <li class="link-activator"><a href="{% url 'store:add-category' %}"><i
-                                    class="fa fa-link"></i>
-                                <span>اضافه کردن دسته بندی</span></a></li>
-                        </ul>
-                    </li>
+                            </a>
+                            <ul class="treeview-menu">
+
+                                <li class="link-activator"><a href="{% url 'store:list-product' %}"><i
+                                        class="fa fa-link"></i>
+                                    <span> محصولات</span></a>
+                                </li>
+                                {% if user.store.can_stores_add_product %}
+
+                                    <li class="link-activator"><a href="{% url 'store:add-product' %}"><i
+                                            class="fa fa-link"></i>
+                                        <span>اضافه کردن محصول</span></a></li>
+                                {% endif %}
+                                <li class="link-activator"><a href="{% url 'store:list-brands' %}"><i
+                                        class="fa fa-link"></i>
+                                    <span>لیست برندها</span></a></li>
+                                {% if user.store.can_stores_add_product_brand %}
+
+                                    <li class="link-activator"><a href="{% url 'store:add-brands' %}"><i
+                                            class="fa fa-link"></i>
+                                        <span>اضافه کردن برند</span></a></li>
+                                {% endif %}
+                                <li class="link-activator"><a href="{% url 'store:list-category' %}"><i
+                                        class="fa fa-link"></i>
+                                    <span>لیست دسته بندی های موجود</span></a></li>
+                                {% if user.store.can_stores_add_product_category %}
+
+                                    <li class="link-activator"><a href="{% url 'store:add-category' %}"><i
+                                            class="fa fa-link"></i>
+                                        <span>اضافه کردن دسته بندی</span></a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {% if user.store.can_store_add_blog_category or user.store.can_store_add_blog_post %}
+                        <li class="treeview">
+                            <a><i class="fa fa-link"></i>
+                                <span>بلاگ</span>
+                                <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                {% if user.store.can_store_add_blog_post %}
+
+                                    <li class="link-activator">
+                                        <a href="{% url 'store:blog-add' %}"><i class="fa fa-link"></i>
+                                            <span>افزودن پست</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li class="link-activator">
+                                    <a href="{% url 'store:blog-list' %}"><i class="fa fa-link"></i>
+                                        <span>لیست پست های وبلاگ</span>
+                                    </a>
+                                </li>
+                                {% if user.store.can_store_add_blog_category %}
+
+                                    <li class="link-activator">
+                                        <a href="{% url 'store:blog-add-category' %}"><i class="fa fa-link"></i>
+                                            <span>افزودن دسته بندی برای وبلاگ</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                <li class="link-activator">
+                                    <a href="{% url 'store:blog-list-category' %}"><i class="fa fa-link"></i>
+                                        <span>لیست دسته بندی وبلاگ</span>
+                                    </a>
+                                </li>
+
+
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if user.is_store_admin and user.store.can_store_add_users %}
+                        <li class="treeview">
+                            <a><i class="fa fa-link"></i>
+                                <span>کاربران فروشگاه</span>
+                                <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li class="link-activator"><a href="{% url 'store:user-list' %}"><i
+                                        class="fa fa-link"></i>
+                                    <span>لیست کاربران فروشگاه</span></a>
+                                </li>
+                                <li class="link-activator"><a href="{% url 'store:user-add' %}"><i
+                                        class="fa fa-link"></i>
+                                    <span>اضافه کردن کاربر فروشگاهی</span></a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                    {% endif %}
+
+
                     <li class="treeview">
                         <a><i class="fa fa-link"></i>
                             <span>تیکت ها</span>
@@ -418,39 +497,6 @@ desired effect
                     </li>
                     <li class="treeview">
                         <a><i class="fa fa-link"></i>
-                            <span>بلاگ</span>
-                            <span class="pull-left-container">
-                             <i class="fa fa-angle-right pull-left"></i>
-                        </span>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li class="link-activator">
-                                <a href="{% url 'store:blog-add' %}"><i class="fa fa-link"></i>
-                                    <span>افزودن پست</span>
-                                </a>
-                            </li>
-                            <li class="link-activator">
-                                <a href="{% url 'store:blog-list' %}"><i class="fa fa-link"></i>
-                                    <span>لیست پست های وبلاگ</span>
-                                </a>
-                            </li>
-                            <li class="link-activator">
-                                <a href="{% url 'store:blog-add-category' %}"><i class="fa fa-link"></i>
-                                    <span>افزودن دسته بندی برای وبلاگ</span>
-                                </a>
-                            </li>
-
-                            <li class="link-activator">
-                                <a href="{% url 'store:blog-list-category' %}"><i class="fa fa-link"></i>
-                                    <span>لیست دسته بندی وبلاگ</span>
-                                </a>
-                            </li>
-
-
-                        </ul>
-                    </li>
-                    <li class="treeview">
-                        <a><i class="fa fa-link"></i>
                             <span style="color: #ff7700">سفارشات</span>
                             <span class="pull-left-container">
                              <i class="fa fa-angle-right pull-left"></i>
@@ -471,7 +517,7 @@ desired effect
                                 <a href="{% url 'store:specifics-list' %}"><i class="fa fa-link"></i>
                                     <span style="color: #ff7700">فاکتور های خاص</span>
                                 </a>
-                            </li>                         
+                            </li>
                             <li class="link-activator">
                                 <a href="{% url 'store:return-order-list' %}"><i class="fa fa-link"></i>
                                     <span style="color: #ff7700">سفارشات مرجوعی</span>
@@ -483,36 +529,18 @@ desired effect
                     </li>
 
 
-                    {% if user.is_store_admin %}
-                        <li class="treeview">
-                            <a><i class="fa fa-link"></i>
-                                <span>کاربران فروشگاه</span>
-                                <span class="pull-left-container">
-                             <i class="fa fa-angle-right pull-left"></i>
-                        </span>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li class="link-activator"><a href="{% url 'store:user-list' %}"><i
-                                        class="fa fa-link"></i>
-                                    <span>لیست کاربران فروشگاه</span></a>
-                                </li>
-                                <li class="link-activator"><a href="{% url 'store:user-add' %}"><i
-                                        class="fa fa-link"></i>
-                                    <span>اضافه کردن کاربر فروشگاهی</span></a>
-                                </li>
-
-                            </ul>
-                        </li>
-
-                    {% endif %}
 
                     <li class="link-activator"><a href="{% url 'store:update' %}"><i class="fa fa-link"></i> <span>ویرایش اطلاعات فروشگاه</span></a>
                     </li>
-                    <li class="link-activator">
-                        <a href="{% url 'store:app-list' %}"><i class="fa fa-link"></i>
-                            <span>برنامه های کاربردی</span>
-                        </a>
-                    </li>
+                    {% if user.store.can_store_add_apps %}
+
+                        <li class="link-activator">
+                            <a href="{% url 'store:app-list' %}"><i class="fa fa-link"></i>
+                                <span>برنامه های کاربردی</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
 
                     <li class="link-activator"><a href="{% url 'store:home' %}"><i class="fa fa-link"></i> <span>صفحه فروشگاه</span></a>
                     </li>
@@ -528,16 +556,23 @@ desired effect
 
                 {% elif user.is_superuser %}
 
-                    <li class="link-activator" style="width: 100%; ">
+                    <li class="link-activator" style="width: 100%;">
                         <div class="btn-group" style="width: 100%">
-                            <a href="{% url 'admin_panel:backup' %}" class="btn btn-danger"
-                               style="width: 40%; margin-right: 1%; color: #FFFFFF">
-                                <i class="fa fa-download"></i> <span>دانلود بکاپ</span>
+                            <a title="دانلود بکاپ مدیا" href="{% url 'admin_panel:backup-media' %}"
+                               class="btn btn-success"
+                               style="width: 33%;  color: #FFFFFF">
+                                <i class="fa fa-download"></i> <span></span>
                             </a>
-                            <a href="{% url 'admin_panel:backup-media' %}" class="btn btn-success"
-                               style="width: 58%; margin-left: 1%; color: #FFFFFF">
-                                <i class="fa fa-upload"></i> <span>دانلود بکاپ مدیا</span>
+                            <a title="پاک سازی فایل های موقت" href="{% url 'admin_panel:backup-clean-temp_file' %}"
+                               class="btn btn-warning"
+                               style="width: 33%; color: #FFFFFF">
+                                <i class="fa fa-trash"></i> <span></span>
                             </a>
+                            <a title="دانلود بکاپ" href="{% url 'admin_panel:backup' %}" class="btn btn-danger"
+                               style="width: 33%; color: #FFFFFF">
+                                <i class="fa fa-download"></i> <span></span>
+                            </a>
+
                         </div>
                     </li>
                     <li class="treeview">
@@ -553,18 +588,27 @@ desired effect
                                     <span>محصولات</span>
                                 </a>
                             </li>
+                            <li class="link-activator"><a href="{% url 'admin_panel:product-create' %}"><i
+                                    class="fa fa-link"></i>
+                                <span>اضافه کردن محصول</span></a></li>
+
                             <li class="link-activator">
                                 <a href="{% url 'admin_panel:product-category-list' %}"><i class="fa fa-link"></i>
                                     <span>دسته بندی ها</span>
                                 </a>
                             </li>
+
+                            <li class="link-activator"><a href="{% url 'admin_panel:product-category-create' %}"><i
+                                    class="fa fa-link"></i>
+                                <span>اضافه کردن دسته بندی</span></a></li>
                             <li class="link-activator">
                                 <a href="{% url 'admin_panel:product-brand-list' %}"><i class="fa fa-link"></i>
                                     <span>برند ها</span>
                                 </a>
                             </li>
-
-
+                            <li class="link-activator"><a href="{% url 'admin_panel:product-brand-create' %}"><i
+                                    class="fa fa-link"></i>
+                                <span>اضافه کردن برند</span></a></li>
                         </ul>
                     </li>
                     <li class="treeview">
@@ -599,17 +643,18 @@ desired effect
                                 <a href="{% url 'admin_panel:site-law-list' %}"><i class="fa fa-link"></i>
                                     <span>قوانین</span>
                                 </a>
-                            </li>                           
-                                                <li class="link-activator"><a href="{% url 'admin_panel:fast-links-list' %}"><i
-                            class="fa fa-link"></i> <span>
+                            </li>
+                            <li class="link-activator"><a href="{% url 'admin_panel:fast-links-list' %}"><i
+                                    class="fa fa-link"></i> <span>
                         لینک های سریع
                     </span></a>
-                    </li>
+                            </li>
                             <li class="link-activator">
                                 <a href="{% url 'admin_panel:backup-media-restore' %}"><i class="fa fa-link"></i>
                                     <span>برگردانن  فایل های اپلود شده</span>
                                 </a>
-                            </li>                            <li class="link-activator">
+                            </li>
+                            <li class="link-activator">
                                 <a href="{% url 'admin_panel:backup-restore' %}"><i class="fa fa-link"></i>
                                     <span>برگردانن اطلاعات دیتابیس</span>
                                 </a>
@@ -657,11 +702,21 @@ desired effect
                                 </a>
                             </li>
                             <li class="link-activator">
+                                <a href="{% url 'admin_panel:blog-create' %}"><i class="fa fa-link"></i>
+                                    <span>افزودن پست</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
                                 <a href="{% url 'admin_panel:blog-category-list' %}"><i class="fa fa-link"></i>
                                     <span>دسته بندی ها</span>
                                 </a>
                             </li>
 
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:blog-category-create' %}"><i class="fa fa-link"></i>
+                                    <span>افزودن دسته بندی </span>
+                                </a>
+                            </li>
 
                         </ul>
                     </li>
@@ -684,7 +739,7 @@ desired effect
                             <li class="link-activator"><a href="{% url 'admin_panel:specifics-list' %}"><i
                                     class="fa fa-link"></i> <span>
                             فاکتور های خاص
-                        </span></a></li>                 
+                        </span></a></li>
                             <li class="link-activator"><a href="{% url 'admin_panel:return-order-list' %}"><i
                                     class="fa fa-link"></i> <span>
 سفارشات مرجوعی
@@ -717,7 +772,7 @@ desired effect
                                   کاربران
                                 </span>
                                 </a>
-                            </li>                           
+                            </li>
                             <li class="link-activator">
                                 <a href="{% url 'admin_panel:user-list-message-history' %}">
                                     <i class="fa fa-link"></i>
@@ -861,47 +916,47 @@ desired effect
 {% endblock %}
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // گرفتن همه inputهای عددی
-const numberInputs = document.querySelectorAll(
-  'input[type="number"], input.number-input-tdc, input[data-numeric-input]'
-);
+    document.addEventListener('DOMContentLoaded', function () {
+        // گرفتن همه inputهای عددی
+        const numberInputs = document.querySelectorAll(
+            'input[type="number"], input.number-input-tdc, input[data-numeric-input]'
+        );
 
-    numberInputs.forEach(originalInput => {
-        // پنهان کردن input اصلی
-        originalInput.style.display = 'none';
+        numberInputs.forEach(originalInput => {
+            // پنهان کردن input اصلی
+            originalInput.style.display = 'none';
 
-        // ساختن input جایگزین
-        const fakeInput = document.createElement('input');
-        fakeInput.type = 'text';
-        fakeInput.className = originalInput.className + ' visible-number-input';  // حفظ استایل
-        fakeInput.placeholder = originalInput.placeholder || '';
-        fakeInput.style.marginBottom = '4px';
+            // ساختن input جایگزین
+            const fakeInput = document.createElement('input');
+            fakeInput.type = 'text';
+            fakeInput.className = originalInput.className + ' visible-number-input';  // حفظ استایل
+            fakeInput.placeholder = originalInput.placeholder || '';
+            fakeInput.style.marginBottom = '4px';
 
-        // مقدار اولیه
-        const initialVal = originalInput.value || '';
-        fakeInput.value = formatWithCommas(initialVal);
+            // مقدار اولیه
+            const initialVal = originalInput.value || '';
+            fakeInput.value = formatWithCommas(initialVal);
 
-        // گذاشتن input جدید جلوی input مخفی
-        originalInput.parentNode.insertBefore(fakeInput, originalInput.nextSibling);
+            // گذاشتن input جدید جلوی input مخفی
+            originalInput.parentNode.insertBefore(fakeInput, originalInput.nextSibling);
 
-        // هنگام تایپ در input جدید
-        fakeInput.addEventListener('input', function () {
-            // پاک‌سازی کاراکترهای غیرعددی
-            const raw = this.value.replace(/,/g, '').replace(/[^\d]/g, '');
-            // نمایش با کاما
-            this.value = formatWithCommas(raw);
-            // مقدار خام به input اصلی بره
-            originalInput.value = raw;
+            // هنگام تایپ در input جدید
+            fakeInput.addEventListener('input', function () {
+                // پاک‌سازی کاراکترهای غیرعددی
+                const raw = this.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                // نمایش با کاما
+                this.value = formatWithCommas(raw);
+                // مقدار خام به input اصلی بره
+                originalInput.value = raw;
+            });
         });
-    });
 
-    // تابع فرمت سه‌رقمی
-    function formatWithCommas(val) {
-        if (!val) return '';
-        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    }
-});
+        // تابع فرمت سه‌رقمی
+        function formatWithCommas(val) {
+            if (!val) return '';
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+    });
 </script>
 
 </body>

@@ -62,6 +62,7 @@ class LoginView(View):
 
     def post(self, request):
         form = LoginForm(request.POST)
+        phone_number = ''
         if form.is_valid():
             phone_number = form.cleaned_data["phone_number"]
             password = form.cleaned_data["password"]
@@ -108,9 +109,14 @@ class LoginView(View):
             else:
                 messages.error(request, "کابری با این مشخصات پیدا نشد")
         else:
-            messages.error(request, form.errors)
+            messages.error(request,form.errors.as_text())
 
-        return redirect(reverse("user:login"))
+        if phone_number != '' :
+            query =  f'?tel={str(phone_number).replace(" ", "")}'
+        else :
+            query=''
+
+        return redirect(str(reverse("user:login")) + query  )
 
 
 class LogoutView(LoginRequiredMixin, View):
@@ -141,6 +147,7 @@ class RegisterView(View):
 
     def post(self, request):
         form = self.form_class(request.POST or None)
+        phone_number = ''
         if form.is_valid():
             phone_number = form.cleaned_data["phone_number"]
             password = form.cleaned_data["password"]
@@ -181,14 +188,22 @@ class RegisterView(View):
 
             else:
                 messages.error(request, "کاربری با این شماره موجود میباشد")
-                return redirect("user:login" )
+
+                if phone_number != '':
+                    query = f'?tel={str(phone_number).replace(" ", "")}'
+                else:
+                    query = ''
+
+                return redirect(reverse("user:login") + query)
+
         else:
             messages.error(
                 request,
-                form.errors,
+                form.errors.as_text(),
                 # 'لطفا اطلاعات را به درستی وارد کنید رمز عبور شما باید 8 کاراکتر باشد و دارای حروف انگلیسی اعداد و حد اقل باید درای یک حرف به صورت کپیتال و یک کاراکتر ویژه باشد'
             )
-            return redirect("user:register")
+
+            return render(request, self.template_name, {"form": self.form_class(request.POST or None)})
 
 
 class OTP(LoginRequiredMixin, View):
@@ -266,6 +281,7 @@ class ForgotPassword(View):
 
     def post(self, request, *args, **kwargs):
         form = RegistrationForm(request.POST or None)
+        phone_number = ''
         if form.is_valid():
             phone_number = form.cleaned_data["phone_number"]
             password = form.cleaned_data["password"]
@@ -300,10 +316,18 @@ class ForgotPassword(View):
 
             else:
                 messages.error(request, "کاربر مورد نظر موجود نیست")
-                return redirect("user:register")
+                if phone_number != '' :
+                    query =  f'?tel={str(phone_number).replace(" ", "")}'
+                else :
+                    query=''
+                return redirect(reverse("user:register")+ query)
         else:
-            messages.error(request, "لطفا اطلاعات خواسته شده را به درستی وارد کنید")
-        return redirect("user:login")
+            messages.error(request, form.errors.as_text())
+
+        return render(
+            request, "auth/forgot-password.html", {"form": RegistrationForm(request.POST or None)}
+        )
+
 
 
 class ActiveAccount(View):
@@ -330,6 +354,7 @@ class ActiveAccount(View):
 
     def post(self, request, *args, **kwargs):
         form = ActiveAccountForm(request.POST or None)
+        phone_number = ''
         if form.is_valid():
             phone_number = form.cleaned_data["phone_number"]
             user = User.objects.filter(PhoneNumber=phone_number)
@@ -348,7 +373,11 @@ class ActiveAccount(View):
                         request,
                         "حساب شما بسته شده است لطفا با مسئول مربوطه تماس فرمایید",
                     )
-                    return redirect("user:login")
+                    if phone_number != '':
+                        query = f'?tel={str(phone_number).replace(" ", "")}'
+                    else:
+                        query = ''
+                    return redirect(reverse("user:login") + query)
 
             else:
                 messages.error(
@@ -358,7 +387,11 @@ class ActiveAccount(View):
         else:
             messages.error(request, "لطفا اطلاعات معتبری وارد کنبد")
 
-        return redirect("user:login")
+        if phone_number != '' :
+            query =  f'?tel={str(phone_number).replace(" ", "")}'
+        else :
+            query = ''
+        return redirect(reverse("user:login") + query)
 
 
 class EditUserInformation(CustomLoginRequiredMixin, View):
@@ -413,7 +446,7 @@ class ChangePassword(CustomLoginRequiredMixin, View):
                 messages.error(request, "رمز عبور فعلی وارد شده اشتباه می باشد")
 
         else:
-            messages.error(request, form.errors)
+            messages.error(request, form.errors.as_text())
         return redirect("dashboard:account")
 
 
@@ -480,7 +513,7 @@ class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
             messages.success(request, "اطلاعات شما با موفقیت ثبت شد")
 
         else:
-            messages.error(request, form.errors)
+            messages.error(request,form.errors.as_text())
 
         return redirect("dashboard:account")
 

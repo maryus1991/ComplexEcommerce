@@ -54,9 +54,9 @@ class OrderListView(AdminUserMixin, ListView):
     def get_queryset(self):
         query = super().get_queryset().prefetch_related(
             'address', 'user', 'store'
-            ).order_by('canceled')
+            )
         
-        query = query.order_by('canceled')
+        query = query.order_by( 'canceled', '-is_paid','-second_date')
 
         form = AdminOrderFilteringForm(self.request.GET)
 
@@ -450,7 +450,7 @@ class SpecificsOrderCreateView(AdminUserMixin, CreateView):
     def form_invalid(self, form):
         messages.error(
             self.request,
-            form.errors
+            form.errors.as_text()
         )
         return super().form_valid(form)
 
@@ -481,7 +481,7 @@ class SpecificsOrdersUpdateView(AdminUserMixin, UpdateView):
     def form_invalid(self, form):
         messages.error(
             self.request,
-            form.errors
+            form.errors.as_text()
         )
         return super().form_valid(form)
 

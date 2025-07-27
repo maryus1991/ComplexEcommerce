@@ -144,213 +144,258 @@
             <form action="" method="GET" enctype="text/plain">
                 <div class="flex items-center justify-between w-full">
 
-                    <span class="flex items-center gap-x-1">
+
+                    {% if request.user_agent.is_mobile %}
+                        <a id="filterToggleBtn" class="flex justify-between w-full">
+                                                <span class="flex items-center gap-x-1">
                         <svg class="w-5 h-5">
                             <use href="#filter"></use>
                         </svg>
                         <p class="font-DanaMedium ">فیلتر ها</p>
                     </span>
-                    {% if request.user_agent.is_mobile %}
                         <span class="flex items-center gap-x-1">
-                        <a href="#products-list">
-                            <svg class="w-8 h-8">
+                            
+                            <svg  id="toggleIcon" class="w-6 h-6 text-gray-600 dark:text-gray-300 transition-transform duration-300">
                                 <use href="#arrow-down-circle"></use>
                             </svg>
-</a>
                         </span>
+                            
+</a>
+                        {% else %}
+                                            <span class="flex items-center gap-x-1">
+                        <svg class="w-5 h-5">
+                            <use href="#filter"></use>
+                        </svg>
+                        <p class="font-DanaMedium ">فیلتر ها</p>
+                    </span>
                     {% endif %}
 
                 </div>
+                <div {% if request.user_agent.is_mobile %} class="hidden" {% endif %} id="filterDropdown">
+                    <!-- accordion -->
+                    <div class="mt-3 w-full  dark:bg-zinc-600 cursor-pointer shadow rounded-lg">
+                        <div id="category-header" onclick="categoryFilter('category-accordion')"
+                             class="accordion-header p-3 flex items-center justify-between">
+                            <p class="font-DanaMedium">دسته بندی </p>
 
-                <!-- accordion -->
-                <div class="mt-3 w-full  dark:bg-zinc-600 cursor-pointer shadow rounded-lg">
-                    <div id="category-header" onclick="categoryFilter('category-accordion')"
-                         class="accordion-header p-3 flex items-center justify-between">
-                        <p class="font-DanaMedium">دسته بندی </p>
+                            <svg class="w-4 h-4">
+                                <use href="#chevron-left"></use>
+                            </svg>
+                        </div>
+                        <ul id="category-accordion" style="max-height: 400px !important; overflow-y: auto!important;"
+                            class="accordion-content  hidden py-2 mx-2  child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
+                            {% for category in categories|active_category %}
+                                <hr>
+                                <li data-id="{{ category.id }}">
+                                    <label class="cl-checkbox">
+                                        <input name="category" value="{{ category.id }}"
+                                               type="checkbox"
+                                               class="category-checkbox" data-id="{{ category.id }}" data-parent="">
+                                        <span></span>
+                                    </label>
+                                    <p>{{ category.name }}</p>
 
-                        <svg class="w-4 h-4">
-                            <use href="#chevron-left"></use>
-                        </svg>
-                    </div>
-                    <ul id="category-accordion"
-                        class="accordion-content  hidden py-2 mx-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
-                        {% for category in categories|active_category %}
-                            <hr>
-                            <li data-id="{{ category.id }}">
-                                <label class="cl-checkbox">
-                                    <input name="category" value="{{ category.id }}"
-                                           type="checkbox"
-                                           class="category-checkbox" data-id="{{ category.id }}" data-parent="">
-                                    <span></span>
-                                </label>
-                                <p >{{ category.name }}</p>
-
-                                {% for child in category.child|active_category %}
-                                    <li data-id="{{ child.id }}" style="padding-right: 2rem;">
-                                        <label class="cl-checkbox">
-                                            <input name="category" value="{{ child.id }}"
-                                                   type="checkbox"
-                                                   class="category-checkbox" data-id="{{ child.id }}"
-                                                   data-parent="{{ category.id }}">
-                                            <span></span>
-                                        </label>
-                                        <p  class="text-sm">{{ child.name }}</p>
-                                    </li>
-
-                                    {% for sub_child in child.child|active_category %}
-                                        <li data-id="{{ sub_child.id }}" style="padding-right: 4rem;">
+                                    {% for child in category.child|active_category %}
+                                        <li data-id="{{ child.id }}" style="padding-right: 2rem;">
                                             <label class="cl-checkbox">
-                                                <input id="c{{ sub_child.id }}" name="category"
-                                                       value="{{ sub_child.id }}" type="checkbox"
-                                                       class="category-checkbox" data-id="{{ sub_child.id }}"
-                                                       data-parent="{{ child.id }}">
+                                                <input name="category" value="{{ child.id }}"
+                                                       type="checkbox"
+                                                       class="category-checkbox" data-id="{{ child.id }}"
+                                                       data-parent="{{ category.id }}">
                                                 <span></span>
                                             </label>
-                                            <p class="text-xs">{{ sub_child.name }}</p>
+                                            <p class="text-sm">{{ child.name }}</p>
                                         </li>
 
-                                        {% for sub_sub_child in sub_child.child|active_category %}
-                                            <li data-id="{{ sub_sub_child.id }}" style="padding-right: 6rem;">
+                                        {% for sub_child in child.child|active_category %}
+                                            <li data-id="{{ sub_child.id }}" style="padding-right: 4rem;">
                                                 <label class="cl-checkbox">
-                                                    <input name="category"
-                                                           value="{{ sub_sub_child.id }}"
-                                                           type="checkbox" class="category-checkbox"
-                                                           data-id="{{ sub_sub_child.id }}"
-                                                           data-parent="{{ sub_child.id }}">
+                                                    <input id="c{{ sub_child.id }}" name="category"
+                                                           value="{{ sub_child.id }}" type="checkbox"
+                                                           class="category-checkbox" data-id="{{ sub_child.id }}"
+                                                           data-parent="{{ child.id }}">
                                                     <span></span>
                                                 </label>
-                                                <p  class="text-xs">{{ sub_sub_child.name }}</p>
+                                                <p class="text-xs">{{ sub_child.name }}</p>
                                             </li>
+
+                                            {% for sub_sub_child in sub_child.child|active_category %}
+                                                <li data-id="{{ sub_sub_child.id }}" style="padding-right: 6rem;">
+                                                    <label class="cl-checkbox">
+                                                        <input name="category"
+                                                               value="{{ sub_sub_child.id }}"
+                                                               type="checkbox" class="category-checkbox"
+                                                               data-id="{{ sub_sub_child.id }}"
+                                                               data-parent="{{ sub_child.id }}">
+                                                        <span></span>
+                                                    </label>
+                                                    <p class="text-xs">{{ sub_sub_child.name }}</p>
+                                                </li>
+                                            {% endfor %}
                                         {% endfor %}
                                     {% endfor %}
-                                {% endfor %}
-                            </li>
-                        {% endfor %}
-                    </ul>
+                                </li>
+                            {% endfor %}
+                        </ul>
 
 
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function () {
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
 
-                            const checkboxes = document.querySelectorAll('.category-checkbox');
+                                const checkboxes = document.querySelectorAll('.category-checkbox');
 
-                            // وقتی روی هر چک‌باکس کلیک شد
-                            checkboxes.forEach(cb => {
-                                cb.addEventListener('change', function () {
-                                    const currentId = this.dataset.id;
-                                    const isChecked = this.checked;
+                                // وقتی روی هر چک‌باکس کلیک شد
+                                checkboxes.forEach(cb => {
+                                    cb.addEventListener('change', function () {
+                                        const currentId = this.dataset.id;
+                                        const isChecked = this.checked;
 
-                                    // تمام چک‌باکس‌هایی که parent آن‌ها این ID باشد را پیدا کن
-                                    const children = getAllChildren(currentId);
-                                    children.forEach(child => {
-                                        child.checked = isChecked;
+                                        // تمام چک‌باکس‌هایی که parent آن‌ها این ID باشد را پیدا کن
+                                        const children = getAllChildren(currentId);
+                                        children.forEach(child => {
+                                            child.checked = isChecked;
+                                        });
                                     });
                                 });
+
+                                // بازگشت همه فرزندان یک دسته (به‌صورت بازگشتی)
+                                function getAllChildren(parentId) {
+                                    let result = [];
+                                    const directChildren = Array.from(document.querySelectorAll(`.category-checkbox[data-parent="${parentId}"]`));
+                                    result.push(...directChildren);
+                                    directChildren.forEach(child => {
+                                        result.push(...getAllChildren(child.dataset.id));
+                                    });
+                                    return result;
+                                }
                             });
+                        </script>
 
-                            // بازگشت همه فرزندان یک دسته (به‌صورت بازگشتی)
-                            function getAllChildren(parentId) {
-                                let result = [];
-                                const directChildren = Array.from(document.querySelectorAll(`.category-checkbox[data-parent="${parentId}"]`));
-                                result.push(...directChildren);
-                                directChildren.forEach(child => {
-                                    result.push(...getAllChildren(child.dataset.id));
-                                });
-                                return result;
-                            }
-                        });
-                    </script>
-
-                </div>
-                <br>
-
-                <div class="w-full  dark:bg-zinc-600 cursor-pointer shadow rounded-lg">
-                    <div id="store-header" onclick="categoryFilter('store-accordion')"
-                         class="accordion-header p-3 flex items-center justify-between">
-                        <p class="font-DanaMedium">فروشگاها</p>
-                        <svg class="w-4 h-4">
-                            <use href="#chevron-left"></use>
-                        </svg>
                     </div>
-                    <ul id="store-accordion"
-                        class="accordion-content hidden mx-2 py-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
-                        <hr>
-                        {% for store in stores %}
-                            <li>
-                                <label class="cl-checkbox">
-                                    <input name="store" value="{{ store.id }}" type="checkbox">
-                                    <span></span>
-                                </label>
-                                <p>{{ store.name }}</p>
-                            </li>
-                        {% endfor %}
+                    <br>
 
-                    </ul>
-                </div>
-                <br>
-                <div class="w-full  dark:bg-zinc-600 cursor-pointer shadow rounded-lg">
-                    <div id="brand-header" onclick="categoryFilter('brand-accordion')"
-                         class="accordion-header p-3 flex items-center justify-between">
-                        <p class="font-DanaMedium">برند</p>
-                        <svg class="w-4 h-4">
-                            <use href="#chevron-left"></use>
-                        </svg>
-                    </div>
-                    <ul id="brand-accordion"
-                        class="accordion-content hidden mx-2 py-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
-                        <hr>
-                        {% for brand in brands %}
-                            <li>
-                                <label class="cl-checkbox">
-                                    <input name="brand" value="{{ brand.id }}" type="checkbox">
-                                    <span></span>
-                                </label>
-                                <p>{{ brand.name }}</p>
-                            </li>
-                        {% endfor %}
+                    <div class="w-full  dark:bg-zinc-600 cursor-pointer shadow rounded-lg">
+                        <div id="store-header" onclick="categoryFilter('store-accordion')"
+                             class="accordion-header p-3 flex items-center justify-between">
+                            <p class="font-DanaMedium">فروشگاها</p>
+                            <svg class="w-4 h-4">
+                                <use href="#chevron-left"></use>
+                            </svg>
+                        </div>
+                        <ul id="store-accordion" style="max-height: 400px !important; overflow-y: auto!important;"
+                            class="accordion-content hidden mx-2 py-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
+                            <hr>
+                            {% for store in stores %}
+                                <li>
+                                    <label class="cl-checkbox">
+                                        <input name="store" value="{{ store.id }}" type="checkbox">
+                                        <span></span>
+                                    </label>
+                                    <p>{{ store.name }}</p>
+                                </li>
+                            {% endfor %}
 
-                    </ul>
-                </div>
-                <br>
-                <div class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
-                    {#                        <p>جستجو محصول</p>#}
-                    <div class="grid">
-                        <input name="search" {% if search_param %} value="{{ search_param }}" {% endif %}
-                               placeholder="جستجو محصول ... " class="tailwind-input col-span-6">
+                        </ul>
                     </div>
-                </div>
-                <div class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
-                    {#                        <p>فیلتر با قیمت</p>#}
-                    <div class="grid">
-                        <input name="start_price" placeholder="از قیمت" class="tailwind-input col-span-3">
-                        <input name="end_price" placeholder="تا قیمت" class="tailwind-input col-span-3">
-                    </div>
-                </div>
+                    <br>
+                    <div class="w-full  dark:bg-zinc-600 cursor-pointer shadow rounded-lg">
+                        <div id="brand-header" onclick="categoryFilter('brand-accordion')"
+                             class="accordion-header p-3 flex items-center justify-between">
+                            <p class="font-DanaMedium">برند</p>
+                            <svg class="w-4 h-4">
+                                <use href="#chevron-left"></use>
+                            </svg>
+                        </div>
+                        <ul id="brand-accordion" style="max-height: 400px !important; overflow-y: auto!important;"
+                            class="accordion-content hidden mx-2 py-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
+                            <hr>
+                            {% for brand in brands %}
+                                <li>
+                                    <label class="cl-checkbox">
+                                        <input name="brand" value="{{ brand.id }}" type="checkbox">
+                                        <span></span>
+                                    </label>
+                                    <p>{{ brand.name }}</p>
+                                </li>
+                            {% endfor %}
 
-                <br>
-                <!-- CHECK BOX -->
-                <div class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
-                    <div class="">
-                        <p>فقط کالا های موجود</p>
-                        <label class="switch">
-                            <input name="available" type="checkbox">
-                            <span class="slider"></span>
-                        </label>
+                        </ul>
+                    </div>
+                    <br>
+                    <div class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
+                        {#                        <p>جستجو محصول</p>#}
+                        <div class="grid">
+                            <input name="search" {% if search_param %} value="{{ search_param }}" {% endif %}
+                                   placeholder="جستجو محصول ... " class="tailwind-input col-span-6">
+                        </div>
+                    </div>
+                    <div class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
+                        {#                        <p>فیلتر با قیمت</p>#}
+                        <div class="grid">
+                            <input name="start_price" placeholder="از قیمت" class="tailwind-input col-span-3">
+                            <input name="end_price" placeholder="تا قیمت" class="tailwind-input col-span-3">
+                        </div>
                     </div>
 
-                </div>
-                <br>
-                <hr>
-                <br>
-                <div class="flex items-center justify-between w-full">
-                    <button type="submit" class="text-white-500 bg-green-500 p-1.5 " style="border-radius:10px ">
-                        اعمال فیلتر ها
-                    </button>
-                    <button type="reset" class="text-green-500">حذف همه فیلتر ها</button>
+                    <br>
+                    <!-- CHECK BOX -->
+                    <div class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
+                        <div class="">
+                            <p>فقط کالا های موجود</p>
+                            <label class="switch">
+                                <input name="available" type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                    </div>
+                    <br>
+                    <hr>
+                    <br>
+                    <div class="flex items-center justify-between w-full">
+                        <button type="submit" class="text-white-500 bg-green-500 p-1.5 " style="border-radius:10px ">
+                            اعمال فیلتر ها
+                        </button>
+                        <button type="reset" class="text-green-500">حذف همه فیلتر ها</button>
+                    </div>
                 </div>
             </form>
+
+            <script>
+                // Toggle mobile filter visibility
+
+
+                // Accordion toggle function
+                function toggleAccordion(contentId, arrowId) {
+                    const content = document.getElementById(contentId);
+                    const arrow = document.getElementById(arrowId);
+
+                    content.classList.toggle('hidden');
+                    content.classList.toggle('block');
+                    arrow.classList.toggle('rotate-90');
+                }
+
+                // Initialize accordions on mobile
+                if (window.innerWidth < 768) {
+                    document.getElementById('filterContent').classList.add('max-h-0');
+                }
+            </script>
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
+                    document.getElementById('filterToggleBtn').addEventListener('click', function () {
+                        const content = document.getElementById('filterDropdown');
+                        const icon = document.getElementById('toggleIcon');
+
+                        if (content.classList.contains('hidden')) {
+                            content.classList.remove('hidden');
+                            
+                        }else {
+                            content.classList.add('hidden');
+                        }
+                        
+                        icon.classList.toggle('rotate-180');
+                    });
+
                     // برای تمام تگ‌های <p> داخل لیست‌ها
                     document.querySelectorAll('ul li p').forEach(function (pTag) {
                         pTag.addEventListener('click', function () {

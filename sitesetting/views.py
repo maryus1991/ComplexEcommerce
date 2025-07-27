@@ -21,7 +21,8 @@ from .models import (
 SiteLaw
 )
 from ipware import get_client_ip
-from stores.models import StoreApps, UsedAppView
+from stores.models import StoreApps
+from stores.models import UsedAppView as UsedAppViewModel
 from user.mixins.logins import CustomLoginRequiredMixin
 from config.settings import BASE_DIR
 from user.forms import ActiveAccountForm as NumberForAddToLettersForm
@@ -209,6 +210,9 @@ class UsedAppDetailView(DetailView):
     context_object_name = "item"
     template_name = "site/apps/apps-details.html"
 
+    def get_object(self, queryset = ...):
+        return get_object_or_404(StoreApps, pk=self.kwargs["pk"], is_active=True, admin_verified=True)
+
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
@@ -342,7 +346,7 @@ class DownloadUsedAppView(View):
 
         try:
             ip, is_rout = get_client_ip(request)
-            app_view_object = UsedAppView.objects.get_or_create(
+            app_view_object = UsedAppViewModel.objects.get_or_create(
                 user=request.user if request.user.is_authenticated else None,
                 app=app,
                 ip=ip,

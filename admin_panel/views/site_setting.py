@@ -64,7 +64,7 @@ class SiteLawCreateView(AdminUserMixin, CreateView):
 
     def form_invalid(self, form):
         messages.success(
-            self.request, form.errors
+            self.request, form.errors.as_text()
         )
         return super().form_invalid(form)
 
@@ -85,7 +85,7 @@ class SiteLawUpdateView(AdminUserMixin, UpdateView):
 
     def form_invalid(self, form):
         messages.success(
-            self.request, form.errors
+            self.request, form.errors.as_text()
         )
         return super().form_invalid(form)
 
@@ -156,7 +156,7 @@ class UpdateSiteSettingView(AdminUserMixin, UpdateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return redirect(self.request.META.get("HTTP_REFERER"))
 
 

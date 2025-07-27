@@ -39,6 +39,19 @@
                                 <use href="#user"></use>
                             </svg>
                         </div>
+                                                <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                function getAllQueryParams(paramName) {
+                                    const params = new URLSearchParams(window.location.search);
+                                    return params.getAll(paramName); // این متد تمام مقادیر یک پارامتر را برمی‌گرداند
+                                }
+                                
+                                const tel = getAllQueryParams('tel');
+                                if (tel.length > 0) {
+                                    document.getElementById('id_phone_number').value = tel;
+                                }
+                            })
+                        </script>
                         <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
                             {{ form.password }}
                             <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">

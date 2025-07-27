@@ -40,6 +40,19 @@
                                 <use href="#envelope"></use>
                             </svg>
                         </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                function getAllQueryParams(paramName) {
+                                    const params = new URLSearchParams(window.location.search);
+                                    return params.getAll(paramName); // این متد تمام مقادیر یک پارامتر را برمی‌گرداند
+                                }
+
+                                const tel = getAllQueryParams('tel');
+                                if (tel.length > 0) {
+                                    document.getElementById('id_phone_number').value = tel;
+                                }
+                            })
+                        </script>
 
 
                         <div class="flex items-center justify-between mt-4">

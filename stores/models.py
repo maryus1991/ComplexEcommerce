@@ -67,6 +67,21 @@ class Store(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # store permissions
+    can_stores_add_product = models.BooleanField(default=True)
+    can_stores_add_product_brand = models.BooleanField(default=False)
+    can_stores_add_product_category = models.BooleanField(default=False)
+    can_store_add_blog_post = models.BooleanField(default=False)
+    can_store_add_blog_category = models.BooleanField(default=False)
+    can_store_add_users = models.BooleanField(default=True)
+    can_store_add_apps = models.BooleanField(default=False)
+    allowed_to_add_and_edit_products_with_out_admin_per = models.BooleanField(default=False)
+    allowed_to_add_and_edit_apps_with_out_admin_per = models.BooleanField(default=False)
+    allowed_to_add_and_edit_posts_with_out_admin_per = models.BooleanField(default=False)
+    allowed_to_activate_product_categories_with_out_admin_per = models.BooleanField(default=False)
+    allowed_to_activate_product_brand_with_out_admin_per = models.BooleanField(default=False)
+    allowed_to_activate_post_categories_with_out_admin_per = models.BooleanField(default=False)
+
     def calculate_store_sold_orders(self):
         return sum(list(self.store_sold_orders.filter(is_returned_by_admin=False).values_list("price", flat=True)))
 

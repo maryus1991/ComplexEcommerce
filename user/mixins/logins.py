@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import AccessMixin
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.shortcuts import redirect, reverse
 from django.shortcuts import Http404
 from sitesetting.models import SiteSetting
 from django.contrib.auth import logout
@@ -81,6 +81,37 @@ class UserStoreStaffMixin(AccessMixin):
                         )
                         return redirect("user:login")
                     if request.user.store.is_active:
+                        path = request.path
+                        store = request.user.store
+
+                        if reverse('store:add-product') == path:
+                            if not store.can_stores_add_product:
+                                messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                return redirect('store:home')
+                        if reverse('store:add-brands') == path:
+                            if not store.can_stores_add_product_brand:
+                                messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                return redirect('store:home')
+                        if reverse('store:add-category') == path:
+                            if not store.can_stores_add_product_category:
+                                messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                return redirect('store:home')
+                        if reverse('store:blog-add') == path:
+                            if not store.can_store_add_blog_post:
+                                messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                return redirect('store:home')
+                        if reverse('store:blog-add-category') == path:
+                            if not store.can_store_add_blog_category:
+                                messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                return redirect('store:home')
+                        if reverse('store:user-add') == path :
+                            if not store.can_store_add_users:
+                                messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                return redirect('store:home')
+                        if reverse('store:app-create') == path or reverse('store:app-upload-app') == path :
+                            if not store.can_store_add_apps:
+                                messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                return redirect('store:home')
                         return super().dispatch(request, *args, **kwargs)
                     else:
                         messages.warning(
@@ -114,7 +145,38 @@ class StoreAdminUserStaff(AccessMixin):
                 if request.user.store is not None:
 
                     if request.user.is_store_admin:
-                        if request.user.store.is_active and request.user.store.is_verified:
+                        if request.user.store.is_active:
+                            path = request.path
+                            store = request.user.store
+
+                            if reverse('store:add-product') == path:
+                                if not store.can_stores_add_product:
+                                    messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                    return redirect('store:home')
+                            if reverse('store:add-brands') == path:
+                                if not store.can_stores_add_product_brand:
+                                    messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                    return redirect('store:home')
+                            if reverse('store:add-category') == path:
+                                if not store.can_stores_add_product_category:
+                                    messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                    return redirect('store:home')
+                            if reverse('store:blog-add') == path:
+                                if not store.can_store_add_blog_post:
+                                    messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                    return redirect('store:home')
+                            if reverse('store:blog-add-category') == path:
+                                if not store.can_store_add_blog_category:
+                                    messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                    return redirect('store:home')
+                            if reverse('store:user-add') == path:
+                                if not store.can_store_add_users:
+                                    messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                    return redirect('store:home')
+                            if reverse('store:app-create') == path or reverse('store:app-upload-app') == path:
+                                if not store.can_store_add_apps:
+                                    messages.error(request, 'شما اجازه ورود به این صفحه را ندارید')
+                                    return redirect('store:home')
                             return super().dispatch(request, *args, **kwargs)
                         else:
                             messages.warning(

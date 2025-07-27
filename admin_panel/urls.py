@@ -263,6 +263,9 @@ urlpatterns = [
         "stores/update/<int:pk>", views.StoreUpdateView.as_view(), name="store-update"
     ),
     path(
+        "stores/permissions/<int:pk>", views.StorePermissionsUpdateView.as_view(), name="store-update-permissions"
+    ),
+    path(
         "stores/detail/<int:pk>", views.StoreDetailView.as_view(), name="store-detail"
     ),
     path(
@@ -423,5 +426,8 @@ urlpatterns = [
     path("backup/media/download/", views.StreamMediaZipView.as_view(), name="backup-media"),
     path("backup/media/upload", views.UploadBackupView.as_view(), name="UploadBackupViewMedia"),
     path("backup/media/restore/", views.MediaBackupRestoreInOneClickView.as_view(), name="backup-media-restore"),
+
+    # clean tmp file
+    path("backup/clean-temp-file/", views.CleanTMPFiles.as_view(), name="backup-clean-temp_file"),
 
 ]

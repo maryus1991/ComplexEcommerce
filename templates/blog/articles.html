@@ -36,25 +36,40 @@
                 <!-- TITLE -->
 
                 <div class="flex items-center justify-between w-full">
-                    <span class="flex items-center gap-x-1">
+                    {% if request.user_agent.is_mobile %}
+                        <a id="filterToggleBtn" class="flex justify-between w-full">
+                                                <span class="flex items-center gap-x-1">
                         <svg class="w-5 h-5">
                             <use href="#filter"></use>
                         </svg>
                         <p class="font-DanaMedium ">فیلتر ها</p>
                     </span>
-                    {% if request.user_agent.is_mobile %}
-                        <span class="flex items-center gap-x-1">
-                        <a href="#blog-list">
-                            <svg class="w-8 h-8">
+                            <span class="flex items-center gap-x-1">
+
+                            <svg id="toggleIcon"
+                                 class="w-6 h-6 text-gray-600 dark:text-gray-300 transition-transform duration-300">
                                 <use href="#arrow-down-circle"></use>
                             </svg>
-</a>
                         </span>
+
+                        </a>
+
+                    {% else %}
+                        <span class="flex items-center gap-x-1">
+                        <svg class="w-5 h-5">
+                            <use href="#filter"></use>
+                        </svg>
+                        <p class="font-DanaMedium ">فیلتر ها</p>
+                    </span>
+                        <button type="reset" class="text-green-500">حذف همه</button>
+
                     {% endif %}
-                    <button type="reset" class="text-green-500">حذف همه</button>
                 </div>
+                <span {% if request.user_agent.is_mobile %} id="filterDropdown" class="hidden w-full" {% else %}
+                                                            class="w-full" {% endif %}>
+
                 <!-- accordion -->
-                <div class="mt-6 w-full dark:bg-zinc-600 cursor-pointer shadow  rounded-lg">
+                <div class="mt-6 w-full dark:bg-zinc-600 cursor-pointer shadow  rounded-lg" style="max-height: 400px !important; overflow-y: auto!important;">
                     <div id='blog-category-header' onclick="categoryFilter('blog-categories-filter')"
                          class="accordion-header p-3 flex items-center justify-between">
                         <p class="font-DanaMedium">دسته بندی </p>
@@ -130,6 +145,7 @@
                             });
                         });
                         document.addEventListener("DOMContentLoaded", function () {
+
                             const checkboxes = document.querySelectorAll('.category-checkbox');
 
                             // وقتی روی هر چک‌باکس کلیک شد
@@ -160,89 +176,112 @@
                     </script>
 
                 </div>
+                <br>
+                    <div class="w-full dark:bg-zinc-600 cursor-pointer shadow rounded-lg" style="max-height: 400px !important; overflow-y: auto!important;">
+                        <div id="store-header" onclick="categoryFilter('store-accordion')"
+                             class="accordion-header p-3 flex items-center justify-between">
+                            <p class="font-DanaMedium">فروشگاها</p>
+                            <svg class="w-4 h-4">
+                                <use href="#chevron-left"></use>
+                            </svg>
+                        </div>
+                        <ul id="store-accordion"
+                            class="accordion-content hidden mx-2 py-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
+                            <hr>
+                            {% for store in stores %}
+                                <li>
+                                    <label class="cl-checkbox">
+                                        <input name="store" value="{{ store.id }}" type="checkbox">
+                                        <span></span>
+                                    </label>
+                                    <p>{{ store.name }}</p>
+                                </li>
+                            {% endfor %}
 
-                <div class="w-full dark:bg-zinc-600 cursor-pointer shadow rounded-lg">
-                    <div id="store-header" onclick="categoryFilter('store-accordion')"
-                         class="accordion-header p-3 flex items-center justify-between">
-                        <p class="font-DanaMedium">فروشگاها</p>
-                        <svg class="w-4 h-4">
-                            <use href="#chevron-left"></use>
-                        </svg>
+                        </ul>
                     </div>
-                    <ul id="store-accordion"
-                        class="accordion-content hidden mx-2 py-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
-                        <hr>
-                        {% for store in stores %}
-                            <li>
+<br>
+                    <div class="w-full dark:bg-zinc-600 cursor-pointer shadow  rounded-lg" >
+                        <div id="date-header" onclick="categoryFilter('date-filter')"
+                             class="accordion-header p-3 flex items-center justify-between">
+                            <p class="font-DanaMedium">تاریخ انتشار</p>
+                            <svg class="w-4 h-4">
+                                <use href="#chevron-left"></use>
+                            </svg>
+                        </div>
+
+                        <ul id="date-filter"
+                            class="accordion-content hidden py-2 mx-2 child:dark:text-gray-200 child:text-gray-600  items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
+                            <li class="flex ">
                                 <label class="cl-checkbox">
-                                    <input name="store" value="{{ store.id }}" type="checkbox">
+                                    <input name="today" type="checkbox">
                                     <span></span>
                                 </label>
-                                <p>{{ store.name }}</p>
+                                <p>امروز</p>
                             </li>
-                        {% endfor %}
+                            <li class="flex text-white">
+                                <label class="cl-checkbox">
+                                    <input name="yesterday" type="checkbox">
+                                    <span></span>
+                                </label>
+                                <p>دیروز</p>
 
-                    </ul>
-                </div>
+                            </li>
 
-                <div class="w-full dark:bg-zinc-600 cursor-pointer shadow  rounded-lg">
-                    <div id="date-header" onclick="categoryFilter('date-filter')"
-                         class="accordion-header p-3 flex items-center justify-between">
-                        <p class="font-DanaMedium">تاریخ انتشار</p>
-                        <svg class="w-4 h-4">
-                            <use href="#chevron-left"></use>
-                        </svg>
+                            <li class="w-full">
+                                {{ date_input.start_date }}
+                            </li>
+                            <li class="w-full">
+                                {{ date_input.end_date }}
+                            </li>
+                            {{ date_input.media }}
+
+                        </ul>
                     </div>
-
-                    <ul id="date-filter"
-                        class="accordion-content hidden py-2 mx-2 child:dark:text-gray-200 child:text-gray-600  items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
-                        <li class="flex ">
-                            <label class="cl-checkbox">
-                                <input name="today" type="checkbox">
-                                <span></span>
+                    <!-- CHECK BOX -->
+<br>
+                    <div
+                            class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
+                        <div class="">
+                            <p>داغ ترین</p>
+                            <label class="switch">
+                                <input name="hottest" type="checkbox">
+                                <span class="slider"></span>
                             </label>
-                            <p>امروز</p>
-                        </li>
-                        <li class="flex text-white">
-                            <label class="cl-checkbox">
-                                <input name="yesterday" type="checkbox">
-                                <span></span>
+                        </div>
+                        <div class="">
+                            <p>بروز ترین </p>
+                            <label class="switch">
+                                <input name="newset" type="checkbox">
+                                <span class="slider"></span>
                             </label>
-                            <p>دیروز</p>
-
-                        </li>
-
-                        <li class="w-full">
-                            {{ date_input.start_date }}
-                        </li>
-                        <li class="w-full">
-                            {{ date_input.end_date }}
-                        </li>
-                        {{ date_input.media }}
-
-                    </ul>
-                </div>
-                <!-- CHECK BOX -->
-
-                <div
-                        class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
-                    <div class="">
-                        <p>داغ ترین</p>
-                        <label class="switch">
-                            <input name="hottest" type="checkbox">
-                            <span class="slider"></span>
-                        </label>
+                        </div>
                     </div>
-                    <div class="">
-                        <p>بروز ترین </p>
-                        <label class="switch">
-                            <input name="newset" type="checkbox">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
+                <br>
+                <div class="flex justify-between w-full">
+                    <button type="submit" class="px-4 py-1 bg-green-500 rounded-lg font-DanaMedium"> اعمال</button>
+                        <button type="reset" class="text-green-500">حذف همه</button>
                 </div>
-                <button class="px-4 py-1 bg-green-500 rounded-lg font-DanaMedium"> اعمال</button>
+                </span>
             </form>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    document.getElementById('filterToggleBtn').addEventListener('click', function () {
+                        const content = document.getElementById('filterDropdown');
+                        const icon = document.getElementById('toggleIcon');
+
+                        if (content.classList.contains('hidden')) {
+                            content.classList.remove('hidden');
+
+                        } else {
+                            content.classList.add('hidden');
+                        }
+
+                        icon.classList.toggle('rotate-180');
+                    });
+                })
+            </script>
 
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
@@ -396,7 +435,7 @@
                     </div>
                 {% endif %}
                 <div id="blog-list"
-                        class="mt-4 grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-3  gap-6 sm:gap-8 child-hover:-translate-y-2 child:duration-300
+                     class="mt-4 grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-3  gap-6 sm:gap-8 child-hover:-translate-y-2 child:duration-300
                     child:bg-white child:dark:bg-zinc-700  child:rounded-lg child:p-2 child:cursor-pointer child:shadow ">
                     <!-- ITEM -->
 

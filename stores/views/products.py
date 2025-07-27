@@ -89,7 +89,7 @@ class StoreProductListView(UserStoreStaffMixin, ListView):
 
     template_name = "store/product/product_list.html"
     ordering = "-id"
-    paginate_by = 50
+    paginate_by = 100
     context_object_name = "products"
 
     def get_queryset(self):
@@ -220,6 +220,7 @@ class StoreProductListView(UserStoreStaffMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["search_form"] = ProductSearchForm(self.request.GET)
+        context["product_count"] = Product.objects.filter(store=self.request.user.store).count
         return context
 
 
@@ -250,7 +251,9 @@ class StoreAddProduct(UserStoreStaffMixin, FormView):
             weight=form.cleaned_data["weight"],
             brand=form.cleaned_data["brand"],
             category=form.cleaned_data["category"],
+
         )
+
         tags = form.cleaned_data["tags"].split("**")
         features = form.cleaned_data["features"].split("**")
         specs = form.cleaned_data["specs"].split("**")
@@ -339,12 +342,19 @@ class StoreAddProduct(UserStoreStaffMixin, FormView):
                         )
 
         messages.success(self.request, "محصول شما با موفقیت ذخیره شد")
-        product.save()
+
+        if not self.request.user.store.allowed_to_add_and_edit_products_with_out_admin_per:
+            product.is_active = False
+            product.admin_verified = False
+
+        if self.request.user.store.can_stores_add_product:
+            product.save()
+
         return redirect(reverse("store:edit-product", kwargs={'pk': product.id}))
 
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
@@ -404,7 +414,12 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
         if form.cleaned_data["picture"]:  # اگر تصویر جدید ارسال شده است
             product.picture = form.cleaned_data["picture"]
 
-        product.save()
+        if not self.request.user.store.allowed_to_add_and_edit_products_with_out_admin_per:
+            product.is_active = False
+            product.admin_verified = False
+
+        if self.request.user.store.can_stores_add_product:
+            product.save()
 
         product = self.get_object()
 
@@ -461,7 +476,6 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
                         messages.warning(
                             self.request,
                             f'{feature}'
-
                         )
 
                 else:
@@ -496,7 +510,14 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
                         )
 
         messages.success(self.request, "تغییرات با موفقیت ثبت شد")
-        product.save()
+
+        if not self.request.user.store.allowed_to_add_and_edit_products_with_out_admin_per:
+            product.is_active = False
+            product.admin_verified = False
+
+        if self.request.user.store.can_stores_add_product:
+            product.save()
+
         return redirect(reverse("store:edit-product", kwargs={'pk': product.id}))
 
 
@@ -528,6 +549,12 @@ class StoreEditActiveOrDeactivateProduct(UserStoreStaffMixin, RedirectView):
         product = get_object_or_404(
             Product, id=product_id, store=self.request.user.store
         )
+
+        if product.picture is None:
+            messages.warning(
+                self.request,'برای فعال سازی اپتدا باید عکس اصلی محصول گذاشته بشه')
+            return self.request.META.get("HTTP_REFERER", "/")
+
         if product.is_active is True:
             product.is_active = False
             product.save()
@@ -656,8 +683,16 @@ class StoreAddBrandView(UserStoreStaffMixin, CreateView):
     success_url = reverse_lazy("store:list-brands")
 
     def form_valid(self, form):
-        messages.success(self.request, "برند شما ساخته شد")
-        form.save()
+        if self.request.user.store.allowed_to_activate_product_brand_with_out_admin_per:
+            form.instance.is_active = True
+        else:
+            form.instance.is_active = False
+
+
+        if self.request.user.store.can_stores_add_product_brand:
+            form.save()
+
+        messages.success(self.request, "برند ساخته شد")
         return redirect(self.request.META.get("HTTP_REFERER", "/"))
 
 
@@ -732,6 +767,14 @@ class StoreAddCategoryView(UserStoreStaffMixin, CreateView):
     success_url = reverse_lazy("store:list-category")
 
     def form_valid(self, form):
+
+        if self.request.user.store.allowed_to_activate_product_categories_with_out_admin_per:
+            form.instance.is_active = True
+        else:
+            form.instance.is_active = False
+
+        if self.request.user.store.can_stores_add_product_category:
+            form.save()
+
         messages.success(self.request, "دسته شما ساخته شد")
-        form.save()
         return redirect(self.request.META.get("HTTP_REFERER", "/"))

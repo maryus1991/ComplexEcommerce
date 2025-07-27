@@ -191,7 +191,7 @@ class FastLinksCreateView(AdminUserMixin, CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
 
@@ -209,7 +209,7 @@ class FastLinksUpdateView(AdminUserMixin, UpdateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request,form.errors.as_text())
         return super().form_invalid(form)
 
 
@@ -266,7 +266,7 @@ class QuestionAndAnswerCreateView(AdminUserMixin, CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
 
@@ -284,7 +284,7 @@ class QuestionAndAnswerUpdateView(AdminUserMixin, UpdateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
 

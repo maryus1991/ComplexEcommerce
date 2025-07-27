@@ -153,6 +153,10 @@ class StoreAddUsersView(StoreAdminUserStaff, FormView):
     def form_valid(self, form):
         store = self.request.user.store
 
+        if not store.can_store_add_users:
+            messages.success(request, "دسترسی ندارید")
+            return redirect("store:user-list")
+
         # new user data
         email = form.cleaned_data["email"]
         first_name = form.cleaned_data["first_name"]
@@ -195,7 +199,7 @@ class StoreAddUsersView(StoreAdminUserStaff, FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
 
@@ -218,6 +222,10 @@ class StoreUpdateUsersView(StoreAdminUserStaff, UpdateView):
     def form_valid(self, form):
         # get store obj
         store = self.request.user.store
+
+        if not store.can_store_add_users:
+            messages.success(request, "دسترسی ندارید")
+            return redirect("store:user-list")
 
         # get form instance
         email = form.cleaned_data["email"]
@@ -275,7 +283,7 @@ class StoreUpdateUsersView(StoreAdminUserStaff, UpdateView):
         return redirect("store:user-list")
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
 

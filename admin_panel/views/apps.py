@@ -111,7 +111,7 @@ class AppsCreateView(AdminUserMixin, CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.form.errors.as_text())
         return super().form_invalid(form)
 
 class AppsUpdateView(AdminUserMixin, UpdateView):
@@ -145,7 +145,7 @@ class AppsUpdateView(AdminUserMixin, UpdateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
 class AppsActiveAndDeactivateView(AdminUserMixin, RedirectView):

@@ -44,27 +44,28 @@ class RegistrationForm(forms.Form):
         password = self.cleaned_data.get("password")
 
         if password and password != conform_password:
-            raise ValidationError("رمز عبور شما به صورت یکسان وارد نشده است")
+
+            raise forms.ValidationError("رمز عبور شما به صورت یکسان وارد نشده است")
         else:
             return conform_password
 
     def clean_password(self):
         password = self.cleaned_data["password"]
         if len(password) < 8:
-            raise ValidationError("رمز شما باید حداقل 8 کاراکتر باشد")
+            raise forms.ValidationError("رمز شما باید حداقل 8 کاراکتر باشد")
 
         if password.isdigit():
-            raise ValidationError(
+            raise forms.ValidationError(
                 "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
             )
 
         if password.isupper():
-            raise ValidationError(
+            raise forms.ValidationError(
                 "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
             )
 
         if password.islower():
-            raise ValidationError(
+            raise forms.ValidationError(
                 "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
             )
 
@@ -162,10 +163,10 @@ class OTPForm(forms.Form):
                 return self.cleaned_data
 
             else:
-                raise ValidationError("کد را به درستی وارد کنید")
+                raise forms.ValidationError("کد را به درستی وارد کنید")
 
         else:
-            raise ValidationError("کد را به درستی وارد کنید")
+            raise forms.ValidationError("کد را به درستی وارد کنید")
 
 
 class ActiveAccountForm(forms.Form):
@@ -299,37 +300,37 @@ class ChangePasswordForm(forms.Form):
         password = self.cleaned_data.get("password")
 
         if password and password != conform_password:
-            raise ValidationError("رمز عبور شما به صورت یکسان وارد نشده است")
+            raise forms.ValidationError("رمز عبور شما به صورت یکسان وارد نشده است")
         else:
             return conform_password
 
     def clean_password(self):
         password = self.cleaned_data["password"]
         if len(password) < 8:
-            raise ValidationError("رمز شما باید حداقل 8 کاراکتر باشد")
+            raise forms.ValidationError("رمز شما باید حداقل 8 کاراکتر باشد")
 
         if password.isdigit():
-            raise ValidationError(
+            raise forms.ValidationError(
                 "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
             )
 
         if password.isupper():
-            raise ValidationError(
+            raise forms.ValidationError(
                 "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
             )
 
         if password.islower():
-            raise ValidationError(
+            raise forms.ValidationError(
                 "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
             )
 
         if not password.isalnum():
-            raise ValidationError(
+            raise forms.ValidationError(
                 "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
             )
 
         if not password.isascii():
-            raise ValidationError(
+            raise forms.ValidationError(
                 "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
             )
 

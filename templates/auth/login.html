@@ -41,6 +41,19 @@
                                 <use href="#envelope"></use>
                             </svg>
                         </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                function getAllQueryParams(paramName) {
+                                    const params = new URLSearchParams(window.location.search);
+                                    return params.getAll(paramName); // این متد تمام مقادیر یک پارامتر را برمی‌گرداند
+                                }
+                                
+                                const tel = getAllQueryParams('tel');
+                                if (tel.length > 0) {
+                                    document.getElementById('id_phone_number').value = tel;
+                                }
+                            })
+                        </script>
                         <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
                             {#                            <input placeholder="رمز عبور" class="appearance-none bg-transparent w-full py-3" required=""#}
                             {#                                autocomplete="password" type="password" />#}
@@ -84,9 +97,10 @@
 
 
                 </div>
-                            <p class="mt2 mt-2 mb-2 text-center text-xs text-gray-400">شما با ورود به سایت تمامی <a
-                            href="{% url 'site:site-law' %}" class="text-blue-400 text-xs">قوانین و مقررات </a>مورد پذیرش شما
-                        تلقی می شود</p>
+                <p class="mt2 mt-2 mb-2 text-center text-xs text-gray-400">شما با ورود به سایت تمامی <a
+                        href="{% url 'site:site-law' %}" class="text-blue-400 text-xs">قوانین و مقررات </a>مورد پذیرش
+                    شما
+                    تلقی می شود</p>
             </div>
         </div>
 

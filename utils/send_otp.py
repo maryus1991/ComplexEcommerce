@@ -1,5 +1,4 @@
 from zeep import Client
-from celery import shared_task
 from pathlib import Path
 from dotenv import load_dotenv
 from os import path
@@ -24,6 +23,8 @@ melipayamak_from_number = os.getenv("melipayamak_panel_from_number")
 
 # todo : add celery shared task
 from config import settings
+from config.celery import shared_task
+
 
 @shared_task(bind=True, queue='sms')
 def send_message(

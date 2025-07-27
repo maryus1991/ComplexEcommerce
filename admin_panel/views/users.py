@@ -483,7 +483,7 @@ class UserCreateView(AdminUserMixin, CreateView):
         return redirect(reverse("admin_panel:user-list"))
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return redirect(self.request.META.get("HTTP_REFERER"))
 
 
@@ -577,7 +577,7 @@ class UserUpdateView(AdminUserMixin, UpdateView):
             return redirect('/')
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request,form.errors.as_text())
         return redirect(self.request.META.get("HTTP_REFERER"))
 
 

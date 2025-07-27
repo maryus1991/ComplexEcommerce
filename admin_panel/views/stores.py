@@ -12,8 +12,30 @@ from user.mixins.logins import AdminUserMixin
 from stores.models import Store
 from django.contrib import messages
 from stores.forms import AddStoreForm
+from admin_panel.forms import StorePermissions
 from utils.tipax_price_calc import validate_city
 from django.core.exceptions import ValidationError
+
+
+class StorePermissionsUpdateView(AdminUserMixin, UpdateView):
+    """
+    for update a store
+    """
+
+    model = Store
+    form_class = StorePermissions
+    template_name = "admin_panel/store/permissions.html"
+    success_url = reverse_lazy("admin_panel:store-list")
+    context_object_name = "item"
+
+    def form_valid(self, form):
+        messages.success(self.request, 'تغییرات ثبت شد')
+        form.save()
+        return redirect(self.request.META.get('HTTP_REFERER'))
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors.as_text())
+        return super().form_invalid(form)
 
 
 class StoreChangeSortNumber(AdminUserMixin, RedirectView):
@@ -129,7 +151,7 @@ class StoreCreateView(AdminUserMixin, CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
 
@@ -202,7 +224,7 @@ class StoreUpdateView(AdminUserMixin, UpdateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
 

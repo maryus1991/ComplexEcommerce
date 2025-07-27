@@ -149,7 +149,7 @@
                     <th class="text-center" width="10%">وضعیت</th>
                     <th class="text-center" width="10%">وضعیت اطلاعات</th>
                     <th class="text-center" width="10%">ترتیب</th>
-                    <th colspan="5" class="text-center" width="15%">عملیات</th>
+                    <th colspan="6" class="text-center" width="15%">عملیات</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -247,6 +247,14 @@
                                title="{% if item.is_active %}تایید نکردن اطلاعات{% else %}تایید کردن اطلاعات{% endif %}">
                                 <i class="fa fa-key"></i>
                             </a>
+                        </td>
+                        <td class="text-center">
+                    <a href="{% url 'admin_panel:store-update-permissions' item.id %}"
+                       class="btn btn-sm btn-warning"
+                       data-toggle="tooltip"
+                       title="اعطای دسترسی">
+                        <i class="fa fa-check-circle-o"></i>
+                    </a>
                         </td>
                         <td class="text-center">
                             <a href="{% url 'admin_panel:store-delete' item.id %}" class="btn btn-sm btn-danger"

@@ -40,7 +40,13 @@
                    data-toggle="tooltip"
                    title="{% if item.is_active %}تایید نکردن اطلاعات{% else %}تایید کردن اطلاعات{% endif %}">
                     <i class="fa fa-key"></i>
-                </a>
+                
+                                        <a href="{% url 'admin_panel:store-update-permissions' item.id %}"
+                       class="btn btn-sm btn-warning"
+                       data-toggle="tooltip"
+                       title="اعطای دسترسی">
+                        اعطای دسترسی
+                    </a>
                 <a href="{% url 'admin_panel:store-delete' item.id %}" class="btn btn-sm btn-danger"
                    data-toggle="tooltip" title="حذف">
                     <i class="fa fa-trash"></i>

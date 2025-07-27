@@ -91,8 +91,17 @@ class StoreAddBlog(UserStoreStaffMixin, FormView):
     def form_valid(self, form):
         form.instance.store = self.request.user.store
         form.instance.user = self.request.user
-        form.instance.is_active = False
-        form.save()
+
+        if not self.request.user.store.allowed_to_add_and_edit_posts_with_out_admin_per :
+            form.instance.is_active = False
+            form.instance.admin_verified = False
+        else:
+            form.instance.is_active = True
+            form.instance.admin_verified = True
+
+        if self.request.user.store.can_store_add_blog_post:
+            form.save()
+
         messages.success(
             self.request,
             "پست شما با موفقیت ایجاد شد لطفا برای انتشار ان پست را فعال کنید",
@@ -189,8 +198,17 @@ class StoreBlogUpdateView(UserStoreStaffMixin, UpdateView):
     def form_valid(self, form):
         form.instance.store = self.request.user.store
         form.instance.user = self.request.user
-        form.instance.is_active = False
-        form.save()
+
+        if not self.request.user.store.allowed_to_add_and_edit_posts_with_out_admin_per:
+            form.instance.is_active = False
+            form.instance.admin_verified = False
+        else:
+            form.instance.is_active = True
+            form.instance.admin_verified = True
+
+        if self.request.user.store.can_store_add_blog_post:
+            form.save()
+
         messages.success(
             self.request,
             "پست شما با موفقیت بروزرسانی شد لطفا برای انتشار ان پست را فعال کنید",
@@ -278,13 +296,20 @@ class StoreBlogAddCategories(UserStoreStaffMixin, FormView):
     success_url = reverse_lazy("store:blog-list-category")
 
     def form_valid(self, form):
-        form.instance.is_active = True
-        form.save()
+        if not self.request.user.store.allowed_to_activate_post_categories_with_out_admin_per:
+            form.instance.is_active = False
+        else:
+            form.instance.is_active = True
+
+        if self.request.user.store.can_store_add_blog_post:
+            form.save()
+
+
         messages.success(self.request, "دسته با موفقیت ساخته شد")
         return redirect(self.request.META.get("HTTP_REFERER"))
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return redirect(self.request.META.get("HTTP_REFERER"))
 
 
@@ -305,7 +330,6 @@ class StoreBlogListCategories(UserStoreStaffMixin, ListView):
  
         search = self.request.GET.get("search")
         status = self.request.GET.get("status")
-        views = self.request.GET.get("views")
         posts = self.request.GET.get("posts")
 
  

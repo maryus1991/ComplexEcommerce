@@ -107,7 +107,7 @@ class StoreMainTemplateListView(ListView):
     paginate_by = 21
 
     def get_queryset(self):
-        return super().get_queryset().filter(is_active=True, is_verified=True)
+        return super().get_queryset().filter(is_active=True, is_verified=True).order_by('-sort_number')
 
 
 class StoreUpdateInformationView(StoreAdminUserStaff, UpdateView):
@@ -127,7 +127,7 @@ class StoreUpdateInformationView(StoreAdminUserStaff, UpdateView):
         )
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
     def form_valid(self, form):

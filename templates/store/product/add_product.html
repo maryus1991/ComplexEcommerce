@@ -78,80 +78,84 @@
                 <!-- بخش دسته‌بندی و برند -->
                 <div class="row">
                     <!-- فرم دسته‌بندی -->
-                    <div class="col-sm-6">
-                        <div class="box box-primary">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">اضافه کردن دسته بندی</h3>
-                                <div class="pull-right box-tools">
-                                    <button type="button" class="btn btn-info btn-sm" data-widget="collapse">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
+                    {% if user.store.can_stores_add_product_category %}
+                        <div class="col-sm-6">
+                            <div class="box box-primary">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">اضافه کردن دسته بندی</h3>
+                                    <div class="pull-right box-tools">
+                                        <button type="button" class="btn btn-info btn-sm" data-widget="collapse">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="box-body" style="display: none;">
+                                    <form role="form" method="POST" action="{% url 'store:add-category' %}"
+                                          enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="id_name">نام:</label>
+                                            {{ category_form.name }}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_parent">دسته بندی مادر:</label>
+                                            {{ category_form.parent }}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_image">لوگو</label>
+                                            {{ category_form.image }}
+                                        </div>
+                                        <div class="checkbox">
+                                            <label>
+                                                {{ category_form.is_active }} فعال کردن دسته بندی
+                                            </label>
+                                        </div>
+                                        <div class="box-footer">
+                                            <button type="submit" class="btn btn-primary">ارسال</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
-                            <div class="box-body" style="display: none;">
-                                <form role="form" method="POST" action="{% url 'store:add-category' %}"
-                                      enctype="multipart/form-data">
-                                    {% csrf_token %}
-                                    <div class="form-group">
-                                        <label for="id_name">نام:</label>
-                                        {{ category_form.name }}
+                        </div>
+                    {% endif %}
+                    {% if user.store.can_stores_add_product_brand %}
+                        <!-- فرم برند -->
+                        <div class="col-sm-6">
+                            <div class="box box-primary">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">اضافه کردن برند</h3>
+                                    <div class="pull-right box-tools">
+                                        <button type="button" class="btn btn-info btn-sm" data-widget="collapse">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="id_parent">دسته بندی مادر:</label>
-                                        {{ category_form.parent }}
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="id_image">لوگو</label>
-                                        {{ category_form.image }}
-                                    </div>
-                                    <div class="checkbox">
-                                        <label>
-                                            {{ category_form.is_active }} فعال کردن دسته بندی
-                                        </label>
-                                    </div>
-                                    <div class="box-footer">
-                                        <button type="submit" class="btn btn-primary">ارسال</button>
-                                    </div>
-                                </form>
+                                </div>
+                                <div class="box-body" style="display: none;">
+                                    <form role="form" method="POST" action="{% url 'store:add-brands' %}"
+                                          enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="id_name_2">نام:</label>
+                                            {{ brand_form.name }}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_image_2">لوگو</label>
+                                            {{ brand_form.image }}
+                                        </div>
+                                        <div class="checkbox">
+                                            <label>
+                                                {{ brand_form.is_active }} فعال کردن برند
+                                            </label>
+                                        </div>
+                                        <div class="box-footer">
+                                            <button type="submit" class="btn btn-primary">ارسال</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    {% endif %}
 
-                    <!-- فرم برند -->
-                    <div class="col-sm-6">
-                        <div class="box box-primary">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">اضافه کردن برند</h3>
-                                <div class="pull-right box-tools">
-                                    <button type="button" class="btn btn-info btn-sm" data-widget="collapse">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="box-body" style="display: none;">
-                                <form role="form" method="POST" action="{% url 'store:add-brands' %}"
-                                      enctype="multipart/form-data">
-                                    {% csrf_token %}
-                                    <div class="form-group">
-                                        <label for="id_name_2">نام:</label>
-                                        {{ brand_form.name }}
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="id_image_2">لوگو</label>
-                                        {{ brand_form.image }}
-                                    </div>
-                                    <div class="checkbox">
-                                        <label>
-                                            {{ brand_form.is_active }} فعال کردن برند
-                                        </label>
-                                    </div>
-                                    <div class="box-footer">
-                                        <button type="submit" class="btn btn-primary">ارسال</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- فرم محصول -->
@@ -166,8 +170,9 @@
                             {% if product %}
                                 <a class="btn btn-sm btn-success" href="{% url 'product:detail' product.id %}">
                                     مشاهده
-                                </a>                          
-                                <a class="btn btn-sm btn-warning" href="{% url 'store:list-gallery-images-product' product.id %}">
+                                </a>
+                                <a class="btn btn-sm btn-warning"
+                                   href="{% url 'store:list-gallery-images-product' product.id %}">
                                     ترتیب گالری
                                 </a>
                                 <a class="btn btn-sm btn-purple"
@@ -183,7 +188,7 @@
                         <br>
                         <span style="font-size: smaller" class="text-muted">
                         نام و تگ ها و مشخصات و ویژگی های محصول نباید بیشتر از 1000 کاراکتر باشد در غیر این صورت محصول شما سیو نخواهد شد
-                    </span>                        <br>
+                    </span> <br>
                         <span style="font-size: smaller" class="text-muted">
 فیلد های اجباری برای ثبت اولیه محصول عنوان  دسته و برند تعداد و وزن می باشد حال پیشنهاد می شود که اول موارد ضروری پر بشه و محصول به صورت اولیه ثبت بشه و بعد در مراحل بعدی اقدام به ثبت توضیحات و عکس و گالری بشه
                     </span>
@@ -279,15 +284,15 @@
                                     </span>
                                         {{ form.weight }}
                                     </div>
-                                </div>                     
-{#                                <div class="col-sm-4 form-group">#}
-{#                                    <div class="input-group">#}
-{#                                    <span class="input-group-btn">#}
-{#                                        <span class="btn btn-flat" style="background-color: #726204; color: white;">تعداد در بسته:</span>#}
-{#                                    </span>#}
-{#                                        {{ form.displacement_unit }}#}
-{#                                    </div>#}
-{#                                </div>#}
+                                </div>
+                                {#                                <div class="col-sm-4 form-group">#}
+                                {#                                    <div class="input-group">#}
+                                {#                                    <span class="input-group-btn">#}
+                                {#                                        <span class="btn btn-flat" style="background-color: #726204; color: white;">تعداد در بسته:</span>#}
+                                {#                                    </span>#}
+                                {#                                        {{ form.displacement_unit }}#}
+                                {#                                    </div>#}
+                                {#                                </div>#}
                             </div>
 
                             <!-- ردیف چهارم فرم محصول -->
@@ -519,215 +524,215 @@
                                 }
                             </style>
 
-                         <script>
-    // حذف تگ
-    function removeTag(wrapper) {
-        wrapper.remove();
-    }
+                            <script>
+                                // حذف تگ
+                                function removeTag(wrapper) {
+                                    wrapper.remove();
+                                }
 
-    // ویرایش تگ
-    function editTag(tagElement) {
-        if (tagElement.classList.contains('editing')) return;
+                                // ویرایش تگ
+                                function editTag(tagElement) {
+                                    if (tagElement.classList.contains('editing')) return;
 
-        const originalText = tagElement.dataset.original || tagElement.textContent.trim();
-        tagElement.classList.add('editing');
-        tagElement.setAttribute('data-original', originalText);
-        tagElement.innerText = originalText;
-        tagElement.contentEditable = true;
-        tagElement.focus();
+                                    const originalText = tagElement.dataset.original || tagElement.textContent.trim();
+                                    tagElement.classList.add('editing');
+                                    tagElement.setAttribute('data-original', originalText);
+                                    tagElement.innerText = originalText;
+                                    tagElement.contentEditable = true;
+                                    tagElement.focus();
 
-        // انتخاب متن
-        const range = document.createRange();
-        range.selectNodeContents(tagElement);
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
+                                    // انتخاب متن
+                                    const range = document.createRange();
+                                    range.selectNodeContents(tagElement);
+                                    const selection = window.getSelection();
+                                    selection.removeAllRanges();
+                                    selection.addRange(range);
 
-        // ذخیره با Enter
-        tagElement.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                saveEdit(tagElement);
-            }
-        });
+                                    // ذخیره با Enter
+                                    tagElement.addEventListener('keypress', function (e) {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            saveEdit(tagElement);
+                                        }
+                                    });
 
-        // لغو با Escape
-        tagElement.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                e.preventDefault();
-                cancelEdit(tagElement);
-            }
-        });
+                                    // لغو با Escape
+                                    tagElement.addEventListener('keydown', function (e) {
+                                        if (e.key === 'Escape') {
+                                            e.preventDefault();
+                                            cancelEdit(tagElement);
+                                        }
+                                    });
 
-        // ذخیره با blur
-        tagElement.addEventListener('blur', function () {
-            saveEdit(tagElement);
-        });
-    }
+                                    // ذخیره با blur
+                                    tagElement.addEventListener('blur', function () {
+                                        saveEdit(tagElement);
+                                    });
+                                }
 
-    function saveEdit(tagElement) {
-        const newText = tagElement.textContent.trim();
-        tagElement.classList.remove('editing');
-        tagElement.contentEditable = false;
+                                function saveEdit(tagElement) {
+                                    const newText = tagElement.textContent.trim();
+                                    tagElement.classList.remove('editing');
+                                    tagElement.contentEditable = false;
 
-        if (newText !== '') {
-            tagElement.dataset.original = newText;
-            tagElement.innerText = newText;
-            addDeleteButton(tagElement);
-        } else {
-            cancelEdit(tagElement);
-        }
-    }
+                                    if (newText !== '') {
+                                        tagElement.dataset.original = newText;
+                                        tagElement.innerText = newText;
+                                        addDeleteButton(tagElement);
+                                    } else {
+                                        cancelEdit(tagElement);
+                                    }
+                                }
 
-    function cancelEdit(tagElement) {
-        const originalText = tagElement.getAttribute('data-original');
-        tagElement.classList.remove('editing');
-        tagElement.contentEditable = false;
-        tagElement.innerText = originalText;
-        addDeleteButton(tagElement);
-    }
+                                function cancelEdit(tagElement) {
+                                    const originalText = tagElement.getAttribute('data-original');
+                                    tagElement.classList.remove('editing');
+                                    tagElement.contentEditable = false;
+                                    tagElement.innerText = originalText;
+                                    addDeleteButton(tagElement);
+                                }
 
-    function addDeleteButton(tagElement) {
-        const wrapper = tagElement.parentElement;
-        let delBtn = wrapper.querySelector('.tag-delete');
+                                function addDeleteButton(tagElement) {
+                                    const wrapper = tagElement.parentElement;
+                                    let delBtn = wrapper.querySelector('.tag-delete');
 
-        if (!delBtn) {
-            delBtn = document.createElement('button');
-            delBtn.className = 'tag-delete';
-            delBtn.innerText = '×';
-            delBtn.title = 'حذف';
-            delBtn.onclick = function () {
-                removeTag(wrapper);
-            };
-            wrapper.appendChild(delBtn);
-        }
-    }
+                                    if (!delBtn) {
+                                        delBtn = document.createElement('button');
+                                        delBtn.className = 'tag-delete';
+                                        delBtn.innerText = '×';
+                                        delBtn.title = 'حذف';
+                                        delBtn.onclick = function () {
+                                            removeTag(wrapper);
+                                        };
+                                        wrapper.appendChild(delBtn);
+                                    }
+                                }
 
-    // افزودن تگ عمومی (برای ویژگی، مشخصه، تگ)
-    function addTagGeneric(inputId, containerId, tagClass) {
-        const input = document.getElementById(inputId);
-        const container = document.getElementById(containerId);
+                                // افزودن تگ عمومی (برای ویژگی، مشخصه، تگ)
+                                function addTagGeneric(inputId, containerId, tagClass) {
+                                    const input = document.getElementById(inputId);
+                                    const container = document.getElementById(containerId);
 
-        if (input.value.trim() !== "") {
-            const wrapper = document.createElement("span");
-            wrapper.className = "tag-wrapper";
-            wrapper.draggable = true;
-            wrapper.ondragstart = handleDragStart;
-            wrapper.ondragover = handleDragOver;
-            wrapper.ondrop = handleDrop;
-            wrapper.ondragend = handleDragEnd;
+                                    if (input.value.trim() !== "") {
+                                        const wrapper = document.createElement("span");
+                                        wrapper.className = "tag-wrapper";
+                                        wrapper.draggable = true;
+                                        wrapper.ondragstart = handleDragStart;
+                                        wrapper.ondragover = handleDragOver;
+                                        wrapper.ondrop = handleDrop;
+                                        wrapper.ondragend = handleDragEnd;
 
-            const newTag = document.createElement("span");
-            newTag.className = `btn btn-default form-group tag-item ${tagClass}`;
-            newTag.innerText = input.value;
-            newTag.setAttribute('data-original', input.value);
-            newTag.ondblclick = function () {
-                editTag(this);
-            };
+                                        const newTag = document.createElement("span");
+                                        newTag.className = `btn btn-default form-group tag-item ${tagClass}`;
+                                        newTag.innerText = input.value;
+                                        newTag.setAttribute('data-original', input.value);
+                                        newTag.ondblclick = function () {
+                                            editTag(this);
+                                        };
 
-            wrapper.appendChild(newTag);
-            container.appendChild(wrapper);
-            addDeleteButton(newTag);
-            input.value = "";
-        }
-    }
+                                        wrapper.appendChild(newTag);
+                                        container.appendChild(wrapper);
+                                        addDeleteButton(newTag);
+                                        input.value = "";
+                                    }
+                                }
 
-    // توابع اختصاصی
-    function addFeature() {
-        addTagGeneric("id_features", "features-container", "feature-tag");
-    }
+                                // توابع اختصاصی
+                                function addFeature() {
+                                    addTagGeneric("id_features", "features-container", "feature-tag");
+                                }
 
-    function addSpec() {
-        addTagGeneric("id_specs", "specs-container", "spec-tag");
-    }
+                                function addSpec() {
+                                    addTagGeneric("id_specs", "specs-container", "spec-tag");
+                                }
 
-    function addTag() {
-        addTagGeneric("id_tags", "tags-container", "tag");
-    }
+                                function addTag() {
+                                    addTagGeneric("id_tags", "tags-container", "tag");
+                                }
 
-    // قابلیت دراگ
-    let draggedElement = null;
-    let placeholder = null;
+                                // قابلیت دراگ
+                                let draggedElement = null;
+                                let placeholder = null;
 
-    function handleDragStart(e) {
-        draggedElement = e.target.closest(".tag-wrapper");
-        draggedElement.classList.add("dragging");
-        e.dataTransfer.effectAllowed = "move";
-    }
+                                function handleDragStart(e) {
+                                    draggedElement = e.target.closest(".tag-wrapper");
+                                    draggedElement.classList.add("dragging");
+                                    e.dataTransfer.effectAllowed = "move";
+                                }
 
-    function handleDragOver(e) {
-        e.preventDefault();
-        const container = e.target.closest(".container-sortable");
-        if (!container) return;
+                                function handleDragOver(e) {
+                                    e.preventDefault();
+                                    const container = e.target.closest(".container-sortable");
+                                    if (!container) return;
 
-        const afterElement = getDragAfterElement(container, e.clientX);
-        if (!placeholder) {
-            placeholder = document.createElement("span");
-            placeholder.className = "sort-placeholder";
-            placeholder.style.width = draggedElement.offsetWidth + "px";
-            placeholder.style.height = draggedElement.offsetHeight + "px";
-        }
+                                    const afterElement = getDragAfterElement(container, e.clientX);
+                                    if (!placeholder) {
+                                        placeholder = document.createElement("span");
+                                        placeholder.className = "sort-placeholder";
+                                        placeholder.style.width = draggedElement.offsetWidth + "px";
+                                        placeholder.style.height = draggedElement.offsetHeight + "px";
+                                    }
 
-        if (afterElement == null) {
-            container.appendChild(placeholder);
-        } else {
-            container.insertBefore(placeholder, afterElement);
-        }
-    }
+                                    if (afterElement == null) {
+                                        container.appendChild(placeholder);
+                                    } else {
+                                        container.insertBefore(placeholder, afterElement);
+                                    }
+                                }
 
-    function handleDrop(e) {
-        e.preventDefault();
-        const container = e.target.closest(".container-sortable");
-        if (!container) return;
+                                function handleDrop(e) {
+                                    e.preventDefault();
+                                    const container = e.target.closest(".container-sortable");
+                                    if (!container) return;
 
-        if (draggedElement && placeholder) {
-            container.insertBefore(draggedElement, placeholder);
-            placeholder.remove();
-            placeholder = null;
-        }
-        draggedElement.classList.remove("dragging");
-        draggedElement = null;
-    }
+                                    if (draggedElement && placeholder) {
+                                        container.insertBefore(draggedElement, placeholder);
+                                        placeholder.remove();
+                                        placeholder = null;
+                                    }
+                                    draggedElement.classList.remove("dragging");
+                                    draggedElement = null;
+                                }
 
-    function handleDragEnd() {
-        if (draggedElement) draggedElement.classList.remove("dragging");
-        if (placeholder && placeholder.parentNode) placeholder.remove();
-        draggedElement = null;
-        placeholder = null;
-    }
+                                function handleDragEnd() {
+                                    if (draggedElement) draggedElement.classList.remove("dragging");
+                                    if (placeholder && placeholder.parentNode) placeholder.remove();
+                                    draggedElement = null;
+                                    placeholder = null;
+                                }
 
-    function getDragAfterElement(container, x) {
-        const elements = [...container.querySelectorAll('.tag-wrapper:not(.dragging)')];
-        return elements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = x - box.left - box.width / 2;
-            if (offset < 0 && offset > closest.offset) {
-                return {offset: offset, element: child};
-            } else {
-                return closest;
-            }
-        }, {offset: Number.NEGATIVE_INFINITY}).element;
-    }
+                                function getDragAfterElement(container, x) {
+                                    const elements = [...container.querySelectorAll('.tag-wrapper:not(.dragging)')];
+                                    return elements.reduce((closest, child) => {
+                                        const box = child.getBoundingClientRect();
+                                        const offset = x - box.left - box.width / 2;
+                                        if (offset < 0 && offset > closest.offset) {
+                                            return {offset: offset, element: child};
+                                        } else {
+                                            return closest;
+                                        }
+                                    }, {offset: Number.NEGATIVE_INFINITY}).element;
+                                }
 
-    // آماده سازی قبل از ارسال فرم
-    function prepareFormData() {
-        ['features', 'tags', 'specs'].forEach(field => {
-            const container = document.getElementById(`${field}-container`);
-            const input = document.getElementById(`id_${field}`);
-            const values = [...container.querySelectorAll(`.${field === 'features' ? 'feature-tag' : field === 'specs' ? 'spec-tag' : 'tag'}`)]
-                .map(el => el.dataset.original || el.textContent.trim());
-            input.value = values.join('**');
-        });
-    }
+                                // آماده سازی قبل از ارسال فرم
+                                function prepareFormData() {
+                                    ['features', 'tags', 'specs'].forEach(field => {
+                                        const container = document.getElementById(`${field}-container`);
+                                        const input = document.getElementById(`id_${field}`);
+                                        const values = [...container.querySelectorAll(`.${field === 'features' ? 'feature-tag' : field === 'specs' ? 'spec-tag' : 'tag'}`)]
+                                            .map(el => el.dataset.original || el.textContent.trim());
+                                        input.value = values.join('**');
+                                    });
+                                }
 
-    // فعال‌سازی رویدادهای دراپ
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.container-sortable').forEach(container => {
-            container.addEventListener('dragover', handleDragOver);
-            container.addEventListener('drop', handleDrop);
-        });
-    });
-</script>
+                                // فعال‌سازی رویدادهای دراپ
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    document.querySelectorAll('.container-sortable').forEach(container => {
+                                        container.addEventListener('dragover', handleDragOver);
+                                        container.addEventListener('drop', handleDrop);
+                                    });
+                                });
+                            </script>
 
 
                             <!-- توضیحات محصول -->
@@ -799,8 +804,9 @@
                                         <h6>عکس اصلی محصول:</h6>
                                         {% if product.picture %}
 
-                                        <img src="{{ product.picture.url }}" alt="" class="img-thumbnail img-responsive"
-                                             style="max-height: 250px; width: 100%;">
+                                            <img src="{{ product.picture.url }}" alt=""
+                                                 class="img-thumbnail img-responsive"
+                                                 style="max-height: 250px; width: 100%;">
                                         {% endif %}
 
                                     </div>
