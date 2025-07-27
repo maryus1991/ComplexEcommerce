@@ -397,6 +397,7 @@ urlpatterns = [
     path("order/set-send-id/<int:pk>", views.ChangeStatusToDeliveredToUser.as_view(), name="orders-set-send-id"),
     path("order/sold/", views.OrderSoldListView.as_view(), name="orders-sold-list"),
     path("order/<int:pk>", views.OrderDetailView.as_view(), name="orders-detail"),
+    path("order/canceling-by-admin/<int:pk>", views.CancelingOrderByAdmin.as_view(), name="orders-canceling-by-admin"),
     path("order/sold/<int:pk>", views.OrderSoledChangeStatus.as_view(), name="orders-change-sold-list-status"),
     # discount
     path("discount/", views.DiscountListView.as_view(), name="discount-list"),

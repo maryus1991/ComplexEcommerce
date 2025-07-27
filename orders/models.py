@@ -92,6 +92,7 @@ class Order(models.Model):
     is_paid = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     canceled = models.BooleanField(default=False)
+    canceled_by_admin = models.BooleanField(default=False)
 
     additional_descriptions = models.TextField(null=True, blank=True)
 

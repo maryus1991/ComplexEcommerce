@@ -136,118 +136,131 @@
             <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست کد تخفیف ها </h3>
             <a href="{% url 'admin_panel:discount-create' %}" class="pull-left btn btn-success">
                 ساخت کد تخفیف جدید</a>
-        </div>
+            <form method="get" class="form-inline pull-left">
+                <!-- Search Box -->
+                <div class="input-group input-group-sm" style="width: 180px; margin-left: 5px;">
+                    <input type="text" name="search" class="form-control"
+                           placeholder="جستجو..." value="{{ request.GET.search }}">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-default">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+        
+        </form>
+    </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover table-bordered table-striped">
-                <thead>
-                <tr class="bg-primary">
-                    <th class="text-center" width="5%">#</th>
-                    <th class="text-center" width="15%">نام</th>
-                    <th class="text-center" width="10%">تعداد</th>
-                    <th class="text-center" width="10%">تاریخ انقضا</th>
-                    <th class="text-center" width="5%">نوع تخفیف</th>
-                    <th class="text-center" width="5%">مقدار تخفیف</th>
-                    <th class="text-center" width="5%">فعال بودن</th>
-                    <th colspan="3" class="text-center" width="20%"></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in items %}
-                    <tr>
-                        <td class="text-center">{{ item.id }}
-                        </td>
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered table-striped">
+            <thead>
+            <tr class="bg-primary">
+                <th class="text-center" width="5%">#</th>
+                <th class="text-center" width="15%">نام</th>
+                <th class="text-center" width="10%">تعداد</th>
+                <th class="text-center" width="10%">تاریخ انقضا</th>
+                <th class="text-center" width="5%">نوع تخفیف</th>
+                <th class="text-center" width="5%">مقدار تخفیف</th>
+                <th class="text-center" width="5%">فعال بودن</th>
+                <th colspan="3" class="text-center" width="20%"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in items %}
+                <tr>
+                    <td class="text-center">{{ item.id }}
+                    </td>
 
-                        <td class="text-center">
-                            <strong>{{ item.name }}</strong>
-                        </td>
-                        <td class="text-center">
-                            <strong class="label label-info">{{ item.count }}</strong>
-                        </td>
-                        <td class="text-center">
-                            <strong>{{ item.end_date_discount|to_jalali:'%H:%M - %Y/%m/%d' }}</strong>
-                        </td>
-                        <td class="text-center">
-                            <strong>
-                                {% if item.percentage_discount %}
-                                    <strong class="label label-warning">درصدی</strong>
-                                {% else %}
-                                    <strong class="label label-warning">مقداری</strong>
-                                {% endif %}
-                            </strong>
-                        </td>
-                        <td class="text-center">
-                            <strong>
-                                {% if item.percentage_discount %}
-                                    <strong class="label label-warning"> {{ item.percent }} درصد </strong>
-                                {% else %}
-                                    <strong class="label label-warning"> {{ item.price|tdc }} تومان  </strong>
-                                {% endif %}
-                            </strong>
-                        </td>
+                    <td class="text-center">
+                        <strong>{{ item.name }}</strong>
+                    </td>
+                    <td class="text-center">
+                        <strong class="label label-info">{{ item.count }}</strong>
+                    </td>
+                    <td class="text-center">
+                        <strong>{{ item.end_date_discount|to_jalali:'%H:%M - %Y/%m/%d' }}</strong>
+                    </td>
+                    <td class="text-center">
+                        <strong>
+                            {% if item.percentage_discount %}
+                                <strong class="label label-warning">درصدی</strong>
+                            {% else %}
+                                <strong class="label label-warning">مقداری</strong>
+                            {% endif %}
+                        </strong>
+                    </td>
+                    <td class="text-center">
+                        <strong>
+                            {% if item.percentage_discount %}
+                                <strong class="label label-warning"> {{ item.percent }} درصد </strong>
+                            {% else %}
+                                <strong class="label label-warning"> {{ item.price|tdc }} تومان </strong>
+                            {% endif %}
+                        </strong>
+                    </td>
 
-                        <td class="text-center">
-                            {% if item.is_active %}
-                                <span class="label label-success">
+                    <td class="text-center">
+                        {% if item.is_active %}
+                            <span class="label label-success">
                                     فعال
                                     </span>
-                            {% else %}
-                                <span class="label label-default">
+                        {% else %}
+                            <span class="label label-default">
                                     غیر فعال
                                     </span>
-                            {% endif %}
-                        </td>
-
-
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:discount-update' item.id %}" class="btn btn-sm btn-info"
-                               data-toggle="tooltip" title="ویرایش">
-                                <i class="fa fa-edit"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:discount-active-deactivate' item.id %}"
-                               class="btn btn-sm btn-warning"
-                               data-toggle="tooltip"
-                               title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
-                                <i class="fa fa-power-off"></i>
-                            </a>
-                        </td>
-
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:discount-delete' item.id %}" class="btn btn-sm btn-danger"
-                               data-toggle="tooltip" title="حذف">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <div class="panel-footer">
-            <div class="row">
-                <div class="col-md-6">
-                    <small class="text-muted">تعداد کل ایتم ها: {{ items.count }}</small>
-                </div>
-                <div class="col-md-6 text-left">
-                    <ul class="pagination pagination-sm no-margin">
-                        {% if page_obj.has_previous %}
-                            <li><a href="?page={{ page_obj.previous_page_number }}">&raquo;</a></li>
                         {% endif %}
-                        {% for page_number in page_obj.paginator.page_range %}
-                            <li {% if page_number == page_obj.number %}class="active" {% endif %}>
-                                <a href="?page={{ page_number }}">{{ page_number }}</a>
-                            </li>
-                        {% endfor %}
-                        {% if page_obj.has_next %}
-                            <li><a href="?page={{ page_obj.next_page_number }}">&laquo;</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
+                    </td>
+
+
+                    <td class="text-center">
+                        <a href="{% url 'admin_panel:discount-update' item.id %}" class="btn btn-sm btn-info"
+                           data-toggle="tooltip" title="ویرایش">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </td>
+                    <td class="text-center">
+                        <a href="{% url 'admin_panel:discount-active-deactivate' item.id %}"
+                           class="btn btn-sm btn-warning"
+                           data-toggle="tooltip"
+                           title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                            <i class="fa fa-power-off"></i>
+                        </a>
+                    </td>
+
+                    <td class="text-center">
+                        <a href="{% url 'admin_panel:discount-delete' item.id %}" class="btn btn-sm btn-danger"
+                           data-toggle="tooltip" title="حذف">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="panel-footer">
+        <div class="row">
+            <div class="col-md-6">
+                <small class="text-muted">تعداد کل ایتم ها: {{ items.count }}</small>
+            </div>
+            <div class="col-md-6 text-left">
+                <ul class="pagination pagination-sm no-margin">
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page={{ page_obj.previous_page_number }}">&raquo;</a></li>
+                    {% endif %}
+                    {% for page_number in page_obj.paginator.page_range %}
+                        <li {% if page_number == page_obj.number %}class="active" {% endif %}>
+                            <a href="?page={{ page_number }}">{{ page_number }}</a>
+                        </li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}">&laquo;</a></li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
+    </div>
     </div>
 
     <script>

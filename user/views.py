@@ -90,7 +90,21 @@ class LoginView(View):
                                     login(request, user)
 
                                 messages.success(request, "خوش امدید")
-                                return redirect("dashboard:dashboard")
+
+                                if user.email is None or user.first_name is None or user.last_name is None :
+                                    messages.warning(
+                                        request,'لطفا ایمیل , نام و نام خانوادگی را وارد کنید'
+                                    )
+                                    return redirect("dashboard:account")
+
+                                elif user.address.count() <= 0:
+                                    messages.warning(
+                                        request,'لطفا ادرس خود را وارد کنید'
+                                    )
+                                    return redirect("dashboard:create_address")
+
+                                else:
+                                    return redirect("product:list")
                             else:
                                 messages.error(
                                     request,
@@ -167,7 +181,7 @@ class RegisterView(View):
 
                 site = SiteSetting.objects.first()
 
-                if site and not site.force_user_to_verify_with_message:
+                if site and not site.force_user_to_verify_with_message and site.is_active:
                     user.is_verified = True
                     user.message_verified = False
                     user.save()
@@ -175,7 +189,20 @@ class RegisterView(View):
                     if site.is_active:
                         login(request, user)
 
-                    return redirect("dashboard:dashboard")
+                    if user.email is None or user.first_name is None or user.last_name is None:
+                        messages.warning(
+                            request, 'لطفا ایمیل , نام و نام خانوادگی را وارد کنید'
+                        )
+                        return redirect("dashboard:account")
+
+                    elif user.address.count() <= 0:
+                        messages.warning(
+                            request, 'لطفا ادرس خود را وارد کنید'
+                        )
+                        return redirect("dashboard:create_address")
+
+                    else:
+                        return redirect("product:list")
 
                 if site and site.is_active:
                     login(request, user)
@@ -247,7 +274,22 @@ class OTP(LoginRequiredMixin, View):
                         user.save()
 
                         messages.success(request, "حساب شما با موفقیت تایید شد")
-                        return redirect("dashboard:dashboard")
+
+                        if user.email is None or user.first_name is None or user.last_name is None:
+                            messages.warning(
+                                request, 'لطفا ایمیل , نام و نام خانوادگی را وارد کنید'
+                            )
+                            return redirect("dashboard:account")
+
+                        elif user.address.count() <= 0:
+                            messages.warning(
+                                request, 'لطفا ادرس خود را وارد کنید'
+                            )
+                            return redirect("dashboard:create_address")
+
+                        else:
+                            return redirect("product:list")
+
                     else:
                         messages.error(
                             request,
@@ -297,7 +339,7 @@ class ForgotPassword(View):
 
                     send_message.delay(
                         str(phone_number).replace(" ", ""),
-                        "کاربر گرامی بازیابی رمز عبور شما با موفقیت انجام گردید اگر شما این درخواست را ندادید لطفا با ورد به صفحه بازیابی رمز عبور  خود را تغییر دهید",
+                        "کاربر گرامی بازیابی رمز عبور شما با موفقیت انجام گردید اگر شما این درخواست را ندادید لطفا با ورود به صفحه بازیابی رمز عبور  خود را تغییر دهید",
                     )
 
                     login(request, user)
@@ -415,6 +457,21 @@ class EditUserInformation(CustomLoginRequiredMixin, View):
                 user.save()
                 messages.success(request, "اطلاعات شما با موفقبت تغییر یافت")
 
+                if user.email is None or user.first_name is None or user.last_name is None:
+                    messages.warning(
+                        request, 'لطفا ایمیل نام و نام خانوادگی را وارد کنید'
+                    )
+                    return redirect("dashboard:account")
+
+                elif user.address.count() <= 0:
+                    messages.warning(
+                        request, 'لطفا ادرس خود را وارد کنید'
+                    )
+                    return redirect("dashboard:create_address")
+
+                else:
+                    return redirect("product:list")
+
             else:
                 messages.error(request, "این ایمیل قبلا استفاده شده است")
 
@@ -442,6 +499,22 @@ class ChangePassword(CustomLoginRequiredMixin, View):
                 user.save()
 
                 messages.success(request, "رمز عبور شما با موقیت تغییر یافت")
+
+                if user.email is None or user.first_name is None or user.last_name is None:
+                    messages.warning(
+                        request, 'لطفا ایمیل نام و نام خانوادگی را وارد کنید'
+                    )
+                    return redirect("dashboard:account")
+
+                elif user.address.count() <= 0:
+                    messages.warning(
+                        request, 'لطفا ادرس خود را وارد کنید'
+                    )
+                    return redirect("dashboard:create_address")
+
+                else:
+                    return redirect("product:list")
+
             else:
                 messages.error(request, "رمز عبور فعلی وارد شده اشتباه می باشد")
 
@@ -511,6 +584,21 @@ class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
             user.save()
 
             messages.success(request, "اطلاعات شما با موفقیت ثبت شد")
+
+            if user.email is None or user.first_name is None or user.last_name is None:
+                messages.warning(
+                    request, 'لطفا ایمیل نام و نام خانوادگی را وارد کنید'
+                )
+                return redirect("dashboard:account")
+
+            elif user.address.count() <= 0:
+                messages.warning(
+                    request, 'لطفا ادرس خود را وارد کنید'
+                )
+                return redirect("dashboard:create_address")
+
+            else:
+                return redirect("product:list")
 
         else:
             messages.error(request,form.errors.as_text())

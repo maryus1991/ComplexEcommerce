@@ -22,7 +22,7 @@
             <div class="flex flex-col lg:flex-row items-start gap-x-8">
                 <div class="w-full lg:w-3/4">
                     
-                    <form class="w-full grid grid-cols-12 gap-4 max-w-sm mx-auto" method="POST" action="{% url 'dashboard:tickets-create' %}" enctype="multipart/form-data">
+                    <form class="w-full grid grid-cols-12 gap-4 mx-auto" method="POST" action="{% url 'dashboard:tickets-create' %}" enctype="multipart/form-data">
                         {% csrf_token %}
 
                         {{ form.subject }}

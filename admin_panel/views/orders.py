@@ -42,6 +42,36 @@ class ChangeStatusToDeliveredToUser(AdminUserMixin, RedirectView):
         return self.request.META.get("HTTP_REFERER")
 
 
+class CancelingOrderByAdmin(AdminUserMixin, RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+
+        order = get_object_or_404(
+            Order, pk=self.kwargs["pk"]
+        )
+
+        if order.store_sold_orders.is_returned_by_admin:
+            messages.info(
+                self.request,
+                'شما این سفارش را تصفیه کرید'
+            )
+            return self.request.META.get("HTTP_REFERER")
+
+        order.is_paid = False
+        order.canceled = True
+        order.canceled_by_admin = True
+        order.second_date = now()
+        order.save()
+        order.store_sold_orders.delete()
+
+        messages.info(
+            self.request,
+            'سفارش کنسل شد'
+        )
+
+
+        return self.request.META.get("HTTP_REFERER")
+
+
 class OrderListView(AdminUserMixin, ListView):
     """for listing the orders"""
 
@@ -345,7 +375,6 @@ class OrderListView(AdminUserMixin, ListView):
         return context
 
 
-
 class OrderSoldListView(AdminUserMixin, ListView):
     """for listing the orders"""
 
@@ -484,6 +513,7 @@ class SpecificsOrdersUpdateView(AdminUserMixin, UpdateView):
             form.errors.as_text()
         )
         return super().form_valid(form)
+
 
 class SpecificsOrdersDeleteView(AdminUserMixin, RedirectView):
     """for delete orders"""

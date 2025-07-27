@@ -3,6 +3,9 @@ from stores.models import Store
 from django import forms
 
 
+
+
+
 class ProductSearchForm(forms.Form):
     name = forms.CharField(
         label="جستجوی محصول",

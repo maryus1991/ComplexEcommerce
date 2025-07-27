@@ -96,26 +96,25 @@ class UserTicketsClientForm(forms.Form):
         )
     )
 
-    content = RichTextUploadingFormField(
-        config_name="default",
+    content = forms.CharField(
         widget=forms.Textarea(
             attrs={
-                "class": "tailwind-input col-span-12 h-20",
+                "class": "tailwind-input col-span-12 h-full w-full ",
                 "placeholder": "پیام ...",
             }
-        ),
+        )
     )
 
     store = forms.ModelChoiceField(
         queryset=Store.objects.all(),
-        help_text="فروشگاه را انتخاب کنید",
+        help_text="جهت ارسال تیکیت به ادمین سایت فروشگاه را انتخاب نکنید ",
         required=False,
         widget=forms.Select(
             attrs={
-                "class": " col-span-3 py-2.5 w-full text text-white-500 px-1.5 py-1.5 dark:bg-zinc-700 border-0 border-b-2 border-green-500 appearance-none  dark:border-green-700 focus:outline-none focus:ring-0 focus:border-green-200 peer",
+                "class": "tailwind-input  col-span-6 py-2.5 w-full text text-white-500 px-1.5 py-1.5 dark:bg-zinc-700 border-0  appearance-none ",
             }
         ),
-        empty_label="فروشگاه را انتخاب کنید",
+        empty_label="فروشگاه ... ",
     )
 
 
@@ -132,7 +131,7 @@ class UserTicketsClientFormMobile(forms.Form):
     content = forms.CharField(
         widget=forms.Textarea(
             attrs={
-                "class": "tailwind-input col-span-12 h-20",
+                "class": "tailwind-input col-span-12 h-full w-full  ",
                 "placeholder": "پیام ...",
             }
         )
@@ -143,7 +142,7 @@ class UserTicketsClientFormMobile(forms.Form):
         required=False,
         widget=forms.Select(
             attrs={
-                "class": " col-span-3 py-2.5 w-full text text-white-500 px-1.5 py-1.5 dark:bg-zinc-700 border-0 border-b-2 border-green-500 appearance-none  dark:border-green-700 focus:outline-none focus:ring-0 focus:border-green-200 peer",
+                "class": "tailwind-input  col-span-6 py-2.5 w-full text text-white-500 px-1.5 py-1.5 dark:bg-zinc-700 border-0  appearance-none ",
             }
         ),
         empty_label="فروشگاه را انتخاب کنید",
@@ -154,7 +153,7 @@ class TicketConversationForm(forms.Form):
     content = RichTextUploadingFormField(
         widget=forms.Textarea(
             attrs={
-                "class": "tailwind-input col-span-12 h-20",
+                "class": "tailwind-input col-span-12 h-36",
                 "placeholder": "پیام ...",
             }
         )
@@ -165,7 +164,7 @@ class TicketConversationMobileForm(forms.Form):
     content = forms.CharField(
         widget=forms.Textarea(
             attrs={
-                "class": "tailwind-input col-span-12 h-20",
+                "class": "tailwind-input col-span-12 h-36",
                 "placeholder": "پیام ...",
             }
         )

@@ -8,6 +8,11 @@ from user.mixins.logins import AdminUserMixin
 from utils.send_otp import send_message
 from sitesetting.models import SiteSetting
 from stores.forms import StoreSendTicketForm
+from stores.forms import TicketFilterForm
+from django.utils.dateparse import parse_date
+import jdatetime
+from django.db.models import Q
+
 
 
 class SendTicketCreateView(AdminUserMixin, CreateView):
@@ -130,12 +135,107 @@ class TicketSendListView(ListView):
     template_name = "admin_panel/tickets/send/list.html"
 
     def get_queryset(self):
-        return (
-            Ticket.objects.filter(user=self.request.user)
-            .all()
-            .order_by("-id")
-            .order_by("close_ticket")
+        query = (
+            super().get_queryset().filter(user=self.request.user).order_by("-id").order_by("close_ticket")
         )
+
+        form = TicketFilterForm(self.request.GET)
+
+        if not form.is_valid():
+            return query.all()
+
+        cleaned_data = form.cleaned_data
+
+        if subject := cleaned_data.get("subject"):
+            query = query.filter(Q(subject=subject) | Q(message__message=subject))
+
+        if store_name := cleaned_data.get("store_name"):
+            query = query.filter(
+                Q(store__name=store_name) |
+                Q(user__store__name=store_name, user__store__isnull=False)
+            )
+
+        if user_name := cleaned_data.get("user_name"):
+            query = query.filter(
+                Q(store__name=user_name) |
+                Q(user__store__name=user_name, user__store__isnull=False)
+            )
+
+        if user_number := cleaned_data.get("user_number"):
+            query = query.filter(
+                Q(store__phone=user_number) |
+                Q(store__phone2=user_number) |
+                Q(user__PhoneNumber=user_number) |
+                Q(user__store__isnull=False, store__phone2=user_number) |
+                Q(user__store__isnull=False, store__phone=user_number)
+            )
+
+        if start_date := cleaned_data.get("start_date"):
+            parts = str(start_date).split("-")
+
+            if len(parts) != 3:
+                messages.error(
+                    self.request,
+                    "لطفاً تاریخ را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                )
+
+            year, month, day = map(int, parts)
+
+            jalali_date = parse_date(
+                jdatetime.date(year, month, day).strftime("%Y-%m-%d")
+            )
+
+            query = query.filter(
+                date__gte=jalali_date,
+            )
+
+        if end_date := cleaned_data.get("end_date"):
+            parts = str(end_date).split("-")
+
+            if len(parts) != 3:
+                messages.error(
+                    self.request,
+                    "لطفاً تاریخ را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                )
+
+            year, month, day = map(int, parts)
+
+            jalali_date = parse_date(
+                jdatetime.date(year, month, day).strftime("%Y-%m-%d")
+            )
+
+            query = query.filter(
+                date__lte=jalali_date,
+            )
+
+        if ticket_status := cleaned_data.get("ticket_status"):
+            if ticket_status == "11":  # 'بسته'
+                query = query.filter(close_ticket=True)
+            elif ticket_status == "12":  # 'باز'
+                query = query.filter(close_ticket=False)
+            elif ticket_status == "21":  # خوانده نشده
+                query = query.filter(message__is_read_by_client=False)
+            elif ticket_status == "22":  # خوانده شده
+                query = query.filter(message__is_read_by_client=True)
+
+        if tsrir := cleaned_data.get("ticket_status_read_in_responder"):
+            if tsrir == "11":  # خوانده شده توسط دریافت کننده
+                query = query.filter(message__is_read_by_server=False)
+            elif tsrir == "12":  # خوانده نشده توسط دریافت کننده
+                query = query.filter(message__is_read_by_server=True)
+
+        if ordering := cleaned_data.get("ordering"):
+            if ordering == "11":  # جدیدترین
+                query = query.order_by("-id")
+            elif ordering == "12":  # قدیمی ترین
+                query = query.order_by("id")
+
+        return query.distinct().all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = TicketFilterForm()
+        return context
 
 
 # received tickets list
@@ -150,12 +250,113 @@ class TicketReceivedListView(AdminUserMixin, ListView):
     template_name = "admin_panel/tickets/received/list.html"
 
     def get_queryset(self):
-        return (
-            Ticket.objects.filter(store__isnull=True)
-            .all()
-            .order_by("-id")
-            .order_by("close_ticket")
+        query = (
+            super()
+            .get_queryset()
+            .filter(
+                store__isnull=True
+            ).order_by("-id").order_by("close_ticket")
         )
+
+        form = TicketFilterForm(self.request.GET)
+
+        if not form.is_valid():
+            return query.all()
+
+        cleaned_data = form.cleaned_data
+
+        if subject := cleaned_data.get("subject"):
+            query = query.filter(
+                Q(subject=subject) | Q(message__message=subject)
+            ).distinct()
+
+        if store_name := cleaned_data.get("store_name"):
+            query = query.filter(
+                Q(store__name=store_name) |
+                Q(user__store__name=store_name, user__store__isnull=False)
+            )
+
+        if user_name := cleaned_data.get("user_name"):
+            query = query.filter(
+                Q(store__name=user_name) |
+                Q(user__store__name=user_name, user__store__isnull=False)
+            )
+
+        if user_number := cleaned_data.get("user_number"):
+            query = query.filter(
+                Q(store__phone=user_number) |
+                Q(store__phone2=user_number) |
+                Q(user__PhoneNumber=user_number) |
+                Q(user__store__isnull=False, store__phone2=user_number) |
+                Q(user__store__isnull=False, store__phone=user_number)
+            )
+
+        if start_date := cleaned_data.get("start_date"):
+            parts = str(start_date).split("-")
+
+            if len(parts) != 3:
+                messages.error(
+                    self.request,
+                    "لطفاً تاریخ  را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                )
+
+            year, month, day = map(int, parts)
+
+            jalali_date = parse_date(
+                jdatetime.date(year, month, day).strftime("%Y-%m-%d")
+            )
+
+            query = query.filter(
+                date__gte=jalali_date,
+            )
+
+        if end_date := cleaned_data.get("end_date"):
+            parts = str(end_date).split("-")
+
+            if len(parts) != 3:
+                messages.error(
+                    self.request,
+                    "لطفاً تاریخ  را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
+                )
+
+            year, month, day = map(int, parts)
+
+            jalali_date = parse_date(
+                jdatetime.date(year, month, day).strftime("%Y-%m-%d")
+            )
+
+            query = query.filter(
+                date__lte=jalali_date,
+            )
+
+        if ticket_status := cleaned_data.get("ticket_status"):
+            if ticket_status == "11":  # 'بسته'
+                query = query.filter(close_ticket=True)
+            elif ticket_status == "12":  # 'باز'
+                query = query.filter(close_ticket=False)
+            elif ticket_status == "21":  # خوانده نشده
+                query = query.filter(message__is_read_by_client=False)
+            elif ticket_status == "22":  # خوانده شده
+                query = query.filter(message__is_read_by_client=True)
+
+        if tsrir := cleaned_data.get("ticket_status_read_in_responder"):
+            if tsrir == "11":  # خوانده شده توسط دریافت کننده
+                query = query.filter(message__is_read_by_server=False)
+            elif tsrir == "12":  # خوانده نشده توسط دریافت کننده
+                query = query.filter(message__is_read_by_server=True)
+
+        if ordering := cleaned_data.get("ordering"):
+            if ordering == "11":  # جدیدترین
+                query = query.order_by("-id")
+            elif ordering == "12":  # قدیمی ترین
+                query = query.order_by("id")
+
+        return query.distinct().all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = TicketFilterForm()
+        return context
 
 
 class CloseTicketView(AdminUserMixin, RedirectView):

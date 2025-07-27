@@ -32,7 +32,7 @@ from user.forms import LegalPersonForm
 from .models import UserAddress, Ticket, TicketConversation
 from sitesetting.models import SiteSetting
 from utils.tipax_price_calc import validate_city
-
+from django.utils.timezone import datetime
 User = get_user_model()
 
 

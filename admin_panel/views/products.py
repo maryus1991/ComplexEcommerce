@@ -498,7 +498,7 @@ class ProductActiveAndDeactivateView(AdminUserMixin, RedirectView):
         product_id = kwargs.get("pk")
         product = get_object_or_404(Product, pk=product_id)
 
-        if product.picture is None:
+        if not product.picture :
             messages.warning(
                 self.request,'برای فعال سازی اپتدا باید عکس اصلی محصول گذاشته بشه')
             return reverse_lazy("admin_panel:product-list")

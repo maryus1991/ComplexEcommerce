@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, reverse
 from django.views.generic import ListView, DetailView, RedirectView
 from sitesetting.models import ContactUs
@@ -13,7 +14,27 @@ class ContactUsListView(AdminUserMixin, ListView):
     model = ContactUs
     context_object_name = "items"
     template_name = "admin_panel/contactUs/list.html"
-    paginate_by = 20
+    paginate_by = 100
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search = self.request.GET.get("search")
+        status = self.request.GET.get("status")
+
+        if search:
+            queryset = queryset.filter(
+                Q(email__icontains=search) | Q(phone=search)
+            )
+
+        if status:
+            if status == "active":
+                queryset = queryset.filter(admin_read=True)
+            if status == "inactive":
+                queryset = queryset.filter(admin_read=False)
+
+        return queryset
+
+
 
 
 class ContactUsDetails(AdminUserMixin, DetailView):

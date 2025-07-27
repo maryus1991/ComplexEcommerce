@@ -47,6 +47,12 @@
                    data-toggle="tooltip"
                    title="مشاهده فروشگاه">
                     مشاهده فروشگاه
+                </a>          
+                <a href="{% url 'admin_panel:orders-canceling-by-admin' order.id %}"
+                   class="btn btn-sm btn-danger"
+                   data-toggle="tooltip"
+                   title=" کنسل کردن ">
+                کنسل کردن 
                 </a>
             </div>
             <div class="clearfix"></div> </div>

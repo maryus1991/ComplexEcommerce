@@ -69,16 +69,27 @@
                                         {{ order.get_payment_price|tdc }} تومان
                                     </td>
                                     <td class="px-6 py-5">
-                                        {{ order.date|to_jalali:'%Y/%m/%d' }}
+                                        {% if order.second_date %}
+
+                                            {{ order.second_date|to_jalali:'%Y/%m/%d' }}
+                                        {% else %}
+                                            {{ order.date|to_jalali:'%Y/%m/%d' }}
+                                        {% endif %}
                                     </td>
                                     {% if order.canceled %}
-                                        <td class="px-6 py-5 text-red-500">
-                                            لغو شده
-                                        </td>
+                                        {% if order.canceled_by_admin %}
+                                            <td class="px-6 py-5 text-red-500">
+                                                لغو شده توسط ادمین
+                                            </td>
+                                        {% else %}
+                                            <td class="px-6 py-5 text-red-500">
+                                                لغو شده
+                                            </td>
+                                        {% endif %}
                                     {% elif order.delivered_to_user %}
                                         <td class="px-6 py-5 text-green-600">
                                             ارسال شده
-                                        </td>                                    
+                                        </td>
                                     {% elif order.sending %}
                                         <td class="px-6 py-5 text-green-500">
                                             درحال ارسال

@@ -16,6 +16,17 @@ class DiscountListView(AdminUserMixin, ListView):
     template_name = "admin_panel/discount/list.html"
 
 
+    def get_queryset(self):
+        query = super().get_queryset()
+        search = self.request.GET.get("search")
+        if search:
+            query = query.filter(
+                name__icontains=search,
+            ).order_by('-id')
+
+        return query
+
+
 class DiscountCreateView(AdminUserMixin, CreateView):
     """for create discount"""
 

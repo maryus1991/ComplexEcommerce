@@ -550,7 +550,7 @@ class StoreEditActiveOrDeactivateProduct(UserStoreStaffMixin, RedirectView):
             Product, id=product_id, store=self.request.user.store
         )
 
-        if product.picture is None:
+        if not product.picture :
             messages.warning(
                 self.request,'برای فعال سازی اپتدا باید عکس اصلی محصول گذاشته بشه')
             return self.request.META.get("HTTP_REFERER", "/")

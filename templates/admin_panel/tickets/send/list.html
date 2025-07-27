@@ -24,7 +24,50 @@
     </script>
     <section class="content" style="margin-top: 30px">
 
-
+<div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading text-center">
+                        <h3 class="panel-title">
+                            <a data-toggle="collapse" onclick="collapsing()"
+                               style="color: white; text-decoration: none;">
+                                <i class="fa fa-search"></i> جستجو
+                                <i class="fa fa-chevron-down pull-left"></i>
+                            </a>
+                        </h3>
+                    </div>
+                    <div id="searchFormCollapse" class="panel-collapse collapse in" style="display: none">
+                        <div class="panel-body">
+                            <form method="GET" action="" class="form-horizontal">
+                                {% csrf_token %}
+                                <div class="row">
+                                    {{ form.media }}
+                                    {% for field in form.visible_fields %}
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="{{ field.id_for_label }}"
+                                                       class="control-label">{{ field.label }}</label>
+                                                {{ field }}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-search"></i> جستجو
+                                        </button>
+                                        <button type="reset" class="btn btn-default">
+                                            <i class="fa fa-undo"></i> بازنشانی
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row" style="">
             <div class="col-md-12">
                 <div class="box box-primary">
