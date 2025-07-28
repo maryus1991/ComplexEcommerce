@@ -21,7 +21,7 @@ urlpatterns = [
     path(f"{get_random_string(100)}-panel-store/", include("stores.urls")),
     # path("store-panel/", include("stores.urls")),
    path(f"{get_random_string(500)}-admin-panel/", include("admin_panel.urls")),
-    # path("admin-panel/", include("admin_panel.urls")),
+   #  path("admin-panel/", include("admin_panel.urls")),
     path("admin/", admin.site.urls),
     path("ckeditor/", include("ckeditor_uploader.urls")),
     path("", include("sitesetting.urls")),

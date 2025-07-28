@@ -98,10 +98,20 @@ services:
       - ./mailserver/mail-data:/var/mail
       - ./mailserver/mail-state:/var/mail-state
       - ./mailserver/mail-logs:/var/log/mail
+      - ./ssl:/etc/letsencrypt
     cap_add:
       - NET_ADMIN
       - SYS_PTRACE
     restart: always
+
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+    ports:
+      - "8025:8025"    # Web UI
+      - "1025:1025"    # SMTP server (listen here)
+    restart: unless-stopped
 
 volumes:
   blog-postgres:

@@ -26,3 +26,4 @@ mailserver/config/dovecot-quotas.cf
 mailserver/mail-data/*
 mailserver/mail-logs/*
 mailserver/mail-state/*
+ssl/*
