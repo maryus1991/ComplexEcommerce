@@ -57,11 +57,15 @@ class User(AbstractUser):
 
         # send message
         print('send message')
-        send_message.delay(
-            str(self.PhoneNumber).replace(" ", ""),
-            f"""            جهت حفظ امنیت حساب کابری شما از دادن این کد در دست دیگران خوداری فرمایید کد تایید شما
-              code: {self.otp}
-                """)
+
+        try:
+            send_message.delay(
+                str(self.PhoneNumber).replace(" ", ""),
+                f"""            جهت حفظ امنیت حساب کابری شما از دادن این کد در دست دیگران خوداری فرمایید کد تایید شما
+                  code: {self.otp}
+                    """)
+        except Exception as e:
+            pass
 
         return otp
 

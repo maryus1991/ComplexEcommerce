@@ -22,3 +22,7 @@ flake8_errors.txt
 *.sql
 data.json
 post_data.json
+mailserver/config/dovecot-quotas.cf
+mailserver/mail-data/*
+mailserver/mail-logs/*
+mailserver/mail-state/*

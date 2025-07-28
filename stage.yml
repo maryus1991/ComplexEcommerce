@@ -47,7 +47,8 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
 
 
   nginx:
@@ -81,8 +82,32 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings
 
+  mailserver:
+    image: docker.arvancloud.ir/mailserver/docker-mailserver:latest
+    container_name: mailserver
+    hostname: mail
+    domainname: amvajsarmad.com
+    env_file:
+      - .envs
+    ports:
+      - "25:25"        # SMTP
+      - "587:587"      # Submission
+      - "465:465"
+    volumes:
+      - ./mailserver/config:/tmp/docker-mailserver
+      - ./mailserver/mail-data:/var/mail
+      - ./mailserver/mail-state:/var/mail-state
+      - ./mailserver/mail-logs:/var/log/mail
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+    restart: always
+
 volumes:
   blog-postgres:
   static_volume:
   media_volume:
   redis_data:
+
+
+

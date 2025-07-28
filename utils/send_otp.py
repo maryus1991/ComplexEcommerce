@@ -8,6 +8,8 @@ try:
     from .melipayamak import Api
 except Exception as e:
     from melipayamak import Api
+except Exception as e:
+    pass
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
