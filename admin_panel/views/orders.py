@@ -86,7 +86,7 @@ class OrderListView(AdminUserMixin, ListView):
             'address', 'user', 'store'
             )
         
-        query = query.order_by( 'canceled', '-is_paid','-second_date')
+        query = query.order_by( '-id')
 
         form = AdminOrderFilteringForm(self.request.GET)
 

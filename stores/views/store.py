@@ -17,7 +17,7 @@ from stores.forms import (
     AddStoreForm, RegisterStoreMinimalInformationForm
 )
 from user.mixins.logins import StoreAdminUserStaff, CustomLoginRequiredMixin
-from utils.tipax_price_calc import validate_city
+from utils.find_city import search_city
 
 
 class StoreMainTemplateCreateView(CustomLoginRequiredMixin, View):
@@ -146,27 +146,38 @@ class StoreUpdateInformationView(StoreAdminUserStaff, UpdateView):
                     "برای فعال شدن صدور فاکتور رسمی باید همه فیلد های مربوط به فاکتور رسمی پر شود"
                 )
 
-        if self.request.user.store.orgin_city != data.get("orgin_city"):
+        if self.get_object().orgin_city != data.get("orgin_city") or self.get_object().province != data.get("province"):
 
             try:
-                validate_city_result = validate_city(data.get("orgin_city"))
 
-                if validate_city_result is None:
-                    messages.error(self.request, "مشکلی پیش امد")
-                    return redirect(self.request.META.get("HTTP_REFERER", "/"))
+                city = form.cleaned_data["orgin_city"]
+                province = form.cleaned_data.get('province')
+                validate_city_result = search_city(province, city)
 
-                if len(validate_city_result) > 1:
-                    messages.warning(
+                if validate_city_result[0] == 0:
+                    messages.error(
                         self.request,
-                        f""" 
-                        شهر شما یافت نشد لطفا در نوشتن ان دقت فرمایید
-                        لیست شهر های پیدا شده با این اسم ارسالی شما 
-                            {" , ".join([x['title'] for x in list(validate_city_result)])}""",  # noqa
-                    )  # noqa
-                    return redirect(self.request.META.get("HTTP_REFERER", "/"))
+                        validate_city_result[1]
+                    )
+                    return render(self.request, self.template_name, {"form": form})
 
-                if len(validate_city_result) == 1:
-                    form.instance.orgin_city_id = validate_city_result[0]["id"]
+                elif validate_city_result[0] == 1:
+                    obj = validate_city_result[1]
+                    form.instance.orgin_city_id = obj['tipax_id']
+                    form.instance.orgin_city_id_post = obj['post_id']
+
+
+                    if obj['tipax_id'] is None:
+                        messages.warning(
+                            self.request,
+                            "این ادرس برای ارسال با تیپاکس مناسب نیست"
+                        )
+
+                    if obj['post_id'] is None:
+                        messages.warning(
+                            self.request,
+                            "این ادرس برای ارسال با پست مناسب نیست"
+                        )
 
             except Exception as e:
                 messages.error(

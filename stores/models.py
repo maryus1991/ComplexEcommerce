@@ -33,6 +33,7 @@ class Store(models.Model):
     zip_code = models.CharField(null=True, blank=True, max_length=20)
     province = models.CharField(null=True, blank=True, max_length=20)
     orgin_city_id = models.BigIntegerField(null=True, blank=True)
+    orgin_city_id_post = models.BigIntegerField(null=True, blank=True)
     orgin_city = models.CharField(max_length=20, null=True, blank=True)
     card = models.CharField(null=True, blank=True, max_length=100)
     card_shaba = models.CharField(null=True, blank=True, max_length=100)

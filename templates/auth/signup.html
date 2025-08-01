@@ -1,4 +1,3 @@
-
 {% extends 'Base/Base.html' %}
 
 {% block title %}
@@ -6,7 +5,7 @@
 {% endblock %}
 
 {% block breadcrumb %}
-	
+
     <li class="flex items-center gap-x-2">
         <a>صفحه کابری</a>
         <svg class="w-4 h-4">
@@ -16,7 +15,7 @@
     <li class="flex items-center gap-x-2">
         <a>ثبت نام در سایت</a>
 
-    </li>    
+    </li>
 
 {% endblock %}
 
@@ -30,25 +29,36 @@
                         خوش آمدید
                     </h2>
                     <p class="mt2 lg:mt-4 text-center text-gray-400">ایجاد حساب کاربری</p>
-                    
-                    <form method="POST" action="" class="mt-8 space-y-6">
+
+                    <form method="POST" action="" class="mt-8 space-y-6" data-recaptcha="true" data-recaptcha-action="signup" >
                         {% csrf_token %}
+                        {{ form.recaptcha }}
                         <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
                             {{ form.phone_number }}
                             <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
                                 <use href="#user"></use>
                             </svg>
+                        </div>                   
+                        <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
+                            {{ form.email }}
+                            <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
+                                <use href="#user"></use>
+                            </svg>
                         </div>
-                                                <script>
+                        <script>
                             document.addEventListener('DOMContentLoaded', function () {
                                 function getAllQueryParams(paramName) {
                                     const params = new URLSearchParams(window.location.search);
                                     return params.getAll(paramName); // این متد تمام مقادیر یک پارامتر را برمی‌گرداند
                                 }
-                                
+
                                 const tel = getAllQueryParams('tel');
                                 if (tel.length > 0) {
                                     document.getElementById('id_phone_number').value = tel;
+                                }
+                                const email = getAllQueryParams('email');
+                                if (email.length > 0) {
+                                    document.getElementById('id_email').value = email;
                                 }
                             })
                         </script>
@@ -70,8 +80,8 @@
                         </p>
                         <div>
                             <button
-                                class="group transition-colors relative w-full flex justify-center py-3 px-4 border border-transparent font-DanaMedium rounded-lg text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                                type="submit">
+                                    class="group transition-colors relative w-full flex justify-center py-3 px-4 border border-transparent font-DanaMedium rounded-lg text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                    type="submit">
                                 عضویت
                             </button>
                         </div>
@@ -81,14 +91,20 @@
                     <span class="text-gray-400">
                         قبلا ثبت نام کرده اید؟
                     </span>
-                    <a class="font-medium text-green-500 hover:text-green-400" href="{% url 'user:login' %}"> وارد شوید</a>
-                    
-                                        <span class="text-gray-400 ">ورود افراد حقیقی؟</span>
-                    <a class="font-medium text-green-500 hover:text-green-400" href="{% url 'user:help-legal-person' %}">راهنمایی</a>
+                    <a class="font-medium text-green-500 hover:text-green-400" href="{% url 'user:login' %}"> وارد
+                        شوید</a>
+
+                    <span class="text-gray-400 ">ورود افراد حقیقی؟</span>
+                    <a class="font-medium text-green-500 hover:text-green-400"
+                       href="{% url 'user:help-legal-person' %}">راهنمایی</a>
                 </div>
-                                            <p class="mt2 mt-2 mb-2 text-center text-xs text-gray-400">شما با ثبت نام در سایت تمامی <a
-                            href="{% url 'site:site-law' %}" class="text-blue-400 text-xs">قوانین و مقررات </a>مورد پذیرش شما
-                        تلقی می شود</p>
+            <p class="px-6 py-3 text-center text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-zinc-700 border-t dark:border-zinc-600">
+                شما با ورود به سایت تمامی
+                <a href="{% url 'site:site-law' %}" class="text-blue-400 hover:text-blue-500 transition-colors duration-300">
+                    قوانین و مقررات
+                </a>
+                مورد پذیرش شما تلقی می شود
+            </p>
             </div>
         </div>
 

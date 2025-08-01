@@ -64,6 +64,7 @@ class SiteSetting(models.Model):
         default=True, verbose_name="فعال کردن دریافت فاکتور رسمی"
     )
 
+
     # main page setting
     active_slider_in_main_page = models.BooleanField(
         default=True, verbose_name="فعال کردن اسلایدر ها در صفحه اصلی"

@@ -7,17 +7,18 @@
                 class="mb-12 flex border-b pb-8 border-white/10 flex-col-reverse sm:flex-row gap-y-1 items-center sm:items-end justify-between">
             <div class="flex gap-y-1 flex-col">
                 <h2 class="font-DanaDemiBold">از جدیدترین تخفیف ها با خبر شوید</h2>
-                <form action="{% url 'site:add-to-news-letters' %}" method="post" class="group  flex justify-end items-center w-full bg-zinc-600 rounded-full  group-hover:opacity-100 group-hover:visible group-hover:top-10 transition-all delay-100  border-0 shadow ">
+                <form action="{% url 'site:add-to-news-letters' %}" method="post"
+                      class="group  flex justify-end items-center w-full bg-zinc-600 rounded-full  group-hover:opacity-100 group-hover:visible group-hover:top-10 transition-all delay-100  border-0 shadow ">
                     {% csrf_token %}
 
 
-                    <span class="px-2 m-1 py-2" >
+                    <span class="px-2 m-1 py-2">
                     {{ form.phone_number }}
                     </span>
 
                     <button type="submit" class="bg-green-500 rounded-full  text-white text-sm py-5 px-5">ثبت
-                            </button>
-                    </form>
+                    </button>
+                </form>
 
             </div>
             <a referrerpolicy='origin' target='_blank'
@@ -41,14 +42,14 @@
             <div class="flex flex-col gap-y-2 w-full lg:w-[30%]">
                 <!-- LOGO -->
                 <a href="/" class="text-green-500 transition-colors w-fit block">
-                                <picture>
-                <source srcset="{{ site.logo.url|to_webp }}"
-                        class="w-25 h-15 rounded-full"
-                        type="image/webp">
-                <img src="{{ site.logo.url }}" alt="{{ site.title }}"
-                     class="w-25 h-15 rounded-full"
-                     loading="lazy">
-            </picture>
+                    <picture>
+                        <source srcset="{{ site.logo.url|to_webp }}"
+                                class="w-25 h-15 rounded-full"
+                                type="image/webp">
+                        <img src="{{ site.logo.url }}" alt="{{ site.title }}"
+                             class="w-25 h-15 rounded-full"
+                             loading="lazy">
+                    </picture>
 
 
                 </a>
@@ -146,4 +147,47 @@
 <!-- OVERLAY -->
 <div class="overlay hidden fixed w-full h-full top-0 left-0 right-0 bg-black/40 z-40 transition-all duration-300">
 </div>
+
+{% if site.active_google_reCAPTCHA %}
+
+<script>
+
+    
+    
+document.addEventListener('DOMContentLoaded', function () {
+  const forms = document.querySelectorAll('form[data-recaptcha="true"]');
+
+  forms.forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); // جلوگیری از ارسال فوری فرم
+
+      // غیرفعال کردن دکمه برای جلوگیری از کلیک‌های متعدد
+      const submitButton = form.querySelector('[type="submit"]');
+      if (submitButton) submitButton.disabled = true;
+
+      grecaptcha.ready(function() {
+        grecaptcha.execute('{{ RECAPTCHA_PUBLIC_KEY }}', {action: form.getAttribute('data-recaptcha-action') || 'default'})
+          .then(function(token) {
+            // افزودن توکن به فرم
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'g-recaptcha-response';
+            input.value = token;
+            form.appendChild(input);
+
+            // ارسال فرم بدون فعال‌سازی مجدد رویداد
+            form.submit();
+          })
+          .catch(function(error) {
+            console.error('Error with reCAPTCHA:', error);
+            if (submitButton) submitButton.disabled = false; // فعال‌سازی مجدد دکمه در صورت خطا
+            alert('خطا در اعتبارسنجی reCAPTCHA. لطفاً دوباره تلاش کنید.'); // اطلاع‌رسانی به کاربر
+          });
+      });
+    });
+  });
+});
+</script>
+{% endif %} 
+
 

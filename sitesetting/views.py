@@ -406,7 +406,10 @@ def header_render_partial(request, title=None):
 
     site = SiteSetting.objects.filter(is_active=True).first()
     title = title if title else site.title
-    return render(request, "Base/Header/Header.html", {"orders": orders, "site": site, 'title': title})
+    return render(request, "Base/Header/Header.html", {
+        "orders": orders, "site": site, 'title': title,
+        "RECAPTCHA_PUBLIC_KEY": settings.RECAPTCHA_PUBLIC_KEY,
+    })
 
 
 def footer_render_partial(request):
@@ -420,5 +423,6 @@ def footer_render_partial(request):
             "links1": links[0:4],
             "links2": links[4:8],
             "form": NumberForAddToLettersForm(),
+            "RECAPTCHA_PUBLIC_KEY": settings.RECAPTCHA_PUBLIC_KEY,
         },
     )

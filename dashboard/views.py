@@ -31,7 +31,7 @@ from .forms import (
 from user.forms import LegalPersonForm
 from .models import UserAddress, Ticket, TicketConversation
 from sitesetting.models import SiteSetting
-from utils.tipax_price_calc import validate_city
+from utils.find_city import search_city
 from django.utils.timezone import datetime
 User = get_user_model()
 
@@ -448,27 +448,38 @@ class CreateUserAddress(LoginRequiredMixin, FormView):
             form.instance.user = self.request.user
 
             city = form.cleaned_data["city"]
-            validate_city_result = validate_city(city)
+            province = form.cleaned_data.get('province')
+            validate_city_result = search_city(province,city)
 
-            if validate_city_result is None:
-                messages.error(self.request, "مشکلی پیش امد")
-                return redirect(self.request.META.get("HTTP_REFERER", "/"))
-
-            if len(validate_city_result) > 1:
-                messages.warning(
+            if validate_city_result[0] == 0 :
+                messages.error(
                     self.request,
-                    f"""
-                    شهر شما یافت نشد لطفا در نوشتن ان دقت فرمایید
-                    لیست شهر های پیدا شده با این اسم ارسالی شما 
-                        {" , ".join([x['title'] for x in list(validate_city_result)])}""",
-                )
-                return redirect(self.request.META.get("HTTP_REFERER", "/"))
+                    validate_city_result[1]
+                    )
+                return render(self.request, self.template_name, {"form": form})
 
-            if len(validate_city_result) == 1:
-                form.instance.city_code = validate_city_result[0]["id"]
+            elif validate_city_result[0] == 1 :
+                obj = validate_city_result[1]
+                form.instance.city_code = obj['tipax_id']
+                form.instance.city_code_post = obj['post_id']
                 form.save()
 
-            messages.success(self.request, "ادرس شما با موفقیت اضافه شد")
+                messages.success(
+                    self.request,'ادرس شما اضافه شد'
+                )
+
+                if obj['tipax_id'] is None:
+                    messages.warning(
+                        self.request,
+                        "این ادرس برای ارسال با تیپاکس مناسب نیست"
+                    )
+
+                if obj['post_id'] is None:
+                    messages.warning(
+                        self.request,
+                        "این ادرس برای ارسال با پست مناسب نیست"
+                    )
+
             return super().form_valid(form)
         except Exception as e:
             messages.error(
@@ -495,27 +506,37 @@ class UpdateUserAddress(LoginRequiredMixin, UpdateView):
         form.instance.user = self.request.user
 
         try:
+            form.instance.user = self.request.user
+
             city = form.cleaned_data["city"]
-            validate_city_result = validate_city(city)
+            province = form.cleaned_data.get('province')
+            validate_city_result = search_city(province, city)
 
-            if validate_city_result is None:
-                messages.error(self.request, "مشکلی پیش امد")
-                return redirect(self.request.META.get("HTTP_REFERER", "/"))
-
-            if len(validate_city_result) > 1:
-                messages.warning(
+            if validate_city_result[0] == 0:
+                messages.error(
                     self.request,
-                    f"""
-                    شهر شما یافت نشد لطفا در نوشتن ان دقت فرمایید
-                    لیست شهر های پیدا شده با این اسم ارسالی شما 
-                        {" , ".join([x['title'] for x in list(validate_city_result)])}""",
+                    validate_city_result[1]
                 )
-                return redirect(self.request.META.get("HTTP_REFERER", "/"))
+                return render(self.request, self.template_name, {"form": form})
 
-            if len(validate_city_result) == 1:
-                form.instance.city_code = validate_city_result[0]["id"]
+            elif validate_city_result[0] == 1:
+                obj = validate_city_result[1]
+                form.instance.city_code = obj['tipax_id']
+                form.instance.city_code_post = obj['post_id']
+                form.save()
 
-            form.save()
+
+                if obj['tipax_id'] is None:
+                    messages.warning(
+                        self.request,
+                        "این ادرس برای ارسال با تیپاکس مناسب نیست"
+                    )
+
+                if obj['post_id'] is None:
+                    messages.warning(
+                        self.request,
+                        "این ادرس برای ارسال با پست مناسب نیست"
+                    )
 
             return super().form_valid(form)
 

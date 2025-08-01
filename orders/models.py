@@ -8,7 +8,7 @@ from stores.models import Store
 from product.models import Product
 
 from utils.tipax_price_calc import calculate_price as calculate_price_tipax
-from utils.post_price_calc import calculate_price as calculate_price_post
+from utils.post_price_calc import calculate_post_price_postex
 
 from sitesetting.models import SiteSetting
 from django.utils.crypto import get_random_string
@@ -31,6 +31,7 @@ class DeliveryPrices(models.Model):
     destination_city_id = models.PositiveIntegerField()
     date = models.DateField()
     weight = models.PositiveIntegerField(default=0)
+    volume = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f'{self.origin_city_id}-{self.destination_city_id}-{self.price}-{"tipax" if self.is_tipax else "post"} '
@@ -99,6 +100,12 @@ class Order(models.Model):
     def calculate_tipax_price(self):
         weight = self.get_total_weight()
 
+        if self.address.city_code is None:
+            return -1
+
+        if self.store.orgin_city_id is None:
+            return -1
+
         price_qs = DeliveryPrices.objects.filter(
             is_tipax=True,
             origin_city_id=self.store.orgin_city_id,
@@ -125,10 +132,41 @@ class Order(models.Model):
         return -1
 
     def calculate_post_price(self):
-        tipax_price = self.calculate_tipax_price()
-        site = SiteSetting.objects.first().difference_between_post_and_tipax_price
-        return tipax_price - (tipax_price * (int(site) / 100) )
+        if self.address.city_code is None:
+            return -1
+        if self.store.orgin_city_id is None:
+            return -1
 
+        try:
+            price_qs = DeliveryPrices.objects.filter(
+                is_tipax=False,
+                origin_city_id=self.store.orgin_city_id,
+                destination_city_id=self.address.city_code,
+                date__range=[now() - timedelta(days=3), now()],
+                weight=self.get_total_weight(),
+                volume=self.calculate_total_volume(),
+            ).order_by("-date")
+
+            if price_qs.exists():
+                return price_qs.first().price
+
+            price = calculate_post_price_postex(self)
+            price = int(price)
+
+            if price :
+                DeliveryPrices.objects.create(
+                    is_tipax=False,
+                    origin_city_id=self.store.orgin_city_id,
+                    destination_city_id=self.address.city_code,
+                    date=now(),
+                    price=price,
+                    weight=self.get_total_weight(),
+                    volume=self.calculate_total_volume(),
+                )
+            return price
+
+        except Exception:
+            return -1
 
     def calculate_total_price(self):
         if not self.is_paid and not self.canceled:
@@ -143,7 +181,6 @@ class Order(models.Model):
             return self.total_price
         else:
             return self.total_price
-
 
     def calculate_total_price_with_out_discount(self):
 
@@ -211,6 +248,13 @@ class Order(models.Model):
         else:
             return self.total_height
 
+    def calculate_total_volume(self):
+        total_volume = 0
+        for item in self.details.all():
+            item_volume = item.product.height * item.product.width * item.product.length
+            total_volume += item_volume * item.count
+        return total_volume
+
     def get_items_discount_amount(self):
         total_amount = 0
 
@@ -236,18 +280,18 @@ class Order(models.Model):
             total_amount_of_items = self.calculate_total_price()
 
             total_payment_price = (
-                total_amount_of_items + self.delivery_price - self.get_total_discount_amount()
+                    total_amount_of_items + self.delivery_price - self.get_total_discount_amount()
             )
 
             # store
 
             if (
-                self.official_invoice and
+                    self.official_invoice and
                     self.store.have_official_invoice and
                     site.active_receive_official_invoice
             ):
                 total_payment_price += total_amount_of_items * (
-                    self.store.official_invoice_price / 100
+                        self.store.official_invoice_price / 100
                 )
 
             if self.store.additional_price:
@@ -255,7 +299,7 @@ class Order(models.Model):
 
             if self.store.additional_tax:
                 total_payment_price += total_amount_of_items * (
-                    self.store.additional_tax / 100
+                        self.store.additional_tax / 100
                 )
 
             # site
@@ -410,6 +454,7 @@ class ReturnsOrders(models.Model):
     accept_by_admin = models.BooleanField(default=False)
     send_request_to_return_this_order_by_admin = models.BooleanField(default=False)
 
+
 class SpecificsOrders(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
@@ -424,4 +469,3 @@ class SpecificsOrders(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     second_date = models.DateTimeField(null=True, blank=True)
     additional_descriptions = models.TextField(null=True, blank=True)
-

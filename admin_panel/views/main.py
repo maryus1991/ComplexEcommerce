@@ -65,7 +65,7 @@ class HomePageView(AdminUserMixin, TemplateView):
         today = now().date()
         yesterday = today - timedelta(days=1)
 
-        total_view = total_view - DailyViewCount.objects.get_or_create(date=today - timedelta(days=1))[0].count
+        total_view = total_view
 
         DailyViewCount.objects.update_or_create(date=today,
                                                 defaults={

@@ -11,6 +11,7 @@ from .views import (
     ChangePassword,
     ChangeLegalPersonInformation,
     LegalPersonHelpText,
+LoginWithEmailView,
 )
 
 
@@ -20,6 +21,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path("otp/", OTP.as_view(), name="otp"),
     path("login/", LoginView.as_view(), name="login"),
+    path("login-with-email/", LoginWithEmailView.as_view(), name="login-with-email"),
     path("register/", RegisterView.as_view(), name="register"),
     path("reset-password/", ForgotPassword.as_view(), name="reset_password"),
     path("active-account/", ActiveAccount.as_view(), name="active_account"),

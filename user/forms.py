@@ -6,6 +6,8 @@ from phonenumber_field.validators import validate_phonenumber
 
 
 class RegistrationForm(forms.Form):
+
+
     phone_number = PhoneNumberField(
         required=True,
         widget=forms.NumberInput(
@@ -16,6 +18,18 @@ class RegistrationForm(forms.Form):
                 "dir": "rtl",
             }
         ),
+    )
+
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(
+            attrs={
+                "class": "appearance-none bg-transparent w-full py-3",
+                "placeholder": "ایمیل",
+                "autocomplete": "email",
+            }
+        ),
+        validators=[validate_email],
     )
 
     password = forms.CharField(
@@ -77,6 +91,15 @@ class RegistrationForm(forms.Form):
         validate_phonenumber(phone_number)
 
         return phone_number
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from sitesetting.models import SiteSetting
+        from django_recaptcha import fields, widgets
+        if SiteSetting.objects.first().active_google_reCAPTCHA:
+            self.fields['recaptcha']=fields.ReCaptchaField(
+                widget=widgets.ReCaptchaV3(action='signup'),
+            )
 
 
 class OTPForm(forms.Form):
@@ -198,7 +221,7 @@ class LoginForm(forms.Form):
     """
 
     phone_number = PhoneNumberField(
-        required=True,
+        required=False,
         widget=forms.NumberInput(
             attrs={
                 "class": "appearance-none bg-transparent w-full py-3",
@@ -209,7 +232,7 @@ class LoginForm(forms.Form):
         ),
     )
     password = forms.CharField(
-        required=True,
+        required=False,
         widget=forms.PasswordInput(
             attrs={
                 "class": "appearance-none bg-transparent w-full py-3",
@@ -224,6 +247,57 @@ class LoginForm(forms.Form):
         validate_phonenumber(phone_number)
         return phone_number
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from sitesetting.models import SiteSetting
+        from django_recaptcha import fields, widgets
+        if SiteSetting.objects.first().active_google_reCAPTCHA:
+            self.fields['recaptcha']=fields.ReCaptchaField(
+                widget=widgets.ReCaptchaV3(action='login'),
+            )
+
+
+class LoginFormWithEmail(forms.Form):
+    """
+    Login form
+    """
+
+    email = forms.EmailField(
+        required=False,
+        widget=forms.EmailInput(
+            attrs={
+                "class": "appearance-none bg-transparent w-full py-3",
+                "placeholder": "ایمیل",
+                "autocomplete": "email",
+            }
+        ),
+        validators=[validate_email],
+    )
+
+    password = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "appearance-none bg-transparent w-full py-3",
+                "placeholder": "رمز عبور",
+                "autocomplete": "password",
+            }
+        ),
+    )
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data["phone_number"]
+        validate_phonenumber(phone_number)
+        return phone_number
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from sitesetting.models import SiteSetting
+        from django_recaptcha import fields, widgets
+        if SiteSetting.objects.first().active_google_reCAPTCHA:
+            self.fields['recaptcha']=fields.ReCaptchaField(
+                widget=widgets.ReCaptchaV3(action='login'),
+            )
 
 class EditUserInformationForm(forms.Form):
     email = forms.EmailField(

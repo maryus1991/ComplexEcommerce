@@ -41,6 +41,11 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", default="*").split(",")
 GOOGLE_RECAPTCHA_SITE_KEY = os.getenv("GOOGLE_RECAPTCHA_SITE_KEY")
 GOOGLE_RECAPTCHA_SECRET_KEY = os.getenv("GOOGLE_RECAPTCHA_SECRET_KEY")
 
+#  google recaptcha config v3
+RECAPTCHA_PUBLIC_KEY = GOOGLE_RECAPTCHA_SITE_KEY
+RECAPTCHA_PRIVATE_KEY = GOOGLE_RECAPTCHA_SECRET_KEY
+RECAPTCHA_SCORE_THRESHOLD = 0.8
+
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
@@ -88,7 +93,7 @@ INSTALLED_APPS = [
     "auditlog",
     "django_celery_beat",
     "cachalot",
-
+    "django_recaptcha",
 
 ]
 
@@ -135,7 +140,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-#
+
 DATABASES = {
     "default": {
         "ENGINE": os.getenv("POSTGRES_ENGIN", default="django.db.backends.postgresql"),
@@ -146,14 +151,6 @@ DATABASES = {
         "PORT": os.getenv("POSTGRES_PORT", default="5432"),
     }
 }
-#
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -301,6 +298,9 @@ TIPAX_USERNAME = os.getenv("TIPAX_USERNAME")
 TIPAX_PASSWORD = os.getenv("TIPAX_PASSWORD")
 TIPAX_API_KEY = os.getenv("TIPAX_API_KEY")
 
+# POSTEX config
+POSTEX_API_KEY = os.getenv("POSTEX_API_KEY")
+
 # session
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
@@ -371,12 +371,13 @@ CELERY_TASK_QUEUES = [
     Queue('details', routing_key='details'),
     Queue('sms', routing_key='sms'),
     Queue('clean', routing_key='clean'),
+    Queue('email', routing_key='email'),
 ]
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_TASK_ROUTES = {
     'orders.tasks.clean_expired_details': {'queue': 'details', 'routing_key': 'details'},
     'utils.send_otp.send_message': {'queue': 'sms', 'routing_key': 'sms'},
-    'admin_panel.tasks.clean_temp_files': {'queue': 'clean', 'routing_key': 'clean'},
+    'utils.send_email_task.send_email_task': {'queue': 'email', 'routing_key': 'email'},
 }
 
 

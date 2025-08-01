@@ -11,7 +11,5 @@
 گذاشتم قیمت همکار
 
 
-
-
-فقط لازمه DNS رکوردها (SPF، DKIM، DMARC) رو درست وارد کنی تا ارسال ایمیل به Gmail و سایر سرویس‌ها معتبر باشه.
-
+combined_with_prompt اصلاح شهر های یکسان
+DKIM , DKIM for mailserver

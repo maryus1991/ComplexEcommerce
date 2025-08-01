@@ -1,6 +1,6 @@
 from django.db import models
 from random import randint
-
+from config import settings
 from django.contrib.auth.models import AbstractUser
 from phonenumber_field.modelfields import PhoneNumberField
 from django.conf import settings
@@ -10,7 +10,7 @@ from .managers import UserManager
 from stores.models import Store
 
 from utils.send_otp import send_message
-
+from utils.send_email_task import send_email_task
 
 class User(AbstractUser):
     username = None
@@ -29,6 +29,14 @@ class User(AbstractUser):
     is_verified = models.BooleanField(default=False)
     is_store_admin = models.BooleanField(default=False)
     message_verified = models.BooleanField(default=True)
+
+    private_code = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True,
+    )
+    email_verified = models.BooleanField(default=False)
+    phone_number_verified = models.BooleanField(default=False)
 
     # legal person infos
     legal_person = models.BooleanField(default=False)
@@ -49,14 +57,12 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ["first_name", "last_name"]
 
     def set_otp(self) -> int:
-        # set the objects
         otp = randint(1000, 9999)
         self.otp_expiry_date = timezone.now() + settings.OTP_EXPIRATION
         self.otp = otp
         self.save()
 
-        # send message
-        print('send message')
+
 
         try:
             send_message.delay(
@@ -68,6 +74,7 @@ class User(AbstractUser):
             pass
 
         return otp
+
 
     def verify_otp(self, otp: str) -> bool:
 

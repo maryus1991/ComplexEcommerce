@@ -24,8 +24,7 @@ from stores.forms import (
 from auditlog.models import LogEntry
 from user.mixins.logins import StoreAdminUserStaff
 import jdatetime
-from django.utils.dateparse import parse_date
-from utils.tipax_price_calc import validate_city
+
 
 User = get_user_model()
 
