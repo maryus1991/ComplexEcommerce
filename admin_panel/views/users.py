@@ -14,7 +14,7 @@ from user.mixins.logins import AdminUserMixin
 from admin_panel.forms import AddUserModelForm, MessagingUserForm, ExcludeUserFromMessagingForm, AdminUsersFilteringForm
 from auditlog.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
-from utils.send_otp import send_message
+from utils.send_otp import send_many_message
 from django.contrib.auth import login
 from sitesetting.models import Newsletter, SendMessageHistory
 from django.db.models import Q
@@ -58,7 +58,8 @@ class UsersNewsLetters(AdminUserMixin, View):
 
     def post(self, request):
         content = request.POST.get('content', '').strip()
-        selected_contacts = request.POST.getlist('selected_contacts')  # استفاده از getlist برای دریافت آرایه
+        selected_contacts = request.POST.getlist('selected_contacts')
+        sender = request.POST.get('sender')
 
         if not content:
             messages.error(request, "متن پیام نمی‌تواند خالی باشد")
@@ -78,14 +79,14 @@ class UsersNewsLetters(AdminUserMixin, View):
                     contact = Newsletter.objects.get(id=int(contact_id))
                     phone_number = str(contact).replace(' ', '')
                     numbers.append(phone_number)
-                    send_message.delay(phone_number, content)
+                    send_many_message.delay(sender, phone_number, content)
                 except Exception as e:
                     pass
 
             messages.success(request, f"پیام با موفقیت به {len(selected_contacts)} مخاطب ارسال شد")
             SendMessageHistory.objects.create(
                 phone_numbers=''.join(str(item) + ' , ' for item in numbers),
-                message=str(content),
+                message=str(content) + ' ارسال شده با شماره {} '.format(sender),
             )
         except Newsletter.DoesNotExist:
             messages.error(request, "یکی از مخاطبین یافت نشد")
@@ -184,15 +185,16 @@ class UserSendManyMessage(AdminUserMixin, View):
             messages.warning(request, 'هیچ کاربری برای ارسال پیام پیدا نشد.')
             return redirect(request.META.get('HTTP_REFERER', '/'))
 
+        sender_number = form.cleaned_data.get('sender_number')
         user_list = []
         for user in user_object:
             user_list.append(str(user.PhoneNumber).replace(" ", ""))
-            send_message.delay(str(user.PhoneNumber).replace(" ", ""), content)
+            send_many_message.delay(str(sender_number), str(user.PhoneNumber).replace(" ", ""), content)
 
         messages.success(request, 'پیام شما با موفقیت ارسال شد')
         SendMessageHistory.objects.create(
             phone_numbers=''.join(str(item) + ' , ' for item in user_list),
-            message=str(content),
+            message=str(content) + ' ارسال شده با شماره {} '.format(sender_number),
             news_letter=False,
         )
         return redirect(request.META.get('HTTP_REFERER', '/'))

@@ -12,6 +12,7 @@ from .views import (
     ChangeLegalPersonInformation,
     LegalPersonHelpText,
 LoginWithEmailView,
+ForgotPasswordWithEmail,
 )
 
 
@@ -24,6 +25,7 @@ urlpatterns = [
     path("login-with-email/", LoginWithEmailView.as_view(), name="login-with-email"),
     path("register/", RegisterView.as_view(), name="register"),
     path("reset-password/", ForgotPassword.as_view(), name="reset_password"),
+    path("reset-password-with-email/", ForgotPasswordWithEmail.as_view(), name="reset_password_with_email"),
     path("active-account/", ActiveAccount.as_view(), name="active_account"),
     # user setting in dashboard
     path("change-number/", ChangeNumber.as_view(), name="change-number"),

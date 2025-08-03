@@ -943,10 +943,9 @@ class VerifyPayment(LoginRequiredMixin, View):
                 if self.site.send_message_successful_payment:
                     send_message.delay(
                         str(order.user.PhoneNumber).replace(" ", ""),
-                        """
-                        از اینکه ما رو انتخاب کردید متشکریم 
-                        سفارش شما در وضعیت ارسال قرار گرفت
-                        """,
+                        'orderNotify',
+                        str(order.user.PhoneNumber).replace(" ", ""),
+
                     )
 
                 messages.success(request, "از خرید شما متشکریم")

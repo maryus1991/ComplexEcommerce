@@ -468,7 +468,7 @@ class StoreResponseToUsersTicketView(UserStoreStaffMixin, View):
 
             send_message.delay(
                 str(obj.user.PhoneNumber).replace(" ", ""),
-                "به تیکیت شما پاسخ داده شد با مراجعه به قسمت کاربری ان را مشاهده کنید",
+                "ticketNotify", str(obj.user.PhoneNumber).replace(" ", ""),
             )
 
         messages.success(request, "پیام شما با موفقیت ارسال شد")

@@ -12,13 +12,14 @@ from utils.send_otp import send_message
 from admin_panel.forms import AdminOrderFilteringForm
 from django.db.models import Value, Q
 from django.db.models.functions import Concat
+from django.utils.dateparse import parse_date
+import jdatetime
 
 
 class ChangeStatusToDeliveredToUser(AdminUserMixin, RedirectView):
     """for set sending id and change status to DeliveredToUser"""
 
     def get_redirect_url(self, *args, **kwargs):
-
         order = get_object_or_404(
             Order, pk=self.kwargs["pk"]
         )
@@ -33,18 +34,16 @@ class ChangeStatusToDeliveredToUser(AdminUserMixin, RedirectView):
         if SiteSetting.objects.first().send_message_when_set_sending_id:
             send_message.delay(
                 str(order.user.PhoneNumber).replace(" ", ""),
-                f"""محموله شما ارسال شد 
-                code:{order.sending_id}
-                """,  # noqa
-            )
+                'deliveryID',
+                order.sending_id
 
+            )
 
         return self.request.META.get("HTTP_REFERER")
 
 
 class CancelingOrderByAdmin(AdminUserMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-
         order = get_object_or_404(
             Order, pk=self.kwargs["pk"]
         )
@@ -68,7 +67,6 @@ class CancelingOrderByAdmin(AdminUserMixin, RedirectView):
             'سفارش کنسل شد'
         )
 
-
         return self.request.META.get("HTTP_REFERER")
 
 
@@ -84,9 +82,9 @@ class OrderListView(AdminUserMixin, ListView):
     def get_queryset(self):
         query = super().get_queryset().prefetch_related(
             'address', 'user', 'store'
-            )
-        
-        query = query.order_by( '-id')
+        )
+
+        query = query.order_by('-id')
 
         form = AdminOrderFilteringForm(self.request.GET)
 
@@ -366,7 +364,6 @@ class OrderListView(AdminUserMixin, ListView):
 
         return query.distinct()
 
-    
     def get_context_data(self, *, object_list=..., **kwargs):
 
         context = super().get_context_data(**kwargs)
@@ -414,7 +411,6 @@ class OrderDetailView(AdminUserMixin, DetailView):
 
 
 class OrderSoledChangeStatus(AdminUserMixin, RedirectView):
-
     """for change soled order status"""
 
     def get_redirect_url(self, *args, **kwargs):
@@ -444,7 +440,7 @@ class SpecificsOrdersListView(AdminUserMixin, ListView):
     def get_queryset(self):
         request = self.request
         queryset = self.model.objects.prefetch_related('user', 'store')
-        if number:= request.GET.get('number'):
+        if number := request.GET.get('number'):
             number = str(number)
             queryset = queryset.filter(user__PhoneNumber=number)
 
@@ -494,13 +490,12 @@ class SpecificsOrdersUpdateView(AdminUserMixin, UpdateView):
     context_object_name = "item"
 
     def form_valid(self, form):
-
         if self.object.is_paid:
             messages.error(
-                self.request,'شما نمی توانید فاکتوری که پرداخت شده رو بروزرسانی کنید'
+                self.request, 'شما نمی توانید فاکتوری که پرداخت شده رو بروزرسانی کنید'
             )
             return redirect("admin_panel:specifics-list")
-        
+
         messages.success(
             self.request,
             'ثبت شد'
@@ -535,6 +530,7 @@ class SpecificsOrdersDeleteView(AdminUserMixin, RedirectView):
             )
         return reverse('admin_panel:specifics-list')
 
+
 # return order
 
 class ReturnOrderList(AdminUserMixin, ListView):
@@ -547,7 +543,7 @@ class ReturnOrderList(AdminUserMixin, ListView):
 
         queryset = super().get_queryset().prefetch_related('order', 'user').order_by('-id')
 
-        if number:= self.request.GET.get('number'):
+        if number := self.request.GET.get('number'):
             number = str(number)
             queryset = queryset.filter(user__PhoneNumber=number)
 
@@ -587,5 +583,3 @@ class ReturnOrderAcceptByAdmin(AdminUserMixin, RedirectView):
                 'فروشگاه درخواست پرگشتی توسط ادمین را نداده است'
             )
         return reverse('admin_panel:return-order-list')
-
-

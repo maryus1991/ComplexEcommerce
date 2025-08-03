@@ -33,3 +33,12 @@ class ContactForm(forms.ModelForm):
         phone = self.cleaned_data["phone"]
         validate_phonenumber(phone)
         return phone
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from sitesetting.models import SiteSetting
+        from django_recaptcha import fields, widgets
+        if SiteSetting.objects.first().active_google_reCAPTCHA:
+            self.fields['recaptcha'] = fields.ReCaptchaField(
+                widget=widgets.ReCaptchaV3(action='signup'),
+            )

@@ -20,7 +20,9 @@ LoginFormWithEmail,
     ChangePasswordForm,
     EditUserInformationForm,
     LegalPersonForm,
-ActiveAccountFormWithRecaptcha
+ActiveAccountFormWithRecaptcha,
+ForgotPasswordForm,
+ForgotPasswordWithEmailForm
 )
 from .forms import ActiveAccountForm as ChangeNumberForm
 from sitesetting.models import SiteSetting
@@ -293,7 +295,6 @@ class RegisterView(View):
 
     def post(self, request):
         form = self.form_class(request.POST or None)
-        phone_number = ''
         if form.is_valid():
             phone_number = form.cleaned_data["phone_number"]
             email = form.cleaned_data["email"]
@@ -423,12 +424,7 @@ class OTP(LoginRequiredMixin, View):
                     if user.verify_otp(code):
 
                         user.phone_number_verified = True
-                        if user.email_verified == True:
-                            user.is_verified = True
-                            messages.success(request, "حساب شما با موفقیت تایید شد")
-                        else:
-                            messages.warning(request, 'برای فعال سازی حساب باید ایمیل وارد شده را تایید کنید')
-
+                        user.is_verified = True
                         messages.success(request, "شماره وارد شده تایید شد")
                         user.save()
 
@@ -474,17 +470,16 @@ class ForgotPassword(View):
 
     def get(self, request, *args, **kwargs):
         return render(
-            request, "auth/forgot-password.html", {"form": RegistrationForm()}
+            request, "auth/forgot-password.html", {"form": ForgotPasswordForm()}
         )
 
     def post(self, request, *args, **kwargs):
-        form = RegistrationForm(request.POST or None)
+        form = ForgotPasswordForm(request.POST or None)
         if form.is_valid():
             phone_number = form.cleaned_data["phone_number"]
             password = form.cleaned_data["password"]
-            email = form.cleaned_data["email"]
 
-            user = User.objects.filter(PhoneNumber=phone_number, email=email)
+            user = User.objects.filter(PhoneNumber=phone_number)
             if user.exists() and user.count() == 1:
                 user = user.first()
                 if not user.check_password(password):
@@ -495,7 +490,7 @@ class ForgotPassword(View):
 
                     send_message.delay(
                         str(phone_number).replace(" ", ""),
-                        "کاربر گرامی بازیابی رمز عبور شما با موفقیت انجام گردید اگر شما این درخواست را ندادید لطفا با ورود به صفحه بازیابی رمز عبور  خود را تغییر دهید",
+                      'ForgotPasswordNotify', str(phone_number).replace(" ", ""),
                     )
 
                     login(request, user)
@@ -519,7 +514,65 @@ class ForgotPassword(View):
             messages.error(request, form.errors.as_text())
 
         return render(
-            request, "auth/forgot-password.html", {"form": RegistrationForm(request.POST or None)}
+            request, "auth/forgot-password.html", {"form": ForgotPasswordForm(request.POST or None)}
+        )
+
+class ForgotPasswordWithEmail(View):
+    """
+    Forgot password page
+    """
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.is_verified:
+            messages.info(
+                request,
+                "شما قبلا لاگین شده اید لطفا خارج بشید از سایت و دوباره وارد سایت بشید",
+            )
+            return redirect("dashboard:dashboard")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return render(
+            request, "auth/forgot-password-with-email.html", {"form": ForgotPasswordWithEmailForm()}
+        )
+
+    def post(self, request, *args, **kwargs):
+        form = ForgotPasswordWithEmailForm(request.POST or None)
+        if form.is_valid():
+            password = form.cleaned_data["password"]
+            email = form.cleaned_data["email"]
+
+            user = User.objects.filter(email=email)
+            if user.exists() and user.count() == 1:
+                user = user.first()
+                if not user.check_password(password):
+                    user.is_verified = False
+                    user.set_password(password)
+                    user.save()
+
+
+                    login(request, user)
+
+                    messages.success(
+                        request,
+                        "رمز عبور شما با موفقیت تغییر یافت حال برای فعال شدن حساب خود کد ارسال به شماره خود را وارد کنید",
+                    )
+                    return redirect("user:login")
+
+                else:
+                    messages.error(
+                        request,
+                        "رمز عبور شما با رمز عبور جدید شما یک سان هست لطفا وارد سایت شوید",
+                    )
+
+            else:
+                messages.error(request, "کاربر مورد نظر موجود نیست")
+
+        else:
+            messages.error(request, form.errors.as_text())
+
+        return render(
+            request, "auth/forgot-password-with-email.html", {"form": ForgotPasswordWithEmailForm(request.POST or None)}
         )
 
 
@@ -602,8 +655,9 @@ class EditUserInformation(CustomLoginRequiredMixin, View):
             user = request.user
 
             if not User.objects.filter(email=email).exists():
+                if email != user.email:
+                    user.email_verified = False
                 user.email = email
-                user.email_verified = False
                 user.first_name = first_name
                 user.last_name = last_name
                 user.save()

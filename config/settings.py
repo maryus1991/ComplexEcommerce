@@ -375,11 +375,13 @@ CELERY_TASK_QUEUES = [
     Queue('sms', routing_key='sms'),
     Queue('clean', routing_key='clean'),
     Queue('email', routing_key='email'),
+    Queue('otp', routing_key='otp'),
 ]
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_TASK_ROUTES = {
     'orders.tasks.clean_expired_details': {'queue': 'details', 'routing_key': 'details'},
     'utils.send_otp.send_message': {'queue': 'sms', 'routing_key': 'sms'},
+    'utils.send_otp.send_otp': {'queue': 'otp', 'routing_key': 'otp'},
     'utils.send_email_task.send_email_task': {'queue': 'email', 'routing_key': 'email'},
 }
 

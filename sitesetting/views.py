@@ -25,7 +25,7 @@ from stores.models import StoreApps
 from stores.models import UsedAppView as UsedAppViewModel
 from user.mixins.logins import CustomLoginRequiredMixin
 from config.settings import BASE_DIR
-from user.forms import ActiveAccountForm as NumberForAddToLettersForm
+from user.forms import ActiveAccountFormWITHRecaptchaWithoutEmail as NumberForAddToLettersForm
 from urllib.parse import quote
 from product.models import Product, ProductCategory, ProductBrand
 from blog.models import Blog, BlogCategory
@@ -415,6 +415,7 @@ def header_render_partial(request, title=None):
 def footer_render_partial(request):
     site = SiteSetting.objects.filter(is_active=True).first()
     links = FastLinks.objects.all().filter(is_active=True).order_by("-sort_number")
+
     return render(
         request,
         "Base/Footer/Footer.html",

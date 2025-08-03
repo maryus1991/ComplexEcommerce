@@ -1,69 +1,50 @@
-from zeep import Client
-from pathlib import Path
-from dotenv import load_dotenv
-from os import path
-import os
-
-try:
-    from .melipayamak import Api
-except Exception as e:
-    from melipayamak import Api
-except Exception as e:
-    pass
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-local_env_file = path.join(BASE_DIR, ".envs")
-
-if path.isfile(local_env_file):
-    load_dotenv(dotenv_path=local_env_file)
-
-melipayamak_username = os.getenv("melipayamak_panel_username")
-melipayamak_password = os.getenv("melipayamak_panel_password")
-melipayamak_from_number = os.getenv("melipayamak_panel_from_number")
-KAVEH_NEGAR_OTP = os.getenv("KAVEH_NEGAR_OTP")
-
 from config import settings
 from config.celery import shared_task
+from kavenegar import KavenegarAPI
 
+KAVEH_NEGAR_OTP = settings.KAVEH_NEGAR_OTP
 
-@shared_task(queue='sms')
-def send_otp(otp):
-    from kavenegar import KavenegarAPI
+@shared_task(queue='otp')
+def send_otp(number, otp):
     try:
-        api = KavenegarAPI('')
+        api = KavenegarAPI(KAVEH_NEGAR_OTP)
         params = {
-            'receptor': '09373061991',
+            'receptor': number,
             'template': 'main',
             'token': f'{otp}',
             'type': 'sms',
         }
         response = api.verify_lookup(params)
-        print(response)
+        print(response.json())
     except Exception as e:
         print(e)
 
 
 @shared_task(queue='sms')
-def send_message(
-        to,
-        text,
-        username=melipayamak_username,
-        password=melipayamak_password,
-        _from=melipayamak_from_number,
-):
-    print('sending message')
-
+def send_message(number, template, message):
     try:
-        api = Api(username, password)
-        result = api.sms("soap").send(to, _from, text)
-        result = int(result)
-        print(result, '1kkk')
-        if 0 <= result <= 35:
-            print(result.json())
-            raise Exception
-        return result
-
+        api = KavenegarAPI(KAVEH_NEGAR_OTP)
+        params = {
+            'receptor': number,
+            'template': template,
+            'token': f'{message}',
+            'type': 'sms',
+        }
+        response = api.verify_lookup(params)
+        print(response.json())
     except Exception as e:
         print(e)
 
+@shared_task(queue='sms')
+def send_many_message(sender , number, message):
+    try:
+        api = KavenegarAPI(KAVEH_NEGAR_OTP)
+        params = {
+            'sender': str(sender),
+            'receptor': str(number),
+            'message': str(message),
+        }
+        response = api.verify_lookup(params)
+        print(response.json())
+    except Exception as e:
+        print(e)

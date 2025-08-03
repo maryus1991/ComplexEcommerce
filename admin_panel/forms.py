@@ -710,6 +710,14 @@ class MessagingUserForm(forms.Form):
         )
     )
 
+    sender_number = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            'placeholder': 'شماره فرستنده ... ',
+        }),
+    )
+
     is_verified = forms.BooleanField(
         required=False,
         widget=forms.CheckboxInput()

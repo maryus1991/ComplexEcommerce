@@ -12,6 +12,7 @@ from stores.models import Store
 from utils.send_otp import send_otp
 from utils.send_email_task import send_email_task
 
+
 class User(AbstractUser):
     username = None
     PhoneNumber = PhoneNumberField(unique=True, db_index=True)
@@ -65,13 +66,12 @@ class User(AbstractUser):
         try:
             send_otp.delay(
                 str(self.PhoneNumber).replace(" ", ""),
-                f"""            جهت حفظ امنیت حساب کابری شما از دادن این کد در دست دیگران خوداری فرمایید کد تایید شما code: {self.otp} 
-                    """)
+                otp
+            )
         except Exception as e:
             pass
 
         return otp
-
 
     def verify_otp(self, otp: str) -> bool:
 

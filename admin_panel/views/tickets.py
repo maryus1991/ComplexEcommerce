@@ -73,7 +73,9 @@ class TicketConversationDetailView(AdminUserMixin, View):
             if SiteSetting.objects.first().send_message_response_to_ticket:
                 send_message.delay(
                     str(item.user.PhoneNumber).replace(" ", ""),
-                    "به تیکت شما پاسخ داده شد با مراجعه به قسمت تیکت ها در حساب کاربری خود ان را مشاهده کنید",
+                    'ticketNotify',
+                    str(item.user.PhoneNumber).replace(" ", ""),
+
                 )
 
             for message in item.message.filter(is_read_by_server=False).all():

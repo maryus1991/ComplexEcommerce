@@ -6,12 +6,15 @@
         <div
                 class="mb-12 flex border-b pb-8 border-white/10 flex-col-reverse sm:flex-row gap-y-1 items-center sm:items-end justify-between">
             <div class="flex gap-y-1 flex-col">
+                {% if '/user/' not in request.path and 'contact' not in request.path %}
                 <h2 class="font-DanaDemiBold">از جدیدترین تخفیف ها با خبر شوید</h2>
+
                 <form action="{% url 'site:add-to-news-letters' %}" method="post"
                       class="group  flex justify-end items-center w-full bg-zinc-600 rounded-full  group-hover:opacity-100 group-hover:visible group-hover:top-10 transition-all delay-100  border-0 shadow ">
                     {% csrf_token %}
 
-
+                    {{ form.media }}
+                    {{ form.recaptcha_field }}
                     <span class="px-2 m-1 py-2">
                     {{ form.phone_number }}
                     </span>
@@ -19,6 +22,7 @@
                     <button type="submit" class="bg-green-500 rounded-full  text-white text-sm py-5 px-5">ثبت
                     </button>
                 </form>
+                {% endif %}
 
             </div>
             <a referrerpolicy='origin' target='_blank'
