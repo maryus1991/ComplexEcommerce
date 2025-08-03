@@ -20,6 +20,7 @@ LoginFormWithEmail,
     ChangePasswordForm,
     EditUserInformationForm,
     LegalPersonForm,
+ActiveAccountFormWithRecaptcha
 )
 from .forms import ActiveAccountForm as ChangeNumberForm
 from sitesetting.models import SiteSetting
@@ -178,21 +179,23 @@ class LoginWithEmailView(View):
     def post(self, request):
 
         email_form = LoginFormWithEmail(request.POST)
-
-
         phone_number = ''
         email = ''
-
 
         if email_form.is_valid():
             email = email_form.cleaned_data["email"]
             password = email_form.cleaned_data["password"]
 
-            # check the user
             user = User.objects.filter(email=email)
             if user is not None :
                 if user.exists() and user.count() == 1:
                     user = user.first()
+
+                    if not user.email_verified:
+                        messages.warning(
+                            request, 'شما این ایمیل را فعال سازی نکردید لطفا از طریق فعال سازی حساب انرا فعال کنید و سپس وارد سایت شوید یا از راه گوگل وارد شوید'
+                        )
+                        return render(request, self.template_name, {"login_form_with_email": LoginFormWithEmail(request.POST or None)})
 
                     if user.check_password(password):
                         if user.is_active and user.is_verified:
@@ -315,7 +318,8 @@ class RegisterView(View):
 
                 user = User.objects.get(PhoneNumber=phone_number)
 
-                user.email = email
+                if email:
+                    user.email = email
                 user.save()
 
                 messages.success(request, "کاربر با موفقیت ساخته شد")
@@ -348,7 +352,7 @@ class RegisterView(View):
                 if site and site.is_active:
                     login(request, user)
 
-                    if not user.email_verified:
+                    if not user.email_verified and user.email:
                         send_email_task.delay(
                             'تایید ایمیل حساب کاربری'
                             , 'با سلام لطفا با ورود به لینک زیر ورود به سایت یا ایمیل را فعال نمایید'
@@ -367,13 +371,8 @@ class RegisterView(View):
 
             else:
                 messages.error(request, "کاربری با این شماره موجود میباشد")
+                return render(request, self.template_name, {"form": self.form_class(request.POST or None)})
 
-                if phone_number != '':
-                    query = f'?tel={str(phone_number).replace(" ", "")}'
-                else:
-                    query = ''
-
-                return redirect(reverse("user:login") + query)
 
         else:
             messages.error(
@@ -422,10 +421,17 @@ class OTP(LoginRequiredMixin, View):
                 code = int(code)
                 if 1000 < code < 9999:
                     if user.verify_otp(code):
-                        user.is_verified = True
+
+                        user.phone_number_verified = True
+                        if user.email_verified == True:
+                            user.is_verified = True
+                            messages.success(request, "حساب شما با موفقیت تایید شد")
+                        else:
+                            messages.warning(request, 'برای فعال سازی حساب باید ایمیل وارد شده را تایید کنید')
+
+                        messages.success(request, "شماره وارد شده تایید شد")
                         user.save()
 
-                        messages.success(request, "حساب شما با موفقیت تایید شد")
 
                         if user.email is None or user.first_name is None or user.last_name is None:
                             messages.warning(
@@ -467,20 +473,18 @@ class ForgotPassword(View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            logout(request)
         return render(
             request, "auth/forgot-password.html", {"form": RegistrationForm()}
         )
 
     def post(self, request, *args, **kwargs):
         form = RegistrationForm(request.POST or None)
-        phone_number = ''
         if form.is_valid():
             phone_number = form.cleaned_data["phone_number"]
             password = form.cleaned_data["password"]
+            email = form.cleaned_data["email"]
 
-            user = User.objects.filter(PhoneNumber=phone_number)
+            user = User.objects.filter(PhoneNumber=phone_number, email=email)
             if user.exists() and user.count() == 1:
                 user = user.first()
                 if not user.check_password(password):
@@ -510,18 +514,13 @@ class ForgotPassword(View):
 
             else:
                 messages.error(request, "کاربر مورد نظر موجود نیست")
-                if phone_number != '' :
-                    query =  f'?tel={str(phone_number).replace(" ", "")}'
-                else :
-                    query=''
-                return redirect(reverse("user:register")+ query)
+
         else:
             messages.error(request, form.errors.as_text())
 
         return render(
             request, "auth/forgot-password.html", {"form": RegistrationForm(request.POST or None)}
         )
-
 
 
 class ActiveAccount(View):
@@ -543,11 +542,11 @@ class ActiveAccount(View):
             return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
-        context = {"login_form": ActiveAccountForm()}
+        context = {"login_form": ActiveAccountFormWithRecaptcha()}
         return render(request, "auth/active_account.html", context)
 
     def post(self, request, *args, **kwargs):
-        form = ActiveAccountForm(request.POST or None)
+        form = ActiveAccountFormWithRecaptcha(request.POST or None)
         phone_number = ''
         if form.is_valid():
             phone_number = form.cleaned_data["phone_number"]
@@ -604,6 +603,7 @@ class EditUserInformation(CustomLoginRequiredMixin, View):
 
             if not User.objects.filter(email=email).exists():
                 user.email = email
+                user.email_verified = False
                 user.first_name = first_name
                 user.last_name = last_name
                 user.save()

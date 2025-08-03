@@ -9,7 +9,7 @@ from django.utils import timezone
 from .managers import UserManager
 from stores.models import Store
 
-from utils.send_otp import send_message
+from utils.send_otp import send_otp
 from utils.send_email_task import send_email_task
 
 class User(AbstractUser):
@@ -62,13 +62,10 @@ class User(AbstractUser):
         self.otp = otp
         self.save()
 
-
-
         try:
-            send_message.delay(
+            send_otp.delay(
                 str(self.PhoneNumber).replace(" ", ""),
-                f"""            جهت حفظ امنیت حساب کابری شما از دادن این کد در دست دیگران خوداری فرمایید کد تایید شما
-                  code: {self.otp}
+                f"""            جهت حفظ امنیت حساب کابری شما از دادن این کد در دست دیگران خوداری فرمایید کد تایید شما code: {self.otp} 
                     """)
         except Exception as e:
             pass

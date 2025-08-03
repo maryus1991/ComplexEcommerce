@@ -1,11 +1,11 @@
-# from config import settings
-# from config.celery import shared_task
-# from django.core.mail import send_mail
+from config import settings
+from config.celery import shared_task
+from django.core.mail import send_mail
 import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime
 
-# @shared_task(queue='email')
+@shared_task(queue='email')
 def send_email_task(subject, message, recipient_list):
 
     smtp_server = '185.97.116.199'
@@ -27,8 +27,4 @@ def send_email_task(subject, message, recipient_list):
     server.quit()
     print("Email sent!")
 
-
-
-
-
-send_email_task('test', 'test', 'maryus19915123@gmail.com')
+# send_email_task('سلامممممممممممممممم', 'سلاممممممممممممممممسلاممممممممممممممممسلاممممممممممممممممسلاممممممممممممممممسلاممممممممممممممممسلاممممممممممممممممسلاممممممممممممممممسلاممممممممممممممممسلامممممممممممممممم', 'test-swwgymmk1@srv1.mail-tester.com')

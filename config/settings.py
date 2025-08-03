@@ -285,6 +285,9 @@ melipayamak_username = os.getenv("melipayamak_panel_username")
 melipayamak_password = os.getenv("melipayamak_panel_password")
 melipayamak_from_number = os.getenv("melipayamak_panel_from_number")
 
+# kaveh negar otp
+KAVEH_NEGAR_OTP=os.getenv("KAVEH_NEGAR_OTP")
+
 # zrinpal payment
 MERCHANT_ID = os.getenv("MERCHANT_ID")
 ZARINPAL_SEND_DATA_URL = os.getenv("ZARINPAL_SEND_DATA_URL")
@@ -303,7 +306,7 @@ POSTEX_API_KEY = os.getenv("POSTEX_API_KEY")
 
 # session
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
-SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 3
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'

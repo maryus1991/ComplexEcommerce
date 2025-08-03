@@ -15,7 +15,8 @@ class Command(BaseCommand):
                 "env" in root or
                     "migrations" in root or
                     "melipayamak" in root or
-                    "static" in root
+                    "static" in root or
+                    "combined_with_prompt.py" in files
             ):
                 continue
 

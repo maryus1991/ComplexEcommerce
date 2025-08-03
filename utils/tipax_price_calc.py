@@ -85,7 +85,7 @@ def send_request_for_city(city):
 
 def validate_city(city: str):
     if access_token is None:
-        print("used")
+
         login()
 
     response = send_request_for_city(city)
@@ -110,8 +110,7 @@ def calculate_price(
     try:
         if access_token is None:
             login()
-            print("used")
-            print(access_token)
+
 
         headers = {
             "Content-Type": "application/json",
@@ -152,7 +151,7 @@ def calculate_price(
                 }
             ]
         }
-        print(json.dumps(data))
+
         response = requests.post(
             TIPAX_CALC_PRICE,
             data=json.dumps(data),
@@ -160,7 +159,6 @@ def calculate_price(
             stream=True,
             timeout=20,
         )
-        print(response.json())
         if response.status_code == 200:
             return int(response.json()[0]["regularRate"]["finalPrice"]) / 10
         elif response.status_code == 401:
