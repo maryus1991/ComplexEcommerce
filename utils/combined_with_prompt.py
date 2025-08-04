@@ -1,14 +1,6 @@
 # Auto-generated Python dictionary from combined_with_prompt.json
 null = None
 CITIES_DATA = {
-    "rw province": {
-        "rw city": {
-            "title": "RW city",
-            "stateTitle": "RW province",
-            "tipax_id": 3040,
-            "post_id": null
-        }
-    },
     "مازندران": {
         "گلوگاه": {
             "title": "گلوگاه",

@@ -7,7 +7,7 @@ from django.contrib.sitemaps.views import sitemap
 from blog.urls import sitemaps as blog_sitemaps
 from product.urls import sitemaps as product_sitemaps
 from sitesetting.urls import sitemaps as site_sitemaps
-from user.views import e_namad
+
 from sitesetting.views import robots_txt
 from stores.sitemap import StoreSitemap
 

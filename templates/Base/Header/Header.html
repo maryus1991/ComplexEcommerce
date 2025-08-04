@@ -46,16 +46,21 @@
     <!-- زبان صفحه -->
     <meta http-equiv="Content-Language" content="fa">
 
+    {% if 'product/?' in request.path  %}
+    	<link rel="canonical" href="https://amvajsarmad.com/product/" />
+    {% endif %} 
+
     <!-- charset -->
     <meta charset="utf-8">
-{% if site.active_google_reCAPTCHA %}
-<script src="https://www.google.com/recaptcha/api.js?render={{ RECAPTCHA_PUBLIC_KEY }}"></script>
-	
-{% endif %} 
+    {% if site.active_google_reCAPTCHA %}
+        
+        <script src="https://www.google.com/recaptcha/api.js?render={{ RECAPTCHA_PUBLIC_KEY }}"></script>
+
+    {% endif %}
 
 </head>
 
-<body class="font-Dana bg-[#f3f4f6] text-zinc-900 dark:bg-zinc-900 dark:text-white overflow-x-hidden transition-all" >
+<body class="font-Dana bg-[#f3f4f6] text-zinc-900 dark:bg-zinc-900 dark:text-white overflow-x-hidden transition-all">
 
 <!-- NAV BAR  -->
 <nav class="w-full hidden md:flex shadow py-5 bg-white dark:bg-zinc-700">
@@ -369,14 +374,14 @@
         <div class="mt-3 flex items-center justify-between">
             <a href="/"
                class="flex items-center gap-x-1 dark:text-brown-300 text-brown-600 font-MorabbaMedium text-xl">
-                            <picture>
-                <source srcset="{{ site.logo.url|to_webp }}"
-                        class="w-20 h-15 rounded-full"
-                        type="image/webp">
-                <img src="{{ site.logo.url }}" alt="{{ site.title }}"
-                     class="w-20 h-15 rounded-full"
-                     loading="lazy">
-            </picture>
+                <picture>
+                    <source srcset="{{ site.logo.url|to_webp }}"
+                            class="w-20 h-15 rounded-full"
+                            type="image/webp">
+                    <img src="{{ site.logo.url }}" alt="{{ site.title }}"
+                         class="w-20 h-15 rounded-full"
+                         loading="lazy">
+                </picture>
 
 
             </a>
@@ -519,14 +524,14 @@
     </div>
     <a href="/"
        class="flex items-center gap-x-1 dark:text-brown-300 text-brown-600 font-MorabbaMedium text-xl">
-                   <picture>
-                <source srcset="{{ site.logo.url|to_webp }}"
-                        class="w-20 h-15 rounded-full"
-                        type="image/webp">
-                <img src="{{ site.logo.url }}" alt="{{ site.title }}"
-                     class="w-20 h-15 rounded-full"
-                     loading="lazy">
-            </picture>
+        <picture>
+            <source srcset="{{ site.logo.url|to_webp }}"
+                    class="w-20 h-15 rounded-full"
+                    type="image/webp">
+            <img src="{{ site.logo.url }}" alt="{{ site.title }}"
+                 class="w-20 h-15 rounded-full"
+                 loading="lazy">
+        </picture>
 
 
     </a>

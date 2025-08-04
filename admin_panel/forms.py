@@ -1326,6 +1326,7 @@ class SiteSettingModelForm(forms.ModelForm):
             "active_fast_links_in_footer_page": forms.CheckboxInput(),
             "active_google_reCAPTCHA": forms.CheckboxInput(),
             "force_users_to_login_for_download_apps": forms.CheckboxInput(),
+            "active_email_account_verified": forms.CheckboxInput(),
         }
 
 

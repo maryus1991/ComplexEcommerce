@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأیید ایمیل</title>
+     
+    <style>
+        /* فونت و تنظیمات پایه */
+        
+        
+        body {
+            font-family: 'Noto Naskh Arabic', serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            color: #333;
+            direction: rtl;
+        }
+        
+        /* کانتینر اصلی */
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        
+        /* هدر ایمیل */
+        .email-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .email-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .email-header p {
+            color: #bfdbfe;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        
+        /* بدنه ایمیل */
+        .email-body {
+            padding: 30px;
+        }
+        
+        /* آیکون مرکز */
+        .email-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #dbeafe;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+        }
+        
+        .email-icon i {
+            color: #3b82f6;
+            font-size: 36px;
+        }
+        
+        /* متن ایمیل */
+        .email-text {
+            color: #4b5563;
+            margin-bottom: 20px;
+            text-align: right;
+            font-size: 16px;
+        }
+        
+        /* دکمه تأیید */
+        .verify-btn {
+            display: inline-block;
+            background-color: #3b82f6;
+            color: white !important;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin: 30px auto;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .verify-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+        
+        /* لینک پشتیبان */
+        .backup-link {
+            background-color: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-size: 14px;
+            color: #64748b;
+            margin: 25px 0;
+            text-align: right;
+        }
+        
+        /* فوتر ایمیل */
+        .email-footer {
+            background-color: #f8fafc;
+            padding: 20px 30px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 13px;
+            color: #64748b;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            color: #94a3b8;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            color: #3b82f6;
+            transform: translateY(-2px);
+        }
+        
+        /* ریسپانسیو */
+        @media (max-width: 640px) {
+            .email-container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            
+            .email-header, .email-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- هدر ایمیل -->
+        <div class="email-header">
+            <h1>به جمع ما خوش آمدید </h1>
+            <h3>لطفاً ایمیل خود را تأیید کنید</h3>
+            <p>{{ site.title }}</p>
+        </div>
+        
+        <!-- محتوای اصلی -->
+        <div class="email-body" style="justify-content: center;">
+            
+            <p class="email-text">سلام کاربر عزیز،</p>
+            
+            <p class="email-text">از اینکه به ما پیوستید متشکریم! لطفاً برای تکمیل ثبت‌نام و فعال‌سازی حساب کاربری خود، روی دکمه زیر کلیک کنید.</p>
+            
+            <!-- دکمه تأیید -->
+            <div style="text-align: center;">
+                <a href="{{link}}" class="verify-btn">تأیید ایمیل</a>
+            </div>
+            
+            <p class="email-text" style="font-size: 14px; color: #64748b;">
+                اگر دکمه بالا کار نکرد، لطفاً لینک زیر را در مرورگر خود کپی کنید:
+            </p>
+            
+            <div class="backup-link">
+                {{link}}
+            </div>
+            
+            <p class="email-text" style="font-size: 14px; color: #64748b;">
+                اگر این ایمیل را به اشتباه دریافت کرده‌اید، لطفاً آن را نادیده بگیرید.
+            </p>
+        </div>
+        
+        <!-- فوتر -->
+        <div class="email-footer" style="justify-content: center;">
+            <div class="footer-content" style="justify-content: center;">
+                <div>{{ site.copy_right_text }}</div>
+                
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -386,6 +386,7 @@ class ActiveAccountForm(forms.Form):
         validate_phonenumber(phone_number)
         return phone_number
 
+
 class ActiveAccountFormWITHRecaptchaWithoutEmail(forms.Form):
     """
     for activating account
@@ -416,7 +417,6 @@ class ActiveAccountFormWITHRecaptchaWithoutEmail(forms.Form):
             self.fields['recaptcha_field'] = fields.ReCaptchaField(
                 widget=widgets.ReCaptchaV3(action='signup'),
             )
-
 
 
 class ActiveAccountFormWithRecaptcha(forms.Form):
@@ -456,8 +456,9 @@ class ActiveAccountFormWithRecaptcha(forms.Form):
         from django_recaptcha import fields, widgets
         if SiteSetting.objects.first().active_google_reCAPTCHA:
             self.fields['recaptcha'] = fields.ReCaptchaField(
-                widget=widgets.ReCaptchaV3(action='signup'),
+                widget=widgets.ReCaptchaV3(action='login'),
             )
+
 
 class LoginForm(forms.Form):
     """

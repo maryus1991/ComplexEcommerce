@@ -44,8 +44,6 @@ class SiteSetting(models.Model):
     about_image = models.ImageField(
         upload_to="site/about_image/", null=True, verbose_name="عکس معرفی", blank=True
     )
-    difference_between_post_and_tipax_price = models.PositiveBigIntegerField(default=10,
-               verbose_name='درصد اختلاف تیپاکس و پست')
 
     # delivery options for all website
     active_post_delivery = models.BooleanField(
@@ -62,6 +60,9 @@ class SiteSetting(models.Model):
     )
     active_receive_official_invoice = models.BooleanField(
         default=True, verbose_name="فعال کردن دریافت فاکتور رسمی"
+    )
+    active_email_account_verified = models.BooleanField(
+        default=False,verbose_name="اجازه به فعال سازی حساب با ایمیل"
     )
 
 

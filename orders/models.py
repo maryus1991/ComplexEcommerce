@@ -146,7 +146,6 @@ class Order(models.Model):
                 weight=self.get_total_weight(),
                 volume=self.calculate_total_volume(),
             ).order_by("-date")
-
             if price_qs.exists():
                 return price_qs.first().price
 
@@ -165,7 +164,8 @@ class Order(models.Model):
                 )
             return price
 
-        except Exception:
+        except Exception as e:
+            print('calc post price error:', e)
             return -1
 
     def calculate_total_price(self):

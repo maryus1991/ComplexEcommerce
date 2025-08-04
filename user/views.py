@@ -13,21 +13,44 @@ from config import settings
 
 from .forms import (
     LoginForm,
-LoginFormWithEmail,
+    LoginFormWithEmail,
     RegistrationForm,
     OTPForm,
     ActiveAccountForm,
     ChangePasswordForm,
     EditUserInformationForm,
     LegalPersonForm,
-ActiveAccountFormWithRecaptcha,
-ForgotPasswordForm,
-ForgotPasswordWithEmailForm
+    ActiveAccountFormWithRecaptcha,
+    ForgotPasswordForm,
+    ForgotPasswordWithEmailForm
 )
 from .forms import ActiveAccountForm as ChangeNumberForm
 from sitesetting.models import SiteSetting
 
 User = get_user_model()
+
+
+class VerifyEmailWIthPrivateCode(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        private_code = kwargs.get('private_code')
+        user = get_object_or_404(User, private_code=private_code)
+        user.email_verified = True
+
+        if SiteSetting.objects.first().active_email_account_verified:
+            user.is_verified = True
+        if user.phone_number_verified:
+            user.is_verified = True
+        user.private_code = None
+        user.save()
+
+        if user.is_verified:
+            login(self.request, user)
+
+        messages.success(
+            self.request,
+            'ایمیل شما فعال شد'
+        )
+        return reverse('product:list')
 
 
 class LoginView(View):
@@ -61,87 +84,55 @@ class LoginView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
-        context = {"login_form": LoginForm()}
-        return render(request, self.template_name, context)
+        return render(request, self.template_name, {"login_form": LoginForm()})
 
     def post(self, request):
         form = LoginForm(request.POST)
-
-        phone_number = ''
-        email = ''
         if form.is_valid():
             phone_number = form.cleaned_data["phone_number"]
             password = form.cleaned_data["password"]
 
-            # check the user
             user = User.objects.filter(PhoneNumber=phone_number)
-            if user is not None:
-                _user = authenticate(username=phone_number, password=password)
-                if user.exists() and user.count() == 1:
-                    user = user.first()
-                    if user.check_password(password):
-                        if user.is_active and user.is_verified and _user:
-                            if user == _user:
-                                site = self.site
+            if not user.exists() or user.count() != 1:
+                messages.error(request, 'کاربر پیدا نشد')
+                return render(request, self.template_name, {"login_form": LoginForm(request.POST)})
 
-                                if self.site :
-                                    if site.is_active:
-                                        login(request, user)
-                                    elif not site.is_active:
-                                        messages.warning(
-                                            request, "ورود به سایت غیر فعال می باشد"
-                                        )
-                                        return redirect("/")
-                                else:
-                                    login(request, user)
+            user = user.first()
+            if not user.is_active:
+                messages.error(request, 'حساب کاربری شما مسدود شده است لطفا با پشتیبانی تماس فرمایید')
+                return render(request, self.template_name, {"login_form": LoginForm(request.POST)})
 
-                                messages.success(request, "خوش امدید")
+            if not user.is_verified or not user.phone_number_verified:
+                messages.error(request, 'حساب کاربری شما نیاز به فعال سازی دارد')
+                return render(request, self.template_name, {"login_form": LoginForm(request.POST)})
 
-                                if user.email is None or user.first_name is None or user.last_name is None :
-                                    messages.warning(
-                                        request,'لطفا ایمیل , نام و نام خانوادگی را وارد کنید'
-                                    )
-                                    return redirect("dashboard:account")
+            if not user.check_password(password):
+                messages.error(request, 'کاربر پیدا نشد')
+                return render(request, self.template_name, {"login_form": LoginForm(request.POST)})
 
-                                elif user.address.count() <= 0:
-                                    messages.warning(
-                                        request,'لطفا ادرس خود را وارد کنید'
-                                    )
-                                    return redirect("dashboard:create_address")
-
-                                else:
-                                    return redirect("product:list")
-                            else:
-                                messages.error(
-                                    request,
-                                    "مشکلی پیش امده است لطفا با پشتیبانی تماس حاصل فرمایید",
-                                )
-                        else:
-                            messages.error(
-                                request,
-                                "کابر شما فعال نیست لطفا با پشتیبانی تماس بگیرید یا از قسمت فعال کردن حساب کاربری به فعال کردن حساب خود اقدام نمایید",
-                            )
-
-                    else:
-                        messages.error(request, "کابری با این مشخصات پیدا نشد")
-                else:
-                    messages.error(request, "کاربر پیدا نشد")
-            else:
-                messages.error(request, "کابری با این مشخصات پیدا نشد")
-
-        else:
-            messages.error(
-                request, form.errors.as_text()
+            login(request, user)
+            messages.success(
+                request, 'خوش امدید'
             )
 
-        if phone_number != '' :
-            query =  f'?tel={str(phone_number).replace(" ", "")}'
-        elif email != '':
-            query =  f'?email={str(email).replace(" ", "")}'
-        else :
-            query=''
+            if user.email is None or user.first_name is None or user.last_name is None:
+                messages.warning(
+                    request, 'لطفا اطلاعات خود را تکمیل کنید'
+                )
+                return redirect("dashboard:account")
 
-        return redirect(str(reverse("user:login")) + query  )
+            elif user.address.count() <= 0:
+                messages.warning(
+                    request, 'لطفا ادرس خود را وارد کنید'
+                )
+                return redirect("dashboard:create_address")
+
+            else:
+                return redirect("product:list")
+
+        else:
+            messages.error(request, form.errors.as_text())
+            return render(request, self.template_name, {"login_form": LoginForm(request.POST)})
 
 
 class LoginWithEmailView(View):
@@ -175,96 +166,55 @@ class LoginWithEmailView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
-        context = {'login_form_with_email': LoginFormWithEmail()}
-        return render(request, self.template_name, context)
+        return render(request, self.template_name, {'login_form_with_email': LoginFormWithEmail()})
 
     def post(self, request):
-
         email_form = LoginFormWithEmail(request.POST)
-        phone_number = ''
-        email = ''
-
         if email_form.is_valid():
             email = email_form.cleaned_data["email"]
             password = email_form.cleaned_data["password"]
 
             user = User.objects.filter(email=email)
-            if user is not None :
-                if user.exists() and user.count() == 1:
-                    user = user.first()
+            if not user.exists() or user.count() != 1:
+                messages.error(request, 'کاربر پیدا نشد')
+                return render(request, self.template_name, {'login_form_with_email': LoginFormWithEmail(request.POST)})
 
-                    if not user.email_verified:
-                        messages.warning(
-                            request, 'شما این ایمیل را فعال سازی نکردید لطفا از طریق فعال سازی حساب انرا فعال کنید و سپس وارد سایت شوید یا از راه گوگل وارد شوید'
-                        )
-                        return render(request, self.template_name, {"login_form_with_email": LoginFormWithEmail(request.POST or None)})
+            user = user.first()
+            if not user.is_active:
+                messages.error(request, 'حساب کاربری شما مسدود شده است لطفا با پشتیبانی تماس فرمایید')
+                return render(request, self.template_name, {'login_form_with_email': LoginFormWithEmail(request.POST)})
 
-                    if user.check_password(password):
-                        if user.is_active and user.is_verified:
+            if not user.is_verified or not user.email_verified:
+                messages.error(request, 'حساب کاربری شما نیاز به فعال سازی دارد')
+                return render(request, self.template_name, {'login_form_with_email': LoginFormWithEmail(request.POST)})
 
-                            if user.email_verified:
-                                site = self.site
+            if not user.check_password(password):
+                messages.error(request, 'کاربر پیدا نشد')
+                return render(request, self.template_name, {'login_form_with_email': LoginFormWithEmail(request.POST)})
 
-                                if self.site:
-                                    if site.is_active:
-                                        login(request, user)
-                                    elif not site.is_active:
-                                        messages.warning(
-                                            request, "ورود به سایت غیر فعال می باشد"
-                                        )
-                                        return redirect("/")
-                                else:
-                                    login(request, user)
-
-                                messages.success(request, "خوش امدید")
-
-                                if user.email is None or user.first_name is None or user.last_name is None:
-                                    messages.warning(
-                                        request, 'لطفا ایمیل , نام و نام خانوادگی را وارد کنید'
-                                    )
-                                    return redirect("dashboard:account")
-
-                                elif user.address.count() <= 0:
-                                    messages.warning(
-                                        request, 'لطفا ادرس خود را وارد کنید'
-                                    )
-                                    return redirect("dashboard:create_address")
-
-                                else:
-                                    return redirect("product:list")
-                            else:
-                                messages.error(
-                                    request,
-                                    "شما ایمیل حسابتان را فعال نکردید اول ان را فعال و سپس وارد سایت نمایید",
-                                )
-                        else:
-                            messages.error(
-                                request,
-                                "کابر شما فعال نیست لطفا با پشتیبانی تماس بگیرید یا از قسمت فعال کردن حساب کاربری به فعال کردن حساب خود اقدام نمایید",
-                            )
-
-                    else:
-                        messages.error(request, "کابری با این مشخصات پیدا نشد")
-                else:
-                    messages.error(request, "کاربر پیدا نشد")
-            else:
-                messages.error(request, "کابری با این مشخصات پیدا نشد")
-
-
-
-        else:
-            messages.error(
-                request, email_form.errors.as_text()
+            login(request, user)
+            messages.success(
+                request, 'خوش امدید'
             )
 
-        if phone_number != '' :
-            query =  f'?tel={str(phone_number).replace(" ", "")}'
-        elif email != '':
-            query =  f'?email={str(email).replace(" ", "")}'
-        else :
-            query=''
+            if user.email is None or user.first_name is None or user.last_name is None:
+                messages.warning(
+                    request, 'لطفا اطلاعات خود را تکمیل کنید'
+                )
+                return redirect("dashboard:account")
 
-        return redirect(str(reverse("user:login")) + query  )
+            elif user.address.count() <= 0:
+                messages.warning(
+                    request, 'لطفا ادرس خود را وارد کنید'
+                )
+                return redirect("dashboard:create_address")
+
+            else:
+                return redirect("product:list")
+
+        else:
+            messages.error(request, email_form.errors.as_text())
+            return render(request, self.template_name, {'login_form_with_email': LoginFormWithEmail(request.POST)})
 
 
 class LogoutView(LoginRequiredMixin, View):
@@ -321,6 +271,10 @@ class RegisterView(View):
 
                 if email:
                     user.email = email
+                    user.save()
+                    user.verify_email(request)
+                    messages.success(request, 'ایمیل فعال سازی ارسال شد')
+
                 user.save()
 
                 messages.success(request, "کاربر با موفقیت ساخته شد")
@@ -353,20 +307,10 @@ class RegisterView(View):
                 if site and site.is_active:
                     login(request, user)
 
-                    if not user.email_verified and user.email:
-                        send_email_task.delay(
-                            'تایید ایمیل حساب کاربری'
-                            , 'با سلام لطفا با ورود به لینک زیر ورود به سایت یا ایمیل را فعال نمایید'
-                            ,user.email
-                        )
-                        messages.success(
-                            request, 'برای شما ایمیل فعال سازی جهت ورود با ایمیل ارسال شد'
-                        )
-
                     return redirect("user:otp")
                 else:
                     messages.warning(
-                        request,'ثبت نام شما انجام شده است ولی ورود به سایت غیر فعال می باشد'
+                        request, 'ثبت نام شما انجام شده است ولی ورود به سایت غیر فعال می باشد'
                     )
                     return redirect("/")
 
@@ -379,7 +323,6 @@ class RegisterView(View):
             messages.error(
                 request,
                 form.errors.as_text(),
-                # 'لطفا اطلاعات را به درستی وارد کنید رمز عبور شما باید 8 کاراکتر باشد و دارای حروف انگلیسی اعداد و حد اقل باید درای یک حرف به صورت کپیتال و یک کاراکتر ویژه باشد'
             )
 
             return render(request, self.template_name, {"form": self.form_class(request.POST or None)})
@@ -400,7 +343,7 @@ class OTP(LoginRequiredMixin, View):
 
     def get(self, request):
         if (
-            request.user.otp_expiry_date is None or
+                request.user.otp_expiry_date is None or
                 request.user.otp_expiry_date <= timezone.now()
         ):
             print('12345')
@@ -427,7 +370,6 @@ class OTP(LoginRequiredMixin, View):
                         user.is_verified = True
                         messages.success(request, "شماره وارد شده تایید شد")
                         user.save()
-
 
                         if user.email is None or user.first_name is None or user.last_name is None:
                             messages.warning(
@@ -480,35 +422,33 @@ class ForgotPassword(View):
             password = form.cleaned_data["password"]
 
             user = User.objects.filter(PhoneNumber=phone_number)
-            if user.exists() and user.count() == 1:
-                user = user.first()
-                if not user.check_password(password):
-                    user.is_verified = False
-                    user.set_password(password)
-                    user.set_otp()
-                    user.save()
-
-                    send_message.delay(
-                        str(phone_number).replace(" ", ""),
-                      'ForgotPasswordNotify', str(phone_number).replace(" ", ""),
-                    )
-
-                    login(request, user)
-
-                    messages.success(
-                        request,
-                        "رمز عبور شما با موفقیت تغییر یافت حال برای فعال شدن حساب خود کد ارسال به شماره خود را وارد کنید",
-                    )
-                    return redirect("user:otp")
-
-                else:
-                    messages.error(
-                        request,
-                        "رمز عبور شما با رمز عبور جدید شما یک سان هست لطفا وارد سایت شوید",
-                    )
-
-            else:
+            if not user.exists() or user.count() != 1:
                 messages.error(request, "کاربر مورد نظر موجود نیست")
+                return render(request, "auth/forgot-password.html", {"form": ForgotPasswordForm(request.POST or None)})
+
+            user = user.first()
+
+            if not user.is_active:
+                messages.error(request, "حساب شما مسدود شده است")
+                return render(request, "auth/forgot-password.html", {"form": ForgotPasswordForm(request.POST or None)})
+
+            user.is_verified = False
+            user.set_password(password)
+            user.set_otp()
+            user.save()
+
+            send_message.delay(
+                str(phone_number).replace(" ", ""),
+                'ForgotPasswordNotify', str(phone_number).replace(" ", ""),
+            )
+
+            login(request, user)
+
+            messages.success(
+                request,
+                "رمز عبور شما با موفقیت تغییر یافت حال برای فعال شدن حساب خود کد ارسال به شماره خود را وارد کنید",
+            )
+            return redirect("user:otp")
 
         else:
             messages.error(request, form.errors.as_text())
@@ -516,6 +456,7 @@ class ForgotPassword(View):
         return render(
             request, "auth/forgot-password.html", {"form": ForgotPasswordForm(request.POST or None)}
         )
+
 
 class ForgotPasswordWithEmail(View):
     """
@@ -529,6 +470,7 @@ class ForgotPasswordWithEmail(View):
                 "شما قبلا لاگین شده اید لطفا خارج بشید از سایت و دوباره وارد سایت بشید",
             )
             return redirect("dashboard:dashboard")
+
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -539,41 +481,40 @@ class ForgotPasswordWithEmail(View):
     def post(self, request, *args, **kwargs):
         form = ForgotPasswordWithEmailForm(request.POST or None)
         if form.is_valid():
-            password = form.cleaned_data["password"]
             email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
 
             user = User.objects.filter(email=email)
-            if user.exists() and user.count() == 1:
-                user = user.first()
-                if not user.check_password(password):
-                    user.is_verified = False
-                    user.set_password(password)
-                    user.save()
 
-
-                    login(request, user)
-
-                    messages.success(
-                        request,
-                        "رمز عبور شما با موفقیت تغییر یافت حال برای فعال شدن حساب خود کد ارسال به شماره خود را وارد کنید",
-                    )
-                    return redirect("user:login")
-
-                else:
-                    messages.error(
-                        request,
-                        "رمز عبور شما با رمز عبور جدید شما یک سان هست لطفا وارد سایت شوید",
-                    )
-
-            else:
+            if not user.exists() or user.count() != 1:
                 messages.error(request, "کاربر مورد نظر موجود نیست")
+                return render(request, "auth/forgot-password-with-email.html",
+                              {"form": ForgotPasswordWithEmailForm(request.POST or None)})
+
+            user = user.first()
+
+            if not user.is_active:
+                messages.error(request, "حساب شما مسدود شده است")
+                return render(request, "auth/forgot-password-with-email.html",
+                              {"form": ForgotPasswordWithEmailForm(request.POST or None)})
+
+            user.is_verified = False
+            user.set_password(password)
+            user.save()
+
+            user.verify_email(request)
+
+            messages.success(
+                request,
+                "رمز عبور شما با موفقیت تغییر یافت حال برای فعال شدن حساب خود وارد لینک ارسال شده به ایمیل خود شوید",
+            )
+            return redirect("user:otp")
 
         else:
             messages.error(request, form.errors.as_text())
 
-        return render(
-            request, "auth/forgot-password-with-email.html", {"form": ForgotPasswordWithEmailForm(request.POST or None)}
-        )
+        return render(request, "auth/forgot-password-with-email.html",
+                      {"form": ForgotPasswordWithEmailForm(request.POST or None)})
 
 
 class ActiveAccount(View):
@@ -585,7 +526,7 @@ class ActiveAccount(View):
 
     def dispatch(self, request, *args, **kwargs):
         if (
-            request.user.is_authenticated and
+                request.user.is_authenticated and
                 request.user.is_verified and
                 request.user.is_active
         ):
@@ -600,44 +541,68 @@ class ActiveAccount(View):
 
     def post(self, request, *args, **kwargs):
         form = ActiveAccountFormWithRecaptcha(request.POST or None)
-        phone_number = ''
+
         if form.is_valid():
-            phone_number = form.cleaned_data["phone_number"]
-            user = User.objects.filter(PhoneNumber=phone_number)
-            if user.exists() and user.count() == 1:
+
+            if phone_number := form.cleaned_data["phone_number"]:
+
+                user = User.objects.filter(PhoneNumber=phone_number)
+                if not user.exists():
+                    messages.error(request, 'کاربر پیدا نشد')
+                    return render(request, "auth/active_account.html",
+                                  {"login_form": ActiveAccountFormWithRecaptcha(request.POST or None)})
+                if user.count() != 1:
+                    messages.error(request, 'کاربر پیدا نشد')
+                    return render(request, "auth/active_account.html",
+                                  {"login_form": ActiveAccountFormWithRecaptcha(request.POST or None)})
+
                 user = user.first()
-                if user.is_active and user.is_verified:
-                    messages.error(request, "حساب شما قبلا فعال شده است")
-                elif user.is_verified is False:
 
-                    login(request, user)
+                if not user.is_active:
+                    messages.error(request, 'کاربر شما فعال نمی باشد لطفا با پشتیبانی تماس فرمایید')
+                    return redirect("user:login")
 
-                    return redirect("user:otp")
+                if user.is_verified:
+                    messages.error(request, 'حساب شما فعال می باشد')
+                    return redirect("user:login")
 
-                if user.is_active is False:
-                    messages.error(
-                        request,
-                        "حساب شما بسته شده است لطفا با مسئول مربوطه تماس فرمایید",
-                    )
-                    if phone_number != '':
-                        query = f'?tel={str(phone_number).replace(" ", "")}'
-                    else:
-                        query = ''
-                    return redirect(reverse("user:login") + query)
+                login(request, user)
+                return redirect("user:otp")
 
-            else:
-                messages.error(
+            elif email := form.cleaned_data["email"]:
+                user = User.objects.filter(email=email)
+                if not user.exists():
+                    messages.error(request, 'کاربر پیدا نشد')
+                    return render(request, "auth/active_account.html",
+                                  {"login_form": ActiveAccountFormWithRecaptcha(request.POST or None)})
+
+                if user.count() != 1:
+                    messages.error(request, 'کاربر پیدا نشد')
+                    return render(request, "auth/active_account.html",
+                                  {"login_form": ActiveAccountFormWithRecaptcha(request.POST or None)})
+
+                user = user.first()
+
+                if not user.is_active:
+                    messages.error(request, 'کاربر شما فعال نمی باشد لطفا با پشتیبانی تماس فرمایید')
+                    return redirect("user:login")
+
+                if user.is_verified:
+                    messages.error(request, 'حساب شما فعال می باشد')
+                    return redirect("user:login")
+
+                user.verify_email(request)
+
+                messages.success(
                     request,
-                    "حساب شما پیدا نشد اگر مطمئن هستید که با این شماره حساب ساختید لطفا در قسمت تماس با ما با پشتیبانی در میان بزارید تا مشکل حل بشود",
+                    'برای شما ایمیل فعال سازی ارسال شد '
                 )
-        else:
-            messages.error(request, "لطفا اطلاعات معتبری وارد کنبد")
+                return redirect("user:login")
 
-        if phone_number != '' :
-            query =  f'?tel={str(phone_number).replace(" ", "")}'
-        else :
-            query = ''
-        return redirect(reverse("user:login") + query)
+        else:
+            messages.error(request, form.errors.as_text())
+            context = {"login_form": ActiveAccountFormWithRecaptcha(request.POST or None)}
+            return render(request, "auth/active_account.html", context)
 
 
 class EditUserInformation(CustomLoginRequiredMixin, View):
@@ -657,7 +622,14 @@ class EditUserInformation(CustomLoginRequiredMixin, View):
             if not User.objects.filter(email=email).exists():
                 if email != user.email:
                     user.email_verified = False
-                user.email = email
+                    user.email = email
+                    user.save()
+                    user.verify_email(request)
+                    messages.success(
+                        request,
+                        'ایمیل فعال سازی برای شما ارسال شد'
+                    )
+
                 user.first_name = first_name
                 user.last_name = last_name
                 user.save()
@@ -699,7 +671,7 @@ class ChangePassword(CustomLoginRequiredMixin, View):
             user = request.user
 
             if user.check_password(current_password) and not user.check_password(
-                password
+                    password
             ):
                 user.set_password(password)
                 user.save()
@@ -776,7 +748,7 @@ class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
             legal_person_phone = form.cleaned_data.get("legal_person_phone")
 
             if (
-                not legal_person_economic_number.isdigit() or not legal_person_registration_number.isdigit()
+                    not legal_person_economic_number.isdigit() or not legal_person_registration_number.isdigit()
             ):
                 messages.error(request, "لطفا در وارد کردن اطلاعات دقت فرمایید")
 
@@ -807,7 +779,7 @@ class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
                 return redirect("product:list")
 
         else:
-            messages.error(request,form.errors.as_text())
+            messages.error(request, form.errors.as_text())
 
         return redirect("dashboard:account")
 
@@ -820,15 +792,3 @@ class LegalPersonHelpText(RedirectView):
             "برای ورود افراد حقیقی اول با ورود با شماره یا نامبر و تایید ان با وارد کردن پیامک ارسالی به ان شماره و سپس باید وارد قسمت پروفایل کاربری شده و در بخش اطلاعات حساب باید شماره اقتصادی و بقیه اطلاعلات را وارد کنید و بعد از این فرایند شما می توانید فاکتور رسمی دریافت کنید  ",
         )
         return reverse('user:login')
-
-
-def e_namad(request):
-    base_dir = settings.BASE_DIR
-    file_path = f"{base_dir}/14545014.txt"
-    try:
-        with open(file_path, "rb") as file:
-            response = HttpResponse(file.read(), content_type="text/plain")
-            response["Content-Disposition"] = 'attachment; filename="14545014.txt"'
-            return response
-    except FileNotFoundError:
-        return HttpResponse("File not found!", status=404)

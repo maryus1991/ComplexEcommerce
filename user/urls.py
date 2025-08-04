@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     LogoutView,
-    OTP,
+    OTP,VerifyEmailWIthPrivateCode,
     LoginView,
     RegisterView,
     ActiveAccount,
@@ -21,6 +21,7 @@ app_name = "user"
 urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path("otp/", OTP.as_view(), name="otp"),
+    path("verify-email/<str:private_code>/", VerifyEmailWIthPrivateCode.as_view(), name="verify-email"),
     path("login/", LoginView.as_view(), name="login"),
     path("login-with-email/", LoginWithEmailView.as_view(), name="login-with-email"),
     path("register/", RegisterView.as_view(), name="register"),

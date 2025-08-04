@@ -56,45 +56,6 @@ def login():
 
         return None
 
-
-def send_request_for_city(city):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer {}".format(access_token),
-    }
-    response = requests.get(
-        TIPAX_GET_LIST_CITIES + f"?title={city}",
-        headers=headers, timeout=20
-    )
-
-    if response.status_code == 200:
-        if type(response.json()) == list:
-            if len(city.split(" ")) == 1:
-                if len(response.json()) > 1:
-                    for item in response.json():
-                        if item["title"] == city:
-                            return [item]
-            return response.json()
-
-    elif response.status_code == 401:
-        login()
-        return send_request_for_city(city)
-    else:
-        return None
-
-
-def validate_city(city: str):
-    if access_token is None:
-
-        login()
-
-    response = send_request_for_city(city)
-    if response is not None:
-        return response
-    else:
-        return send_request_for_city(city)
-
-
 def calculate_price(
     order_obj,
     store_origin_id=0,

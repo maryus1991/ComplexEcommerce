@@ -71,5 +71,5 @@ def calculate_post_price_postex(order):
         print(resp.json())
         return resp.json()['total_cost'] / 10
     except Exception as e:
-        calculate_post_price_postex(order)
+        return None
 

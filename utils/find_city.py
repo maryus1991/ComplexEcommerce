@@ -74,6 +74,7 @@ def search_city(province: str, city: str, fuzzy_threshold: int = 80):
     province = province.strip().lower()
     city = city.strip().lower()
 
+
     if province in CITIES_DATA:
         province_key = province
     else:
@@ -99,3 +100,69 @@ def search_city(province: str, city: str, fuzzy_threshold: int = 80):
     return 0, 'شهر مورد نظر بافت نشد'
 
 
+def reformat_city_names():
+    import difflib
+    from pprint import pprint
+    data = CITIES_DATA
+    cities = []
+    for province, city_map in CITIES_DATA.items():
+        for city_name, info in city_map.items():
+            cities.append({
+                "province": province,
+                "city_key": city_name,
+                "title": info["title"],
+                "stateTitle": info["stateTitle"],
+                "tipax_id": info["tipax_id"],
+                "post_id": info["post_id"]
+            })
+
+    checked = set()
+
+
+    for i in range(len(cities)):
+        city1 = cities[i]
+        for j in range(i + 1, len(cities)):
+            city2 = cities[j]
+
+            # فقط شهرهای داخل یه استان رو مقایسه کن
+            if city1["province"] != city2["province"]:
+                continue
+
+            key1 = city1["city_key"]
+            key2 = city2["city_key"]
+
+            pair_id = tuple(sorted([key1, key2]))
+            if pair_id in checked:
+                continue
+
+            checked.add(pair_id)
+
+            # تشخیص شباهت
+            ratio = difflib.SequenceMatcher(None, key1, key2).ratio()
+            if ratio >= 0.7:  # آستانه شباهت
+                print(f"\n❓ آیا این دو شهر یکی هستن؟")
+                print(f"  🟦 {key1}   ⇔   🟩 {key2}")
+                print(f"    tipax/post: {city1['tipax_id']}/{city1['post_id']} ⇔ {city2['tipax_id']}/{city2['post_id']}")
+
+                confirm = input("اگر یکی هستن بنویس y (بقیه چیزها رو رد می‌کنه): ").strip().lower()
+                if confirm == "y":
+                    # مرج در دیکشنری اصلی
+                    main_city = data[city1["province"]][key1]
+                    other_city = data[city2["province"]][key2]
+
+                    if main_city["tipax_id"] is None and other_city["tipax_id"] is not None:
+                        main_city["tipax_id"] = other_city["tipax_id"]
+
+                    if main_city["post_id"] is None and other_city["post_id"] is not None:
+                        main_city["post_id"] = other_city["post_id"]
+
+                    print("✅ مرج انجام شد. حالا حذف شهر دوم؟ (y/n)")
+                    if input().strip().lower() == "y":
+                        del data[city2["province"]][key2]
+                        print("🗑️ شهر دوم حذف شد.")
+
+    print("\n🎉 پردازش تمام شد.")
+
+    with open("merged_output.py", "w", encoding="utf-8") as f:
+        f.write("data = ")
+        f.write(repr(data))

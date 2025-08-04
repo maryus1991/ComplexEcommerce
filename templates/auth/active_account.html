@@ -31,18 +31,20 @@
                     فعال کردن حساب کاربری
                 </h5>
 
-                <form method="POST" action="" class="space-y-6"> <!-- استفاده از space-y برای فاصله‌گذاری بهتر -->
+                <form method="POST" action="" class="space-y-6" data-recaptcha="true" data-recaptcha-action="login"> <!-- استفاده از space-y برای فاصله‌گذاری بهتر -->
                     {% csrf_token %}
-                    
+                    {{ login_form.recaptcha }}
+                    {{ login_form.media }}
                     <!-- فیلد شماره تلفن با border و focus بهتر -->
                     <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg px-4 py-3 border border-gray-200 dark:border-zinc-600 focus-within:ring-1 focus-within:ring-green-500">
+    
                         {{ login_form.phone_number }}
                         <svg class="h-5 w-5 text-gray-500 dark:text-gray-200 ml-2">
                             <use href="#phone"></use> <!-- تغییر آیکون به phone -->
                         </svg>
                     </div>
                     <button disabled class="button    w-full flex justify-center items-center gap-x-2">
-                        <p class="text-sm font-medium rounded-full p-4 bg-green-500 text-white">
+                        <p class="text-sm font-DanaDemiBold rounded-full p-4 bg-green-500 text-white">
                             یا
                         </p>
                     </button>

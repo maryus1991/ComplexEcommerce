@@ -464,6 +464,8 @@ class CreateUserAddress(LoginRequiredMixin, FormView):
                 form.instance.city_code_post = obj['post_id']
                 form.save()
 
+                print(obj['tipax_id'],obj['post_id'])
+
                 messages.success(
                     self.request,'ادرس شما اضافه شد'
                 )
@@ -525,6 +527,7 @@ class UpdateUserAddress(LoginRequiredMixin, UpdateView):
                 form.instance.city_code_post = obj['post_id']
                 form.save()
 
+                print(obj['tipax_id'],obj['post_id'])
 
                 if obj['tipax_id'] is None:
                     messages.warning(
