@@ -70,8 +70,23 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.admin",
+<<<<<<< HEAD
     "django.contrib.sitemaps",
 
+=======
+    'django.contrib.sitemaps',
+
+    # third party apps
+    'phonenumber_field',
+    'ckeditor',
+    'ckeditor_uploader',
+    'jalali_date',
+    'django_render_partial',
+    'django_user_agents',
+    'multiupload',
+    'auditlog',
+    
+>>>>>>> 01991dd30a2cfe243e367ebac42a3b23224e0c5f
     # installed apps
     "user",
     "product",
