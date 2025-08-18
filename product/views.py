@@ -39,7 +39,6 @@ class ProductListView(ListView):
 
         # get the url params
         url_params = dict(self.request.GET.lists())
-        have_filter_url = False
 
         # get the product obj
         products = Product.objects.filter(
@@ -49,8 +48,8 @@ class ProductListView(ListView):
                 admin_verified=True,
                 brand__is_active=True,
                 category__is_active=True,
-            ).prefetch_related("features").prefetch_related("tags").prefetch_related("specs").order_by("-count").order_by("-sort_number")
-
+                parent__isnull=True,
+            ).prefetch_related("features", "tags","specs",'brand', 'category')
 
         if "available" in url_params:
             if url_params["available"] == ["on"]:
@@ -133,30 +132,46 @@ class ProductListView(ListView):
             )
 
         sort = None
+
+        # --- حالت وقتی پارامتر sort در URL هست ---
         if "sort" in url_params:
-            sort = url_params["sort"]
-            if len(sort) == 1:
-                sort = sort[0]
-                if sort.isdigit():
-                    sort = int(sort)
-                    if 1 <= sort <= 5:
-                        if sort == 1:
-                            products = products.order_by( '-have_discount','-discount')
-                        elif sort == 2:
-                            products = products.order_by("orders__count").distinct()
-                        elif sort == 3:
-                            products = products.order_by("price")
-                        elif sort == 4:
-                            products = products.order_by("-price")
-                        elif sort == 5:
-                            products = products.order_by("-id")
-                    else:
-                        sort = None
+            sort_param = url_params["sort"]
+            if len(sort_param) == 1 and sort_param[0].isdigit():
+                sort = int(sort_param[0])
+                sort_map = {
+                    1: ['-have_discount', '-discount'],
+                    2: ['orders__count'],
+                    3: ['price'],
+                    4: ['-price'],
+                    5: ['-id'],
+                }
+                if sort in sort_map:
+                    products = products.order_by(*sort_map[sort]).distinct()
                 else:
                     sort = None
-            else:
-                sort = None
 
+        # --- حالت وقتی sort در URL نیست ---
+        else:
+            site = SiteSetting.objects.first()
+
+            site_sort_map = [
+                (site.product_sort_by_count, ["-count"]),
+                (site.product_sort_by_highest_price, ["-price"]),
+                (site.product_sort_by_lowest_price, ["price"]),
+                (site.product_sort_by_sort_number, ["-sort_number"]),
+                (site.product_sort_by_category_sort_number, ["-category__sort_number"]),
+                (site.product_sort_by_brand_sort_number, ["-brand__sort_number"]),
+                (site.product_sort_by_existing_count, ["-count"]),
+            ]
+
+            applied_sort = False
+            for condition, fields in site_sort_map:
+                if condition:
+                    products = products.order_by(*fields)
+                    applied_sort = True
+
+            if not applied_sort:
+                products = products.order_by("-count", "-sort_number")
 
         return products.distinct().all()
 
@@ -213,22 +228,19 @@ class ProductDetailView(DetailView):
     model = Product
     context_object_name = "product"
 
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(
+    def get_object(self, queryset = ...):
+        product_obj = Product.objects.filter(
+                pk=self.kwargs["pk"],
                 is_active=True,
                 store__is_active=True,
                 store__is_verified=True,
                 admin_verified=True,
                 brand__is_active=True,
                 category__is_active=True,
-            )
-            .prefetch_related("features")
-            .prefetch_related("tags")
-            .prefetch_related("specs")
-        )
+            ).prefetch_related("features", 'brand', 'category', 'favorite', 'comments', 'gallery', 'store', "tags", "specs", "child", 'parent').first()
+
+
+        return product_obj
 
     def get_context_data(self, **kwargs):
 
@@ -278,16 +290,18 @@ class ProductDetailView(DetailView):
         obj = self.object
         same_product = (
             Product.objects.filter(
-                Q(is_active=True), Q(admin_verified=True) |
-                Q(brand=obj.brand) , Q(brand__is_active=True) |
-                Q(category=obj.category) , Q(category__is_active=True) |
-                Q(tags__name=obj.tags.name)
+                Q(is_active=True),
+                Q(admin_verified=True),
+                (
+                        Q(brand=obj.brand, brand__is_active=True) |
+                        Q(category=obj.category, category__is_active=True) |
+                        Q(category__parent=obj.category, category__parent__is_active=True)
+                )
             )
             .exclude(id=obj.id)
             .distinct()
             .order_by("-id")
         )
-
         context["same_product"] = same_product
 
         if self.request.user.is_authenticated:

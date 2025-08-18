@@ -900,7 +900,7 @@ class AddProductForm(forms.ModelForm):
             ),
 
             "discount": forms.NumberInput(
-                attrs={"class": "form-control", "placeholder": "تخفیف", "value": 0},
+                attrs={"class": "form-control", "placeholder": "تخفیف (درصدی)", "value": 0},
             ),
             "count": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "تعداد"}

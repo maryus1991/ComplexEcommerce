@@ -30,7 +30,7 @@ def clean_expired_details(self):
             bool(order.additional_descriptions),
         ])
 
-        if should_keep_for_1_day and order_detail.added_date >= now() - timedelta(days=1):
+        if should_keep_for_1_day and order_detail.added_date > now() - timedelta(days=1):
             continue  # هنوز نباید پاک بشه
 
         # برگرداندن موجودی محصول

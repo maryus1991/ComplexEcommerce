@@ -150,10 +150,10 @@ class UserTicketsClientFormMobile(forms.Form):
 
 
 class TicketConversationForm(forms.Form):
-    content = RichTextUploadingFormField(
+    content = forms.CharField(
         widget=forms.Textarea(
             attrs={
-                "class": "tailwind-input col-span-12 h-36",
+                "class": "tailwind-input col-span-12 ",
                 "placeholder": "پیام ...",
             }
         )

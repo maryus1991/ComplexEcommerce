@@ -1,0 +1,260 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% load products_tags %}
+
+{% block title %}
+    محصولات
+{% endblock %}
+
+{% block header_reference %}
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/static/dist/css/rtl.css">
+    <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
+    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+    <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+
+{% endblock %}
+
+
+
+{% block breadcrumb %}
+    <li class="active">محصولات</li>
+{% endblock %}
+
+{% block body %}
+    <section class="content" style="margin-top: 30px">
+ 
+
+        <!-- جدول محصولات -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">محصولات فروشگاه {{ user.store.name }}</h3>
+                    </div>
+
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>کد محصول</th>
+                                    <th>نام محصول</th>
+                                    <th>وزن(گرم)</th>
+                                    <th>تعداد</th>
+                                    <th>بازدید ها</th>
+                                    <th>قیمت</th>
+                                    <th>دسته بندی</th>
+                                    <th>برند</th>
+                                    <th>تاییده ادمین</th>
+                                    <th>مشاهده صفحه محصول</th>
+                                    <th>بروزرسانی محصول</th>
+                                    <th>فعال/غیرفعال</th>
+                                    <th>حذف کردن محصول</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product in products %}
+                                    <tr>
+                                        <td>{{ product.id }}</td>
+                                        <td>{{ product.name }}</td>
+                                        <td>{{ product.weight }}</td>
+                                        <td>{{ product.count }}</td>
+                                        <td>{{ product.views.count }}</td>
+                                        <td>
+                                            {% if product.have_discount %}
+                                                دارای تخفیف:
+                                                {{ product.price|clac_discount:product.discount }}
+                                                -
+                                                <del style="color:red">
+                                                    {{ product.price|tdc }}
+                                                </del>
+                                            {% else %}
+                                                {{ product.price|tdc }}
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ product.category.name }}</td>
+                                        <td>{{ product.brand.name }}</td>
+                                        <td>
+                                            {% if product.admin_verified %}
+                                                <span class="label label-success">تاییده شده</span>
+                                            {% else %}
+                                                <span class="label label-danger">تاییده نشده</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-block btn-success btn-sm"
+                                               href="{% url 'product:detail' product.id %}">
+                                                مشاهده
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'store:edit-product' product.id %}"
+                                               class="btn btn-block btn-warning btn-sm">
+                                                بروزرسانی
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-block btn-sm"
+                                               style="background: rebeccapurple; color: white"
+                                               href="{% url 'store:active-deactivate-product' product.id %}">
+                                                {% if product.is_active %}
+                                                    غیر فعال کردن
+                                                {% else %}
+                                                    فعال کردن
+                                                {% endif %}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-block btn-sm" style="background: red; color: white"
+                                               href="{% url 'store:remove-product' product.pk %}">
+                                                حذف کردن
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- صفحه‌بندی -->
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <h5 class="text-muted">تعداد کل محصولات: {{ product_count }}</h5>
+                                <h5 class="text-muted">تعداد نمایش شده در این صفحه: {{ products.count }}</h5>
+                            </div>
+                            <div class="col-sm-7">
+                                <div class="dataTables_paginate paging_simple_numbers">
+                                    <ul class="pagination">
+                                        {% if page_obj.has_previous %}
+                                            <li class="paginate_button previous">
+                                                <a href="?page={{ page_obj.previous_page_number }}">قبلی</a>
+                                            </li>
+                                        {% endif %}
+
+                                        {% for page_number in page_obj.paginator.page_range %}
+                                            <li class="paginate_button {% if page_number == page_obj.number %}active{% endif %}">
+                                                <a href="?page={{ page_number }}">{{ page_number }}</a>
+                                            </li>
+                                        {% endfor %}
+
+                                        {% if page_obj.has_next %}
+                                            <li class="paginate_button next">
+                                                <a href="?page={{ page_obj.next_page_number }}">بعدی</a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer_reference %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script src="/static/node_modules/moment/min/moment.min.js"></script>
+    <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#tarikh').persianDatepicker({
+                altField: '#tarikhAlt',
+                altFormat: 'X',
+                format: 'D MMMM YYYY HH:mm a',
+                observer: true,
+                timePicker: {
+                    enabled: true
+                },
+            });
+        });
+        $(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
+            //Money Euro
+            $('[data-mask]').inputmask()
+
+            //Date range picker
+            $('#reservation').daterangepicker()
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                format: 'MM/DD/YYYY h:mm A'
+            })
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                }
+            )
+
+            //Date picker
+            $('#datepicker').datepicker({
+                autoclose: true
+            })
+
+            //iCheck for checkbox and radio inputs
+            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue'
+            })
+            //Red color scheme for iCheck
+            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                checkboxClass: 'icheckbox_minimal-red',
+                radioClass: 'iradio_minimal-red'
+            })
+            //Flat red color scheme for iCheck
+            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            })
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false
+            })
+        })
+    </script>
+{% endblock %}

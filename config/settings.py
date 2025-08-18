@@ -69,24 +69,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # "jazzmin",
     "django.contrib.admin",
-<<<<<<< HEAD
-    "django.contrib.sitemaps",
-
-=======
     'django.contrib.sitemaps',
 
-    # third party apps
-    'phonenumber_field',
-    'ckeditor',
-    'ckeditor_uploader',
-    'jalali_date',
-    'django_render_partial',
-    'django_user_agents',
-    'multiupload',
-    'auditlog',
-    
->>>>>>> 01991dd30a2cfe243e367ebac42a3b23224e0c5f
     # installed apps
     "user",
     "product",
@@ -188,12 +174,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
-
-TIME_ZONE = "Asia/Tehran"
-
+LANGUAGE_CODE = "fa"
 USE_I18N = True
-
+TIME_ZONE = "Asia/Tehran"
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
@@ -294,11 +277,6 @@ JALALI_DATE_DEFAULTS = {
 PHONENUMBER_DEFAULT_FORMAT = "NATIONAL"
 PHONENUMBER_DEFAULT_REGION = "IR"
 
-# melipayamak_panel config
-
-melipayamak_username = os.getenv("melipayamak_panel_username")
-melipayamak_password = os.getenv("melipayamak_panel_password")
-melipayamak_from_number = os.getenv("melipayamak_panel_from_number")
 
 # kaveh negar otp
 KAVEH_NEGAR_OTP=os.getenv("KAVEH_NEGAR_OTP")

@@ -1327,8 +1327,14 @@ class SiteSettingModelForm(forms.ModelForm):
             "active_google_reCAPTCHA": forms.CheckboxInput(),
             "force_users_to_login_for_download_apps": forms.CheckboxInput(),
             "active_email_account_verified": forms.CheckboxInput(),
+            'product_sort_by_count': forms.CheckboxInput(),
+            'product_sort_by_highest_price': forms.CheckboxInput(),
+            'product_sort_by_lowest_price': forms.CheckboxInput(),
+            'product_sort_by_sort_number': forms.CheckboxInput(),
+            'product_sort_by_category_sort_number': forms.CheckboxInput(),
+            'product_sort_by_brand_sort_number': forms.CheckboxInput(),
+            'product_sort_by_existing_count': forms.CheckboxInput(),
         }
-
 
 class BannersModelForm(forms.ModelForm):
     image = forms.ImageField(
@@ -1358,7 +1364,6 @@ class BannersModelForm(forms.ModelForm):
             "only_show_on_phone": forms.CheckboxInput(),
         }
 
-
 class SliderModelForm(forms.ModelForm):
     image = forms.ImageField(
         required=False,
@@ -1387,7 +1392,6 @@ class SliderModelForm(forms.ModelForm):
             "only_show_on_phone": forms.CheckboxInput(),
         }
 
-
 class FastLinksModelForm(forms.ModelForm):
     class Meta:
         model = FastLinks
@@ -1399,7 +1403,6 @@ class FastLinksModelForm(forms.ModelForm):
             "is_active": forms.CheckboxInput(),
         }
 
-
 class QuestionAndAnswerModelForm(forms.ModelForm):
     class Meta:
         model = QuestionAndAnswer
@@ -1409,7 +1412,6 @@ class QuestionAndAnswerModelForm(forms.ModelForm):
             "answer": forms.TextInput(attrs={"class": "form-control"}),
             "is_active": forms.CheckboxInput(),
         }
-
 
 class UsedAppModelForm(forms.ModelForm):
     short_description = RichTextUploadingFormField(
@@ -1457,7 +1459,6 @@ class UsedAppModelForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "نام را وارد کنید"}
             ),
         }
-
 
 class AddBlogModelForm(forms.ModelForm):
     user = forms.ModelChoiceField(
@@ -1540,7 +1541,6 @@ class AddBlogModelForm(forms.ModelForm):
             ),
             "is_active": forms.CheckboxInput(),
         }
-
 
 class AddBlogCategoryModelForm(forms.ModelForm):
     parent = forms.ModelChoiceField(

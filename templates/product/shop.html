@@ -339,16 +339,43 @@
 
                     <br>
                     <!-- CHECK BOX -->
-                    <div class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
-                        <div class="">
-                            <p>فقط کالا های موجود</p>
-                            <label class="switch">
-                                <input name="available" type="checkbox">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
+<a id="available-toggle"
+   class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium"
+   href="#">
+    <div>
+        <p>فقط کالاهای موجود</p>
+        <label class="switch">
+            <input id="available-checkbox" name="available" type="checkbox">
+            <span class="slider"></span>
+        </label>
+    </div>
+</a>
 
-                    </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const checkbox = document.getElementById("available-checkbox");
+    const params = new URLSearchParams(window.location.search);
+
+    // وضعیت فعلی پارامتر رو روی سوییچ ست کن
+    if (params.get("available") === "on") {
+        checkbox.checked = true;
+    }
+
+    // وقتی کلیک شد وضعیت رو عوض کن
+    document.getElementById("available-toggle").addEventListener("click", function (e) {
+        e.preventDefault();
+
+        if (checkbox.checked) {
+            params.delete("available");
+        } else {
+            params.set("available", "on");
+        }
+
+        window.location.search = params.toString();
+    });
+});
+</script>
+
                     <br>
                     <hr>
                     <br>
@@ -584,13 +611,13 @@
 
                         <!-- PRODUCT FOOTER -->
                         <div class="flex items-center justify-between px-2 lg:px-4 mb-3">
-                            <div class="flex items-center gap-x-2 child:transition-all child:duration-300">
+                            <div class="flex items-center justify-between gap-x-2 child:transition-all child:duration-300 w-full">
                                 {% if product.count > 0 %}
                                     {% if product.id in user_details_orders %}
 
                                         <a href="{% url 'orders:remove-product' product.id %}"
                                            class="rounded-full p-2 dark:bg-zinc-800 dark:hover:bg-green-500 bg-gray-100 hover:bg-green-600 hover:text-white">
-                                            <svg class="w-4 h-4">
+                                            <svg class="w-5 h-5">
                                                 <use href="#close"></use>
                                             </svg>
                                         </a>
@@ -599,21 +626,27 @@
 
                                         <a href="{% url 'orders:add' product.id %}"
                                            class="rounded-full p-2 dark:bg-zinc-800 dark:hover:bg-green-500 bg-gray-100 hover:bg-green-600 hover:text-white">
-                                            <svg class="w-4 h-4">
+                                            <svg class="w-5 h-5">
                                                 <use href="#shopping-cart"></use>
                                             </svg>
                                         </a>
 
                                     {% endif %}
                                 {% else %}
-                                    <span class="font-Dana text-sm text-green-500"> اتمام موجودی</span>
+<span class="font-Dana text-sm bg-red-100 text-red-600   py-1 rounded-full inline-flex items-center" title="اتمام موجودی">
+    <svg class="w-6 h-6  " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    
 
+</span>
                                 {% endif %}
 
                                 {% if product.id in user_favorite %}
                                     <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}">
                                             <span class="hover:text-red-600">
-                                                <svg class="w-4 h-4">
+                                                <svg class="w-5 h-5">
                                                     <use href="#close"></use>
                                                 </svg>
                                             </span>
@@ -621,7 +654,7 @@
                                 {% else %}
                                     <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}">    
                                             <span class="hover:text-green-600">
-                                                <svg class="w-4 h-4">
+                                                <svg class="w-5 h-5">
                                                     <use href="#heart"></use>
                                                 </svg>
                                             </span>

@@ -159,6 +159,7 @@ class ReturnOrderView(LoginRequiredMixin, View):
             )
         return redirect('dashboard:orders-returns-list')
 
+
 class ReturnsOrderListView(LoginRequiredMixin, ListView):
     """for return order list"""
 
@@ -168,6 +169,7 @@ class ReturnsOrderListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return super().get_queryset().filter(user=self.request.user).order_by("-id")
+
 
 class ReturnsOrderDelete(LoginRequiredMixin, RedirectView):
     """for return order detail"""
@@ -203,6 +205,7 @@ class ReturnsOrderDelete(LoginRequiredMixin, RedirectView):
             )
 
         return reverse("dashboard:orders-returns-list")
+
 
 # order section in dashboard
 

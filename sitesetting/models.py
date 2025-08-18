@@ -141,6 +141,29 @@ class SiteSetting(models.Model):
         default=True, verbose_name="ارسال پیام هنگام قرار دادن کد پیگیری ارسال"
     )
 
+    # product default order in product list page
+    product_sort_by_count = models.BooleanField(
+        default=True, verbose_name="بیشترین تعداد"
+    )
+    product_sort_by_highest_price = models.BooleanField(
+        default=True, verbose_name="بیشترین قیمت"
+    )
+    product_sort_by_lowest_price = models.BooleanField(
+        default=True, verbose_name='کمترین قیمت'
+    )
+    product_sort_by_sort_number = models.BooleanField(
+        default=True, verbose_name="ترتیب انتخابی"
+    )
+    product_sort_by_category_sort_number = models.BooleanField(
+        default=True, verbose_name=" اولویت ترتیب دسته بندی ها"
+    )
+    product_sort_by_brand_sort_number = models.BooleanField(
+        default=True, verbose_name='	اولویت ترتیب برند ها	'
+    )
+    product_sort_by_existing_count = models.BooleanField(
+        default=True, verbose_name="اولویت با محصولات موجود"
+    )
+
 
     def __str__(self):
         return self.title

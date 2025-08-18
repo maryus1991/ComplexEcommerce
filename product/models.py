@@ -50,6 +50,8 @@ class ProductCategory(models.Model):
 
 
 class Product(models.Model):
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="child")
+
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="products")
     name = models.CharField(max_length=1000)
     price = models.BigIntegerField()

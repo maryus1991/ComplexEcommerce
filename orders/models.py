@@ -168,6 +168,7 @@ class Order(models.Model):
             print('calc post price error:', e)
             return -1
 
+
     def calculate_total_price(self):
         if not self.is_paid and not self.canceled:
             details = self.details.all()
@@ -190,7 +191,7 @@ class Order(models.Model):
         for item in details:
             total_price += item.get_item_price_without_discount()
 
-        return self.total_price
+        return total_price
 
     def get_total_weight(self):
         if not self.is_paid and not self.canceled:
@@ -277,7 +278,7 @@ class Order(models.Model):
         if not self.is_paid and not self.canceled:
             site = SiteSetting.objects.first()
 
-            total_amount_of_items = self.calculate_total_price()
+            total_amount_of_items = self.get_total_products_with_no_discount_price()
 
             total_payment_price = (
                     total_amount_of_items + self.delivery_price - self.get_total_discount_amount()
@@ -326,6 +327,14 @@ class Order(models.Model):
     def __str__(self):
         return f"{self.user.PhoneNumber} - {self.store.name} - {self.id}"
 
+    def get_total_products_with_no_discount_price(self):
+        details = self.details.all()
+        total_price = 0
+
+        for item in details:
+            total_price += item.get_price_without_discount() * item.count
+        return total_price
+
 
 class OrderDetail(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="details")
@@ -345,7 +354,7 @@ class OrderDetail(models.Model):
         if not self.order.is_paid and not self.order.canceled:
             self.product_price = self.product.calc_discount()
             self.save()
-            return self.product.calc_discount()
+            return self.product_price
         else:
             return self.product_price
 
@@ -386,7 +395,7 @@ class OrderDetail(models.Model):
             return self.price
 
     def get_item_price_without_discount(self):
-        product = self.get_price()
+        product = self.product_price_without_discount
         price = product * self.count
 
         return price

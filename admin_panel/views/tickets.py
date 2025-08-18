@@ -138,7 +138,7 @@ class TicketSendListView(ListView):
 
     def get_queryset(self):
         query = (
-            super().get_queryset().filter(user=self.request.user).order_by("-id").order_by("close_ticket")
+            super().get_queryset().filter(user=self.request.user).order_by("-id",'close_ticket')
         )
 
         form = TicketFilterForm(self.request.GET)
@@ -257,7 +257,7 @@ class TicketReceivedListView(AdminUserMixin, ListView):
             .get_queryset()
             .filter(
                 store__isnull=True
-            ).order_by("-id").order_by("close_ticket")
+            ).order_by("-id",'close_ticket')
         )
 
         form = TicketFilterForm(self.request.GET)

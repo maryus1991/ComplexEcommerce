@@ -85,6 +85,23 @@ def active_category(orm):
         return None
 
 @register.filter
+def active_product(orm):
+    if orm and orm.exists():
+        orm = orm.filter(is_active=True,
+                         store__is_active=True,
+                         store__is_verified=True,
+                         admin_verified=True,
+                         brand__is_active=True,
+                         category__is_active=True,
+                         )
+        try:
+           return orm.order_by('-sort_number').all()
+        except Exception as e:
+            return orm.all()
+    else:
+        return None
+
+@register.filter
 def sort_number(orm):
     if orm and orm.exists():
         try:

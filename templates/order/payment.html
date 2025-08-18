@@ -385,7 +385,7 @@
                         <p class="text-green-500">
                             {% if order.official_invoice %}
                                 هزینه دریافت فاکتور رسمی از این فروشگاه
-                                ({{ order.calculate_total_price|clac_tax:order.store.official_invoice_price }})
+                                ({{ order.get_total_products_with_no_discount_price|clac_tax:order.store.official_invoice_price }})
                                 تومان می باشد
                             {% endif %}
                         </p>
@@ -488,7 +488,7 @@
                             <ul class="child:flex child:items-center child:justify-between space-y-2">
                                 <li>
                                     <p> مبلغ سفارش محصولات :</p>
-                                    <p class="font-DanaMedium text-green-500">{{ order.calculate_total_price|tdc }}
+                                    <p class="font-DanaMedium text-green-500">{{ order.get_total_products_with_no_discount_price|tdc }}
                                         تومان</p>
                                 </li>
                                 <li>
@@ -512,14 +512,14 @@
                                 {% endif %}
                                 <li>
                                     <p>هزینه زیر ساخت :</p>
-                                    <p class="font-DanaMedium text-green-500">{{ order.calculate_total_price|clac_tax:tax }}
+                                    <p class="font-DanaMedium text-green-500">{{ order.get_total_products_with_no_discount_price|clac_tax:tax }}
                                         تومان </p>
                                 </li>
                                 {% if order.store.additional_tax %}
 
                                     <li>
                                         <p>مالیات بر ارزش افزوده فروشگاه :</p>
-                                        <p class="font-DanaMedium text-green-500">{{ order.calculate_total_price|clac_tax:order.store.additional_tax }}
+                                        <p class="font-DanaMedium text-green-500">{{ order.get_total_products_with_no_discount_price|clac_tax:order.store.additional_tax }}
                                             تومان </p>
                                     </li>
                                 {% endif %}
@@ -534,7 +534,7 @@
                                 {% if site.active_receive_official_invoice and order.store.have_official_invoice and order.official_invoice %}
                                     <li>
                                         <p> جمع عوارض و مالیات :</p>
-                                        <p class="font-DanaMedium text-green-500">{{ order.calculate_total_price|clac_tax:order.store.official_invoice_price }}
+                                        <p class="font-DanaMedium text-green-500">{{ order.get_total_products_with_no_discount_price|clac_tax:order.store.official_invoice_price }}
                                             تومان </p>
                                     </li>
                                 {% endif %}

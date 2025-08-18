@@ -648,7 +648,7 @@ class EditUserInformation(CustomLoginRequiredMixin, View):
                     return redirect("dashboard:create_address")
 
                 else:
-                    return redirect("product:list")
+                    return redirect("dashboard:orders")
 
             else:
                 messages.error(request, "این ایمیل قبلا استفاده شده است")
@@ -774,9 +774,6 @@ class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
                     request, 'لطفا ادرس خود را وارد کنید'
                 )
                 return redirect("dashboard:create_address")
-
-            else:
-                return redirect("product:list")
 
         else:
             messages.error(request, form.errors.as_text())

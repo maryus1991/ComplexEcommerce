@@ -781,6 +781,82 @@
 
                                 </div>
                             </div>
+                            <p>
+                                 ترتیب محصولات در صفحه لیست محصولات بر اساس :
+                            </p>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+
+                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                style="background-color: #7f3ddb; color: white;">
+                                            {{ form.product_sort_by_count.label }}:
+                                            {{ form.product_sort_by_count }}
+                                        </span>
+                                        </div>
+                                    </div>                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                style="background-color: #db3d6c; color: white;">
+                                            {{ form.product_sort_by_highest_price.label }}:
+                                            {{ form.product_sort_by_highest_price }}
+                                        </span>
+                                        </div>
+                                    </div>                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                style="background-color: #db3d8f; color: white;">
+                                            {{ form.product_sort_by_lowest_price.label }}:
+                                            {{ form.product_sort_by_lowest_price }}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #dbc63d; color: white;">
+                                            {{ form.product_sort_by_sort_number.label }}:
+                                            {{ form.product_sort_by_sort_number }}
+                                        </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+
+                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                style="background-color: #7f3ddb; color: white;">
+                                            {{ form.product_sort_by_category_sort_number.label }}:
+                                            {{ form.product_sort_by_category_sort_number }}
+                                        </span>
+                                        </div>
+                                    </div>                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                style="background-color: #db3d6c; color: white;">
+                                            {{ form.product_sort_by_brand_sort_number.label }}:
+                                            {{ form.product_sort_by_brand_sort_number }}
+                                        </span>
+                                        </div>
+                                    </div>                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                style="background-color: #db3d8f; color: white;">
+                                            {{ form.product_sort_by_existing_count.label }}:
+                                            {{ form.product_sort_by_existing_count }}
+                                        </span>
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                            </div>
+
+
 
 
 

@@ -295,7 +295,7 @@ class RemoveItemFromOrder(LoginRequiredMixin, RedirectView):
         obj.order.calculate_total_price()
         obj.order.save()
 
-        messages.info(self.request, "ایتم مورد نظر با موفقیت حذف شد از سبد خرید شما")
+        messages.info(self.request, "ایتم مورد نظر با موفقیت از سبد خرید شما حذف شد ")
         return self.request.META.get("HTTP_REFERER", "/")
 
 
@@ -328,7 +328,7 @@ class RemoveProductFromOrder(LoginRequiredMixin, RedirectView):
         else:
             raise Http404()
 
-        messages.info(self.request, "ایتم مورد نظر با موفقیت حذف شد از سبد خرید شما")
+        messages.info(self.request, "ایتم مورد نظر با موفقیت از سبد خرید شما حذف شد ")
         return self.request.META.get("HTTP_REFERER", "/")
 
 

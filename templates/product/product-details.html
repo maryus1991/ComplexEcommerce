@@ -67,11 +67,7 @@
             <path stroke-linecap="round" stroke-linejoin="round"
                   d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"></path>
         </symbol>
-        <symbol id="moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokewidth="{1.5}"
-                stroke="currentColor">
-            <path strokelinecap="round" strokelinejoin="round"
-                  d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"></path>
-        </symbol>
+
         <symbol id="sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -261,62 +257,79 @@
                             </div>
                         {% endif %}
                     </div>
-                    <div class="swiper mt-2 w-full porduct-details-slider rounded-lg">
-                        <div class="swiper-wrapper">
-                            <div class="swiper-slide">
-                                <picture>
-                                    {% if product.picture %}
-
-                                        <source srcset="{{ product.picture.url|to_webp }}"
-                                                class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
-                                                type="image/webp">
-                                        <img src="{{ product.picture.url }}" alt="{{ product.name }}"
-                                             class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
-                                             loading="lazy">
-                                    {% endif %}
-                                </picture>
-
-                            </div>
-                            {% for img in product.gallery|sort_number %}
-                                <div class="swiper-slide">
-                                    <picture>
-                                        <source srcset="{{ img.image.url|to_webp }}"
-                                                class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
-                                                type="image/webp">
-                                        <img src="{{ img.image.url }}" alt="{{ product.name }}"
-                                             class="rounded-lg shadow w-full  object-cover lg:w-96 lg:h-fit"
-                                             loading="lazy">
-                                    </picture>
-
+                    <div class="relative w-full">
+                        <!-- ردیف اسلایدها -->
+                        <div id="slider"
+                             class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory rounded-lg scrollbar-hide">
+                            {% if product.picture %}
+                                <div class="flex-shrink-0 w-full snap-center">
+                                    <img src="{{ product.picture.url }}"
+                                         alt="{{ product.name }}"
+                                         class="w-full h-auto rounded-lg object-cover">
                                 </div>
-                            {% endfor %}
+                            {% endif %}
+                            {% if product.parent %}
+                                {% for img in product.parent.gallery|sort_number %}
+                                    <div class="flex-shrink-0 w-full snap-center">
+                                        <img src="{{ img.image.url }}"
+                                             alt="{{ product.parent.name }}"
+                                             class="w-full h-auto rounded-lg object-cover">
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {% for img in product.gallery|sort_number %}
+                                    <div class="flex-shrink-0 w-full snap-center">
+                                        <img src="{{ img.image.url }}"
+                                             alt="{{ product.name }}"
+                                             class="w-full h-auto rounded-lg object-cover">
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
                         </div>
-                        <div class="swiper-pagination"></div>
+
+                        <div class="flex justify-between mt-2 w-full">
+                            <button onclick="document.getElementById('slider').scrollBy({left: 384, behavior: 'smooth'})"
+                                    class="relative  flex m-1 items-center justify-center w-10 h-10 rounded-full bg-gray-800 dark:text-white  shadow-md hover:bg-gray-700 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </button>
+
+                            {% if product.store.whats_app_link and product.store.whats_app_ID %}
+                                <a href="{{ product.store.whats_app_link }}"
+                                   class="hover:opacity-80 transition-opacity">
+                                    <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-10 h-10" alt="WhatsApp"/>
+                                </a>
+                            {% endif %}
+
+                            {% if product.store.instagram_app_Link and product.store.instagram_app_ID %}
+                                <a href="{{ product.store.instagram_app_Link }}"
+                                   class="hover:opacity-80 transition-opacity">
+                                    <img src="/static/Images/svg/instagram.png" class="w-10 h-10" alt="Instagram"/>
+                                </a>
+                            {% endif %}
+
+                            {% if product.store.telegram_app_Link and product.store.telegram_app_ID %}
+                                <a href="{{ product.store.telegram_app_Link }}"
+                                   class="hover:opacity-80 transition-opacity">
+                                    <img src="/static/Images/svg/telegram.png" class="w-10 h-10" alt="Telegram"/>
+                                </a>
+                            {% endif %}
+
+                            <button onclick="document.getElementById('slider').scrollBy({left: -384, behavior: 'smooth'})"
+                                    class="relative flex m-1 items-center justify-center w-10 h-10 rounded-full bg-gray-800 dark:text-white shadow-md hover:bg-gray-700 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 19l-7-7 7-7"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
-                    <!-- SLIDER -->
 
 
-                    <!-- SOCIAL LINKS -->
-                    <div class="flex items-center gap-4">
-                        {% if product.store.whats_app_link and product.store.whats_app_ID %}
-                            <a href="{{ product.store.whats_app_link }}" class="hover:opacity-80 transition-opacity">
-                                <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-6 h-6" alt="WhatsApp"/>
-                            </a>
-                        {% endif %}
-
-                        {% if product.store.instagram_app_Link and product.store.instagram_app_ID %}
-                            <a href="{{ product.store.instagram_app_Link }}"
-                               class="hover:opacity-80 transition-opacity">
-                                <img src="/static/Images/svg/instagram.png" class="w-6 h-6" alt="Instagram"/>
-                            </a>
-                        {% endif %}
-
-                        {% if product.store.telegram_app_Link and product.store.telegram_app_ID %}
-                            <a href="{{ product.store.telegram_app_Link }}" class="hover:opacity-80 transition-opacity">
-                                <img src="/static/Images/svg/telegram.png" class="w-6 h-6" alt="Telegram"/>
-                            </a>
-                        {% endif %}
-                    </div>
                 </div>
 
                 <!-- PRODUCT INFO -->
@@ -337,39 +350,234 @@
                     </div>
 
                     <!-- FEATURES -->
-                    {% if product.features.exists %}
-                        <div class="space-y-2">
-                            <p class="font-medium text-gray-800 dark:text-white">ویژگی های محصول:</p>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                {% for feature in product.features.all %}
-                                    {% if feature.title != '' %}
-                                        <div class="bg-gray-100 dark:bg-zinc-800 rounded-lg p-3 flex items-center">
-                                            <p class="text-gray-600 dark:text-gray-300">{{ feature.title }}</p>
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
+                    {% if product.parent %}
+                        {% if product.parent.features.exists %}
+                            <div class="space-y-2">
+                                <p class="font-medium text-gray-800 dark:text-white">ویژگی های محصول:</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {% for feature in product.parent.features.all %}
+                                        {% if feature.title != '' %}
+                                            <div class="bg-gray-100 dark:bg-zinc-800 rounded-lg p-3 flex items-center">
+                                                <p class="text-gray-600 dark:text-gray-300">{{ feature.title }}</p>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
+                    {% else %}
+                        {% if product.features.exists %}
+                            <div class="space-y-2">
+                                <p class="font-medium text-gray-800 dark:text-white">ویژگی های محصول:</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {% for feature in product.features.all %}
+                                        {% if feature.title != '' %}
+                                            <div class="bg-gray-100 dark:bg-zinc-800 rounded-lg p-3 flex items-center">
+                                                <p class="text-gray-600 dark:text-gray-300">{{ feature.title }}</p>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
 
             <!-- SPECIFICATIONS -->
-            {% if product.specs.exists %}
-                <div class="space-y-2">
-                    <p class="font-medium text-gray-800 dark:text-white">مشخصات محصول:</p>
-                    <div class=" gap-3">
-                        {% for spec in product.specs.all %}
-                            {% if spec.name != ' ' and spec.name != '' and spec.name is not None %}
-                                <div class="border my-2 border-gray-200 dark:border-white/20 rounded-lg p-3 flex items-center">
-                                    <p class="text-gray-600 dark:text-gray-400">{{ spec.name }}</p>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
+            {% if product.parent %}
+                {% if product.parent.specs.exists %}
+                    <div class="space-y-2">
+                        <p class="font-medium text-gray-800 dark:text-white">مشخصات محصول:</p>
+                        <div class=" gap-3">
+                            {% for spec in product.parent.specs.all %}
+                                {% if spec.name != ' ' and spec.name != '' and spec.name is not None %}
+                                    <div class="border my-2 border-gray-200 dark:border-white/20 rounded-lg p-3 flex items-center">
+                                        <p class="text-gray-600 dark:text-gray-400">{{ spec.name }}</p>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
                     </div>
-                </div>
+                {% endif %}
+            {% else %}
+                {% if product.specs.exists %}
+                    <div class="space-y-2">
+                        <p class="font-medium text-gray-800 dark:text-white">مشخصات محصول:</p>
+                        <div class=" gap-3">
+                            {% for spec in product.specs.all %}
+                                {% if spec.name != ' ' and spec.name != '' and spec.name is not None %}
+                                    <div class="border my-2 border-gray-200 dark:border-white/20 rounded-lg p-3 flex items-center">
+                                        <p class="text-gray-600 dark:text-gray-400">{{ spec.name }}</p>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
             {% endif %}
 
+{% if product.child and product.parent is None %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+        <div class="flex items-center rounded-lg p-2 transition-all border  hover:shadow-sm {% if request.resolver_match.kwargs.pk == product.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
+            <div class="w-1/4 sm:w-1/3 flex justify-center">
+                {% if product.picture %}
+                    <img src="{{ product.picture.url }}" class="h-16 sm:h-20 w-auto object-contain rounded-lg px-2" 
+                         alt="{{ product.name }}">
+                {% endif %}
+            </div>
+            <div class="w-3/4 sm:w-2/3 pl-2">
+                <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
+                    {{ product.name }}
+                </h3>
+                <div class="mt-auto flex items-center gap-1">
+
+            {% if product.have_discount %}
+              <div class="flex flex-wrap items-baseline gap-1">
+                <span class="text-base font-bold text-primary-600 dark:text-primary-400">
+                  {{ product.price|clac_discount:product.discount }}
+                </span>
+                <del class="text-xs text-rose-500    ">
+                  {{ product.price|tdc }}
+                </del>
+                <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
+              </div>
+            {% else %}
+              <div class="flex items-baseline gap-1">
+                <span class="text-base font-bold text-primary-600 dark:text-primary-400">
+                  {{ product.price|tdc }}
+                </span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
+              </div>
+            {% endif %}
+
+                </div>
+            </div>
+        </div>
+        {% for child in product.child|active_category %}
+            <a href="{% url 'product:detail' child.id %}" class="block">
+                <div class="flex items-center border rounded-lg p-2   transition-all hover:shadow-sm {% if request.resolver_match.kwargs.pk == child.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
+                    <div class="w-1/4 sm:w-1/3 flex justify-center">
+                        {% if child.picture %}
+                            <img src="{{ child.picture.url }}" class="h-16 sm:h-20 w-auto object-contain rounded-lg px-2" 
+                                 alt="{{ child.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="w-3/4 sm:w-2/3 pl-2">
+                        <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
+                            {{ child.name }}
+                        </h3>
+                        <div class="mt-auto flex items-center gap-1">
+ 
+            {% if child.have_discount %}
+              <div class="flex flex-wrap items-baseline gap-1">
+                <span class="text-base font-bold text-primary-600 dark:text-primary-400">
+                  {{ child.price|clac_discount:child.discount }}
+                </span>
+                <del class="text-xs text-rose-500   ">
+                  {{ child.price|tdc }}
+                </del>
+                <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
+              </div>
+            {% else %}
+              <div class="flex items-baseline gap-1">
+                <span class="text-base font-bold text-primary-600 dark:text-primary-400">
+                  {{ child.price|tdc }}
+                </span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
+              </div>
+            {% endif %}
+ 
+                        </div>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% elif product.parent is not None %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+        <a href="{% url 'product:detail' product.parent.id %}" class="block">
+            <div class="flex items-center border rounded-lg p-2 transition-all border-gray-200 hover:shadow-sm {% if request.resolver_match.kwargs.pk == product.parent.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
+                <div class="w-1/4 sm:w-1/3 flex justify-center">
+                    {% if product.parent.picture %}
+                        <img src="{{ product.parent.picture.url }}" 
+                             class="h-16 sm:h-20 w-auto object-contain rounded-lg px-2" 
+                             alt="{{ product.parent.name }}">
+                    {% endif %}
+                </div>
+                <div class="w-3/4 sm:w-2/3 pl-2">
+                    <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
+                        {{ product.parent.name }}
+                    </h3>
+                    <div class="mt-auto flex items-center gap-1">
+            {% if product.parent.have_discount %}
+              <div class="flex flex-wrap items-baseline gap-1">
+                <span class="text-base font-bold text-primary-600 dark:text-primary-400">
+                  {{ product.parent.price|clac_discount:product.parent.discount }}
+                </span>
+                <del class="text-xs text-rose-500    ">
+                  {{ product.parent.price|tdc }}
+                </del>
+                <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
+              </div>
+            {% else %}
+              <div class="flex items-baseline gap-1">
+                <span class="text-base font-bold text-primary-600 dark:text-primary-400">
+                  {{ product.parent.price|tdc }}
+                </span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
+              </div>
+            {% endif %}
+                    </div>
+                </div>
+            </div>
+        </a>
+
+        {% for child in product.parent.child|active_category %}
+            <a href="{% url 'product:detail' child.id %}" class="block">
+                <div class="flex items-center border rounded-lg p-2 transition-all border-gray-200 hover:shadow-sm {% if request.resolver_match.kwargs.pk == child.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
+                    <div class="w-1/4 sm:w-1/3 flex justify-center">
+                        {% if child.picture %}
+                            <img src="{{ child.picture.url }}" class="h-16 sm:h-20 w-auto object-contain rounded-lg px-2" 
+                                 alt="{{ child.name }}">
+                        {% else %}
+                            {% if product.parent.picture %}
+                                <img src="{{ product.parent.picture.url }}"
+                                     class="h-16 sm:h-20 w-auto object-contain rounded-lg"
+                                     alt="{{ product.parent.name }}">
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="w-3/4 sm:w-2/3 pl-2">
+                        <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
+                            {{ child.name }}
+                        </h3>
+                        <div class="mt-auto flex items-center gap-1">
+            {% if child.have_discount %}
+              <div class="flex flex-wrap items-baseline gap-1">
+                <span class="text-base font-bold text-primary-600 dark:text-primary-400">
+                  {{ child.price|clac_discount:child.discount }}
+                </span>
+                <del class="text-xs text-rose-500    ">
+                  {{ child.price|tdc }}
+                </del>
+                <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
+              </div>
+            {% else %}
+              <div class="flex items-baseline gap-1">
+                <span class="text-base font-bold text-primary-600 dark:text-primary-400">
+                  {{ child.price|tdc }}
+                </span>
+                <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
+              </div>
+            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% endif %}
             <!-- DESCRIPTION -->
             <div class="w-full space-y-8">
                 <!-- ... سایر بخش های قبلی ... -->
@@ -381,7 +589,13 @@
                         <div id="product-description"
                              class="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 overflow-hidden transition-all duration-300"
                              style="max-height: 75px;">
-                            {{ product.description|safe }}
+                            {% if product.parent %}
+                                {{ product.parent.description|safe }}
+
+                            {% else %}
+                                {{ product.description|safe }}
+
+                            {% endif %}
                         </div>
                         <div id="description-fade"
                              class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent dark:from-zinc-900 pointer-events-none transition-opacity duration-300"></div>
@@ -434,21 +648,37 @@
                     }
                 });
             </script>
-            <!-- TAGS -->
-            {% if product.tags.exists %}
-                <div class="flex flex-wrap gap-2">
-                    {% for tag in product.tags.all %}
-                        {% if tag.name != '' %}
-                            <span class="inline-flex items-center bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 rounded-lg font-medium text-sm px-3 py-1">
-            {{ tag.name }}
-          </span>
-                        {% endif %}
-                    {% endfor %}
-                </div>
+            {% if product.parent %}
+                {% if product.parent.tags.exists %}
+                    <div class="flex flex-wrap gap-2">
+                        {% for tag in product.parent.tags.all %}
+                            {% if tag.name != '' %}
+                                <span class="inline-flex items-center bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 rounded-lg font-medium text-sm px-3 py-1">
+                            {{ tag.name }}
+                        </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% else %}
+                {% if product.tags.exists %}
+                    <div class="flex flex-wrap gap-2">
+                        {% for tag in product.tags.all %}
+                            {% if tag.name != '' %}
+                                <span class="inline-flex items-center bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 rounded-lg font-medium text-sm px-3 py-1">
+                            {{ tag.name }}
+                        </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
             {% endif %}
-        </div>        <!-- PRICE & ADD TO CART BOX -->
+
+
+        </div>
+
         <div class="w-full lg:w-1/4 lg:sticky top-5 flex flex-col gap-y-6">
-            <!-- PRICE -->
+
             <div class="flex items-center gap-x-1">
                 {% if product.have_discount %}
                     <p class="text-2xl font-DanaDemiBold">{{ product.price|clac_discount:product.discount }}</p>
@@ -467,19 +697,19 @@
 
             <script>
                 const handle_input = (sign) => {
-                    let element = document.getElementById('customInput');
+                    const element = document.getElementById('customInput');
+                    const maxCount = Number(element.getAttribute('max')) || Infinity;
+                    let value = Number(element.value) || 0;
+
                     if (sign === '+') {
-                        element.value = Number(element.value) + 1;
+                        value = Math.min(value + 1, maxCount);
                     } else if (sign === '-') {
-                        element.value = Number(element.value) - 1;
-
+                        value = Math.max(value - 1, 0);
                     }
 
-                    if (Number(element.value) <= 0) {
-                        element.value = 0;
-                    }
+                    element.value = value;
+                };
 
-                }
             </script>
 
             {% if product.count > 0 %}
@@ -489,7 +719,7 @@
                         <svg onclick="handle_input('+')" class="w-6 h-6 shrink-0 text-green-600">
                             <use href="#plus"></use>
                         </svg>
-                        <input type="number" name="count" id="customInput" min="0"
+                        <input type="number" name="count" id="customInput" min="0" max="{{ product.count }}"
                                value="{{ user_order_detail.count|default:1 }}"
                                class="custom-input mx-4 w-10 text-lg bg-transparent text-center flex-1">
                         <svg onclick="handle_input('-')" class="w-6 h-6 shrink-0  text-red-500">
@@ -571,9 +801,7 @@
                 </p>
             {% endif %}
         </div>
-    
-    
-    
+
 
     </section>
 
@@ -722,50 +950,45 @@
                 </h2>
             </div>
             <div class="flex items-center gap-x-2 child:p-2 child:bg-white child:dark:bg-zinc-700 child:shadow child:rounded-full">
-                <button class="prev-slide ">
+                <button class="related-products-prev">
                     <svg class="w-4 h-4">
                         <use href="#chevron-right"></use>
                     </svg>
                 </button>
-                <button class="next-slide ">
+                <button class="related-products-next">
                     <svg class="w-4 h-4">
                         <use href="#chevron-left"></use>
                     </svg>
                 </button>
             </div>
         </div>
-        <!-- SLIDER  -->
+        <!-- SLIDER -->
+        <!-- dqwpodjqpwojdpqowjdpqwjdpqojwpdqwd -->
+        <div class="swiper related-products-swiper rounded-lg" dir="rtl">
+            <div class="swiper-wrapper">
 
-        <div class="swiper BestSelling rounded-lg swiper-initialized swiper-horizontal swiper-rtl swiper-backface-hidden"
-             dir="rtl">
-            <div class="swiper-wrapper rounded-lg mb-2 child:cursor-pointer child:overflow-hidden child:rounded-lg child:bg-white child:dark:bg-zinc-700 child:shadow child:w-64 child:relative"
-                 id="swiper-wrapper-5b91b42b56a78dd6" aria-live="off"
-                 style="transition-duration: 0ms; transform: translate3d(275.6px, 0px, 0px); transition-delay: 0ms;">
                 {% for product in same_product.all %}
-                    <div class="swiper-slide group swiper-slide-prev" style="width: 255.6px; margin-left: 20px;"
-                         role="group" aria-label="{{ forloop.counter }} / {{ same_product.count }}"
-                         data-swiper-slide-index="{{ product.id|sum:1 }}">
+                    <div class="swiper-slide group bg-white dark:bg-zinc-700 w-64"
+                         style="width: 250px !important; margin-left: 20px;">
                         <!-- OFF BADGE -->
                         {% if product.have_discount %}
-
-                            <span class="absolute top-5 right-5 flex items-center justify-center w-8 h-8 text-xs bg-green-500  rounded-full text-white z-30">{{ product.discount }}%</span>
+                            <span class="absolute top-5 right-5 flex items-center justify-center w-8 h-8 text-xs bg-green-500 rounded-full text-white z-30">
+                            {{ product.discount }}%
+                        </span>
                         {% endif %}
 
-                        <!-- PRODUCT IMGAE -->
+                        <!-- PRODUCT IMAGE -->
                         <a href="{% url 'product:detail' product.id %}">
                             <picture>
                                 {% if product.picture %}
-
-                                    <source srcset="{{ product.picture.url|to_webp }}"
-                                            class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
-                                            type="image/webp">
+                                    <source srcset="{{ product.picture.url|to_webp }}" type="image/webp">
                                     <img src="{{ product.picture.url }}" alt="{{ product.name }}"
                                          class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
                                          loading="lazy">
                                 {% endif %}
                             </picture>
-
                         </a>
+
                         <!-- PRODUCT MAIN -->
                         <div class="px-2 lg:px-4 mb-3">
                             <a href="{% url 'product:detail' product.id %}"
@@ -774,7 +997,6 @@
                             </a>
                             <div class="flex items-center gap-x-1 lg:gap-x-3">
                                 {% if not product.have_discount %}
-
                                     <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
                                         {{ product.price|tdc }}
                                         <span class="font-Dana text-sm">تومان</span>
@@ -789,39 +1011,72 @@
                                         <span class="">تومان</span>
                                     </del>
                                 {% endif %}
-
                             </div>
                         </div>
+
                         <!-- PRODUCT FOOTER -->
                         <div class="flex items-center justify-between px-2 lg:px-4 mb-3">
                             <div class="flex items-center gap-x-2 child:transition-all child:duration-300">
-
                                 {% if product.id in user_favorite %}
                                     <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}">
-                                            <span class="hover:text-red-600">
-                                                <svg class="w-4 h-4">
-                                                    <use href="#close"></use>
-                                                </svg>
-                                            </span>
+                                    <span class="hover:text-red-600">
+                                        <svg class="w-4 h-4">
+                                            <use href="#close"></use>
+                                        </svg>
+                                    </span>
                                     </a>
                                 {% else %}
                                     <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}">
-                                            <span class="hover:text-green-600">
-                                                <svg class="w-4 h-4">
-                                                    <use href="#heart"></use>
-                                                </svg>
-                                            </span>
+                                    <span class="hover:text-green-600">
+                                        <svg class="w-4 h-4">
+                                            <use href="#heart"></use>
+                                        </svg>
+                                    </span>
                                     </a>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
                 {% endfor %}
-
             </div>
-            <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+        </div>
     </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const relatedProductsSwiper = new Swiper('.related-products-swiper', {
+                slidesPerView: 'auto',
+                spaceBetween: 20,
+                loop: false,
+                rtl: true,
+                speed: 900, // سرعت انتقال اسلایدها (میلی‌ثانیه) - مقدار پیش‌فرض 300 است
+                navigation: {
+                    nextEl: '.related-products-next',
+                    prevEl: '.related-products-prev',
+                },
+                breakpoints: {
+                    640: {
+                        slidesPerView: 2,
+                        slidesPerGroup: 2
+                    },
+                    768: {
+                        slidesPerView: 3,
+                        slidesPerGroup: 3
+                    },
+                    1024: {
+                        slidesPerView: 4,
+                        slidesPerGroup: 4
+                    },
+                }
+            });
+        });
+    </script>
 
-
+    <style>
+        .related-products-swiper .swiper-slide {
+            width: 250px !important;
+            margin-left: 0 !important;
+            margin-right: 20px !important;
+        }
+    </style>
 
 {% endblock %}

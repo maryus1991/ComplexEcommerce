@@ -181,19 +181,19 @@
 
             <th>واحد</th>
             <th>مقدار</th>
-            <th>مبلغ واحد )ریال(</th>
-            <th>مبلغ کل )ریال(</th>
-            <th>مبلغ تخفیف )ریال(</th>
+            <th>مبلغ واحد  ریال </th>
+            <th>مبلغ کل  ریال </th>
+            <th>مبلغ تخفیف  ریال </th>
         
             <th>مبلغ کل پس از تخفیف</th>
 
             <th>
 
-                هزینه های جانبی و هزینه ارسال )ریال(
+                هزینه های جانبی و هزینه ارسال  ریال 
 
             
             </th>
-            <th>جمع مبلغ نهایی )ریال(</th>
+            <th>جمع مبلغ نهایی  ریال </th>
         </tr>
         </thead>
         <tbody>
@@ -208,7 +208,7 @@
                 <td>{{ item.product.name }}</td>
 
                 <td colspan="2">{{ item.count }}</td>
-                <td>{{ item.get_price|tdcR }}</td>
+                <td>{{ item.get_price_without_discount|tdcR }}</td>
                 <td>{{ item.get_item_price_without_discount|tdcR }}</td>
                 <td>{{ item.get_item_discount|tdcR }}</td>
                 <td>{{ item.get_item_price|tdcR }}</td>

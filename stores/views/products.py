@@ -1,4 +1,5 @@
 from django.views.generic import (
+
     ListView,
     CreateView,
     FormView,
@@ -778,3 +779,14 @@ class StoreAddCategoryView(UserStoreStaffMixin, CreateView):
 
         messages.success(self.request, "دسته شما ساخته شد")
         return redirect(self.request.META.get("HTTP_REFERER", "/"))
+
+
+class ProductChildrenListView(UserStoreStaffMixin, ListView):pass
+class ProductChildrenActiveAdDeactivate(UserStoreStaffMixin, RedirectView):pass
+class ProductChildrenDelete(UserStoreStaffMixin, RedirectView):pass
+class ProductCreateChildren(UserStoreStaffMixin, CreateView):pass
+class ProductUpdateChildren(UserStoreStaffMixin, UpdateView):pass
+
+class ProductFastPanelListView(UserStoreStaffMixin, ListView):pass
+class ProductFastPanelChangeCount(UserStoreStaffMixin, RedirectView):pass
+class ProductFastPanelChangePrice(UserStoreStaffMixin, RedirectView):pass

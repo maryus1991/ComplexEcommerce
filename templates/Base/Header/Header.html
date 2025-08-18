@@ -46,17 +46,12 @@
     <!-- زبان صفحه -->
     <meta http-equiv="Content-Language" content="fa">
 
-    {% if 'product/?' in request.path  %}
-    	<link rel="canonical" href="https://amvajsarmad.com/product/" />
-    {% endif %} 
+    {% if 'product/?' in request.path %}
+        <link rel="canonical" href="https://amvajsarmad.com/product/"/>
+    {% endif %}
 
     <!-- charset -->
     <meta charset="utf-8">
-    {% if site.active_google_reCAPTCHA %}
-        
-        <script src="https://www.google.com/recaptcha/api.js?render={{ RECAPTCHA_PUBLIC_KEY }}"></script>
-
-    {% endif %}
 
 </head>
 
@@ -172,7 +167,7 @@
 
             </script>
             <!-- SHOPPING CART BTN -->
-            <button class="open-shopping-cart__btn relative">
+            <button class="open-shopping-cart__btn relative" title="سبد خرید">
                 <svg class="w-6 h-6">
                     <use href="#shopping-cart"/>
                 </svg>
@@ -221,7 +216,7 @@
                             <svg class="h-5 w-5">
                                 <use href="#envelope"></use>
                             </svg>
-                            لیست پیام ها
+                            لیست تیکت ها
                         </a>
                         <a href="{% url 'dashboard:account' %}"
                            class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
@@ -315,22 +310,44 @@
 
 
                 <!-- ITEM -->
-                <div class="flex items-center gap-x-3 border-b border-gray-200 pb-4 dark:border-white/10">
-                    <a href="{% url 'product:detail' order.product.id %}">
-                        <!-- IMAGE -->
-                        <img src="{{ order.product.picture.url }}" class="w-20 h-20 object-cover rounded-lg" alt=""/>
-                        <!-- TEXT -->
-                        <br>
-                        <div class="flex flex-col gap-y-1">
-                            <h2 class="font-DanaMedium line-clamp-2 text-sm">
-                                {{ order.product.name }}
-                            </h2>
+                <div class="flex items-center justify-between gap-4 border-b border-gray-200 pb-4 dark:border-white/10">
+                    <a href="{% url 'product:detail' order.product.id %}" class="flex items-center gap-3 flex-grow">
+                        <!-- Image -->
+                        <img
+                                src="{{ order.product.picture.url }}"
+                                class="w-20 h-20 object-cover rounded-lg"
+                                alt="{{ order.product.name }}"
+                        />
 
-                            <p class="font-DanaDemiBold text-sm">
-                                {{ order.product.calc_discount|tdc }}
-                                <span class="font-Dana">تومان</span>
-                            </p>
+                        <!-- Text -->
+                        <div class="flex items-center gap-x-1">
+                            {% if order.product.have_discount %}
+                                <p class="text-2xl font-DanaDemiBold">{{ order.product.price|clac_discount:order.product.discount }}</p>
+                                <p class="">تومان</p>
+                                <br>
+                                <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                                    {{ order.product.price|tdc }}
+                                    <span class="font-Dana text-sm">تومان</span>
+                                </del>
+                            {% else %}
+                                <p class="text-2xl font-DanaDemiBold">{{ order.product.price|tdc }}</p>
+                                <p class="">تومان</p>
+
+                            {% endif %}
                         </div>
+                    </a>
+
+                    <!-- Delete button -->
+                    <a href="{% url 'orders:remove' order.id %}"
+                       type="button"
+                       class="text-red-500 hover:text-red-700 transition-colors p-2"
+                       aria-label="حذف محصول"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
                     </a>
                 </div>
             {% endfor %}
@@ -347,14 +364,24 @@
 
 
     {% else %}
-        <!-- EMPITY SHOPPING CART -->
-        <div class="flex flex-col">
-        <span class="w-full justify-center gap-x-2 items-center text-red-400">
-            <svg class="w-4 h-5">
-                <use href="#shopping-cart"></use>
-            </svg>
-            <p>سبد خرید شما خالی میباشد</p>
-        </span>
+
+        <div class="flex flex-col items-center justify-center py-8">
+            <div class="flex flex-col items-center gap-3 text-red-400">
+                <!-- Shopping Cart Icon -->
+                <svg class="w-12 h-12 text-red-400/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+
+                <!-- Message -->
+                <p class="text-lg font-medium text-center">سبد خرید شما خالی میباشد</p>
+
+                <!-- Optional: Add a button to continue shopping -->
+                <a href="{% url 'product:list' %}"
+                   class="mt-4 px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                    بازگشت به فروشگاه
+                </a>
+            </div>
         </div>
     {% endif %}
 
@@ -536,7 +563,7 @@
 
     </a>
     <!-- OPEN SHOPPING CART BTN  -->
-    <button class="open-shopping-cart__btn">
+    <button class="open-shopping-cart__btn" title="سبد خرید">
         <svg class="w-6 h-6">
             <use href="#shopping-cart"/>
         </svg>

@@ -37,11 +37,11 @@ class StoreCloseTicketViewSenderSide(UserStoreStaffMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         pk = self.kwargs.get("pk")
-        obj = get_object_or_404(Ticket, pk=pk, user=self.request.user)
-        if obj.user == self.request.user:
-            obj.close_ticket = True
-            obj.close_at = now()
-            obj.save()
+        obj = get_object_or_404(Ticket, pk=pk, store=self.request.user.store)
+
+        obj.close_ticket = True
+        obj.close_at = now()
+        obj.save()
         messages.info(self.request, "تیکت شما بسته شد")
         return self.request.META.get("HTTP_REFERER", "/")
 
@@ -54,6 +54,7 @@ class StoreCloseTicketViewReceiverSide(UserStoreStaffMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         pk = self.kwargs.get("pk")
         obj = get_object_or_404(Ticket, pk=pk)
+
         if obj.store is None and self.request.user.is_superuser:
             obj.close_ticket = True
             obj.close_at = now()

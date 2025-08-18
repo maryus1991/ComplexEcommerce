@@ -50,7 +50,7 @@ class SiteLawListView(ListView):
 
 def robots_txt(request):
     # ساختن آدرس‌های خاص برای دیس‌الو
-    disallows = ["/user/", "/dashboard/", "/order/", "/ckeditor/"]
+    disallows = ["/dashboard/", "/order/", "/ckeditor/"]
 
     lines = ["User-Agent: *"]
 
@@ -193,7 +193,7 @@ class AddTONewsLetters(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         form = NumberForAddToLettersForm(self.request.POST)
         if form.is_valid():
-            Newsletter.objects.create(phone_number=form.cleaned_data["phone_number"])
+            Newsletter.objects.get_or_create(phone_number=form.cleaned_data["phone_number"])
             messages.success(self.request, "شماره شما با موفقیت اضافه شد")
         else:
             messages.warning(self.request, 'در وارد کردن شماره دقت فرمایید')

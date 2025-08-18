@@ -47,18 +47,21 @@
                         <p dir="ltr">{{ site.telegram_ID }}</p>
                         <img src="/static/Images/svg/telegram.png" class="w-6 h-6" alt="instagram"/>
                     </a>
+                    <a href="tel:{{ site.phone }}" class="flex items-center gap-x-2">
+                        <p dir="ltr" class=" text-lg  text-green-500">{{ site.phone }}</p>
+                    </a>
                 </div>
             </div>
             <div class="flex justify-end  w-full lg:w-2/4">
-                                                                                                        <picture>
-                <source srcset="{{ site.about_image.url|to_webp }}"
-                        class="rounded-lg lg:h-[35rem]"
-                        type="image/webp">
-                <img src="{{ site.about_image.url }}" alt="{{ site.title }}"
-                     class="rounded-lg lg:h-[35rem]"
-                     loading="lazy">
-            </picture>
-                
+                <picture>
+                    <source srcset="{{ site.about_image.url|to_webp }}"
+                            class="rounded-lg lg:h-[35rem]"
+                            type="image/webp">
+                    <img src="{{ site.about_image.url }}" alt="{{ site.title }}"
+                         class="rounded-lg lg:h-[35rem]"
+                         loading="lazy">
+                </picture>
+
             </div>
         </section>
     </main>

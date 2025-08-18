@@ -73,34 +73,34 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings
 
-  mailserver:
-    image: docker.arvancloud.ir/mailserver/docker-mailserver:latest
-    container_name: mailserver
-    hostname: mail
-    domainname: amvajsarmad.com
-    env_file:
-      - .envs
-    ports:
-      - "143:143"
-      - "587:587"
-    volumes:
-      - ./mailserver/config:/tmp/docker-mailserver
-      - ./mailserver/mail-data:/var/mail
-      - ./mailserver/mail-state:/var/mail-state
-      - ./mailserver/mail-logs:/var/log/mail
-      - ./ssl:/etc/letsencrypt
-    cap_add:
-      - NET_ADMIN
-      - SYS_PTRACE
-    restart: always
-
-
-  snappymail:
-    image: ghcr.io/the-djmaze/snappymail:latest
-    container_name: snappymail
-    restart: always
-    volumes:
-      - snappymail-data:/var/www/html/_data
+#  mailserver:
+#    image: docker.arvancloud.ir/mailserver/docker-mailserver:latest
+#    container_name: mailserver
+#    hostname: mail
+#    domainname: amvajsarmad.com
+#    env_file:
+#      - .envs
+#    ports:
+#      - "143:143"
+#      - "587:587"
+#    volumes:
+#      - ./mailserver/config:/tmp/docker-mailserver
+#      - ./mailserver/mail-data:/var/mail
+#      - ./mailserver/mail-state:/var/mail-state
+#      - ./mailserver/mail-logs:/var/log/mail
+#      - ./ssl:/etc/letsencrypt
+#    cap_add:
+#      - NET_ADMIN
+#      - SYS_PTRACE
+#    restart: always
+#
+#
+#  snappymail:
+#    image: ghcr.io/the-djmaze/snappymail:latest
+#    container_name: snappymail
+#    restart: always
+#    volumes:
+#      - snappymail-data:/var/www/html/_data
 
 volumes:
   blog-postgres:

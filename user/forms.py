@@ -193,7 +193,7 @@ class ForgotPasswordForm(forms.Form):
         from django_recaptcha import fields, widgets
         if SiteSetting.objects.first().active_google_reCAPTCHA:
             self.fields['recaptcha']=fields.ReCaptchaField(
-                widget=widgets.ReCaptchaV3(action='signup'),
+                widget=widgets.ReCaptchaV3(action='login'),
             )
 
 
@@ -270,7 +270,7 @@ class ForgotPasswordWithEmailForm(forms.Form):
         from django_recaptcha import fields, widgets
         if SiteSetting.objects.first().active_google_reCAPTCHA:
             self.fields['recaptcha']=fields.ReCaptchaField(
-                widget=widgets.ReCaptchaV3(action='signup'),
+                widget=widgets.ReCaptchaV3(action='login'),
             )
 
 
