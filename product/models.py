@@ -78,7 +78,7 @@ class Product(models.Model):
     sort_number_newest_products = models.PositiveSmallIntegerField(default=0)
     sort_number_most_sell = models.PositiveSmallIntegerField(default=0)
     sort_number_discount = models.PositiveSmallIntegerField(default=0)
-
+    group_name = models.CharField(max_length=1000, null=True, blank=True)
 
     def __str__(self):
         return f"{self.id}-|-{self.name}"

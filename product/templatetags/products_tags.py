@@ -110,3 +110,7 @@ def sort_number(orm):
             return orm.all()
     else:
         return None
+
+@register.filter
+def multiply(x, y):
+    return "{:,}".format(int(x) * int(y))

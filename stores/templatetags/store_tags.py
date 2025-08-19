@@ -46,3 +46,4 @@ def orders_obj(query):
         canceled=False,
         second_date=now() - timedelta(days=1),
     ).all()
+

@@ -376,7 +376,15 @@
                                         {{ item.date|to_jalali:'%Y/%m/%d' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-DanaDemiBold text-gray-900 dark:text-white">
-                                        {{ item.get_price|tdc }} <span class="text-xs font-DanaLight">تومان</span>
+                                        {% if item.product.have_discount and not item.order.canceled and not item.order.is_paid %}
+                                            {{ item.get_price|tdc }}
+                                            <span class="text-xs font-DanaLight">تومان</span>
+                                            <del class="text-xs font-DanaLight text-red-500">
+                                                {{ item.product.price|tdc }}
+                                            </del>
+                                        {% else %}
+                                            {{ item.get_price|tdc }} <span class="text-xs font-DanaLight">تومان</span>
+                                        {% endif %}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap border-0">
                                         <form action="{% url 'orders:add' item.product.id %}" method="GET"
@@ -395,7 +403,7 @@
                                                 <input type="text" name="count" id="quantity-{{ item.product.id }}"
                                                        min="1" value="{{ item.count }}" max="{{ item.product.count }}"
                                                        class="w-12 px-1 py-1.5 text-center bg-transparent border-0 border-gray-200 dark:border-zinc-600 focus:ring-1 ">
-                                                <button type="button" 
+                                                <button type="button"
                                                         onclick="updateQuantity('{{ item.product.id }}', 1)"
                                                         class="px-2 py-1.5 rounded-full  bg-gray-100 dark:bg-zinc-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-600 transition-colors">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
@@ -435,15 +443,15 @@
                     </div>
 
                     <script>
-function updateQuantity(productId, change) {
-    const input = document.getElementById(`quantity-${productId}`);
-    const maxCount = Number(input.getAttribute('max')) || Infinity;
+                        function updateQuantity(productId, change) {
+                            const input = document.getElementById(`quantity-${productId}`);
+                            const maxCount = Number(input.getAttribute('max')) || Infinity;
 
-    let value = Number(input.value) || 0;
-    value = Math.max(1, Math.min(value + change, maxCount));
+                            let value = Number(input.value) || 0;
+                            value = Math.max(1, Math.min(value + change, maxCount));
 
-    input.value = value;
-}
+                            input.value = value;
+                        }
 
                         function confirmRemove(url, productName) {
                             if (confirm(`آیا از حذف محصول "${productName}" اطمینان دارید؟`)) {
