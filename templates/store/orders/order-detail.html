@@ -78,6 +78,7 @@
                                     {% if order.vip_post %} پست پیشتاز
                                     {% elif order.tipax_post_delivery %} تیپاکس
                                     {% elif order.physical_delivery %} حضوری
+                                    {% elif order.freight_delivery %}  باربری (پس کرایه)
                                     {% elif order.in_city_delivery %} درون شهری ({{ order.store.orgin_city }})
                                     {% endif %}
                                 </span>

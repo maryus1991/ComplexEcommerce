@@ -353,6 +353,8 @@ class StoreOrdersView(UserStoreStaffMixin, ListView):
                 query = query.filter(in_city_delivery=True)
             elif data["deliver_status"] == "22":  # حضوری
                 query = query.filter(physical_delivery=True)
+            elif data["deliver_status"] == "23":  # حضوری
+                query = query.filter(freight_delivery=True)
 
         # فیلتر بر اساس وضعیت پرداخت
         if data.get("payment_status"):

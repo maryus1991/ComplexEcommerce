@@ -139,7 +139,8 @@
 
                                         </div>
 
-                                    </div>                                    <div class="col-md-3" dir="rtl">
+                                    </div>
+                                    <div class="col-md-3" dir="rtl">
                                         <div class="input-group input-group">
                                         <span class="input-group-btn">
                                           <span class="btn btn-success">
@@ -311,22 +312,21 @@
 
                                         </div>
                                     </div>
+
+
                                     <div class="col-md-3">
                                         <div class="input-group input-group" dir="rtl">
                                         <span class="input-group-btn">
                                           <span class="btn btn-flat" style="background-color: #ff7700; color: white;">
 
-                                            {{ form.active_email_account_verified.label }}
+                                            {{ form.minute_for_clean_order_detail_product.label }}
 
                                           </span>
                                         </span>
-                                            {{ form.active_email_account_verified }}
+                                            {{ form.minute_for_clean_order_detail_product }}
 
                                         </div>
                                     </div>
-
-
-
                                     <div class="col-md-5">
                                         <div class="input-group">
                                             <span class="input-group-addon"
@@ -344,30 +344,14 @@
 
                                 </div>
                             </div>
-                            <div class="col-md-12 form-group">
-                                <div class="">
-                                    <div class="col-md-4">
-                                        <div class="input-group input-group" dir="rtl">
-                                        <span class="input-group-btn">
-                                          <span class="btn btn-flat" style="background-color: #ff7700; color: white;">
-
-                                            {{ form.minute_for_clean_order_detail_product.label }}
-
-                                          </span>
-                                        </span>
-                                            {{ form.minute_for_clean_order_detail_product }}
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
+ 
                             <div class="col-md-12 form-group ">
                                 <div class="">
                                     <div class="col-md-3 no-padding">
                                         <div class="input-group input-group" dir="rtl">
                                         <span style="background-color: #ed59f4; color: white;"
-                                             {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
                                         >
                                           <span>
 
@@ -383,8 +367,9 @@
                                     <div class="col-md-3 no-padding" dir="rtl">
                                         <div class="input-group">
 
-                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                style="background-color: #3DA0DB; color: white;">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
 
                                             {{ form.active_tipax_delivery.label }}:
 
@@ -399,8 +384,9 @@
 
                                     <div class="col-md-3 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #00ad9c; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #00ad9c; color: white;">
 
                                             {{ form.active_in_same_city_delivery.label }}:
                                             {{ form.active_in_same_city_delivery }}
@@ -412,8 +398,9 @@
                                     </div>
                                     <div class="col-md-3 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #726204; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
                                                  {{ form.active_physical_delivery.label }} :
 
                                             {{ form.active_physical_delivery }}
@@ -431,8 +418,9 @@
 
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #22c55e; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #22c55e; color: white;">
                                                  {{ form.active_receive_official_invoice.label }}:
                                             {{ form.active_receive_official_invoice }}
                                             </span>
@@ -441,8 +429,9 @@
 
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #22c55e; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #22c55e; color: white;">
                                                  {{ form.active_slider_in_main_page.label }}:
                                             {{ form.active_slider_in_main_page }}
                                             </span>
@@ -450,8 +439,9 @@
                                     </div>
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #22c55e; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #22c55e; color: white;">
                                                  {{ form.active_banner_in_main_page.label }}:
                                             {{ form.active_banner_in_main_page }}
                                             </span>
@@ -464,7 +454,8 @@
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group input-group" dir="rtl">
                                         <span style="background-color: #ed59f4; color: white;"
-                                              {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}>
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}>
                                           <span>
 
                                             {{ form.active_categories_in_main_page.label }}:
@@ -479,8 +470,9 @@
                                     <div class="col-md-4 no-padding" dir="rtl">
                                         <div class="input-group">
 
-                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                style="background-color: #3DA0DB; color: white;">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
 
                                             {{ form.active_newset_peoduct_in_main_page.label }}:
 
@@ -495,8 +487,9 @@
 
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #00ad9c; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #00ad9c; color: white;">
 
                                             {{ form.active_most_soled_product_in_main_page.label }}:
                                             {{ form.active_most_soled_product_in_main_page }}
@@ -516,8 +509,9 @@
 
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #726204; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
                                                  {{ form.active_most_read_posts_in_main_page.label }} :
 
                                             {{ form.active_most_read_posts_in_main_page }}
@@ -528,8 +522,9 @@
                                     </div>
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #726204; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
                                                  {{ form.active_most_discount_in_main_page.label }} :
 
                                             {{ form.active_most_discount_in_main_page }}
@@ -538,8 +533,9 @@
                                     </div>
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #726204; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
                                                  {{ form.force_user_to_verify_with_message.label }} :
 
                                             {{ form.force_user_to_verify_with_message }}
@@ -555,7 +551,8 @@
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group input-group" dir="rtl">
                                         <span style="background-color: #ed59f4; color: white;"
-                                              {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}>
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}>
                                           <span>
 
                                             {{ form.store_users_staff_logins.label }}:
@@ -570,8 +567,9 @@
                                     <div class="col-md-4 no-padding" dir="rtl">
                                         <div class="input-group">
 
-                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                style="background-color: #3DA0DB; color: white;">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
 
                                             {{ form.legal_users_login.label }}:
 
@@ -586,8 +584,9 @@
 
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #00ad9c; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #00ad9c; color: white;">
 
                                             {{ form.active_store_page.label }}:
                                             {{ form.active_store_page }}
@@ -606,8 +605,9 @@
 
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #726204; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
                                                  {{ form.active_zarinpal_payment.label }} :
 
                                             {{ form.active_zarinpal_payment }}
@@ -618,8 +618,9 @@
                                     </div>
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #726204; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
                                                  {{ form.send_message_response_to_ticket.label }} :
 
                                             {{ form.send_message_response_to_ticket }}
@@ -628,8 +629,9 @@
                                     </div>
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #726204; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
                                                  {{ form.send_message_successful_payment.label }} :
 
                                             {{ form.send_message_successful_payment }}
@@ -645,7 +647,8 @@
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group input-group" dir="rtl">
                                         <span style="background-color: #ed59f4; color: white;"
-                                              {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}>
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}>
                                           <span>
 
                                             {{ form.send_message_official_invoice_upload.label }}:
@@ -660,8 +663,9 @@
                                     <div class="col-md-4 no-padding" dir="rtl">
                                         <div class="input-group">
 
-                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                style="background-color: #3DA0DB; color: white;">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
 
                                             {{ form.send_message_when_set_sending_id.label }}:
 
@@ -676,8 +680,9 @@
 
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #00ad9c; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #00ad9c; color: white;">
 
                                             {{ form.is_active.label }}:
                                             {{ form.is_active }}
@@ -696,7 +701,8 @@
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group input-group" dir="rtl">
                                         <span style="background-color: #ed59f4; color: white;"
-                                              {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}>
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}>
                                           <span>
 
                                             {{ form.active_brands_in_main_page.label }}:
@@ -711,8 +717,9 @@
                                     <div class="col-md-4 no-padding" dir="rtl">
                                         <div class="input-group">
 
-                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                style="background-color: #3DA0DB; color: white;">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
 
                                             {{ form.active_blog_categories_in_main_page.label }}:
 
@@ -727,8 +734,9 @@
 
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group">
-                                            <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                  style="background-color: #00ad9c; color: white;">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #00ad9c; color: white;">
 
                                             {{ form.active_fast_links_in_footer_page.label }}:
                                             {{ form.active_fast_links_in_footer_page }}
@@ -747,7 +755,8 @@
                                     <div class="col-md-4 no-padding">
                                         <div class="input-group input-group" dir="rtl">
                                         <span style="background-color: #ed59f4; color: white;"
-                                              {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}>
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}>
                                           <span>
 
                                             {{ form.active_google_reCAPTCHA.label }}:
@@ -762,8 +771,9 @@
                                     <div class="col-md-4 no-padding" dir="rtl">
                                         <div class="input-group">
 
-                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                style="background-color: #3DA0DB; color: white;">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
 
                                             {{ form.force_users_to_login_for_download_apps.label }}:
 
@@ -775,38 +785,80 @@
 
                                     </div>
 
+                                    <div class="col-md-4 no-padding" dir="rtl">
+                                        <div class="input-group">
 
-  
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
+
+                                            {{ form.active_freight_delivery.label }}:
+
+                                            {{ form.active_freight_delivery }}
+
+                                        </span>
+
+                                        </div>
+
+                                    </div>
 
 
                                 </div>
                             </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}>
+                                          <span>
+
+                                            {{ form.active_email_account_verified.label }}:
+
+                                            {{ form.active_email_account_verified }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+ 
+
+ 
+
+                                </div>
+                            </div>
                             <p>
-                                 ترتیب محصولات در صفحه لیست محصولات بر اساس :
+                                ترتیب محصولات در صفحه لیست محصولات بر اساس :
                             </p>
                             <div class="col-md-12 form-group ">
                                 <div class="">
 
                                     <div class="col-md-3 no-padding" dir="rtl">
                                         <div class="input-group">
-                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                style="background-color: #7f3ddb; color: white;">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #7f3ddb; color: white;">
                                             {{ form.product_sort_by_count.label }}:
                                             {{ form.product_sort_by_count }}
                                         </span>
                                         </div>
-                                    </div>                                    <div class="col-md-3 no-padding" dir="rtl">
+                                    </div>
+                                    <div class="col-md-3 no-padding" dir="rtl">
                                         <div class="input-group">
-                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                style="background-color: #db3d6c; color: white;">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #db3d6c; color: white;">
                                             {{ form.product_sort_by_highest_price.label }}:
                                             {{ form.product_sort_by_highest_price }}
                                         </span>
                                         </div>
-                                    </div>                                    <div class="col-md-3 no-padding" dir="rtl">
+                                    </div>
+                                    <div class="col-md-3 no-padding" dir="rtl">
                                         <div class="input-group">
-                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                style="background-color: #db3d8f; color: white;">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #db3d8f; color: white;">
                                             {{ form.product_sort_by_lowest_price.label }}:
                                             {{ form.product_sort_by_lowest_price }}
                                         </span>
@@ -829,78 +881,80 @@
 
                                     <div class="col-md-3 no-padding" dir="rtl">
                                         <div class="input-group">
-                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                style="background-color: #7f3ddb; color: white;">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #7f3ddb; color: white;">
                                             {{ form.product_sort_by_category_sort_number.label }}:
                                             {{ form.product_sort_by_category_sort_number }}
                                         </span>
                                         </div>
-                                    </div>                                    <div class="col-md-3 no-padding" dir="rtl">
+                                    </div>
+                                    <div class="col-md-3 no-padding" dir="rtl">
                                         <div class="input-group">
-                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                style="background-color: #db3d6c; color: white;">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #db3d6c; color: white;">
                                             {{ form.product_sort_by_brand_sort_number.label }}:
                                             {{ form.product_sort_by_brand_sort_number }}
                                         </span>
                                         </div>
-                                    </div>                                    <div class="col-md-3 no-padding" dir="rtl">
+                                    </div>
+                                    <div class="col-md-3 no-padding" dir="rtl">
                                         <div class="input-group">
-                                          <span {% if not request.user_agent.is_mobile %} class="input-group-addon" {% endif %}
-                                                style="background-color: #db3d8f; color: white;">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #db3d8f; color: white;">
                                             {{ form.product_sort_by_existing_count.label }}:
                                             {{ form.product_sort_by_existing_count }}
                                         </span>
                                         </div>
                                     </div>
-                                   
+
                                 </div>
                             </div>
-
-
-
 
 
                             <br>
                             <br>
                             {{ form.long_description }}
                             {{ form.media }}
-                        
-                        
-        <script>
-     fetch('{% url "admin_panel:font_list_json" %}')
-        .then(response => response.json())
-        .then(fontList => {
-            const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
-            CKEDITOR.instances['{{ form.long_description.id_for_label }}'].destroy(true);
-            CKEDITOR.replace('{{ form.long_description.id_for_label }}', {
-                toolbar: [
-            ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
-             'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
-             'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
-             'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
-             'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
-             'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
-             'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
-             'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
-             'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
-             'Styles', 'Format', 'Font', 'FontSize'],
 
-        ],
-                width: 750,
-                height: 200,
-                skin: 'moono',
-                extraPlugins: 'font',
-                contentsCss: ['{% url 'admin_panel:fonts.css' %}'],
-                font_names: fontNamesStr +
-                    'Arial/Arial, Helvetica, sans-serif;' +
-                    'Courier New/Courier New, Courier, monospace;' +
-                    'Georgia/Georgia, serif;' +
-                    'Tahoma/Tahoma, Geneva, sans-serif;' +
-                    'Times New Roman/Times New Roman, Times, serif;' +
-                    'Verdana/Verdana, Geneva, sans-serif;'
-            });
-        });
-</script>
+
+                            <script>
+                                fetch('{% url "admin_panel:font_list_json" %}')
+                                    .then(response => response.json())
+                                    .then(fontList => {
+                                        const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
+                                        CKEDITOR.instances['{{ form.long_description.id_for_label }}'].destroy(true);
+                                        CKEDITOR.replace('{{ form.long_description.id_for_label }}', {
+                                            toolbar: [
+                                                ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
+                                                    'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
+                                                    'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
+                                                    'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
+                                                    'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
+                                                    'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
+                                                    'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
+                                                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
+                                                    'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
+                                                    'Styles', 'Format', 'Font', 'FontSize'],
+
+                                            ],
+                                            width: 750,
+                                            height: 200,
+                                            skin: 'moono',
+                                            extraPlugins: 'font',
+                                            contentsCss: ['{% url 'admin_panel:fonts.css' %}'],
+                                            font_names: fontNamesStr +
+                                                'Arial/Arial, Helvetica, sans-serif;' +
+                                                'Courier New/Courier New, Courier, monospace;' +
+                                                'Georgia/Georgia, serif;' +
+                                                'Tahoma/Tahoma, Geneva, sans-serif;' +
+                                                'Times New Roman/Times New Roman, Times, serif;' +
+                                                'Verdana/Verdana, Geneva, sans-serif;'
+                                        });
+                                    });
+                            </script>
 
                             <div class="col-md-12">
                                 <br>

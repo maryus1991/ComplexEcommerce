@@ -49,6 +49,9 @@ class SiteSetting(models.Model):
     active_post_delivery = models.BooleanField(
         default=True, verbose_name="فعال کردن  ارسال با پست برای فروشگاها"
     )
+    active_freight_delivery = models.BooleanField(
+        default=True, verbose_name="فعال کردن  ارسال با باربری (پس کرایه)"
+    )
     active_tipax_delivery = models.BooleanField(
         default=True, verbose_name="فعال کردن ارسال با تپاکس برای فروشگاها"
     )
@@ -58,6 +61,8 @@ class SiteSetting(models.Model):
     active_physical_delivery = models.BooleanField(
         default=True, verbose_name="فعال کردن تحویل فیزیکی برای فروشگاها"
     )
+
+
     active_receive_official_invoice = models.BooleanField(
         default=True, verbose_name="فعال کردن دریافت فاکتور رسمی"
     )

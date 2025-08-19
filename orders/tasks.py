@@ -25,6 +25,7 @@ def clean_expired_details(self):
             order.tipax_post_delivery,
             order.in_city_delivery,
             order.physical_delivery,
+            order.freight_delivery,
             order.use_discount_code,
             order.official_invoice,
             bool(order.additional_descriptions),

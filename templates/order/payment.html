@@ -398,7 +398,7 @@
                         <p class="font-DanaMedium">نوع ارسال :</p>
                     </span>
 
-                    {% if order.vip_post or order.tipax_post_delivery or order.physical_delivery or  order.in_city_delivery %}
+                    {% if order.vip_post or order.tipax_post_delivery or order.physical_delivery or  order.in_city_delivery or order.freight_delivery %}
 
                         <div class="text-sm text-green-500">
                             <p>
@@ -406,6 +406,7 @@
                                 {% if order.vip_post %} پست
                                 {% elif order.tipax_post_delivery %} تیپاکس
                                 {% elif order.physical_delivery %} تحویل حضوری
+                                {% elif order.freight_delivery %}باربری (پس کرایه)
                                 {% elif order.in_city_delivery %}  پست درون شهری
                                 {% endif %}
                                 )
@@ -414,7 +415,7 @@
 
                                     {{ order.delivery_price|tdc }}
                                     تومان می باشد
-                                {% elif order.physical_delivery %}
+                                {% elif order.physical_delivery or order.freight_delivery %}
                                     رایگان می باشد
                                 {% else %}
                                     از ({{ order.store.orgin_city }})
@@ -468,6 +469,16 @@
                             <span
                                     class="w-4 h-4 border rounded-full  {% if order.physical_delivery %} bg-green-400 border-green-500 {% else %} border-gray-400  group-focus:bg-blue-400 group-focus:border-blue-500 {% endif %} duration-300 transition-all "></span>
                                 تحویل حضوری ({{ order.store.orgin_city }})
+                            </a>
+                        {% endif %}                  
+                        {% if site.active_freight_delivery and order.store.have_freight_delivery %}
+
+                            <a type="button"
+                               href="{% url 'orders:choose-type-of-delivery' store_id=order.store.id pk=order.id did=5 %}"
+                               class="group ring-transparent ring-1 border {% if  order.freight_delivery %} border-green-500 bg-green-200  {% else %} focus:ring-blue-500 dark:ring-white/20 dark:focus:ring-blue-400  {% endif %}">
+                            <span
+                                    class="w-4 h-4 border rounded-full  {% if order.freight_delivery %} bg-green-400 border-green-500 {% else %} border-gray-400  group-focus:bg-blue-400 group-focus:border-blue-500 {% endif %} duration-300 transition-all "></span>
+                                باربری (پس کرایه)  
                             </a>
                         {% endif %}
 

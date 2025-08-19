@@ -516,6 +516,7 @@ class ProductActiveAndDeactivateView(AdminUserMixin, RedirectView):
                 order__tipax_post_delivery=False,
                 order__in_city_delivery=False,
                 order__physical_delivery=False,
+                order__freight_delivery=False,
             ).delete()
             UserFavorite.objects.filter(product=product).delete()
             messages.warning(self.request, "ایتم مورد نظر غیر فعال شد و از تمامی سبد خرید ها حذف شد")
@@ -548,6 +549,7 @@ class ProductAdminVerifiedView(AdminUserMixin, RedirectView):
                 order__tipax_post_delivery=False,
                 order__in_city_delivery=False,
                 order__physical_delivery=False,
+                order__freight_delivery=False,
             ).delete()
             UserFavorite.objects.filter(product=product).delete()
             messages.warning(self.request, "ایتم مورد نظر مورد تایید ادمین قرار نگرفت و از تمامی سبد خرید ها حذف شد")

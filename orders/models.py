@@ -48,6 +48,7 @@ class Order(models.Model):
     tipax_post_delivery = models.BooleanField(default=False)
     in_city_delivery = models.BooleanField(default=False)
     physical_delivery = models.BooleanField(default=False)
+    freight_delivery = models.BooleanField(default=False)
 
     vip_post_price = models.PositiveBigIntegerField(default=0)
     tipax_post_price = models.PositiveBigIntegerField(default=0)

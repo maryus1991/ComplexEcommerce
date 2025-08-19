@@ -217,12 +217,20 @@
                                 class="btn btn-block btn-flat">داشتن تحویل فیزیکی: {{ form.have_physical_delivery }}</button>
                     </span>
                     </div>
-                </div>
-
-                <div class="col-md-4">
+                </div>             
+                <div class="col-md-2">
                     <div class="input-group input-group-sm">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-flat">هزینه پست درون شهری (تومان)</button>
+                        <button type="button"
+                                class="btn btn-block btn-flat">داشتن تحویل باربری (پس کرایه): {{ form.have_freight_delivery }}</button>
+                    </span>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-flat">هزینه پست درون شهری</button>
                     </span>
                         {{ form.in_same_city_delivery_price }}
                     </div>

@@ -273,6 +273,7 @@ class OrderFilteringForm(forms.Form):
             ("12", "تیپاکس"),
             ("21", "ارسال درون شهری"),
             ("22", "تحویل حضوری"),
+            ("23", " باربری (پس کرایه)"),
         ],
         required=False,
         widget=forms.Select(attrs={"class": "form-control"}),
@@ -1056,6 +1057,8 @@ class AddStoreForm(forms.ModelForm):
             'card_shaba',
             'card_name',
             'time_for_return_order_days',
+            'have_freight_delivery',
+
 
         )
 
@@ -1128,6 +1131,7 @@ class AddStoreForm(forms.ModelForm):
             ),
             "is_active": forms.CheckboxInput(attrs={}),
             "have_post_delivery": forms.CheckboxInput(attrs={}),
+            "have_freight_delivery": forms.CheckboxInput(attrs={}),
             "have_tipax_delivery": forms.CheckboxInput(attrs={}),
             "have_in_same_city_delivery": forms.CheckboxInput(attrs={}),
             "have_physical_delivery": forms.CheckboxInput(attrs={}),

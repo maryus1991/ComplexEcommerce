@@ -324,6 +324,7 @@ class RemoveProductFromOrder(LoginRequiredMixin, RedirectView):
             obj.count += order_detail.count
             obj.save()
 
+
             order_detail.delete()
         else:
             raise Http404()
@@ -364,6 +365,7 @@ class AddAddressToOrder(LoginRequiredMixin, View):
         order.tipax_post_delivery = False
         order.in_city_delivery = False
         order.physical_delivery = False
+        order.freight_delivery = False
         order.address = address
         order.save()
 
@@ -654,6 +656,7 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
                 order.vip_post = True
                 order.tipax_post_delivery = False
                 order.in_city_delivery = False
+                order.freight_delivery = False
                 order.physical_delivery = False
                 price = order.calculate_post_price()
 
@@ -675,6 +678,8 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
                 order.vip_post = False
                 order.in_city_delivery = False
                 order.physical_delivery = False
+                order.freight_delivery = False
+
                 order.delivery_price = price
                 order.save()
 
@@ -691,6 +696,7 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
             if order.store.orgin_city_id == order.address.city_code:
                 order.in_city_delivery = True
                 order.tipax_post_delivery = False
+                order.freight_delivery = False
                 order.vip_post = False
                 order.physical_delivery = False
                 order.delivery_price = order.store.in_same_city_delivery_price
@@ -705,6 +711,17 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
         elif delivery_id == 4 and site.active_physical_delivery and order.store.have_physical_delivery:  # physical delivery
 
             order.physical_delivery = True
+            order.freight_delivery = False
+            order.in_city_delivery = False
+            order.tipax_post_delivery = False
+            order.vip_post = False
+            order.delivery_price = 0
+            order.save()
+
+        elif delivery_id == 5 and site.active_freight_delivery and order.store.have_freight_delivery:  # freight delivery
+
+            order.physical_delivery = False
+            order.freight_delivery = True
             order.in_city_delivery = False
             order.tipax_post_delivery = False
             order.vip_post = False
@@ -794,6 +811,7 @@ class ConformPayment(LoginRequiredMixin, View):
                 order.vip_post or
                 order.tipax_post_delivery or
                 order.in_city_delivery or
+                order.freight_delivery or
                 order.physical_delivery
         ):
 

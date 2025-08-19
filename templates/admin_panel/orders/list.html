@@ -629,7 +629,9 @@
                             {% elif item.in_city_delivery %}
                                 <span class="label label-success">ارسال درون شهری</span>
                             {% elif item.physical_delivery %}
-                                <span class="label label-success">تحویل حضوری</span>
+                                <span class="label label-success">تحویل حضوری</span>               
+                            {% elif item.freight_delivery %}
+                                <span class="label label-success"> باربری (پس کرایه)</span>
                             {% endif %}
                         </td>
                         <td class="text-center">{{ item.second_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>

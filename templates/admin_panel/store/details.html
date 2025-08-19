@@ -141,6 +141,16 @@
                 <td class="col-md-3 col-sm-6 col-xs-12"><strong>هزینه پست درون شهری:</strong>{{ item.in_same_city_delivery_price|tdc }}</td>
             </tr>
             <tr>
+                <td class="col-md-3 col-sm-6 col-xs-12"><strong>وضعیت ارسال با باربری (پس کرایه):</strong>
+                    {% if item.have_freight_delivery %}
+                        <span class="label label-success">فعال</span>
+                    {% else %}
+                        <span class="label label-danger">غیر فعال</span>
+                    {% endif %}
+                </td>
+ 
+            </tr>
+            <tr>
                 <td class="col-md-3 col-sm-6 col-xs-12"><strong>هزینه اضافی :</strong>{{ item.additional_price|tdc }}</td>
                 <td colspan="2" class="col-md-6 col-sm-12 col-xs-12"><strong>مالیات اضافی :</strong>{{ item.additional_tax }}</td>
                 <td colspan="2" class="col-md-6 col-sm-12 col-xs-12"><strong>تاریخ ساخت

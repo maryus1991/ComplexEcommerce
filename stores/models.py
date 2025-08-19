@@ -60,6 +60,7 @@ class Store(models.Model):
     have_tipax_delivery = models.BooleanField(default=True)
     have_in_same_city_delivery = models.BooleanField(default=True)
     have_physical_delivery = models.BooleanField(default=True)
+    have_freight_delivery = models.BooleanField(default=True)
     in_same_city_delivery_price = models.PositiveIntegerField(default=0)
 
     additional_price = models.PositiveIntegerField(default=0)
@@ -116,7 +117,6 @@ class StoreApps(models.Model):
 
     def get_absolute_url(self):
         return reverse("site:apps-details", kwargs={"pk": self.pk})
-
 
 
 class UsedAppView(models.Model):

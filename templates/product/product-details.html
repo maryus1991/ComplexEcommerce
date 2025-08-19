@@ -428,7 +428,7 @@
             </div>
             <div class="w-3/4 sm:w-2/3 pl-2">
                 <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
-                    {{ product.name }}
+                    {{ product.short_name }}
                 </h3>
                 <div class="mt-auto flex items-center gap-1">
 
@@ -465,7 +465,7 @@
                     </div>
                     <div class="w-3/4 sm:w-2/3 pl-2">
                         <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
-                            {{ child.name }}
+                            {{ child.short_name }}
                         </h3>
                         <div class="mt-auto flex items-center gap-1">
  
@@ -507,7 +507,7 @@
                 </div>
                 <div class="w-3/4 sm:w-2/3 pl-2">
                     <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
-                        {{ product.parent.name }}
+                        {{ product.parent.short_name }}
                     </h3>
                     <div class="mt-auto flex items-center gap-1">
             {% if product.parent.have_discount %}
@@ -550,7 +550,7 @@
                     </div>
                     <div class="w-3/4 sm:w-2/3 pl-2">
                         <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
-                            {{ child.name }}
+                            {{ child.short_name }}
                         </h3>
                         <div class="mt-auto flex items-center gap-1">
             {% if child.have_discount %}

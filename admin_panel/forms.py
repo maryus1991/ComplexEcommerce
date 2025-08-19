@@ -27,7 +27,6 @@ from jalali_date.widgets import AdminJalaliDateWidget
 
 User = get_user_model()
 
-
 class StorePermissions(forms.ModelForm):
     class Meta:
         model = Store
@@ -61,7 +60,6 @@ class StorePermissions(forms.ModelForm):
             'allowed_to_activate_product_brand_with_out_admin_per': forms.CheckboxInput(),
             'allowed_to_activate_post_categories_with_out_admin_per': forms.CheckboxInput(),
         }
-
 
 class AdminUsersFilteringForm(forms.Form):
     user_PhoneNumber = PhoneNumberField(
@@ -219,7 +217,6 @@ class AdminUsersFilteringForm(forms.Form):
         label="تلفن یا نامبر شخص (رسمی)",
         widget=forms.TextInput(attrs={"class": "form-control"}),
     )
-
 
 class AdminOrderFilteringForm(forms.Form):
     discount = forms.ModelChoiceField(
@@ -384,6 +381,7 @@ class AdminOrderFilteringForm(forms.Form):
             ("12", "تیپاکس"),
             ("21", "ارسال درون شهری"),
             ("22", "تحویل حضوری"),
+            ("23", " باربری (پس کرایه)"),
         ],
         required=False,
         widget=forms.Select(attrs={"class": "form-control"}),
@@ -532,7 +530,6 @@ class AdminOrderFilteringForm(forms.Form):
             items.pop(key)
         return items
 
-
 class AdminBlogFilteringForm(forms.Form):
     store = forms.ModelChoiceField(
         queryset=Store.objects.all(),
@@ -642,7 +639,6 @@ class AdminBlogFilteringForm(forms.Form):
             items.pop(key)
         return items
 
-
 class SpecificsOrdersModelForm(forms.ModelForm):
     user = forms.ModelChoiceField(
         queryset=User.objects.all(),
@@ -680,7 +676,6 @@ class SpecificsOrdersModelForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"class": "form-control"}),
         }
 
-
 class SiteLawModelForm(forms.ModelForm):
     description = forms.CharField(
         widget=CKEditorUploadingWidget(attrs={'id': 'id_description'})
@@ -693,7 +688,6 @@ class SiteLawModelForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "is_active": forms.CheckboxInput(),
         }
-
 
 class MessagingUserForm(forms.Form):
     user = forms.ModelMultipleChoiceField(
@@ -783,7 +777,6 @@ class MessagingUserForm(forms.Form):
         ),
     )
 
-
 class ExcludeUserFromMessagingForm(forms.Form):
     exclude_user = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),
@@ -855,7 +848,6 @@ class ExcludeUserFromMessagingForm(forms.Form):
         widget=forms.CheckboxInput()
     )
 
-
 class AddDiscountForm(forms.ModelForm):
     end_date_discount = JalaliDateField(
         required=False,
@@ -922,7 +914,6 @@ class AddDiscountForm(forms.ModelForm):
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "is_active": forms.CheckboxInput(),
         }
-
 
 class AddProductForm(forms.ModelForm):
     description = RichTextUploadingFormField(
@@ -1108,7 +1099,6 @@ class AddProductForm(forms.ModelForm):
             ),
         }
 
-
 class AddUserModelForm(forms.ModelForm):
     PhoneNumber = PhoneNumberField(
         widget=forms.TextInput(
@@ -1188,7 +1178,6 @@ class AddUserModelForm(forms.ModelForm):
             "legal_person": forms.CheckboxInput(),
             "message_verified": forms.CheckboxInput(),
         }
-
 
 class SiteSettingModelForm(forms.ModelForm):
     logo = forms.ImageField(
@@ -1334,6 +1323,7 @@ class SiteSettingModelForm(forms.ModelForm):
             'product_sort_by_category_sort_number': forms.CheckboxInput(),
             'product_sort_by_brand_sort_number': forms.CheckboxInput(),
             'product_sort_by_existing_count': forms.CheckboxInput(),
+            'active_freight_delivery': forms.CheckboxInput(),
         }
 
 class BannersModelForm(forms.ModelForm):
@@ -1580,3 +1570,4 @@ class AddBlogCategoryModelForm(forms.ModelForm):
             ),
             "is_active": forms.CheckboxInput(),
         }
+
