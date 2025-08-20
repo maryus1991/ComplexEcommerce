@@ -401,7 +401,7 @@
                                                     </svg>
                                                 </button>
                                                 <input type="text" name="count" id="quantity-{{ item.product.id }}"
-                                                       min="1" value="{{ item.count }}" max="{{ item.product.count }}"
+                                                       min="1" value="{{ item.count }}"  max="{{ item.product.count|sum:item.count }}" 
                                                        class="w-12 px-1 py-1.5 text-center bg-transparent border-0 border-gray-200 dark:border-zinc-600 focus:ring-1 ">
                                                 <button type="button"
                                                         onclick="updateQuantity('{{ item.product.id }}', 1)"

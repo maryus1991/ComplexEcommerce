@@ -719,14 +719,15 @@
 
             </script>
 
-            {% if product.count > 0 %}
+            {% if product.count > 0 or user_order_detail.count > 0  %}
 
                 <form action="{% url 'orders:add' product.id %}" class="flex flex-col gap-y-5">
                     <div class="flex items-center justify-between rounded-lg border border-gray-200 dark:border-white/20 py-2 px-3">
                         <svg onclick="handle_input('+')" class="w-6 h-6 shrink-0 text-green-600">
                             <use href="#plus"></use>
                         </svg>
-                        <input type="number" name="count" id="customInput" min="0" max="{{ product.count }}"
+                        
+                        <input type="number" name="count" id="customInput" min="0" {% if user_order_detail is not None %} max="{{ product.count|sum:user_order_detail.count }}" {% else %} max="{{ product.count }}" {% endif %}
                                value="{{ user_order_detail.count|default:1 }}"
                                class="custom-input mx-4 w-10 text-lg bg-transparent text-center flex-1">
                         <svg onclick="handle_input('-')" class="w-6 h-6 shrink-0  text-red-500">
@@ -750,24 +751,13 @@
 
                 </form>
 
-                {#                <div class="text-sm  text-gray-400 flex xl:items-center gap-x-1">#}
-                {#                    <svg class="w-5 h-5">#}
-                {#                        <use href="#info"></use>#}
-                {#                    </svg>#}
-                {#                    <p>ارسال رایگان برای خریدهای بالای 400 هزار تومان</p>#}
-                {#                </div>#}
+ 
             {% else %}
                 <button class="w-full flex items-center gap-x-1 justify-center bg-red-500 text-white hover:bg-red-600 transition-all rounded-lg shadow py-2">
                     موجودی این محصول تمام شده است
 
                 </button>
-                {#                <a class="flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2"#}
-                {#                   href="{% url 'product:notif_me' product.id %}">#}
-                {#                    <svg class="w-5 h-5">#}
-                {#                        <use href="#shopping-bag"></use>#}
-                {#                    </svg>#}
-                {#                    موجود شد خبرم کن#}
-                {#                </a>#}
+ 
 
             {% endif %}
             {% if user.is_authenticated %}

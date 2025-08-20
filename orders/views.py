@@ -174,16 +174,18 @@ class AddOrder(LoginRequiredMixin, RedirectView):
         if not num_str.isdigit() or int(num_str) < 0:
             raise Http404()
 
-        num = int(num_str)
-        product_id = kwargs.get("pk")
-        product = get_object_or_404(Product,
-                                    pk=product_id,
-                                    is_active=True,
-                                    store__is_active=True,
-                                    store__is_verified=True,
-                                    admin_verified=True,
-                                    brand__is_active=True,
-                                    category__is_active=True)
+        try:
+            num = int(num_str)
+        except Exception:
+            messages.error(
+                self.request,'در عدد ارسالی مشکلی پیش اومد لطفا دوباره امتحان کنید'
+            )
+            return referer
+
+        product = get_object_or_404(Product, pk=kwargs.get("pk"),
+        is_active=True, store__is_active=True, store__is_verified=True,
+        admin_verified=True, brand__is_active=True, category__is_active=True)
+
 
         order, _ = Order.objects.get_or_create(
             user=request.user,
@@ -212,7 +214,26 @@ class AddOrder(LoginRequiredMixin, RedirectView):
             return referer
 
         if new_count == 0:
-            order_detail.delete()
+
+            try:
+                with transaction.atomic():
+                    if difference > 0:
+                        # کاهش موجودی
+                        product.count -= abs(difference)
+                    elif difference < 0:
+                        # افزایش موجودی
+                        product.count += abs(difference)
+                    product.save()
+
+                    order_detail.delete()
+
+                    order.calculate_total_price()
+                    order.save()
+
+            except Exception as e:
+                messages.error(request, "خطایی در افزودن محصول به سبد خرید رخ داد.")
+                return referer
+
             messages.info(request, "محصول با موفقیت از سبد خرید حذف شد.")
             return referer
 
@@ -220,7 +241,7 @@ class AddOrder(LoginRequiredMixin, RedirectView):
             with transaction.atomic():
                 if difference > 0:
                     # کاهش موجودی
-                    product.count -= difference
+                    product.count -= abs(difference)
                 elif difference < 0:
                     # افزایش موجودی
                     product.count += abs(difference)
@@ -232,6 +253,7 @@ class AddOrder(LoginRequiredMixin, RedirectView):
 
                 order.calculate_total_price()
                 order.save()
+
         except Exception as e:
             messages.error(request, "خطایی در افزودن محصول به سبد خرید رخ داد.")
             return referer

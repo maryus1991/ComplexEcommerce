@@ -50,6 +50,14 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_SSL_REDIRECT = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
+
+
 CSRF_TRUSTED_ORIGINS = [
     "https://amvajsarmad.com",
     "https://*.amvajsarmad.com",
@@ -69,7 +77,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "jazzmin",
+
     "django.contrib.admin",
     'django.contrib.sitemaps',
 
@@ -95,6 +103,8 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "cachalot",
     "django_recaptcha",
+    "csp",
+
 
 ]
 
@@ -117,6 +127,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_user_agents.middleware.UserAgentMiddleware",
     "auditlog.middleware.AuditlogMiddleware",
+    "csp.middleware.CSPMiddleware",
+
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -136,6 +148,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = "config.wsgi.application"
 
@@ -386,4 +399,51 @@ EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS") == "True"
+
+
+# csp config
+# منابع پیش‌فرض
+CSP_DEFAULT_SRC = ("'self'",)
+
+# اسکریپت‌ها (جاوااسکریپت)
+CSP_SCRIPT_SRC = (
+    "'self'",                 # فقط از خودت
+    "cdnjs.cloudflare.com",   # برای کتابخونه‌های معروف (jquery, bootstrap js)
+    "cdn.jsdelivr.net",       # برای جاوااسکریپت از jsdelivr
+    "www.googletagmanager.com",  # اگر Google Tag Manager استفاده کنی
+    "www.google-analytics.com",  # اگر GA فعال باشه
+)
+
+# استایل‌ها (CSS)
+CSP_STYLE_SRC = (
+    "'self'",
+    "fonts.googleapis.com",   # برای گوگل فونت
+    "cdnjs.cloudflare.com",   # برای bootstrap/css از CDN
+    "cdn.jsdelivr.net",
+    "'unsafe-inline'",        # ⚠️ فقط اگه واقعا inline-style داری (bootstrap یا template قدیمی)
+)
+
+# فونت‌ها
+CSP_FONT_SRC = (
+    "'self'",
+    "fonts.gstatic.com",      # برای فونت‌های گوگل
+    "cdnjs.cloudflare.com",
+    "cdn.jsdelivr.net",
+)
+
+# عکس‌ها
+CSP_IMG_SRC = (
+    "'self'",
+ )
+
+# Ajax / API calls
+CSP_CONNECT_SRC = (
+    "'self'",
+    "www.google-analytics.com",
+)
+
+# Media (ویدئو، صدا)
+CSP_MEDIA_SRC = ("'self'",)
+
+
 

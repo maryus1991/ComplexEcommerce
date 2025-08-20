@@ -31,6 +31,17 @@ def clac_tax_no_format(price: int, discount: int):
 
 @register.filter
 def sum(x, y):
+    try:
+        x = int(x)
+    except Exception:
+        x = 0
+
+    try:
+        y = int(y)
+    except Exception:
+        y = 0
+
+
     return "{:,}".format(int(x) + int(y))
 
 

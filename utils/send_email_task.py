@@ -1,38 +1,43 @@
 from config import settings
 from config.celery import shared_task
-from django.core.mail import send_mail
-import smtplib
-from email.mime.text import MIMEText
-from datetime import datetime
-from sitesetting.models import  SiteSetting
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from sitesetting.models import SiteSetting
+from datetime import datetime
+import logging
 
-@shared_task(queue='email')
-def send_email_task(recipient_list, link):
+logger = logging.getLogger(__name__)
+
+@shared_task(queue='email', bind=True, max_retries=3, default_retry_delay=60)
+def send_email_task(self, recipient_email, link):
     try:
+        # آماده سازی context
         context = {
             'site': SiteSetting.objects.first(),
             'link': link,
         }
-        html_message = render_to_string(f'utils/emails/send_mail_verify.html', context)
-        # smtp_server = settings.EMAIL_HOST
-        smtp_server = '185.97.116.199'
-        smtp_port = 587
-        from_addr = settings.EMAIL_HOST_USER
-        to_addr = recipient_list
-        password = settings.EMAIL_HOST_PASSWORD
-        msg = MIMEText(html_message, 'html')
-        msg['Subject'] = 'ایمیل خود را تایید کنید'
-        msg['From'] = from_addr
-        msg['To'] = to_addr
-        msg['Date'] = datetime.today().strftime('%m/%d/%Y %I:%M:%S %p')
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()
-        server.login(from_addr, password)
-        server.sendmail(from_addr, [to_addr], msg.as_string())
-        server.quit()
 
-        return f"Email sent to {recipient_list} at {datetime.now()}"
+        # رندر HTML و متن fallback
+        html_content = render_to_string('utils/emails/send_mail_verify.html', context)
+        text_content = f"لطفاً ایمیل خود را تایید کنید: {link}"
+
+        # ساخت پیام ایمیل
+        msg = EmailMultiAlternatives(
+            subject='ایمیل خود را تایید کنید',
+            body=text_content,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[recipient_email],
+        )
+        msg.attach_alternative(html_content, "text/html")
+
+        # ارسال ایمیل
+        msg.send(fail_silently=False)
+
+        logger.info(f"Email sent to {recipient_email} at {datetime.now()}")
+        return f"Email sent to {recipient_email} at {datetime.now()}"
 
     except Exception as e:
-        return f"Email sending failed: {str(e)}"
+        logger.error(f"Email sending failed to {recipient_email}: {str(e)}")
+        # Retry خودکار با Celery
+        raise self.retry(exc=e)
+
