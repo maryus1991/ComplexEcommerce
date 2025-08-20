@@ -7,18 +7,13 @@ urlpatterns = [
     path("", views.StoreMainPage.as_view(), name="home"),
 
     # product fast panel
-    path('product/fat-panel/list/', views.ProductFastPanelListView.as_view(), name='product-fast-panel-list'),
-    path('product/fat-panel/change/count/', views.ProductFastPanelChangeCount.as_view(), name='product-fast-panel-change-count'),
-    path('product/fat-panel/change/price-amount', views.ProductFastPanelChangePrice.as_view(), name='product-fast-panel-change-price'),
+    path('product/fast-panel/list/', views.ProductFastPanelListView.as_view(), name='product-fast-panel-list'),
+    path('product/fast-panel/change-group/', views.ProductFastPanelGropeChange.as_view(), name='product-fast-panel-group-change'),
+    path('product/fast-panel/change/price-amount/<int:pk>/', views.ProductFastPanelChangePrice.as_view(), name='product-fast-panel-change-price'),
+    path('product/fast-panel/change/count-amount/<int:pk>/', views.ProductFastPanelChangeCount.as_view(), name='product-fast-panel-change-count'),
 
-
-    # add child for product
+    # children of product
     path('product/children/<int:pk>/list/', views.ProductChildrenListView.as_view(), name='product-children-list'),
-    path("product/children/<int:pk>/active-deativate/<int:child_id>/", views.ProductChildrenActiveAdDeactivate.as_view(), name='product-children-active-deactivate'),
-    path("product/children/<int:pk>/delete/<int:child_id>/", views.ProductChildrenDelete.as_view(), name='product-children-delete'),
-    path("product/children/<int:pk>/create/", views.ProductCreateChildren.as_view(), name='product-children-create'),
-    path("product/children/<int:pk>/update/<int:child_id>/", views.ProductUpdateChildren.as_view(), name='product-children-update'),
-
 
     # return orders
     path("return-order/", views.ReturnOrderList.as_view(), name="return-order-list"),

@@ -759,6 +759,8 @@ class BrandAndCategorySearchForm(forms.Form):
 
 
 class AddProductForm(forms.ModelForm):
+
+
     description = forms.CharField(
         required=False,
         widget=CKEditorUploadingWidget(attrs={'id': 'id_description'})
@@ -775,6 +777,21 @@ class AddProductForm(forms.ModelForm):
                 "tabindex": "-1",
                 "aria-hidden ": "true",
                 "placeholder": "درسته بندی",
+            }
+        ),
+    )
+    parent = forms.ModelChoiceField(
+        queryset=Product.objects.all(),
+        required=False,
+        empty_label="مادر محصول را انتخاب کنید",
+        widget=forms.Select(
+            attrs={
+                "class": 'form-control select2 select2-hidden-accessible"',
+                "style": "width: 100%;",
+                "tabindex": "-1",
+                "aria-hidden ": "true",
+                "placeholder": "مادر",
+                "dir": "rtl",
             }
         ),
     )
@@ -881,11 +898,20 @@ class AddProductForm(forms.ModelForm):
             "width",
             "height",
             "specs",
+            "parent",
+            "short_name",
+            "group_name",
 
         )
         widgets = {
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "عنوان"}
+            ),
+            "short_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": " نام کوتاه "}
+            ),
+            "group_name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "نام گروه "}
             ),
             "price": forms.NumberInput(
                 attrs={"class": "form-control number-input", "placeholder": "قیمت"}
