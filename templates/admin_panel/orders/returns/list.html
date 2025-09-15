@@ -1,0 +1,205 @@
+{% extends 'Base/AdminBase.html' %}
+{% load jalali_tags %}
+{% load products_tags %}
+
+{% block title %}
+    سفارشات مرجوعی
+
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">
+        صفحه فروشگاه
+    </li>
+    <li class="active">سفارشات مرجوعی</li>
+{% endblock %}
+
+
+
+{% block body %}
+    <div class="panel box box-primary panel-default" style="margin-top: 20px;">
+        <div class="panel-heading clearfix">
+            <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست سفارشات مرجوعی
+            </h3>
+                        <div class="pull-left">
+<form action="" method="get" class="form-inline">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="input-group">
+                <input type="text" name="number" style="width: 50%;" class="form-control col-xs-6 input-sm col-md-6" placeholder="جستجوی شماره...">
+                <input type="text" name="store" style="width: 50%;" class="form-control col-xs-6 input-sm col-md-6" placeholder="جستجوی فروشگاه...">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-sm btn-primary">
+                        <i class="fa fa-search"></i>
+                        <span class="hidden-xs"> جستجو</span>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+</form>
+
+<style>
+@media (max-width: 768px) {
+    .input-group input[type="text"] {
+        width: 50% !important;
+        float: left;
+    }
+}
+</style>
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered table-striped">
+                <thead>
+                <tr class="bg-primary">
+                    <th class="text-center" width="5%">#</th>
+                    <th class="text-center" width="15%">کاربر</th>
+                    <th class="text-center" width="15%">فروشگاه</th>
+                    <th class="text-center" width="15%">سفارش</th>
+                    <th class="text-center" width="15%">مبلغ</th>
+                    <th class="text-center" width="20%">زمان باز شدن</th>
+                    <th class="text-center" width="20%">تاریخ بسته شدن</th>
+                    <th class="text-center" width="10%"></th>
+                    <th class="text-center" width="10%"></th>
+                    <th class="text-center" width="10%"></th>
+                    <th colspan="4" class="text-center" width="20%"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td class="text-center">{{ item.id }}</td>
+
+                        <td class="text-center">
+                            <strong dir="ltr">{{ item.user.PhoneNumber }}</strong>
+                        </td>
+                        <td class="text-center">
+                            <strong>{{ item.order.store.name }}</strong>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'store:return-order-details' item.id %}"
+                               class="btn btn-sm btn-success"
+                               data-toggle="tooltip">
+                                سفارش شماره
+                                {{ item.order.id }}
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <strong>{{ item.order.get_payment_price|tdc }}</strong>
+                        </td>
+
+                        <td class="text-center">
+                            <strong>{{ item.date_open_request|to_jalali:'%H:%M - %Y/%m/%d' }}</strong>
+                        </td>
+                        <td class="text-center">
+                            <strong>{{ item.date_close_request|to_jalali:'%H:%M - %Y/%m/%d' }}</strong>
+                        </td>
+                        <td class="text-center">
+                            {% if item.accept_by_store %}
+                                <span class="label label-success">
+                                    قبول شده توسط فروشگاه
+                                </span>
+                            {% else %}
+                                <span class="label label-danger">
+                                    قبول نشده توسط فروشگاه
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if item.send_request_to_return_this_order_by_admin %}
+
+                            {% if item.accept_by_admin %}
+                                <span class="label label-success">
+                                    قبول شده توسط ادمین
+                                </span>
+                            {% else %}
+                                <span class="label label-danger">
+                                    قبول نشده توسط ادمین
+                                </span>
+                            {% endif %}
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if item.send_request_to_return_this_order_by_admin %}
+                                <span class="label label-success">
+ارسال شده به ادمین
+                                </span>
+
+                            {% endif %}
+                        </td>
+
+
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:return-order-details' item.id %}"
+                               class="btn btn-sm btn-success"
+                               data-toggle="tooltip">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                        </td>
+                            {% if item.send_request_to_return_this_order_by_admin %}
+
+                        <td class="text-center">
+
+                            <a href="{% url 'admin_panel:return-accept-by-store' item.id %}"
+                               class="btn btn-sm btn-info"
+                               data-toggle="tooltip" title="تایید نهایی">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </td>
+                            {% endif %}
+
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="text-muted">تعداد کل ایتم ها: {{ items.count }}</small>
+                </div>
+                <div class="col-md-6 text-left">
+                    <ul class="pagination pagination-sm no-margin">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}">&raquo;</a></li>
+                        {% endif %}
+                        {% for page_number in page_obj.paginator.page_range %}
+                            <li {% if page_number == page_obj.number %}class="active" {% endif %}>
+                                <a href="?page={{ page_number }}">{{ page_number }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">&laquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip({
+                placement: 'top',
+                delay: {"show": 500, "hide": 100}
+            });
+
+            // افزودن کلاس form-control به تمام فیلدهای فرم
+            // This is already well-handled by Django's form rendering if using crispy forms or similar.
+            // If not, this line is good.
+            $('form input, form select, form textarea').addClass('form-control');
+
+            // تنظیمات برای فیلدهای تاریخ
+            $('.datepicker').datepicker({
+                format: 'yyyy/mm/dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+    </script>
+{% endblock %}

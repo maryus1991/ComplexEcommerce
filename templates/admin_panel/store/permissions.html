@@ -1,0 +1,192 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    بروز رسانی یا اضافه کردن فروشگاه
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">فروشگاها</li>
+    <li class="active">بروز رسانی اطلاعات فروشگاه یا اضافه کردن فروشگاه</li>
+{% endblock %}
+
+{% block body %}
+    <div class="box-primary" style="margin-top:40px">
+        <div class="box-header with-border">
+            <h3 class="box-title">بروز رسانی اطلاعات فروشگاه یا اضافه کردن فروشگاه</h3>
+            {% if item %}
+                <div class="pull-left">
+                    <a href="{% url 'admin_panel:store-detail' item.id %}" class="btn btn-sm btn-success"
+                       data-toggle="tooltip" title="مشاهده">
+                        <i class="fa fa-eye"></i>
+                    </a>
+                    <a href="{% url 'admin_panel:store-update' item.id %}" class="btn btn-sm btn-info"
+                       data-toggle="tooltip" title="ویرایش">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <a href="{% url 'admin_panel:store-active-deactivate' item.id %}"
+                       class="btn btn-sm btn-warning"
+                       data-toggle="tooltip"
+                       title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                        <i class="fa fa-power-off"></i>
+                    </a>
+                    <a href="{% url 'admin_panel:store-verify' item.id %}"
+                       class="btn btn-sm btn-info"
+                       data-toggle="tooltip"
+                       title="{% if item.is_active %}تایید نکردن اطلاعات{% else %}تایید کردن اطلاعات{% endif %}">
+                        <i class="fa fa-key"></i>
+                    </a>
+                    <a href="{% url 'admin_panel:store-delete' item.id %}" class="btn btn-sm btn-danger"
+                       data-toggle="tooltip" title="حذف">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <form role="form" method='POST' action='' class="box" enctype='multipart/form-data'>
+            {% csrf_token %}
+
+
+            <!-- ردیف سوم -->
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">اجازه گذاشتن دسته بندی محصولات: {{ form.can_stores_add_product_category }}</button>
+                    </span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">اجازه گذاشتن برند محصولات: {{ form.can_stores_add_product_brand }}</button>
+                    </span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">اجازه گذاشتن اضافه کردن محصول: {{ form.can_stores_add_product }}</button>
+                    </span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">اجازه گذاشتن دسته بندی بلاگ: {{ form.can_store_add_blog_category }}</button>
+                    </span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">اجازه افزودن پست: {{ form.can_store_add_blog_post }}</button>
+                    </span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">اجازه افزودن برنامه: {{ form.can_store_add_apps }}</button>
+                    </span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">اجازه افزودن کارمند: {{ form.can_store_add_users }}</button>
+                    </span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">فعال سازی خودکار تاییده ادمین هنگام افزودن و بروزسانی محصول : {{ form.allowed_to_add_and_edit_products_with_out_admin_per }}</button>
+                    </span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">فعال سازی خودکار تاییده ادمین هنگام افزودن و بروزسانی برنامه : {{ form.allowed_to_add_and_edit_apps_with_out_admin_per }}</button>
+                    </span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">فعال سازی خودکار تاییده ادمین هنگام افزودن و بروزسانی پست ها : {{ form.allowed_to_add_and_edit_posts_with_out_admin_per }}</button>
+                    </span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">فعال سازی خودکار هنگام افزودن دسته بندی محصولات : {{ form.allowed_to_activate_product_categories_with_out_admin_per }}</button>
+                    </span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">فعال سازی خودکار هنگام افزودن برند محصولات : {{ form.allowed_to_activate_product_brand_with_out_admin_per }}</button>
+                    </span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="box-body form-group flex col-md-12">
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">فعال سازی خودکار هنگام افزودن دسته بندی بلاگ : {{ form.allowed_to_activate_post_categories_with_out_admin_per }}</button>
+                    </span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-info btn-sm btn-block">ثبت</button>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- دکمه ثبت -->
+
+        </form>
+    </div>
+
+
+{% endblock %}
+
+

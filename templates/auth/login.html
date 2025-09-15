@@ -1,0 +1,127 @@
+
+
+{% extends 'Base/Base.html' %}
+
+{% block title %}
+    خوش امدید
+{% endblock %}
+
+{% block breadcrumb %}
+
+    <li class="flex items-center gap-x-2">
+        <a>صفحه کابری</a>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>
+    <li class="flex items-center gap-x-2">
+        <a>ورود به سایت</a>
+
+    </li>
+
+{% endblock %}
+
+{% block content %}
+
+<main class="container mx-auto flex items-center flex-col justify-center mt-8 px-4">
+    <div class="max-w-lg w-full shadow-lg rounded-lg overflow-hidden transition-all duration-300">
+        <div class="bg-white dark:bg-zinc-700 rounded-lg overflow-hidden">
+            <!-- Tab Navigation -->
+            <div class="flex border-b dark:border-zinc-600 mb-1">
+                <button id="phone-tab"
+                        class="flex-1 border-b-2 py-4 text-center font-DanaMedium text-nowrap text-green-500 border-green-500 transition-all duration-300">
+                    ورود با شماره تلفن
+                </button>
+                <a id="email-tab" href="{% url 'user:login-with-email' %}" 
+                        class="flex-1 border-b-2 py-4 text-center font-DanaMedium text-gray-500 dark:text-gray-400 border-transparent hover:text-green-500 transition-all duration-300">
+                    ورود با ایمیل
+                </a>
+            </div>
+
+            <div class="p-5 lg:p-10 mt-2">
+                <h2 class="text-center text-2xl lg:text-3xl font-DanaMedium text-gray-800 dark:text-white">
+                    خوش آمدید
+                </h2>
+                <p class="mt-2 lg:mt-3 text-center text-gray-500 dark:text-gray-400">
+                    ورود به حساب کاربری
+                </p>
+
+                <!-- Phone Login Form -->
+                <form id="phone-form" method="POST" action="{% url 'user:login' %}" class="mt-8 space-y-6"
+                      data-recaptcha="true" data-recaptcha-action="login">
+                    {% csrf_token %}
+                    {{ login_form.recaptcha }}
+                    {{ login_form.media }}
+                    <input type="hidden" value="phone" name="login_type_tel">
+                    <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-600 rounded-lg px-4 py-3 transition-all duration-300 focus-within:ring-2 focus-within:ring-green-500 focus-within:bg-gray-50 dark:focus-within:bg-zinc-500">
+                        {{ login_form.phone_number }}
+                        <svg class="h-5 w-5 text-gray-500 dark:text-gray-200 ml-2">
+                            <use href="#phone"></use>
+                        </svg>
+                    </div>
+
+                    <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-600 rounded-lg px-4 py-3 transition-all duration-300 focus-within:ring-2 focus-within:ring-green-500 focus-within:bg-gray-50 dark:focus-within:bg-zinc-500">
+                        {{ login_form.password }}
+                        <svg class="h-5 w-5 text-gray-500 dark:text-gray-200 ml-2">
+                            <use href="#lock"></use>
+                        </svg>
+                    </div>
+
+                    <div class="flex items-center justify-between mt-4">
+                        <div class="text-sm">
+                            <a class="font-medium text-green-500 hover:text-green-600 transition-colors duration-300"
+                               href="{% url 'user:reset_password' %}">
+                                فراموشی رمز عبور
+                            </a>
+                        </div>
+                        <div class="text-sm">
+                            <a class="font-medium text-green-500 hover:text-green-600 transition-colors duration-300"
+                               href="{% url 'user:active_account' %}">
+                                فعال کردن حساب کاربری
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button
+                                class="group relative w-full flex justify-center py-3 px-4 border border-transparent font-DanaMedium rounded-lg text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-300 shadow-md hover:shadow-lg"
+                                type="submit">
+                            وارد شوید
+                        </button>
+                    </div>
+                </form>
+
+
+            </div>
+
+            <div class="px-6 py-4 text-sm flex flex-wrap items-center justify-between dark:bg-zinc-700">
+                <div class="w-full sm:w-auto mb-2 sm:mb-0 flex items-center">
+                    <span class="text-gray-500 dark:text-gray-400">حساب کاربری ندارید؟</span>
+                    <a class="font-medium text-green-500 hover:text-green-400 mr-2 transition-colors duration-300"
+                       href="{% url 'user:register' %}">
+                        ثبت نام کنید
+                    </a>
+                </div>
+                <div class="w-full sm:w-auto flex items-center">
+                    <span class="text-gray-500 dark:text-gray-400">ورود افراد حقیقی؟</span>
+                    <a class="font-medium text-green-500 hover:text-green-400 mr-2 transition-colors duration-300"
+                       href="{% url 'user:help-legal-person' %}">
+                        راهنمایی
+                    </a>
+                </div>
+            </div>
+
+            <p class="px-6 py-3 text-center text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-zinc-700 border-t dark:border-zinc-600">
+                شما با ورود به سایت تمامی
+                <a href="{% url 'site:site-law' %}"
+                   class="text-blue-400 hover:text-blue-500 transition-colors duration-300">
+                    قوانین و مقررات
+                </a>
+                مورد پذیرش شما تلقی می شود
+            </p>
+        </div>
+    </div>
+</main>
+
+ 
+{% endblock %}

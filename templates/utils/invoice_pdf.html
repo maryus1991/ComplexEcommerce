@@ -1,0 +1,277 @@
+{% load static %}
+{% load jalali_tags %}
+{% load products_tags %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- افزودن کتابخانه‌های مورد نیاز -->
+   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script>
+        // تابع دانلود PDF
+        async function downloadPDF() {
+            const {jsPDF} = window.jspdf;
+            const doc = new jsPDF('p', 'pt', 'a4');
+
+            try {
+                const element = document.getElementById('invoice');
+                if (!element) {
+                    alert('عنصر فاکتور یافت نشد!');
+                    return;
+                }
+
+                // استفاده از html2canvas برای تبدیل HTML به تصویر
+                const canvas = await html2canvas(element, {
+                    scale: 2,
+                    logging: false,
+                    useCORS: true
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = doc.internal.pageSize.getWidth() - 20;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+                doc.save('فاکتور.pdf');
+            } catch (error) {
+                console.error('خطا در تولید PDF:', error);
+                alert('خطا در تولید PDF!');
+            }
+        }
+
+
+    </script>
+
+    <title>فاکتور رسمی فروش</title>
+    <style>
+        .buttons {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .buttons button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        body {
+            font-family: 'Tahoma', sans-serif;
+            margin: 40px;
+            background: #ffffff;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #eee;
+        }
+
+        .section-title {
+            background-color: #ddd;
+            font-weight: bold;
+            padding: 5px;
+            margin-top: 0px;
+        }
+
+        .info-table td {
+            text-align: right;
+        }
+
+        .signature-section {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .note {
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="buttons">
+    <button onclick="downloadPDF()">دانلود PDF</button>
+    {#    <button onclick="downloadWord()">دانلود Word</button>#}
+</div>
+<div id="invoice">
+    <h2>فاکتور موقت فروش کالا و خدمات</h2>
+    <div class="">
+        شماره سریال: {{ order.id }}
+        <br>
+        تاریخ: {{ order.date|to_jalali:'%Y/%m/%d' }}
+    </div>
+    <br>
+    <div class="section-title">مشخصات فروشنده</div>
+    <table class="info-table">
+        <tr>
+            <td>  {{ order.store.name }}</td>
+
+            <td>کد پستی ۱۰ رقمی: {{ order.store.zip_code }}</td>
+            <td> استان: {{ order.store.province }}</td>
+            <td> شهر: {{ order.store.orgin_city }}</td>
+        </tr>
+        <tr>
+
+            <td>شماره تماس:
+                <span dir="ltr">
+                    {{ order.store.phone2 }}
+                </span>
+            </td>
+
+            <td colspan="4">نشانی : {{ order.store.address }}</td>
+        </tr>
+    </table>
+
+    <div class="section-title">مشخصات خریدار</div>
+    <table class="info-table">
+        <tr>
+            <td>  {{ order.user.get_full_name }}</td>
+
+            <td>کد پستی ۱۰ رقمی: {{ order.address.zipcode }}</td>
+            <td> استان: {{ order.address.province }}</td>
+            <td> شهر: {{ order.address.city }}</td>
+        </tr>
+        <tr>
+
+
+
+            <td colspan="4">نشانی : {{ order.address.address }}</td>
+        </tr>
+    </table>
+
+    <div class="section-title">مشخصات کالا یا خدمات مورد معامله</div>
+    <table>
+        <thead>
+        <tr>
+            <th>ردیف</th>
+            <th>کد کالا / خدمات</th>
+            <th>شرح کالا / خدمات</th>
+
+            <th>واحد</th>
+            <th>مقدار</th>
+            <th>مبلغ واحد  ریال </th>
+            <th>مبلغ کل  ریال </th>
+            <th>مبلغ تخفیف  ریال </th>
+        
+            <th>مبلغ کل پس از تخفیف</th>
+
+            <th>
+
+                هزینه های جانبی و هزینه ارسال  ریال 
+
+            
+            </th>
+            <th>جمع مبلغ نهایی  ریال </th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- سطر نمونه، می‌توانید سطرهای بیشتری اضافه کنید -->
+
+        {% for item in order.details.all %}
+
+
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.product.id }}</td>
+                <td>{{ item.product.name }}</td>
+
+                <td colspan="2">{{ item.count }}</td>
+                <td>{{ item.get_price_without_discount|tdcR }}</td>
+                <td>{{ item.get_item_price_without_discount|tdcR }}</td>
+                <td>{{ item.get_item_discount|tdcR }}</td>
+                <td>{{ item.get_item_price|tdcR }}</td>
+                {% with item.get_item_price|clac_tax_no_format:site.tax as tax %}
+
+                    <td>{{ tax|tdcR }}</td>
+                    <td>{{ item.get_item_price|sumR:tax }}</td>
+                {% endwith %}
+            </tr>
+        {% endfor %}
+
+        <tr class="section-title">
+            <td colspan="6"> جمع کل قابل پرداخت :</td>
+            <td>{{ order.calculate_total_price_with_out_discount|tdcR }}</td>
+            <td>{{ order.get_total_discount_amount|tdcR }}</td>
+            <td>{{ order.calculate_total_price|tdcR }}</td>
+            <td>{{ order.get_payment_price|minesR:order.calculate_total_price }}</td>
+            <td>{{ order.get_payment_price|tdcR }}</td>
+        </tr>
+        <tr class="">
+            <td colspan="3" style="text-align: right">شرایط و نحوه فروش :</td>
+            <td colspan="2">نقدی</td>
+            <td colspan="2">غیر نقد</td>
+            <td colspan="5">
+                {% if order.is_paid %}
+                    این سفارش با موفقیت و به صورت نقد مبلغ {{ order.get_payment_price|tdcR }} ریال پرداخت شده است
+                {% elif order.canceled %}
+                    این سفارش کنسل شده است و پرداختی حاصل نشده است
+                {% else %}
+                    این سفارش هنوز در وضعیت انتظار برای پرداخت می باشد و پرداختی حاصل نشده است
+                {% endif %}
+            </td>
+
+        </tr>
+        <tr>
+            <td colspan="11" style="text-align: right">
+                توضیحات :
+                {% if order.additional_descriptions %}
+                    {{ order.additional_descriptions }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+    <br>
+    {% if order.official_invoice %}
+        <div class="signature-section">
+
+            <div>مهر و امضاء فروشنده</div>
+            <div>مهر و امضاء خریدار</div>
+        </div>
+
+
+    {% endif %}
+
+    <br>
+    <br>
+
+
+</div>
+</body>
+</html>

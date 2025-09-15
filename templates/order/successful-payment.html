@@ -1,0 +1,67 @@
+{% extends 'Base/Base.html' %}
+{% load jalali_tags %}
+
+
+
+{% block title %}
+
+{% endblock %}
+
+
+{% block breadcrumb %}
+    <li class="flex items-center gap-x-2">
+        <a>پرداخت</a>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>
+    <li class="flex items-center gap-x-2">
+        <a>پرداخت موفق</a>
+    </li>
+{% endblock %}
+
+{% block content %}
+
+    <main class="container child:mt-8">
+        <!-- Breadcrumbs -->
+
+
+        <!-- payment box info -->
+        <section
+                class="lg:w-[40%] mx-auto flex justify-center items-center flex-col gap-y-4 p-4 rounded-lg shadow bg-white dark:bg-zinc-700">
+            <svg class="w-16 h-16 text-green-500">
+                <use href="#check-circle"></use>
+            </svg>
+            <h3 class="font-DanaMedium text-green-500 text-lg">پرداخت شما موفقیت آمیز بود</h3>
+            <p class="font-DanaMedium">جزییات سفارش :</p>
+            <span class="w-full flex border-t-2 border-gray-200 dark:border-white/20"></span>
+            <div
+                    class="mt-2 flex flex-wrap w-full items-center justify-center lg:justify-between child:text-center gap-5 lg:child:w-[30%]">
+                <span>
+                    <p class="text-gray-400">تاریخ و زمان </p>
+                    <p class="font-DanaMedium mt-2">{{ order.second_date|to_jalali:' %H/%M - %Y/%m/%d ' }}</p>
+                </span>
+                <span class="order-4 lg:order-none">
+                    <p class="text-gray-400"> وضعیت </p>
+                    <button class="mt-1 bg-green-500/20 text-green-500 text-sm px-2 py-0.5 rounded">پرداخت موفق</button>
+                </span>
+                <span>
+                    <p class="text-gray-400"> شماره پیگیری </p>
+                    <p class="font-DanaMedium mt-2">{{ order.payment_id }}</p>
+                </span>
+            </div>
+            <div
+                    class="w-full grid grid-cols-12 child:col-span-6 gap-x-4 child:text-white child:flex child:w-full child:justify-center child:items-center child:py-2 mt-4 child:rounded-lg child:transition-all">
+                <a href="/" class="bg-green-500 hover:bg-green-600">بازگشت به سایت</a>
+                {% if specifics_order %}
+                    <a href="{% url 'orders:specifics-orders'  %}" class="bg-blue-500 hover:bg-blue-600">پیگیری
+                        سفارش</a>
+                {% else %}
+                    <a href="{% url 'dashboard:order_detail' order.id %}" class="bg-blue-500 hover:bg-blue-600">پیگیری
+                        سفارش</a>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+{% endblock %}

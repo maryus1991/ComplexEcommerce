@@ -1,0 +1,471 @@
+{% extends 'Base/AdminBase.html' %}
+{% load jalali_tags %}
+{% load products_tags %}
+
+{% block title %}
+    سفارشات
+
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">
+        صفحه مدیریت
+    </li>
+    <li class="active">سفارشات</li>
+    <li class="active">تصفیه</li>
+{% endblock %}
+
+
+{% block footer_reference %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script src="/static/node_modules/moment/min/moment.min.js"></script>
+    <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#tarikh').persianDatepicker({
+                altField: '#tarikhAlt',
+                altFormat: 'X',
+                format: 'D MMMM YYYY HH:mm a',
+                observer: true,
+                timePicker: {
+                    enabled: true
+                },
+            });
+        });
+        $(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
+            //Money Euro
+            $('[data-mask]').inputmask()
+
+            //Date range picker
+            $('#reservation').daterangepicker()
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                format: 'MM/DD/YYYY h:mm A'
+            })
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                }
+            )
+
+            //Date picker
+            $('#datepicker').datepicker({
+                autoclose: true
+            })
+
+            //iCheck for checkbox and radio inputs
+            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue'
+            })
+            //Red color scheme for iCheck
+            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                checkboxClass: 'icheckbox_minimal-red',
+                radioClass: 'iradio_minimal-red'
+            })
+            //Flat red color scheme for iCheck
+            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            })
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false
+            })
+        })
+    </script>
+{% endblock %}
+
+{% block header_reference %}
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/static/dist/css/rtl.css">
+    <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
+    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+    <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+
+{% endblock %}
+
+
+{% block body %}
+    <div class="panel box box-primary panel-default" style="margin-top: 20px;">
+        <div class="panel-heading clearfix">
+            <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست سفارشات </h3>
+
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered table-striped">
+                <thead>
+                <tr class="bg-primary">
+                    <th class="text-center" width="5%">#</th>
+                    <th class="text-center" width="15%">نام فروشگاه</th>
+                    <th class="text-center" width="15%">مبلغ</th>
+                    <th class="text-center" width="15%">تصفیه </th>
+                    <th class="text-center" width="15%">زمان تصفیه</th>
+                    <th class="text-center" width="5%">مشاهده فروشگاه</th>
+                    <th class="text-center" width="10%">تبدیل وضعیت به تصفیه شده</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in stores %}
+                    {% with item.calculate_store_sold_orders as price %}
+
+                        <tr>
+                            <td class="text-center">{{ item.id }}</td>
+                            <td class="text-center">{{ item.name }}</td>
+                            <td class="text-center">{{ price|tdc }}</td>
+                            <td class="text-center">
+                                {% if order.is_returned_by_admin %}
+                                    <span class="label label-success">تصفیه شده</span>
+                                {% else %}
+                                    <span class="label label-danger">تصفیه نشده</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">{{ order.paid_by_admin_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+
+                            
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:store-detail' item.id %}"
+                                   class="btn btn-sm btn-warning"
+                                   data-toggle="tooltip"
+                                   title="مشاهده فروشگاه">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                        <td class="text-center">
+                                <a href="{% url 'admin_panel:orders-change-sold-list-status' item.id %}"
+                                   class="btn btn-sm btn-success"
+                                   data-toggle="tooltip"
+                                   title="تبدیل وضعیت به تصفیه شده">
+                                    <i class="fa fa-key"></i>
+                                </a>
+                            </td>
+
+                    {% endwith %}
+
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="text-muted">تعداد کل ایتم ها: {{ items.count }}</small>
+                </div>
+                <div class="col-md-6 text-left">
+                    <ul class="pagination pagination-sm no-margin">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}">&raquo;</a></li>
+                        {% endif %}
+                        {% for page_number in page_obj.paginator.page_range %}
+                            <li {% if page_number == page_obj.number %}class="active" {% endif %}>
+                                <a href="?page={{ page_number }}">{{ page_number }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">&laquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip({
+                placement: 'top',
+                delay: {"show": 500, "hide": 100}
+            });
+
+            // افزودن کلاس form-control به تمام فیلدهای فرم
+            // This is already well-handled by Django's form rendering if using crispy forms or similar.
+            // If not, this line is good.
+            $('form input, form select, form textarea').addClass('form-control');
+
+            // تنظیمات برای فیلدهای تاریخ
+            $('.datepicker').datepicker({
+                format: 'yyyy/mm/dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+    </script>
+    <div class="panel box box-primary panel-default" style="margin-top: 20px;">
+        <div class="panel-heading clearfix">
+            <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست سفارشات </h3>
+
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered table-striped">
+                <thead>
+                <tr class="bg-primary">
+                    <th class="text-center" width="5%">#</th>
+                    <th class="text-center" width="15%">تصفیه شده</th>
+                    <th class="text-center" width="15%">زمان تصفیه</th>
+                    <th class="text-center" width="15%">نام فروشگاه</th>
+                    <th class="text-center" width="15%">خریدار</th>
+                    <th class="text-center" width="5%">حقیقی / حقوقی</th>
+                    <th class="text-center" width="5%">وضعیت</th>
+                    <th class="text-center" width="10%">قیمت پرداختی</th>
+                    <th class="text-center" width="5%">وضعیت ارسال</th>
+                    <th class="text-center" width="15%">نحوه ارسال</th>
+                    <th class="text-center" width="15%">تایخ پرداخت توسط کابر</th>
+                    <th class="text-center" width="5%">مشاهده جزییات</th>
+                    <th class="text-center" width="5%">مشاهده فروشگاه</th>
+                    <th class="text-center" width="5%">مشاهده خریدار</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in items %}
+                    {% if order.order %}
+                    {% with order.order as item %}
+
+                        <tr>
+                            <td class="text-center">{{ item.id }}</td>
+                            <td class="text-center">                            {% if order.is_returned_by_admin %}
+                                <span class="label label-success">تصفیه شده</span>
+                            {% else %}
+                                <span class="label label-danger">تصفیه نشده</span>
+                            {% endif %}
+                            </td>
+
+                            <td class="text-center">{{ order.paid_by_admin_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                            <td class="text-center">{{ item.store.name }}</td>
+                            <td class="text-center" dir="ltr">{{ item.user.PhoneNumber }}</td>
+                            <td class="text-center">
+                                {% if item.official_invoice %}
+                                    <span class="label label-success">فاکتور رسمی</span>
+                                {% else %}
+                                    <span class="label label-default">فاکتور عادی</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if item.is_paid %}
+                                    <span class="label label-success">پرداخت شده</span>
+                                {% elif item.canceled %}
+                                    <span class="label label-danger">کنسل شده</span>
+                                {% else %}
+                                    <span class="label label-default">باز</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">{{ order.get_payment_price|tdc }}</td>
+                            <td class="text-center">
+                                {% if item.sending %}
+                                    <span class="label label-warning"> درحال ارسال </span>
+                                {% elif item.delivered_to_user %}
+                                    <span class="label label-success">تحویل شده</span>
+                                {% else %}
+                                    <span class="label label-danger">ارسال نشده</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if item.vip_post %}
+                                    <span class="label label-success">ارسال با پست</span>
+                                {% elif item.tipax_post_delivery %}
+                                    <span class="label label-success">ارسال با تیپاکس</span>
+                                {% elif item.in_city_delivery %}
+                                    <span class="label label-success">ارسال درون شهری</span>
+                                {% elif item.physical_delivery %}
+                                    <span class="label label-success">تحویل حضوری</span>      
+                                {% elif item.freight_delivery %}
+                                    <span class="label label-success"> باربری (پس کرایه)</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">{{ item.second_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:orders-detail' item.id %}"
+                                   class="btn btn-sm btn-success"
+                                   data-toggle="tooltip"
+                                   title="مشاهده جزییات">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:store-detail' item.store.id %}"
+                                   class="btn btn-sm btn-warning"
+                                   data-toggle="tooltip"
+                                   title="مشاهده فروشگاه">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:user-detail' item.user.pk %}"
+                                   class="btn btn-sm btn-success"
+                                   data-toggle="tooltip"
+                                   title="مشاهده خریدار">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endwith %}
+                        
+                        {% elif order.specifics_order %}
+                                        {% with order.specifics_order as item %}
+
+                        <tr>
+                            <td class="text-center">{{ item.id }}</td>
+                            <td class="text-center">                            {% if order.is_returned_by_admin %}
+                                <span class="label label-success">تصفیه شده</span>
+                            {% else %}
+                                <span class="label label-danger">تصفیه نشده</span>
+                            {% endif %}
+                            </td>
+
+                            <td class="text-center">{{ order.paid_by_admin_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                            <td class="text-center">{{ item.store.name }}</td>
+                            <td class="text-center" dir="ltr">{{ item.user.PhoneNumber }}</td>
+                            <td class="text-center">
+
+                                    <span class="label label-success">فاکتور خاص</span>
+
+                            </td>
+                            <td class="text-center">
+                                {% if item.is_paid %}
+                                    <span class="label label-success">پرداخت شده</span>
+                                {% elif item.canceled %}
+                                    <span class="label label-danger">کنسل شده</span>
+                                {% else %}
+                                    <span class="label label-default">باز</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">{{ order.price|tdc }}</td>
+                            <td class="text-center">
+    فاکتور خاص
+                            </td>
+                            <td class="text-center">
+فاکتور خاص
+                            </td>
+                            <td class="text-center">{{ item.second_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                            <td class="text-center">
+                                <a href="{% url 'store:specifics-details' item.id %}"
+                                   class="btn btn-sm btn-success"
+                                   data-toggle="tooltip"
+                                   title="مشاهده جزییات">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                                                    <td class="text-center">
+                                <a href="{% url 'admin_panel:store-detail' item.store.id %}"
+                                   class="btn btn-sm btn-warning"
+                                   data-toggle="tooltip"
+                                   title="مشاهده فروشگاه">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:user-detail' item.user.pk %}"
+                                   class="btn btn-sm btn-success"
+                                   data-toggle="tooltip"
+                                   title="مشاهده خریدار">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                            </td>
+
+                        </tr>
+                    {% endwith %}
+
+                        
+                    {% endif %} 
+                    	
+
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="text-muted">تعداد کل ایتم ها: {{ items.count }}</small>
+                </div>
+                <div class="col-md-6 text-left">
+                    <ul class="pagination pagination-sm no-margin">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}">&raquo;</a></li>
+                        {% endif %}
+                        {% for page_number in page_obj.paginator.page_range %}
+                            <li {% if page_number == page_obj.number %}class="active" {% endif %}>
+                                <a href="?page={{ page_number }}">{{ page_number }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">&laquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip({
+                placement: 'top',
+                delay: {"show": 500, "hide": 100}
+            });
+
+            // افزودن کلاس form-control به تمام فیلدهای فرم
+            // This is already well-handled by Django's form rendering if using crispy forms or similar.
+            // If not, this line is good.
+            $('form input, form select, form textarea').addClass('form-control');
+
+            // تنظیمات برای فیلدهای تاریخ
+            $('.datepicker').datepicker({
+                format: 'yyyy/mm/dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+    </script>
+{% endblock %}

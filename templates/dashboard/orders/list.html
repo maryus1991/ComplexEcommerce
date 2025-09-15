@@ -1,0 +1,152 @@
+{% extends 'dashboard/Base/dashboard-base.html' %}
+{% load jalali_tags %}
+{% load products_tags %}
+
+{% block title %}
+    تاریخچه سفارشات
+{% endblock %}
+
+
+{% block dashboard %}
+
+    <!-- MAIN  -->
+    <div class="lg:w-3/4 xl:w-4/5 lg:m-5 w-full">
+        <!-- NAVBAR -->
+    </div>
+    <div class="m-5 lg:m-0">
+        <div class="grid grid-cols-12 gap-6 lg:gap-12 mt-6">
+
+            <div class="col-span-12">
+                <p class="text-lg"> سفارش های من :</p>
+                <div class="relative mt-4 overflow-x-auto shadow rounded-lg">
+                    <table class="w-full text-sm text-right text-gray-500 dark:text-gray-400">
+                        <thead
+                                class="text-xs text-gray-700  bg-gray-50 dark:bg-zinc-700 dark:text-gray-200">
+                        <tr>
+                            <th scope="col" class="px-6 py-3.5">
+                                نام فروشگاه
+                            </th>
+                            <th scope="col" class="px-6 py-3.5">
+
+                            </th>
+                            <th scope="col" class="px-6 py-3.5">
+                                قیمت
+                            </th>
+                            <th scope="col" class="px-6 py-3.5">
+                                تاریخ
+                            </th>
+                            <th scope="col" class="px-6 py-3.5">
+                                وضعیت
+                            </th>
+                            <th scope="col" class="px-6 py-3.5">
+
+                            </th>
+                            <th scope="col" class="px-6 py-3.5">
+
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% if orders %}
+                            {% for order in orders %}
+                                <tr
+                                        class="bg-white border-b dark:bg-zinc-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-zinc-600">
+                                    <th scope="row"
+                                        class="px-6 py-5 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {{ order.store.name }}
+                                    </th>
+                                    <td class="px-1 py-1">
+                                        <a href="{% url 'dashboard:order_detail' order.id %}">
+                                            <button class="main-btn p-2 gap-x-1 shadow">
+                                                <svg class="w-5 h-5">
+                                                    <use href="#add"></use>
+                                                </svg>
+                                                دیدن جزئیات
+                                            </button>
+                                        </a>
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        {{ order.get_payment_price|tdc }} تومان
+                                    </td>
+                                    <td class="px-6 py-5">
+                                        {% if order.second_date %}
+
+                                            {{ order.second_date|to_jalali:'%Y/%m/%d' }}
+                                        {% else %}
+                                            {{ order.date|to_jalali:'%Y/%m/%d' }}
+                                        {% endif %}
+                                    </td>
+                                    {% if order.canceled %}
+                                        {% if order.canceled_by_admin %}
+                                            <td class="px-6 py-5 text-red-500">
+                                                لغو شده توسط ادمین
+                                            </td>
+                                        {% else %}
+                                            <td class="px-6 py-5 text-red-500">
+                                                لغو شده
+                                            </td>
+                                        {% endif %}
+                                    {% elif order.delivered_to_user %}
+                                        <td class="px-6 py-5 text-green-600">
+                                            ارسال شده
+                                        </td>
+                                    {% elif order.sending %}
+                                        <td class="px-6 py-5 text-green-500">
+                                            درحال ارسال
+                                        </td>
+                                    {% elif order.is_paid %}
+                                        <td class="px-6 py-5 text-blue-500">
+                                            پرداخت شده
+                                        </td>
+                                    {% else %}
+                                        <td class="px-6 py-5 text-yellow-500">
+                                            درانتظار پرداخت
+                                        </td>
+                                    {% endif %}
+
+                                    <td class="px-1 py-1">
+                                        {% if not order.canceled and not order.is_paid %}
+                                            <a href="{% url 'orders:cancel'  order.id %}">
+                                                <button class="main-btn p-2 gap-x-1 shadow bg-red-500 ">
+                                                    <svg class="w-5 h-5">
+                                                        <use href="#close"></use>
+                                                    </svg>
+                                                    کنسل کردن
+                                                </button>
+                                            </a>
+                                            </td>
+
+                                            <td class="px-1 py-1">
+
+                                                <a href="{% url 'orders:payment-conform' order.id %}">
+                                                    <button class="main-btn p-2 gap-x-1 shadow">
+                                                        درخواست ارسال محصولات
+                                                        <svg class="w-5 h-5">
+                                                            <use href="#add"></use>
+                                                        </svg>
+                                                    </button>
+                                                </a>
+                                                {% else %}
+                                            <td class="px-1 py-1">
+
+                                        {% endif %}
+                                        </td>
+
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            هنوز محصولی به سبد خرید اضافه نشده است
+                        {% endif %}
+
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+{% endblock %}
+

@@ -1,0 +1,478 @@
+{% extends 'Base/AdminBase.html' %}
+{% load jalali_tags %}
+{% load products_tags %}
+
+
+
+{% block title %}
+    جزییات کاربر  {{ item.PhoneNuber }}
+{% endblock %}
+
+
+{% block breadcrumb %}
+    <li class="active">فروشگاها</li>
+    <li class="active">جزییات کاربر {{ item.PhoneNuber }}</li>
+{% endblock %}
+
+{% block body %}
+    <div class="container" style="margin-top: 70px;">
+        <div class="panel panel-primary">
+            <div class="panel-heading text-center">
+                <h3 class="panel-title">جزییات 
+                <span dir="ltr">
+                    {{ item.PhoneNumber }}
+                </span>
+                </h3>
+
+                {% if item %}
+
+                    <tabel class="pull-left">
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:user-detail' item.id %}" class="btn btn-sm btn-success"
+                               data-toggle="tooltip" title="مشاهده">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:user-admin-login' item.id %}" class="btn btn-sm btn-warning"
+                               data-toggle="tooltip" title="وارد حساب شدن">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:user-update' item.id %}" class="btn btn-sm btn-info"
+                               data-toggle="tooltip" title="ویرایش">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:user-verify' item.id %}"
+                               class="btn btn-sm btn-info"
+                               data-toggle="tooltip"
+                               title="{% if item.is_active %}تایید نکردن اطلاعات{% else %}تایید کردن اطلاعات{% endif %}">
+                                <i class="fa fa-key"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:user-active-deactivate' item.id %}"
+                               class="btn btn-sm btn-warning"
+                               data-toggle="tooltip"
+                               title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                <i class="fa fa-power-off"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:user-activities' item.id %}"
+                               class="btn btn-sm btn-warning"
+                               data-toggle="tooltip"
+                               title="فعالیت کاربر">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:user-delete' item.id %}" class="btn btn-sm btn-danger"
+                               data-toggle="tooltip" title="حذف">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                    </tabel>
+                {% endif %}
+
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <tbody>
+                        <!-- Row 1 -->
+                        <tr>
+                            <td><strong>نام:</strong> {{ item.get_full_name|default:'وارد نشده' }}</td>
+                            <td ><strong>شماره:</strong>
+                                <span dir="ltr">{{ item.PhoneNumber }}
+                            </span>
+                            </td>
+                            <td>
+                                <strong>وضعیت:</strong>
+                                {% if item.is_active %}
+                                    <span class="label label-success">فعال</span>
+                                {% else %}
+                                    <span class="label label-danger">غیرفعال</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong>وضعیت اطلاعات:</strong>
+                                {% if item.is_verified %}
+                                    {% if item.message_verified %}
+                                        <span class="label label-success">
+                                    تایید شده با پیامک
+                                    </span>
+                                    {% else %}
+                                        <span class="label label-warning">
+                                    تایید شده بدون پیامک
+                                    </span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="label label-danger">تایید نشده</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        <!-- Row 2 -->
+                        <tr>
+                            <td><strong>فروشگاه:</strong> {{ item.store.name|default:'-' }}</td>
+                            <td>
+                                <strong>وضعیت کارمندی:</strong>
+                                {% if item.is_staff %}
+                                    <span class="label label-success">کارمند می باشد</span>
+                                {% else %}
+                                    <span class="label label-default">کارمند نمی باشد</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong>وضعیت ادمین فروشگاه:</strong>
+                                {% if item.is_store_admin %}
+                                    <span class="label label-success">ادمین فروشگاه می باشد</span>
+                                {% else %}
+                                    <span class="label label-default">ادمین فروشگاه نمی باشد</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong>وضعیت مدیر سایت:</strong>
+                                {% if item.is_superuser %}
+                                    <span class="label label-success">ادمین سایت می باشد</span>
+                                {% else %}
+                                    <span class="label label-default">ادمین سایت نمی باشد</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        <!-- Row 3 -->
+                        <tr>
+                            <td>
+                                <strong>وضعیت حقوقی/حقیقی:</strong>
+                                {% if item.legal_person %}
+                                    <span class="label label-success">حقوقی</span>
+                                {% else %}
+                                    <span class="label label-default">حقیقی</span>
+                                {% endif %}
+                            </td>
+                            <td><strong>شماره اقتصادی:</strong> {{ item.legal_person_economic_number|default:'-' }}</td>
+                            <td><strong>شماره ثبت:</strong> {{ item.legal_person_registration_number|default:'-' }}</td>
+                            <td><strong>شماره یا نامبر:</strong> {{ item.legal_person_phone|default:'-' }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <style>
+                @media (max-width: 767px) {
+                    /* Force table to not be like tables anymore */
+                    .table-responsive table,
+                    .table-responsive thead,
+                    .table-responsive tbody,
+                    .table-responsive th,
+                    .table-responsive td,
+                    .table-responsive tr {
+                        display: block;
+                        width: 100%;
+                    }
+
+                    /* Hide table headers (but not display: none;, for accessibility) */
+                    .table-responsive thead tr {
+                        position: absolute;
+                        top: -9999px;
+                        left: -9999px;
+                    }
+
+                    .table-responsive tr {
+                        border: 1px solid #ddd;
+                        margin-bottom: 10px;
+                    }
+
+                    .table-responsive td {
+                        /* Behave like a "row" */
+                        border: none;
+                        border-bottom: 1px solid #eee;
+                        position: relative;
+                        padding-left: 50%;
+                        text-align: right;
+                        min-height: 30px;
+                    }
+
+                    .table-responsive td:before {
+                        /* Now like a table header */
+                        position: absolute;
+                        left: 10px;
+                        width: 45%;
+                        padding-right: 10px;
+                        white-space: nowrap;
+                        text-align: left;
+                        font-weight: bold;
+                        content: attr(data-title);
+                    }
+
+                    /* Special cases for empty cells */
+                    .table-responsive td:empty {
+                        padding: 0;
+                    }
+
+                    .table-responsive td:empty:before {
+                        display: none;
+                    }
+
+                    .label {
+                        display: inline-block;
+                        margin-top: 3px;
+                    }
+                }
+            </style>
+            <div class="panel box box-primary panel-default" style="margin-top: 20px;">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست ادرس های کاربر </h3>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered table-striped">
+                        <thead>
+                        <tr class="bg-primary">
+                            <th class="text-center" width="5%">#</th>
+                            <th class="text-center" width="10%">نام</th>
+                            <th width="5%" class="text-center">استان</th>
+                            <th class="text-center" width="5%">شهر</th>
+                            <th class="text-center" width="10%">کد پستی</th>
+                            <th class="text-center" width="10%">شماره</th>
+                            <th class="text-center">ادرس</th>
+                            <th class="text-center">توضیحات</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in item.address.all %}
+                            <tr>
+                                <td class="text-center">{{ item.id }}
+                                </td>
+
+                                <td class="text-center">
+                                    <strong>{{ item.name }}</strong>
+                                    <strong>{{ item.last_name }}</strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>{{ item.province }}</strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>{{ item.city }}</strong>
+                                </td>
+                                <td dir="ltr" class="text-center">
+                                    <strong>{{ item.zipcode }}</strong>
+                                </td>
+                                <td dir="ltr" class="text-center">
+                                    <strong>{{ item.phone }}</strong>
+                                </td>
+                                <td dir="ltr" class="text-center">
+                                    <strong>{{ item.address }}</strong>
+                                </td>
+                                <td dir="ltr" class="text-center">
+                                    <strong>{{ item.additional_decryption }}</strong>
+                                </td>
+
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted">تعداد کل ایتم ها: {{ item.address.count }}</small>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel box box-primary panel-default" style="margin-top: 20px;">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست پست های کاربر </h3>
+
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered table-striped">
+                        <thead>
+                        <tr class="bg-primary">
+                            <th class="text-center" width="5%">#</th>
+                            <th width="25%" class="text-center">عنوان</th>
+                            <th width="25%" class="text-center">فروشگاه</th>
+                            <th class="text-center" width="10%">تایید ادمین</th>
+                            <th class="text-center" width="10%">وضعیت</th>
+                            <th width="25%" class="text-center">زمان انتشار</th>
+                            <th width="10%" class="text-center">دسته</th>
+                            <th class="text-center" width="10%">مشاهده</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in item.blogs.all %}
+                            <tr>
+                                <td class="text-center">{{ item.id }}
+                                </td>
+
+                                <td class="text-center">
+                                    <strong>{{ item.title }}</strong>
+                                </td>
+                                <td class="text-center" dir="ltr">
+                                    <strong>{{ item.user.store.name }}</strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>
+                                        {% if item.admin_verified %}
+                                            <span class="label label-success">
+                                    فعال
+                                    </span>
+                                        {% else %}
+                                            <span class="label label-danger">
+                                    غیر فعال
+                                    </span>
+                                        {% endif %}
+                                    </strong>
+                                </td>
+
+                                <td class="text-center">
+                                    <strong>
+                                        {% if item.is_active %}
+                                            <span class="label label-success">
+                                    فعال
+                                    </span>
+                                        {% else %}
+                                            <span class="label label-danger">
+                                    غیر فعال
+                                    </span>
+                                        {% endif %}
+                                    </strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>
+                                        {% if item.is_active %}
+                                            <span class="label label-success">
+                                           {{ item.updated_at|to_jalali:'%H:%M - %Y/%m/%d' }}
+                                    </span>
+                                        {% else %}
+                                            <span class="label label-danger">
+                                    غیر فعال
+                                    </span>
+                                        {% endif %}
+                                    </strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>
+
+
+                                            <span class="label label-default">
+                                                {{ item.category.name }}
+                                            </span>
+
+                                    </strong>
+                                </td>
+
+                                <td class="text-center">
+                                    <a href="{% url 'admin_panel:blog-update' item.id %}"
+                                       class="btn btn-sm btn-success"
+                                       data-toggle="tooltip" title="مشاهده">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted">تعداد کل ایتم ها: {{ item.blogs.count }}</small>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="panel box box-primary panel-default" style="margin-top: 20px;">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست سفارشات کاربر </h3>
+
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered table-striped">
+                        <thead>
+                        <tr class="bg-primary">
+                            <th class="text-center" width="5%">#</th>
+                            <th width="10%" class="text-center">قیمت</th>
+                            <th width="15%" class="text-center">فروشگاه</th>
+                            <th width="10%" class="text-center"> وضعیت</th>
+                            <th width="15%" class="text-center">تاریخ ثانویه</th>
+                            <th class="text-center" width="10%">مشاهده</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in item.orders.all|order_by:'-id' %}
+                            <tr>
+                                <td class="text-center">{{ item.id }}
+                                </td>
+
+                                <td class="text-center">
+                                    <strong>{{ item.get_payment_price|tdc }}</strong>
+                                </td>
+                                <td class="text-center" dir="ltr">
+                                    <strong>{{ item.store.name }}</strong>
+                                </td>
+
+                                <td class="text-center">
+                                    <strong>
+                                        {% if item.is_paid %}
+                                            <span class="label label-success">
+                                    پرداخت شده
+                                    </span>
+                                        {% elif item.canceled %}
+                                            <span class="label label-danger">
+                                    کنسل شده
+                                    </span>
+                                        {% else %}
+                                            <span class="label label-default">
+باز
+                                    </span>
+                                        {% endif %}
+                                    </strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>{{ item.second_date|to_jalali:' %H/%M - %Y/%m/%d ' }}</strong>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{% url 'admin_panel:orders-detail' item.id %}"
+                                       class="btn btn-sm btn-success"
+                                       data-toggle="tooltip" title="مشاهده">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted">تعداد کل ایتم ها: {{ item.orders.count }}</small>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+
+

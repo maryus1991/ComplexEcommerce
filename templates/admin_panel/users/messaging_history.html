@@ -1,0 +1,156 @@
+{% extends 'Base/AdminBase.html' %}
+{% load jalali_tags %}
+
+{% block title %}
+    تاریخچه ارسال پیامک
+{% endblock %}
+
+
+{% block breadcrumb %}
+    <li class="active">کابران</li>
+    <li class="active"> تاریخچه ارسال پیامک</li>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="page-header">
+                <i class="glyphicon glyphicon-time"></i> تاریخچه ارسال پیامک
+            </h2>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for history in items %}
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h4 class="panel-title pull-right">
+                        <i class="glyphicon glyphicon-send"></i>
+                        ارسال در {{ history.date|to_jalali:'%H:%M - %Y/%m/%d' }}
+                    </h4>
+                    <span class="label label-{{ history.news_letter|yesno:'success,primary' }} pull-left">
+                        {{ history.news_letter|yesno:'خبرنامه,پیامک خدماتی' }}
+                    </span>
+                </div>
+
+                <div class="panel-body">
+                    <p><strong>متن پیام:</strong></p>
+                    <div class="well well-sm" style="min-height:60px">{{ history.message }}</div>
+
+                    <p><strong>شماره گیرندگان:</strong></p>
+                    <div class="well well-sm" style="min-height:50px">
+                        {% with history.phone_numbers as numbers %}
+                            {{ numbers|truncatewords:10|linebreaksbr }}
+                            {% if numbers|wordcount > 10 %}
+                                <br>
+                                <button class="btn btn-xs btn-link show-more-numbers"
+                                        data-target="#full-numbers-{{ history.id }}">
+                                    بیشتر ببینید...
+                                </button>
+                                <textarea id="full-numbers-{{ history.id }}" style="display:none">{{ numbers }}</textarea>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <i class="glyphicon glyphicon-info-sign"></i> هیچ تاریخچه‌ای یافت نشد.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if items %}
+    <div class="row">
+        <div class="col-md-6">
+            <p class="text-muted">تعداد کل پیام‌ها: {{ items.count }}</p>
+        </div>
+        <div class="col-md-6 text-left">
+            <ul class="pagination pagination-sm no-margin">
+                {% if page_obj.has_previous %}
+                <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                {% endif %}
+                {% for page in page_obj.paginator.page_range %}
+                <li class="{% if page == page_obj.number %}active{% endif %}">
+                    <a href="?page={{ page }}">{{ page }}</a>
+                </li>
+                {% endfor %}
+                {% if page_obj.has_next %}
+                <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<div class="modal fade" id="numbersModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <!-- دکمه بستن با کلاس درست -->
+        <button type="button" class="close close-modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">شماره‌گیرندگان کامل</h4>
+      </div>
+      <div class="modal-body">
+        <div class="well" id="fullNumbersContent" style="white-space: pre-wrap;"></div>
+      </div>
+      <div class="modal-footer">
+        <!-- دکمه بستن با کلاس درست -->
+        <button type="button" class="btn btn-default close-modal">بستن</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var modal = document.getElementById('numbersModal');
+    var fullNumbersDiv = document.getElementById('fullNumbersContent');
+
+    // نمایش مودال
+    document.querySelectorAll('.show-more-numbers').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            var target = this.getAttribute('data-target');
+            var textarea = document.querySelector(target);
+            if (textarea) {
+                fullNumbersDiv.textContent = textarea.value;
+            }
+
+            // باز کردن مودال دستی
+            modal.classList.add('in');
+            modal.style.display = 'block';
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('modal-open');
+
+            var backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop fade in';
+            backdrop.id = 'modal-backdrop-custom';
+            document.body.appendChild(backdrop);
+        });
+    });
+
+    // بستن مودال
+    document.querySelectorAll('.close-modal').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            modal.classList.remove('in');
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('modal-open');
+            var backdrop = document.getElementById('modal-backdrop-custom');
+            if (backdrop) backdrop.remove();
+        });
+    });
+});
+</script>
+
+
+
+
+{% endblock %}

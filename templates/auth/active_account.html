@@ -1,0 +1,79 @@
+
+
+{% extends 'Base/Base.html' %}
+
+{% block title %}
+    خوش امدید
+{% endblock %}
+
+
+{% block breadcrumb %}
+    <li class="flex items-center gap-x-2">
+        <a>صفحه کابری</a>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>
+    <li class="flex items-center gap-x-2">
+        <a>فعال سازی حساب کاربری</a>
+
+    </li>
+
+{% endblock %}
+
+{% block content %}
+
+<main class="container flex items-center flex-col justify-center mt-8">
+    <div class="max-w-lg w-full shadow-md rounded-lg border border-gray-200 dark:border-zinc-600"> <!-- اضافه کردن border -->
+        <div class="bg-white dark:bg-zinc-700 rounded-lg overflow-hidden">
+            <div class="p-6 lg:p-8"> <!-- کاهش padding در موبایل -->
+                <h5 class="text-center text-xl lg:text-2xl font-DanaMedium mb-6 mt-2"> <!-- اضافه کردن margin-bottom -->
+                    فعال کردن حساب کاربری
+                </h5>
+
+                <form method="POST" action="" class="space-y-6" data-recaptcha="true" data-recaptcha-action="login"> <!-- استفاده از space-y برای فاصله‌گذاری بهتر -->
+                    {% csrf_token %}
+                    {{ login_form.recaptcha }}
+                    {{ login_form.media }}
+                    <!-- فیلد شماره تلفن با border و focus بهتر -->
+                    <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg px-4 py-3 border border-gray-200 dark:border-zinc-600 focus-within:ring-1 focus-within:ring-green-500">
+    
+                        {{ login_form.phone_number }}
+                        <svg class="h-5 w-5 text-gray-500 dark:text-gray-200 ml-2">
+                            <use href="#phone"></use> <!-- تغییر آیکون به phone -->
+                        </svg>
+                    </div>
+                    <button disabled class="button    w-full flex justify-center items-center gap-x-2">
+                        <p class="text-sm font-DanaDemiBold rounded-full p-4 bg-green-500 text-white">
+                            یا
+                        </p>
+                    </button>
+                    <!-- فیلد ایمیل با border و focus بهتر -->
+                    <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg px-4 py-3 border border-gray-200 dark:border-zinc-600 focus-within:ring-1 focus-within:ring-green-500">
+                        {{ login_form.email }}
+                        <svg class="h-5 w-5 text-gray-500 dark:text-gray-200 ml-2">
+                            <use href="#envelope"></use>
+                        </svg>
+                    </div>
+
+                    <!-- لینک‌ها با فاصله و تراز بهتر -->
+                    <div class="flex items-center justify-between pt-4"> <!-- اضافه کردن padding-top -->
+                        <a class="text-sm font-medium text-green-500 hover:text-green-600 transition-colors" href="{% url 'user:login' %}">
+                            ورود به حساب
+                        </a>
+                        <a class="text-sm font-medium text-green-500 hover:text-green-400 transition-colors" href="{% url 'user:register' %}">
+                            ثبت‌نام کنید
+                        </a>
+                    </div>
+
+                    <!-- دکمه با افکت hover بهتر -->
+                    <button type="submit" class="mt-6 w-full py-3 px-4 rounded-lg text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200">
+                        فعال‌سازی حساب
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

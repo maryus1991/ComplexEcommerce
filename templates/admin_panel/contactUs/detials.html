@@ -1,0 +1,93 @@
+{% extends 'Base/AdminBase.html' %}
+{% load jalali_tags %}
+
+{% block title %}
+    پیام ها
+
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">
+        صفحه مدیریت
+    </li>
+    <li class="active">پیام ها
+    </li>    <li class="active">
+    پیام ها
+شماره {{ item.id }}
+    </li>
+{% endblock %}
+
+
+{% block body %}
+    <div class="panel box box-primary panel-default" style="margin-top: 20px;">
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered table-striped">
+                <thead>
+                <tr class="bg-primary">
+                    <th class="text-center" width="5%">#</th>
+                    <th width="25%">عنوان</th>
+                    <th class="text-center" width="10%">ایمیل</th>
+                    <th class="text-center" width="10%">شماره</th>
+                    <th class="text-center" width="10%"></th>
+                    <th colspan="2" class="text-center" width="35%"></th>
+                </tr>
+                </thead>
+                <tbody>
+                
+                    <tr>
+                        <td class="text-center">{{ item.id }}
+                        </td>
+
+                        <td>
+                            <strong>{{ item.subject }}</strong>
+
+                        </td>
+
+                        <td>
+                            <strong>{{ item.email }}</strong>
+                        </td>
+                        <td dir="ltr">
+                            <strong>{{ item.phone }}</strong>
+                        </td>
+<td class="text-center">
+                                                        <a href="{% url 'admin_panel:contact-delete' item.id %}" class="btn btn-sm btn-danger"
+                               data-toggle="tooltip" title="حذف">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            {{ item.message }}
+                        </td>                        
+                        
+                        
+                    </tr>
+                
+                </tbody>
+            </table>
+        </div>
+
+        
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip({
+                placement: 'top',
+                delay: {"show": 500, "hide": 100}
+            });
+
+            // افزودن کلاس form-control به تمام فیلدهای فرم
+            // This is already well-handled by Django's form rendering if using crispy forms or similar.
+            // If not, this line is good.
+            $('form input, form select, form textarea').addClass('form-control');
+
+            // تنظیمات برای فیلدهای تاریخ
+            $('.datepicker').datepicker({
+                format: 'yyyy/mm/dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+    </script>
+{% endblock %}

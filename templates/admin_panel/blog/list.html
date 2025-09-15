@@ -1,0 +1,411 @@
+{% extends 'Base/AdminBase.html' %}
+{% load jalali_tags %}
+
+{% block title %}
+    بلاگ
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">
+        صفحه مدیریت
+    </li>
+    <li class="active">بلاگ
+    </li>
+{% endblock %}
+
+
+{% block footer_reference %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script src="/static/node_modules/moment/min/moment.min.js"></script>
+    <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#tarikh').persianDatepicker({
+                altField: '#tarikhAlt',
+                altFormat: 'X',
+                format: 'D MMMM YYYY HH:mm a',
+                observer: true,
+                timePicker: {
+                    enabled: true
+                },
+            });
+        });
+        $(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
+            //Money Euro
+            $('[data-mask]').inputmask()
+
+            //Date range picker
+            $('#reservation').daterangepicker()
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                format: 'MM/DD/YYYY h:mm A'
+            })
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                }
+            )
+
+            //Date picker
+            $('#datepicker').datepicker({
+                autoclose: true
+            })
+
+            //iCheck for checkbox and radio inputs
+            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue'
+            })
+            //Red color scheme for iCheck
+            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                checkboxClass: 'icheckbox_minimal-red',
+                radioClass: 'iradio_minimal-red'
+            })
+            //Flat red color scheme for iCheck
+            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            })
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false
+            })
+        })
+    </script>
+{% endblock %}
+
+{% block header_reference %}
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/static/dist/css/rtl.css">
+    <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
+    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+    <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+
+{% endblock %}
+
+
+{% block body %}
+    <div class="well box box-primary" style="margin-top: 20px;">
+
+        <form method="get" class="form-horizontal">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form.user_number.label_tag }}
+                        {{ form.user_number }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form.start_date.label_tag }}
+                        <div class="input-group">
+                            {{ form.start_date }}
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form.end_date.label_tag }}
+                        <div class="input-group">
+                            {{ form.end_date }}
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form.category.label_tag }}
+                        {{ form.category }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="checkbox-inline">
+                            {{ form.is_active.label }}
+                        </label>
+                        {{ form.is_active }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="checkbox-inline">
+                            {{ form.admin_verified.label }}
+                        </label>
+                        {{ form.admin_verified }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form.ordering.label_tag }}
+                        {{ form.ordering }}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ form.title.label_tag }}
+                        {{ form.title }}
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+
+                <div class="col-md-6">
+                                        <div class="form-group">
+                        {{ form.store.label_tag }}
+                        {{ form.store }}
+                    </div>
+
+                </div>
+                    <div class="col-md-6">
+                                    
+                    <div class="form-group" style="margin-top: 25px;">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fa fa-search"></i> جستجو
+                        </button>
+                    
+                </div>
+            </div>
+            {{ form.media }}
+        </form>
+    </div>
+
+    <div class="panel box box-primary panel-default" style="margin-top: 20px;">
+        <div class="panel-heading clearfix">
+            <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست پست ها </h3>
+            <a href="{% url 'admin_panel:blog-create' %}" class="pull-left btn btn-success">نوشتن پست جدید</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered table-striped">
+                <thead>
+                <tr class="bg-primary">
+                    <th class="text-center" width="5%">#</th>
+                    <th width="20%">عنوان</th>
+                    <th width="10%">فروشگاه</th>
+                    <th width="10%">نویسنده</th>
+                    <th width="12%">تاریخ انتشار</th>
+                    <th width="8%">دسته</th>
+                    <th width="8%">ترتیب</th>
+                    <th class="text-center" width="5%">بازدید ها</th>
+                    <th colspan="4" class="text-center" width="30%">عملیات</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td class="text-center">{{ item.id }}</td>
+                        <td>
+                            <strong>{{ item.title }}</strong>
+                            {% if not item.admin_verified %}
+                                <span class="label label-danger pull-left">غیر فعال توسط ادمین</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ item.store.name }}</strong></td>
+                        <td dir="ltr"><strong>{{ item.user.PhoneNumber }}</strong></td>
+                        <td>
+                            {% if item.is_active %}
+                                <strong dir="ltr">{{ item.updated_at|to_jalali:'%Y/%m/%d - %H:%M' }}</strong>
+                            {% else %}
+                                <p class="label label-warning">
+                                    منتشر نشده توسط فروشگاه
+                                </p>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ item.category.name }}</strong></td>
+                        <td class="text-center" style="min-width: 200px;">
+                            <form action="{% url 'admin_panel:blog-set-sort-number' item.id %}" method="POST"
+                                  class="form-inline">
+                                {% csrf_token %}
+                                <div class="input-group input-group-sm">
+                                    <input type="text"
+                                           value="{{ item.sort_number }}"
+                                           name="{{ item.id }}"
+                                           id="input_{{ item.id }}"
+                                           class="form-control input-sm "
+                                           style="width: 120px; display: inline-block;">
+
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default btn-sm sort-up"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-up"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm sort-down"
+                                                data-id="{{ item.id }}">
+                                            <i class="fa fa-caret-down"></i>
+                                        </button>
+                                        <button type="submit" class="btn btn-success btn-sm sort-down">
+                                            <i class="fa fa-hand-pointer-o"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </td>
+
+                        <td class="text-center">
+<span class="badge bg-blue">{{ item.views_count }}</span>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'blog:detail' item.id %}" class="btn btn-sm btn-success"
+                               data-toggle="tooltip" title="مشاهده">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:blog-update' item.id %}" class="btn btn-sm btn-info"
+                               data-toggle="tooltip" title="ویرایش">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:blog-active-deactivate' item.id %}"
+                               class="btn btn-sm btn-warning"
+                               data-toggle="tooltip"
+                               title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                <i class="fa fa-power-off"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:blog-delete' item.id %}" class="btn btn-sm btn-danger"
+                               data-toggle="tooltip" title="حذف">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer">
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="text-muted">تعداد کل ایتم ها: {{ items.count }}</small>
+                </div>
+                <div class="col-md-6 text-left">
+                    <ul class="pagination pagination-sm no-margin">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}">&raquo;</a></li>
+                        {% endif %}
+                        {% for page_number in page_obj.paginator.page_range %}
+                            <li {% if page_number == page_obj.number %}class="active" {% endif %}>
+                                <a href="?page={{ page_number }}">{{ page_number }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">&laquo;</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip({
+                placement: 'top',
+                delay: {"show": 500, "hide": 100}
+            });
+
+            // افزودن کلاس form-control به تمام فیلدهای فرم
+            // This is already well-handled by Django's form rendering if using crispy forms or similar.
+            // If not, this line is good.
+            $('form input, form select, form textarea').addClass('form-control');
+
+            // تنظیمات برای فیلدهای تاریخ
+            $('.datepicker').datepicker({
+                format: 'yyyy/mm/dd',
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            function getInput(button) {
+                const inputId = 'input_' + button.getAttribute('data-id');
+                return document.getElementById(inputId);
+            }
+
+            function parseInputValue(input) {
+                const value = parseInt(input.value);
+                return isNaN(value) ? 0 : value;
+            }
+
+            // دکمه افزایش
+            document.querySelectorAll('.sort-up').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const input = getInput(this);
+                    let value = parseInputValue(input);
+                    input.value = value + 1;
+                });
+            });
+
+            // دکمه کاهش
+            document.querySelectorAll('.sort-down').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const input = getInput(this);
+                    let value = parseInputValue(input);
+                    if (value > 0) {
+                        input.value = value - 1;
+                    }
+                });
+            });
+
+        });
+    </script>
+
+{% endblock %}

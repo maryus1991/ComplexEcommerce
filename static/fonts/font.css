@@ -1,0 +1,118 @@
+
+@font-face {
+    font-family: 'Ravi-Bold';
+    src: url('/static/fonts/ckeditor/Ravi-Bold.ttf');
+}
+@font-face {
+    font-family: 'Ravi-ExtraBold';
+    src: url('/static/fonts/ckeditor/Ravi-ExtraBold.ttf');
+}
+@font-face {
+    font-family: 'Ravi-Medium';
+    src: url('/static/fonts/ckeditor/Ravi-Medium.ttf');
+}
+@font-face {
+    font-family: 'Ravi-Regular';
+    src: url('/static/fonts/ckeditor/Ravi-Regular.ttf');
+}
+@font-face {
+    font-family: 'Ravi-SemiBold';
+    src: url('/static/fonts/ckeditor/Ravi-SemiBold.ttf');
+}
+@font-face {
+    font-family: 'Ravi-Thin';
+    src: url('/static/fonts/ckeditor/Ravi-Thin.ttf');
+}
+@font-face {
+    font-family: 'Vazir';
+    src: url('/static/fonts/Vazir.ttf');
+}
+@font-face {
+    font-family: 'NotoNaskhArabic';
+    src: url('/static/fonts/NotoNaskhArabic-Regular.ttf');
+}
+@font-face {
+    font-family: 'Morabba-Light';
+    src: url('/static/fonts/Morabba/woff2/Morabba-Light.woff2');
+}
+@font-face {
+    font-family: 'Morabba-Medium';
+    src: url('/static/fonts/Morabba/woff2/Morabba-Medium.woff2');
+}
+@font-face {
+    font-family: 'Morabba-Bold';
+    src: url('/static/fonts/Morabba/woff2/Morabba-Bold.woff2');
+}
+@font-face {
+    font-family: 'DanaFaNum-DemiBold';
+    src: url('/static/fonts/Dana/woff2/DanaFaNum-DemiBold.woff2');
+}
+@font-face {
+    font-family: 'DanaFaNum-Medium';
+    src: url('/static/fonts/Dana/woff2/DanaFaNum-Medium.woff2');
+}
+@font-face {
+    font-family: 'DanaFaNum-Regular';
+    src: url('/static/fonts/Dana/woff2/DanaFaNum-Regular.woff2');
+}
+@font-face {
+    font-family: 'PINAR-BOLD';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-BOLD.TTF');
+}
+@font-face {
+    font-family: 'PINAR-DS3-BLACK';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-DS3-BLACK.TTF');
+}
+@font-face {
+    font-family: 'PINAR-DS3-BOLD';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-DS3-BOLD.TTF');
+}
+@font-face {
+    font-family: 'PINAR-DS3-EXTRABOLD';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-DS3-EXTRABOLD.TTF');
+}
+@font-face {
+    font-family: 'PINAR-DS3-LIGHT';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-DS3-LIGHT.TTF');
+}
+@font-face {
+    font-family: 'PINAR-DS3-MEDIUM';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-DS3-MEDIUM.TTF');
+}
+@font-face {
+    font-family: 'PINAR-DS3-REGULAR';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-DS3-REGULAR.TTF');
+}
+@font-face {
+    font-family: 'PINAR-DS3-SEMIBOLD';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-DS3-SEMIBOLD.TTF');
+}
+@font-face {
+    font-family: 'PINAR-EXTRABOLD';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-EXTRABOLD.TTF');
+}
+@font-face {
+    font-family: 'PINAR-FD-VF[WGHT-KSHD-DSTY]';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-FD-VF[WGHT-KSHD-DSTY].TTF');
+}
+@font-face {
+    font-family: 'PINAR-LIGHT';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-LIGHT.TTF');
+}
+@font-face {
+    font-family: 'PINAR-MEDIUM';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-MEDIUM.TTF');
+}
+@font-face {
+    font-family: 'PINAR-REGULAR';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-REGULAR.TTF');
+}
+@font-face {
+    font-family: 'PINAR-SEMIBOLD';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-SEMIBOLD.TTF');
+}
+@font-face {
+    font-family: 'PINAR-VF[WGHT-KSHD-DSTY]';
+    src: url('/static/fonts/ckeditor/pinar/PINAR-VF[WGHT-KSHD-DSTY].TTF');
+}
+

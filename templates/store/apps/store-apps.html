@@ -1,0 +1,151 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    لیست برنامه ها
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">برنامه ها</li>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <!-- فرم اضافه کردن برنامه -->
+        <!-- فرم جستجو -->
+        <div class="col-md-12">
+            <div class="box box-primary" style="margin-top: 20px;">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-search"></i> فرم جستجو</h3>
+                </div>
+                <form role="form" method="GET" action="" class="box" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label>نام برنامه</label>
+                            <div class="input-group input-group-sm">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-info btn-flat">نام</button>
+                            </span>
+                                <input type="text" name="search" class="form-control" placeholder="نام را وارد کنید"
+                                       maxlength="100" id="id_name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                            <span class="btn-danger input-group-addon" style="background-color: #f56954; color: #FFFFFF ">
+                                فعال :
+                                <input type="checkbox" name="is_active" id="id_is_active">
+                                 غیر فعال :
+                                <input type="checkbox" name="not_active" id="id_is_active">
+                                غیرفعال شده توسط ادمین   :
+                                <input type="checkbox" name="admin_verified" id="id_is_active">
+
+
+                            </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-success btn-sm btn-block">جستجو</button>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- لیست برنامه‌ها -->
+        <div class="col-md-12">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title"><i class="fa fa-list"></i> لیست برنامه‌ها</h3>
+                    <div class="box-tools pull-right">
+                        <span class="badge bg-green">{{ items.count }} برنامه</span>
+                        <a href="{% url 'store:app-create' %}" class="badge bg-info   ">اپلود برنامه چدید</a>
+                    </div>
+                </div>
+                <div class="box-body table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                        <tr class="bg-light-blue">
+                            <th width="5%">#</th>
+                            <th width="25%">نام برنامه</th>
+                            <th width="5%">تعداد دانلود ها</th>
+
+                            <th width="5%">وضعیت</th>
+                            <th width="10%">عملیات</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in items %}
+                            <tr>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.name }}</td>
+                                <td><span class="badge bg-blue">{{ item.views_count }}</span></td>
+
+                                <td>
+                                    {% if item.is_active and item.admin_verified %}
+                                        <span class="label label-success">فعال</span>
+                                    {% elif not item.admin_verified %}
+                                        <span class="label label-danger">توسط ادمین سایت غیرفعال شده است</span>
+                                    {% else %}
+                                        <span class="label label-danger">غیرفعال</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ item.get_absolute_url }}" class="btn btn-sm btn-success" title="مشاهده">
+                                            <i class="fa fa-eye"></i>
+                                        </a>                                
+                                        <a href="{% url 'store:app-update' item.pk %}" class="btn btn-sm btn-info" title="بروزرسانی">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'store:remove-active-deactive' item.pk %}"
+                                           class="btn btn-sm {% if item.is_active %}btn-warning{% else %}btn-success{% endif %}"
+                                           title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                            <i class="fa {% if item.is_active %}fa-ban{% else %}fa-check{% endif %}"></i>
+                                        </a>
+                                        <form action="{% url 'store:remove-active-deactive' item.pk %}"
+                                              method="post" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-danger" title="حذف">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">برنامه‌ای یافت نشد</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="box-footer clearfix">
+                    <ul class="pagination pagination-sm no-margin pull-right">
+                        {% if page_obj.has_previous %}
+                            <li>
+                                <a href="?page={{ page_obj.previous_page_number }}&name={{ request.GET.name }}&is_active={{ request.GET.is_active }}">&laquo;</a>
+                            </li>
+                        {% endif %}
+                        {% for page_number in page_obj.paginator.page_range %}
+                            <li class="{% if page_number == page_obj.number %}active{% endif %}">
+                                <a href="?page={{ page_number }}&name={{ request.GET.name }}&is_active={{ request.GET.is_active }}">{{ page_number }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li>
+                                <a href="?page={{ page_obj.next_page_number }}&name={{ request.GET.name }}&is_active={{ request.GET.is_active }}">&raquo;</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

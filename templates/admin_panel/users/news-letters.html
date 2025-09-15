@@ -1,0 +1,123 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    خبرنامه
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">کابران</li>
+    <li class="active">شماره های ثبت شده در خبرنامه</li>
+{% endblock %}
+
+{% block body %}
+    <div class="panel panel-primary" style="margin-top:40px">
+        <div class="panel-heading">
+            <h3 class="panel-title ">ارسال پیام به شماره های خبرنامه</h3>
+            <span class="pull-left">
+                <form action="" method="get" class="form-inline">
+                    {% csrf_token %}
+                    <input type="text" placeholder="شماره ..." name="search" class="form-control">
+                    <button type="submit" class="btn btn-success btn-sm sort-down">
+                                                <i class="fa fa-hand-pointer-o"></i>
+                                            </button>
+                </form>
+            </span>
+        </div>
+
+
+        <form role="form" method="POST" action="" class="panel-body" enctype="multipart/form-data">
+            <span class="text-xs text-muted">
+                توجه که شماره هایی که در خبر نامه هستن به احتمال زیاد حساب کاربری در سایت شما ندارن
+            </span>
+            {% csrf_token %}
+
+            <div class="card mb-4">
+
+
+                <div class="card-body">
+                    
+                    <!-- Message Content -->
+                    <div class="form-group mb-4">
+                        <label for="sender" class="form-label">شماره ارسال </label>
+                        <input type="text" id="sender" name="sender" class="form-control">
+                         
+                    </div>           
+                    
+                    <div class="form-group mb-4">
+                        <label for="id_content" class="form-label">متن پیام</label>
+                        <textarea name="content" id="id_content" class="form-control" rows="6"
+                                  placeholder="لطفاً متن پیام خود را وارد نمایید (متن مختصر و مفید باشد)..."
+                                  required></textarea>
+                        <small class="text-muted">سعی کنید متن پیام مختصر و مفید باشد</small>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                            <i class="fa fa-paper-plane"></i> ارسال پیام
+                        </button>
+                    </div>
+
+                    <!-- Contact Selection -->
+                    <div class="form-group mb-4">
+                        <label class="form-label">انتخاب مخاطبین</label>
+
+
+                        <div class="contact-selection-box p-3 border rounded">
+                            <!-- Select All Button -->
+                            <div class="mb-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary select-all-contacts">
+                                    <i class="fa fa-check-square"></i> انتخاب همه
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary deselect-all-contacts">
+                                    <i class="fa fa-square"></i> عدم انتخاب همه
+                                </button>
+                            </div>
+
+
+                            <!-- Contacts List -->
+                            <div class="row contacts-list">
+                                {% for item in items %}
+                                    <div class="col-md-2 ">
+                                        <div class="form-check">
+                                            <input class="form-check-input contact-checkbox" type="checkbox"
+                                                   name="selected_contacts" value="{{ item.id }}"
+                                                   id="contact_{{ item.id }}">
+                                            <label class="form-check-label" for="contact_{{ item.id }}" dir="ltr">
+                                                <a href="{% url 'admin_panel:user-news-letters-delete' item.id  %}" class="btn btn-warning btn-sm sort-down">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                                {{ item.phone_number }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+
+                </div>
+            </div>
+        </form>
+
+        <!-- Add some JavaScript for the selection functionality -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Select all contacts
+                document.querySelector('.select-all-contacts').addEventListener('click', function () {
+                    document.querySelectorAll('.contact-checkbox').forEach(checkbox => {
+                        checkbox.checked = true;
+                    });
+                });
+
+                // Deselect all contacts
+                document.querySelector('.deselect-all-contacts').addEventListener('click', function () {
+                    document.querySelectorAll('.contact-checkbox').forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                });
+            });
+        </script>
+    </div>
+{% endblock %}

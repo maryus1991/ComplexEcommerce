@@ -1,0 +1,24 @@
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="google-site-verification" content="1l9Tiq1KcW3p1XnmpzZ4QrW2BnJht3tSYso7BdVuvZo">
+<!-- ==========================  FAVICON ============================= -->
+<!-- ==========================  STYLE APP ============================= -->
+<link rel="stylesheet" href="/static/styles/app.css"/>
+
+<!-- ==========================  SLIDER ============================= -->
+<link rel="stylesheet" href="/static/styles/swiper.css"/>
+<link rel="stylesheet" href="/static/styles/swiper.css"/>
+<link rel="stylesheet" href="{% url 'site:fonts.css' %}"/>
+<!-- ==========================  DARK MODE SCRPT ============================= -->
+<script type="text/javascript">
+    const theme = localStorage.getItem("theme");
+    const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    if (theme === "dark" || (theme !== "light" && isSystemDark)) {
+        document.documentElement.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+    }
+
+
+</script>

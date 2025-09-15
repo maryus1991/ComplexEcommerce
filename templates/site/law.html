@@ -1,0 +1,46 @@
+{% extends 'Base/Base.html' %}
+
+{% block title %}
+    قوانین و مقررات سایت
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="flex items-center gap-x-2">
+        <a href="{% url 'site:site-law' %}">سوالات قوانین و مقررات سایت</a>
+    </li>
+
+{% endblock %}
+
+{% block content %}
+    <main class="container child:mt-8">
+
+
+        <section class="w-full px-5 pt-5 pb-10 rounded-lg shadow bg-white dark:bg-zinc-700">
+            <h2 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1">قوانین و مقررات</h2>
+
+            {% for item in items %}
+
+
+                <!-- accordion -->
+                <div
+                        class="mt-4 w-full  mx-auto dark:bg-zinc-600 cursor-pointer  rounded-lg border border-gray-200 dark:border-white/20">
+                    <div class="accordion-header p-3 flex items-center justify-between">
+                        <p class="font-DanaMedium line-clamp-1 text-sm md:text-base">
+                            {{ item.name }}
+                        </p>
+                        <svg class="w-4 h-4">
+                            <use href="#chevron-left"></use>
+                        </svg>
+                    </div>
+                    <div class="accordion-content py-2 mx-4 child:dark:text-gray-200 child:text-gray-400">
+                        <p>
+                            {{ item.description|safe }}
+                        </p>
+                    </div>
+
+                </div>
+            {% endfor %}
+
+        </section>
+    </main>
+{% endblock %}

@@ -1,0 +1,559 @@
+{% extends 'Base/Base.html' %}
+{% load static %}
+{% load to_webp %}
+{% load jalali_tags %}
+{% load products_tags %}
+
+
+{% block title %}
+    مقالات
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="flex items-center gap-x-2">
+        <a href="{% url 'blog:list' %}">مقالات</a>
+    </li>
+{% endblock %}
+
+{% block header %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="{% static 'admin/jquery.ui.datepicker.jalali/themes/base/jquery-ui.min.css' %}">
+    <script src="{% static 'admin/js/django_jalali.min.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+    <main class="container child:mt-8">
+        <!-- Breadcrumbs -->
+
+        <div class="flex flex-col lg:flex-row gap-4">
+            <!-- SIDE FILTER BOX -->
+
+            <form method="get" action=""
+                  class="top-5 h-fit lg:w-1/4 flex flex-col gap-y-4 items-center shadow rounded-lg p-4
+            dark:bg-zinc-700 bg-white">
+                <!-- TITLE -->
+
+                <div class="flex items-center justify-between w-full">
+                    {% if request.user_agent.is_mobile %}
+                        <a id="filterToggleBtn" class="flex justify-between w-full">
+                                                <span class="flex items-center gap-x-1">
+                        <svg class="w-5 h-5">
+                            <use href="#filter"></use>
+                        </svg>
+                        <p class="font-DanaMedium ">فیلتر ها</p>
+                    </span>
+                            <span class="flex items-center gap-x-1">
+
+                            <svg id="toggleIcon"
+                                 class="w-6 h-6 text-gray-600 dark:text-gray-300 transition-transform duration-300">
+                                <use href="#arrow-down-circle"></use>
+                            </svg>
+                        </span>
+
+                        </a>
+
+                    {% else %}
+                        <span class="flex items-center gap-x-1">
+                        <svg class="w-5 h-5">
+                            <use href="#filter"></use>
+                        </svg>
+                        <p class="font-DanaMedium ">فیلتر ها</p>
+                    </span>
+                        <button type="reset" class="text-green-500">حذف همه</button>
+
+                    {% endif %}
+                </div>
+                <span {% if request.user_agent.is_mobile %} id="filterDropdown" class="hidden w-full" {% else %}
+                                                            class="w-full" {% endif %}>
+
+                <!-- accordion -->
+                <div class="mt-6 w-full dark:bg-zinc-600 cursor-pointer shadow  rounded-lg" style="max-height: 400px !important; overflow-y: auto!important;">
+                    <div id='blog-category-header' onclick="categoryFilter('blog-categories-filter')"
+                         class="accordion-header p-3 flex items-center justify-between">
+                        <p class="font-DanaMedium">دسته بندی </p>
+                        <svg class="w-4 h-4">
+                            <use href="#chevron-left"></use>
+                        </svg>
+                    </div>
+
+                    <ul id="category-accordion"
+                        class="accordion-content  hidden py-2 mx-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
+                        {% for category in categories|active_category %}
+                            <hr>
+                            <li data-id="{{ category.id }}">
+                                <label class="cl-checkbox">
+                                    <input name="category" value="{{ category.id }}" type="checkbox"
+                                           class="category-checkbox" data-id="{{ category.id }}" data-parent="">
+                                    <span></span>
+                                </label>
+                                <p>{{ category.name }}</p>
+
+                                {% for child in category.children|active_category %}
+                                    <li data-id="{{ child.id }}" style="padding-right: 2rem;">
+                                        <label class="cl-checkbox">
+                                            <input name="category" value="{{ child.id }}" type="checkbox"
+                                                   class="category-checkbox" data-id="{{ child.id }}"
+                                                   data-parent="{{ category.id }}">
+                                            <span></span>
+                                        </label>
+                                        <p>{{ child.name }}</p>
+                                    </li>
+
+                                    {% for sub_child in child.children|active_category %}
+                                        <li data-id="{{ sub_child.id }}" style="padding-right: 4rem;">
+                                            <label class="cl-checkbox">
+                                                <input name="category" value="{{ sub_child.id }}" type="checkbox"
+                                                       class="category-checkbox" data-id="{{ sub_child.id }}"
+                                                       data-parent="{{ child.id }}">
+                                                <span></span>
+                                            </label>
+                                            <p>{{ sub_child.name }}</p>
+                                        </li>
+
+                                        {% for sub_sub_child in sub_child.children|active_category %}
+                                            <li data-id="{{ sub_sub_child.id }}" style="padding-right: 6rem;">
+                                                <label class="cl-checkbox">
+                                                    <input name="category" value="{{ sub_sub_child.id }}"
+                                                           type="checkbox" class="category-checkbox"
+                                                           data-id="{{ sub_sub_child.id }}"
+                                                           data-parent="{{ sub_child.id }}">
+                                                    <span></span>
+                                                </label>
+                                                <p>{{ sub_sub_child.name }}</p>
+                                            </li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            // برای تمام تگ‌های <p> داخل لیست‌ها
+                            document.querySelectorAll('ul li p').forEach(function (pTag) {
+                                pTag.addEventListener('click', function () {
+                                    const checkbox = this.closest('li').querySelector('input[type="checkbox"]');
+                                    if (checkbox) {
+                                        checkbox.checked = !checkbox.checked;
+                                        checkbox.dispatchEvent(new Event('change')); // اگر نیاز به واکنش به تغییر هست
+                                    }
+                                });
+                            });
+                        });
+                        document.addEventListener("DOMContentLoaded", function () {
+
+                            const checkboxes = document.querySelectorAll('.category-checkbox');
+
+                            // وقتی روی هر چک‌باکس کلیک شد
+                            checkboxes.forEach(cb => {
+                                cb.addEventListener('change', function () {
+                                    const currentId = this.dataset.id;
+                                    const isChecked = this.checked;
+
+                                    // تمام چک‌باکس‌هایی که parent آن‌ها این ID باشد را پیدا کن
+                                    const children = getAllChildren(currentId);
+                                    children.forEach(child => {
+                                        child.checked = isChecked;
+                                    });
+                                });
+                            });
+
+                            // بازگشت همه فرزندان یک دسته (به‌صورت بازگشتی)
+                            function getAllChildren(parentId) {
+                                let result = [];
+                                const directChildren = Array.from(document.querySelectorAll(`.category-checkbox[data-parent="${parentId}"]`));
+                                result.push(...directChildren);
+                                directChildren.forEach(child => {
+                                    result.push(...getAllChildren(child.dataset.id));
+                                });
+                                return result;
+                            }
+                        });
+                    </script>
+
+                </div>
+                <br>
+                    <div class="w-full dark:bg-zinc-600 cursor-pointer shadow rounded-lg" style="max-height: 400px !important; overflow-y: auto!important;">
+                        <div id="store-header" onclick="categoryFilter('store-accordion')"
+                             class="accordion-header p-3 flex items-center justify-between">
+                            <p class="font-DanaMedium">فروشگاها</p>
+                            <svg class="w-4 h-4">
+                                <use href="#chevron-left"></use>
+                            </svg>
+                        </div>
+                        <ul id="store-accordion"
+                            class="accordion-content hidden mx-2 py-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
+                            <hr>
+                            {% for store in stores %}
+                                <li>
+                                    <label class="cl-checkbox">
+                                        <input name="store" value="{{ store.id }}" type="checkbox">
+                                        <span></span>
+                                    </label>
+                                    <p>{{ store.name }}</p>
+                                </li>
+                            {% endfor %}
+
+                        </ul>
+                    </div>
+<br>
+                    <div class="w-full dark:bg-zinc-600 cursor-pointer shadow  rounded-lg" >
+                        <div id="date-header" onclick="categoryFilter('date-filter')"
+                             class="accordion-header p-3 flex items-center justify-between">
+                            <p class="font-DanaMedium">تاریخ انتشار</p>
+                            <svg class="w-4 h-4">
+                                <use href="#chevron-left"></use>
+                            </svg>
+                        </div>
+
+                        <ul id="date-filter"
+                            class="accordion-content hidden py-2 mx-2 child:dark:text-gray-200 child:text-gray-600  items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
+                            <li class="flex ">
+                                <label class="cl-checkbox">
+                                    <input name="today" type="checkbox">
+                                    <span></span>
+                                </label>
+                                <p>امروز</p>
+                            </li>
+                            <li class="flex text-white">
+                                <label class="cl-checkbox">
+                                    <input name="yesterday" type="checkbox">
+                                    <span></span>
+                                </label>
+                                <p>دیروز</p>
+
+                            </li>
+
+                            <li class="w-full">
+                                {{ date_input.start_date }}
+                            </li>
+                            <li class="w-full">
+                                {{ date_input.end_date }}
+                            </li>
+                            {{ date_input.media }}
+
+                        </ul>
+                    </div>
+                    <!-- CHECK BOX -->
+<br>
+                    <div
+                            class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium">
+                        <div class="">
+                            <p>داغ ترین</p>
+                            <label class="switch">
+                                <input name="hottest" type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="">
+                            <p>بروز ترین </p>
+                            <label class="switch">
+                                <input name="newset" type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                <br>
+                <div class="flex justify-between w-full">
+                    <button type="submit" class="px-4 py-1 bg-green-500 rounded-lg font-DanaMedium"> اعمال</button>
+                        <button type="reset" class="text-green-500">حذف همه</button>
+                </div>
+                </span>
+            </form>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    document.getElementById('filterToggleBtn').addEventListener('click', function () {
+                        const content = document.getElementById('filterDropdown');
+                        const icon = document.getElementById('toggleIcon');
+
+                        if (content.classList.contains('hidden')) {
+                            content.classList.remove('hidden');
+
+                        } else {
+                            content.classList.add('hidden');
+                        }
+
+                        icon.classList.toggle('rotate-180');
+                    });
+                })
+            </script>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    // تابع برای گرفتن تمام مقادیر یک پارامتر از URL
+                    function getAllParams(paramName) {
+                        const params = new URLSearchParams(window.location.search);
+                        return params.getAll(paramName);
+                    }
+
+                    // تابع برای بررسی وجود پارامتر
+                    function hasParam(paramName) {
+                        return new URLSearchParams(window.location.search).has(paramName);
+                    }
+
+                    // --- پردازش دسته‌بندی‌ها ---
+                    const selectedCategories = getAllParams('category');
+                    if (selectedCategories.length > 0) {
+                        const categoriesAccordion = document.getElementById('blog-categories-filter');
+                        if (categoriesAccordion) {
+                            categoriesAccordion.classList.remove('hidden');
+
+                            selectedCategories.forEach(catId => {
+                                const checkbox = document.querySelector(`input[name="category"][value="${catId}"]`);
+                                if (checkbox) {
+                                    checkbox.checked = true;
+
+                                    // برای به روزرسانی UI در صورت نیاز
+                                    const event = new Event('change');
+                                    checkbox.dispatchEvent(event);
+                                }
+                            });
+                        }
+                    }
+
+                    // برای دسته‌بندی‌ها
+                    if (selectedCategories.length > 0) {
+                        // باز کردن آکاردیون دسته‌بندی
+                        document.getElementById('category-accordion').classList.remove('hidden');
+
+                        // علامت‌گذاری تمام دسته‌بندی‌های انتخاب شده
+                        selectedCategories.forEach(catId => {
+                            const checkbox = document.querySelector(`input[name="category"][value="${catId}"]`);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    }
+
+
+                    // --- پردازش فروشگاه‌ها (با استفاده از تابع صحیح) ---
+                    const selectedStores = getAllParams('store'); // تغییر از getAllQueryParams به getAllParams
+                    if (selectedStores.length > 0) {
+                        const storeAccordion = document.getElementById('store-accordion');
+                        if (storeAccordion) {
+                            storeAccordion.classList.remove('hidden');
+
+                            selectedStores.forEach(storeId => {
+                                const checkbox = document.querySelector(`input[name="store"][value="${storeId}"]`);
+                                if (checkbox) {
+                                    checkbox.checked = true;
+
+                                    // برای به روزرسانی UI در صورت نیاز
+                                    const event = new Event('change');
+                                    checkbox.dispatchEvent(event);
+                                }
+                            });
+                        }
+                    }
+
+                    // --- پردازش تاریخ انتشار ---
+                    if (hasParam('today') || hasParam('yesterday') || hasParam('start_date') || hasParam('end_date')) {
+                        const dateAccordion = document.getElementById('date-filter');
+                        if (dateAccordion) {
+                            dateAccordion.classList.remove('hidden');
+
+                            if (hasParam('today')) {
+                                const todayCheckbox = document.querySelector('input[name="today"]');
+                                if (todayCheckbox) todayCheckbox.checked = true;
+                            }
+                            if (hasParam('yesterday')) {
+                                const yesterdayCheckbox = document.querySelector('input[name="yesterday"]');
+                                if (yesterdayCheckbox) yesterdayCheckbox.checked = true;
+                            }
+                        }
+                    }
+
+                    // --- پردازس سوئیچ‌ها ---
+                    if (hasParam('hottest')) {
+                        const hottestCheckbox = document.querySelector('input[name="hottest"]');
+                        if (hottestCheckbox) hottestCheckbox.checked = true;
+                    }
+                    if (hasParam('newset')) {
+                        const newestCheckbox = document.querySelector('input[name="newset"]');
+                        if (newestCheckbox) newestCheckbox.checked = true;
+                    }
+                });
+            </script><!-- FILTER BOXES & articles -->
+
+            <div class="lg:w-3/4">
+                <!-- TOP FILTER BOX -->
+                <div
+                        class="dark:bg-zinc-700 bg-white flex flex-wrap items-center justify-start sm:gap-x-8 py-2 px-2 sm:px-4 shadow rounded-lg sm:h-16">
+                    <div class="flex items-center gap-x-2">
+                        <svg class="w-5 h-5">
+                            <use href="#sort-list"></use>
+                        </svg>
+                        <h2 class="font-DanaDemiBold">مرتب سازی بر اساس :</h2>
+                    </div>
+                    <ul
+                            class="flex items-center  gap-x-2 lg:gap-x-5 child:transition-all child:cursor-pointer child-hover:bg-gray-300/30 child:rounded-lg child:px-1 child:py-1 child:text-sm sm:child:text-base">
+                        <li>
+                            <a onclick="updateOrdering(1); return false;">محبوب ترین</a>
+                        </li>
+                        <li>
+                            <a onclick="updateOrdering(2); return false;">جدید ترین</a>
+                        </li>
+                        <li>
+                            <a onclick="updateOrdering(3); return false;">پربازدید ترین</a>
+                        </li>
+
+                        <script>
+                            function updateOrdering(orderValue) {
+                                const url = new URL(window.location.href);
+                                const params = new URLSearchParams(url.search);
+
+                                // اضافه یا به‌روزرسانی پارامتر ordering
+                                params.set('ordering', orderValue);
+
+                                // رفتن به URL جدید با حفظ پارامترهای دیگر
+                                window.location.href = `${url.pathname}?${params.toString()}`;
+                            }
+                        </script>
+                    </ul>
+                    <script>
+                        function OrderingFilter(element, id) {
+                            const params = new URLSearchParams();
+                            params.set('ordering', id);
+                        }
+                    </script>
+                </div>
+
+                <!-- articles -->
+                {% if not posts %}
+
+                    <div class="flex flex-col items-center justify-center py-16 mt-8 ">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400 mb-4" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <h2 class="text-2xl font-medium text-gray-600">پست یافت نشد</h2>
+                        <p class="text-gray-500 mt-2">متأسفیم، هیچ پستی مطابق با جستجوی شما وجود ندارد.</p>
+                    </div>
+                {% endif %}
+                <div id="blog-list"
+                     class="mt-4 grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 xl:grid-cols-3  gap-6 sm:gap-8 child-hover:-translate-y-2 child:duration-300
+                    child:bg-white child:dark:bg-zinc-700  child:rounded-lg child:p-2 child:cursor-pointer child:shadow ">
+                    <!-- ITEM -->
+
+                    {% for post in posts %}
+                        <div class="group">
+                            <div class="relative overflow-hidden rounded-lg">
+                                <a href="{% url 'blog:detail' post.id %}">
+                                    <picture>
+                                        <source srcset="{{ post.image.url|to_webp }}"
+                                                class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
+                                                type="image/webp">
+                                        <img src="{{ post.image.url }}" alt="{{ post.title }}"
+                                             class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
+                                             loading="lazy">
+                                    </picture>
+                                    <a href="{% url 'blog:detail' post.id %}">
+                                        <div
+                                                class="absolute opacity-0 left-0 top-0 bottom-0 right-0 bg-black/60 flex items-center justify-center group-hover:opacity-100 duration-300 transition-all rounded-bl-3xl rounded-tr-3xl">
+                                            <a href="{% url 'blog:detail' post.id %}"
+                                               class="flex items-center px-2 py-1 gap-x-1 font-DanaMedium rounded-lg border-2 border-white text-white">
+                                                <p>ادامه مطالب</p>
+                                                <svg class="w-4 h-4">
+                                                    <use href="#chevron-left"></use>
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </a>
+                                </a>
+
+                            </div>
+                            <a href="{% url 'blog:detail' post.id %}">
+                                <div class="flex flex-col gap-y-1 my-2 px-1">
+                                    <h2 class="font-DanaDemiBold">{{ post.title|truncatewords:5 }}</h2>
+                                </div>
+                                <span class="flex w-full h-1 py-1 border-t border-gray-100 dark:border-white/10"></span>
+                                <div class="flex items-center justify-between text-sm px-1">
+                            <span class="flex items-center gap-x-1 text-gray-400">
+                                <svg class="w-4 h-4">
+                                    <use href="#calendar"></use>
+                                </svg>
+                                <p class="mt-1">{{ post.updated_at|to_jalali:'%Y/%m/%d' }}</p>
+                            </span>
+                                    <span class="flex items-start gap-x-1 text-gray-400">
+                                <p class="font-DanaDemiBold">{{ post.view_count }}</p>
+                                <svg class="w-4 h-4">
+                                    <use href="#eye"></use>
+                                </svg>
+                            </span>
+                                </div>
+                            </a>
+
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+                <!-- PAGINATION -->
+                <div class="mt-10 w-full flex items-center justify-center">
+                    <ul class="flex items-center gap-x-3 child:flex child:items-center child:justify-center child:w-8 child:h-8 child:cursor-pointer child:shadow child:rounded-lg child:transition-all child:duration-300">
+                        {% if page_obj.has_previous %}
+                            <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
+                                <a href="?page={{ page_obj.previous_page_number }}">
+
+                                    <svg class="w-5 h-5">
+                                        <use href="#chevron-right"></use>
+                                    </svg>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for page_number in page_obj.paginator.page_range %}
+                            <li class="text-white {% if page_number == page_obj.number %} bg-green-500 {% else %} bg-white dark:bg-zinc-700 {% endif %} ">
+                                <a href="?page={{ page_number }}">
+                                    {{ page_number }}
+                                </a>
+                            </li>
+                        {% endfor %}
+
+
+                        {% if page_obj.has_next %}
+
+                            <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
+                                <a href="?page={{ page_obj.next_page_number }}">
+                                    <svg class="w-5 h-5">
+                                        <use href="#chevron-left"></use>
+                                    </svg>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <script>
+        function categoryFilter(id) {
+            let elem = document.getElementById(id).classList;
+            if (elem.contains('hidden')) {
+                elem.remove('hidden')
+            } else {
+                elem.add('hidden')
+            }
+        }
+
+        document.getElementById("blog-category-header").addEventListener("click", function () {
+            categoryFilter("blog-categories-filter");
+        });
+        document.getElementById("date-header").addEventListener("click", function () {
+            categoryFilter("date-filter");
+        });
+        document.getElementById("store-header").addEventListener("click", function () {
+            categoryFilter("store-accordion");
+        });
+
+    </script>
+{% endblock %}
+
+
+

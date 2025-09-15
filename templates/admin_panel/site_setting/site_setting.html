@@ -1,0 +1,1112 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    تغییر تنظیمات سایت
+{% endblock %}
+
+{% block header_reference %}
+
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/static/dist/css/rtl.css">
+    <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
+    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+    <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+
+
+    <link rel="stylesheet" href=/static/dist/css/bootstrap-theme.css">
+
+    <link rel="stylesheet" href=/static/dist/css/rtl.css">
+
+    <link rel="stylesheet" href=/static/node_modules/font-awesome/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href=/static/node_modules/ionicons/dist/css/ionicons-core.min.css">
+
+    <link rel="stylesheet" href=/static/dist/css/AdminLTE.min.css">
+
+    <link rel="stylesheet" href=/static/dist/css/skins/_all-skins.min.css">
+
+    <link rel="stylesheet" href=/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+
+
+    <style>.cke {
+        visibility: hidden;
+    }</style>
+    <link rel="stylesheet" type="text/css" id="u0"
+          href="/static/dist/js/lightgray.js">
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/config.js?t=E8PB"></script>
+    {#    <script type="text/javascript"#}
+    {#            src="/static/dist/js/bootstrapck-skin.js"></script>#}
+    <link rel="stylesheet" type="text/css"
+          href="/static/dist/css/bootstrapck-editor_gecko.css">
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/lang/fa.js?t=E8PB"></script>
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/styles.js?t=E8PB"></script>
+    <script type="text/javascript"
+            src="/static/dist/js/wpmore-plugin.js"></script>
+
+
+
+{% endblock %}
+
+
+{% block breadcrumb %}
+    <li class="active">
+        صفحه مدیریت
+    </li>
+    <li class="active"> تنظیمات سایت
+    </li>
+    <li class="active"> تغییر تنظیمات سایت
+    </li>
+{% endblock %}
+
+{% block body %}
+    <style>
+        .no-padding {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+    </style>
+    {% if form.errors %}
+        <div class="col-md-12 bg-red" style="margin-bottom: 20px; margin-top: 50px; border-radius: 10px">
+            {{ form.errors }}
+
+        </div>
+
+    {% endif %}
+
+    <!-- Main content -->
+    <section class="content" style="min-height: 600px; margin-top: 20px;">
+
+        <div class="row">
+
+            <div class="col-md-12">
+
+                <div class="box box-info">
+                    <div class="box-header">
+                        <h3 class="box-title">
+                            تغییر تنظیمات سایت
+
+                        </h3>
+                        <!-- tools box -->
+                        <div class="pull-right box-tools">
+                            <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
+                                    data-toggle="tooltip" title="" data-original-title="Collapse">
+                                <i class="fa fa-minus"></i></button>
+
+                        </div>
+                        <!-- /. tools -->
+                    </div>
+
+                    <!-- /.box-header -->
+                    <div class="box-body pad">
+                        <form enctype="multipart/form-data" method="post" action="">
+                            {% csrf_token %}
+
+                            <div class="col-md-12 form-group">
+                                <div class="">
+                                    <div class="col-md-2">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-success">
+                                            {{ form.title.label }}
+
+                                          </span>
+                                        </span>
+                                            {{ form.title }}
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2" dir="rtl">
+                                        <div class="input-group input-group">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-success">
+                                            {{ form.tax.label }}
+
+                                          </span>
+                                        </span>
+                                            {{ form.tax }}
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-3" dir="rtl">
+                                        <div class="input-group input-group">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-success">
+                                            {{ form.min_payment.label }}
+
+                                          </span>
+                                        </span>
+                                            {{ form.min_payment }}
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="input-group">
+                                            <span class="input-group-btn ">
+                                          <span class="btn btn-success">
+
+                                            {{ form.copy_right_text.label }}
+
+                                            </span>
+                                            </span>
+                                            {{ form.copy_right_text }}
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="input-group">
+                                            <span class="input-group-btn">
+                                          <span class="btn btn-success">
+
+                                            {{ form.about_image.label }}
+
+                                            </span>
+                                            </span>
+                                            {{ form.about_image }}
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+                                    <div class="col-md-3">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-flat" style="background-color: #ed59f4; color: white;">شماره اول</span>
+                                        </span>
+                                            {{ form.phone }}
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3" dir="rtl">
+                                        <div class="input-group input-group">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-flat" style="background-color: #ed59f4; color: white;">شماره دوم</span>
+                                        </span>
+                                            {{ form.phone2 }}
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"
+                                                  style="background-color: #ed59f4; color: white;">
+
+                                            {{ form.email.label }}
+
+                                            </span>
+                                            {{ form.email }}
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"
+                                                  style="background-color: #ed59f4; color: white;">
+
+                                            {{ form.telegram_link.label }}
+
+                                            </span>
+                                            {{ form.telegram_link }}
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="">
+                                    <div class="col-md-3">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-flat" style="background-color: #0000ff; color: white;">
+
+                                            {{ form.telegram_ID.label }}
+
+                                          </span>
+                                        </span>
+                                            {{ form.telegram_ID }}
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3" dir="rtl">
+                                        <div class="input-group input-group">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-flat" style="background-color: #0000ff; color: white;">
+
+                                            {{ form.instagram_link.label }}
+
+                                          </span>
+                                        </span>
+                                            {{ form.instagram_link }}
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"
+                                                  style="background-color: #0000ff; color: white;">
+                                            {{ form.instagram_ID.label }}
+
+
+                                            </span>
+                                            {{ form.instagram_ID }}
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"
+                                                  style="background-color: #0000ff; color: white;">
+                                            {{ form.logo.label }}
+
+
+                                            </span>
+                                            {{ form.logo }}
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="">
+                                    <div class="col-md-4">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-flat" style="background-color: #ff7700; color: white;">
+
+                                            {{ form.short_description.label }}
+
+                                          </span>
+                                        </span>
+                                            {{ form.short_description }}
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-3">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-flat" style="background-color: #ff7700; color: white;">
+
+                                            {{ form.minute_for_clean_order_detail_product.label }}
+
+                                          </span>
+                                        </span>
+                                            {{ form.minute_for_clean_order_detail_product }}
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"
+                                                  style="background-color: #ff7700; color: white;">
+                                            {{ form.address.label }}
+
+                                            </span>
+                                            {{ form.address }}
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-3">
+                                    </div>
+
+                                </div>
+                            </div>
+ 
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+                                    <div class="col-md-3 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                        >
+                                          <span>
+
+                                            {{ form.active_post_delivery.label }}:
+
+                                            {{ form.active_post_delivery }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
+
+                                            {{ form.active_tipax_delivery.label }}:
+
+                                            {{ form.active_tipax_delivery }}
+
+                                        </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-3 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #00ad9c; color: white;">
+
+                                            {{ form.active_in_same_city_delivery.label }}:
+                                            {{ form.active_in_same_city_delivery }}
+
+                                            </span>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-3 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
+                                                 {{ form.active_physical_delivery.label }} :
+
+                                            {{ form.active_physical_delivery }}
+                                            </span>
+                                        </div>
+
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #22c55e; color: white;">
+                                                 {{ form.active_receive_official_invoice.label }}:
+                                            {{ form.active_receive_official_invoice }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #22c55e; color: white;">
+                                                 {{ form.active_slider_in_main_page.label }}:
+                                            {{ form.active_slider_in_main_page }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #22c55e; color: white;">
+                                                 {{ form.active_banner_in_main_page.label }}:
+                                            {{ form.active_banner_in_main_page }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}>
+                                          <span>
+
+                                            {{ form.active_categories_in_main_page.label }}:
+
+                                            {{ form.active_categories_in_main_page }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 no-padding" dir="rtl">
+                                        <div class="input-group">
+
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
+
+                                            {{ form.active_newset_peoduct_in_main_page.label }}:
+
+                                            {{ form.active_newset_peoduct_in_main_page }}
+
+                                        </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #00ad9c; color: white;">
+
+                                            {{ form.active_most_soled_product_in_main_page.label }}:
+                                            {{ form.active_most_soled_product_in_main_page }}
+
+                                            </span>
+                                        </div>
+
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
+                                                 {{ form.active_most_read_posts_in_main_page.label }} :
+
+                                            {{ form.active_most_read_posts_in_main_page }}
+                                            </span>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
+                                                 {{ form.active_most_discount_in_main_page.label }} :
+
+                                            {{ form.active_most_discount_in_main_page }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
+                                                 {{ form.force_user_to_verify_with_message.label }} :
+
+                                            {{ form.force_user_to_verify_with_message }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}>
+                                          <span>
+
+                                            {{ form.store_users_staff_logins.label }}:
+
+                                            {{ form.store_users_staff_logins }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 no-padding" dir="rtl">
+                                        <div class="input-group">
+
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
+
+                                            {{ form.legal_users_login.label }}:
+
+                                            {{ form.legal_users_login }}
+
+                                        </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #00ad9c; color: white;">
+
+                                            {{ form.active_store_page.label }}:
+                                            {{ form.active_store_page }}
+
+                                            </span>
+                                        </div>
+
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
+                                                 {{ form.active_zarinpal_payment.label }} :
+
+                                            {{ form.active_zarinpal_payment }}
+                                            </span>
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
+                                                 {{ form.send_message_response_to_ticket.label }} :
+
+                                            {{ form.send_message_response_to_ticket }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #726204; color: white;">
+                                                 {{ form.send_message_successful_payment.label }} :
+
+                                            {{ form.send_message_successful_payment }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}>
+                                          <span>
+
+                                            {{ form.send_message_official_invoice_upload.label }}:
+
+                                            {{ form.send_message_official_invoice_upload }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 no-padding" dir="rtl">
+                                        <div class="input-group">
+
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
+
+                                            {{ form.send_message_when_set_sending_id.label }}:
+
+                                            {{ form.send_message_when_set_sending_id }}
+
+                                        </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #00ad9c; color: white;">
+
+                                            {{ form.is_active.label }}:
+                                            {{ form.is_active }}
+
+                                            </span>
+                                        </div>
+
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}>
+                                          <span>
+
+                                            {{ form.active_brands_in_main_page.label }}:
+
+                                            {{ form.active_brands_in_main_page }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 no-padding" dir="rtl">
+                                        <div class="input-group">
+
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
+
+                                            {{ form.active_blog_categories_in_main_page.label }}:
+
+                                            {{ form.active_blog_categories_in_main_page }}
+
+                                        </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group">
+                                            <span {% if not request.user_agent.is_mobile %}
+                                                class="input-group-addon" {% endif %}
+                                                style="background-color: #00ad9c; color: white;">
+
+                                            {{ form.active_fast_links_in_footer_page.label }}:
+                                            {{ form.active_fast_links_in_footer_page }}
+
+                                            </span>
+                                        </div>
+
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}>
+                                          <span>
+
+                                            {{ form.active_google_reCAPTCHA.label }}:
+
+                                            {{ form.active_google_reCAPTCHA }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 no-padding" dir="rtl">
+                                        <div class="input-group">
+
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
+
+                                            {{ form.force_users_to_login_for_download_apps.label }}:
+
+                                            {{ form.force_users_to_login_for_download_apps }}
+
+                                        </span>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-4 no-padding" dir="rtl">
+                                        <div class="input-group">
+
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #3DA0DB; color: white;">
+
+                                            {{ form.active_freight_delivery.label }}:
+
+                                            {{ form.active_freight_delivery }}
+
+                                        </span>
+
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}>
+                                          <span>
+
+                                            {{ form.active_email_account_verified.label }}:
+
+                                            {{ form.active_email_account_verified }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+ 
+
+ 
+
+                                </div>
+                            </div>
+                            <p>
+                                ترتیب محصولات در صفحه لیست محصولات بر اساس :
+                            </p>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+
+                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #7f3ddb; color: white;">
+                                            {{ form.product_sort_by_count.label }}:
+                                            {{ form.product_sort_by_count }}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #db3d6c; color: white;">
+                                            {{ form.product_sort_by_highest_price.label }}:
+                                            {{ form.product_sort_by_highest_price }}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #db3d8f; color: white;">
+                                            {{ form.product_sort_by_lowest_price.label }}:
+                                            {{ form.product_sort_by_lowest_price }}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #dbc63d; color: white;">
+                                            {{ form.product_sort_by_sort_number.label }}:
+                                            {{ form.product_sort_by_sort_number }}
+                                        </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group ">
+                                <div class="">
+
+                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #7f3ddb; color: white;">
+                                            {{ form.product_sort_by_category_sort_number.label }}:
+                                            {{ form.product_sort_by_category_sort_number }}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #db3d6c; color: white;">
+                                            {{ form.product_sort_by_brand_sort_number.label }}:
+                                            {{ form.product_sort_by_brand_sort_number }}
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 no-padding" dir="rtl">
+                                        <div class="input-group">
+                                          <span {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                              style="background-color: #db3d8f; color: white;">
+                                            {{ form.product_sort_by_existing_count.label }}:
+                                            {{ form.product_sort_by_existing_count }}
+                                        </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                            <br>
+                            <br>
+                            {{ form.long_description }}
+                            {{ form.media }}
+
+
+                            <script>
+                                fetch('{% url "admin_panel:font_list_json" %}')
+                                    .then(response => response.json())
+                                    .then(fontList => {
+                                        const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
+                                        CKEDITOR.instances['{{ form.long_description.id_for_label }}'].destroy(true);
+                                        CKEDITOR.replace('{{ form.long_description.id_for_label }}', {
+                                            toolbar: [
+                                                ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
+                                                    'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
+                                                    'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
+                                                    'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
+                                                    'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
+                                                    'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
+                                                    'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
+                                                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
+                                                    'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
+                                                    'Styles', 'Format', 'Font', 'FontSize'],
+
+                                            ],
+                                            width: 750,
+                                            height: 200,
+                                            skin: 'moono',
+                                            extraPlugins: 'font',
+                                            contentsCss: ['{% url 'admin_panel:fonts.css' %}'],
+                                            font_names: fontNamesStr +
+                                                'Arial/Arial, Helvetica, sans-serif;' +
+                                                'Courier New/Courier New, Courier, monospace;' +
+                                                'Georgia/Georgia, serif;' +
+                                                'Tahoma/Tahoma, Geneva, sans-serif;' +
+                                                'Times New Roman/Times New Roman, Times, serif;' +
+                                                'Verdana/Verdana, Geneva, sans-serif;'
+                                        });
+                                    });
+                            </script>
+
+                            <div class="col-md-12">
+                                <br>
+                                <br>
+                                <br>
+                                <button type="submit" onclick="submitForm()" class="btn btn-success btn-block">ثبت
+                                </button>
+                            </div>
+
+                        </form>
+                        {% if site.logo and site.about_image %}
+
+                            عکس های ذخیره شده <br>برای عوض کردن انها عکس جدید اپلود کنید در غیر این صورت عکسی رو اپلود
+                            نکنید
+                            <br>
+                            لوگو =>
+                            <img src="{{ site.logo.url }}" width="100px" height="100px" alt="">
+                            <br>
+                            عکس معرفی =>
+                            <img src="{{ site.about_image.url }}" width="100px" height="100px" alt="">
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}
+
+
+{% block footer_reference %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script src="/static/node_modules/moment/min/moment.min.js"></script>
+    <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+
+
+
+    <script>
+        $(document).ready(function () {
+            $('#tarikh').persianDatepicker({
+                altField: '#tarikhAlt',
+                altFormat: 'X',
+                format: 'D MMMM YYYY HH:mm a',
+                observer: true,
+                timePicker: {
+                    enabled: true
+                },
+            });
+        });
+        $(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
+            //Money Euro
+            $('[data-mask]').inputmask()
+
+            //Date range picker
+            $('#reservation').daterangepicker()
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                format: 'MM/DD/YYYY h:mm A'
+            })
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                }
+            )
+
+            //Date picker
+            $('#datepicker').datepicker({
+                autoclose: true
+            })
+
+            //iCheck for checkbox and radio inputs
+            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue'
+            })
+            //Red color scheme for iCheck
+            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                checkboxClass: 'icheckbox_minimal-red',
+                radioClass: 'iradio_minimal-red'
+            })
+            //Flat red color scheme for iCheck
+            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            })
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false
+            })
+        })
+    </script>
+    {#    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>#}
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
+    <script src="/dist/js/adminlte.min.js"></script>
+    <script src="/static/dist/js/demo.js"></script>
+    <script src="/static/node_modules/ckeditor/ckeditor.js"></script>
+    <script src="/static/node_modules/tinymce/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea#mytextarea',
+            plugins: 'advlist autolink link lists preview table code pagebreak',
+            menubar: false,
+            language: 'fa',
+            height: 300,
+            relative_urls: false,
+            toolbar: 'undo redo | removeformat preview code | fontsizeselect bullist numlist | alignleft aligncenter alignright alignjustify | bold italic | pagebreak table link',
+        });
+        $(function () {
+            // Replace the <textarea id="editor1"> with a CKEditor
+            // instance, using default configuration.
+            CKEDITOR.replace('editor1')
+            //bootstrap WYSIHTML5 - text editor
+            $('.textarea').wysihtml5()
+        })
+    </script>
+{% endblock %}

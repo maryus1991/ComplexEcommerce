@@ -1,0 +1,131 @@
+{% extends 'dashboard/Base/dashboard-base.html' %}
+{% load jalali_tags %}
+
+
+{% block title %}
+    تیکت ها
+{% endblock %}
+
+
+{% block dashboard %}
+
+
+    <div style="padding: 10px; overflow-y: scroll; height: 750px;">
+        <div class="m-5 lg:m-0">
+            <div class="grid grid-cols-12 gap-6 lg:gap-12 mt-6">
+                <div class="col-span-12">
+                    <div class="flex items-center justify-between">
+                        <p class="text-lg">  {{ ticket.subject }}</p>
+                        {% if not ticket.close_ticket %}
+
+
+                            <a href="{% url 'dashboard:tickets-close' ticket.id %}">
+                                <button class="main-btn bg-red-500 hover:bg-green-600 p-2 gap-x-1 shadow">
+                                    بستن تیکت
+                                    <svg class="w-5 h-5 mb-1">
+                                        <use href="#x-close"></use>
+                                    </svg>
+                                </button>
+                            </a>
+                        {% else %}
+                            <p class="text-lg">
+                                این تیکت بسته شده است
+                            </p>
+                        {% endif %}
+                    </div>
+                    {% for message_ticket in messages_tickets %}
+
+                        <div class="bg-white shadow child:flex child:items-center child:gap-x-2 mt-4 p-4 dark:bg-zinc-700 rounded-lg flex flex-col space-y-4">
+                       <span class="font-DanaMedium text-blue-400 lg:text-lg">
+                           {{ message_ticket.message|safe }}
+                       </span>
+                            <div class="flex items-center justify-between flex-wrap gap-y-5">
+                           <span class="text-gray-400 flex items-center gap-x-2 mt-2">
+                                ارسال شده در :{{ ticket.date|to_jalali:'%y/%m/%d | %H:%M' }}
+                               <svg class="w-5 h-5 mb-1">
+                                   <use href="#calendar"></use>
+                               </svg>
+                           </span>
+                                <span class="text-gray-400 flex items-center gap-x-2 mt-2">
+                               {% if message_ticket.date_read_by_client %}
+                                   خوانده شده توسط کاربر در :
+                                   {{ message_ticket.date_read_by_client|to_jalali:'%y/%m/%d | %H:%M' }}
+                                   <svg class="w-5 h-5 mb-1">
+                                   <use href="#calendar"></use>
+                               </svg>
+                               {% else %}
+                                   توسط کاربر  خوانده نشده
+
+                               {% endif %}
+                           </span><span class="text-gray-400 flex items-center gap-x-2 mt-2">
+                           {% if message_ticket.date_read_by_admin %}
+                               خوانده شده توسط فروشگاه در :{{ message_ticket.date_read_by_admin|to_jalali:'%y/%m/%d | %H:%M' }}
+                               <svg class="w-5 h-5 mb-1">
+                                   <use href="#calendar"></use>
+                               </svg>
+                           {% else %}
+                               توسط فروشگاه خوانده نشده
+
+                           {% endif %}
+                           </span>
+                                <div class="flex items-center gap-x-4">
+                                    <button class="bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-2">
+                                        <p>{% if message_ticket.admin_message %}
+                                            پیام ادمین
+                                        {% else %}
+                                            پیام کاربر
+                                        {% endif %}
+                                        </p>
+                                    </button>
+
+                                    {% if not ticket.close_ticket %}
+                                            <a href="{% url 'dashboard:tickets-delete' message_ticket.id %}">
+
+                                        <button class="bg-red-500/20 text-red-500 flex items-center gap-x-1 rounded-lg p-2">
+                                            حذف
+                                        </button></a>
+                                    {% endif %}
+
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+
+        <br>
+        {% if not ticket.close_ticket %}
+            <div style="position: static;" class="w-full p-5  rounded-lg shadow bg-white dark:bg-zinc-700">
+                <h2 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1">ارسال پیام</h2>
+                <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-4 mb-8 text-sm lg:text-base">
+
+                </p>
+
+                <div class="flex flex-col lg:flex-row items-start gap-x-8">
+                    <div style="display: flex;flex-flow: column" class="w-full lg:w-3/4">
+                        <form class="w-full grid grid-cols-12 gap-4 max-w-sm mx-auto" method="POST" action=""
+                              enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            {{ form.media }}
+                            {{ form.content }}
+
+                            <button type="submit"
+                                    class="mx-auto rounded-lg col-span-12 w-32 p-2 bg-green-500 hover:bg-green-600 text-white transition-all">
+                                ارسال پیام
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            </div>
+        {% endif %}
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'dashboard/Base/dashboard-base.html' %}
+
+
+
+{% block title %}
+تیکت ها
+{% endblock %}
+
+
+{% block dashboard %}
+
+
+    <br>
+<section class="w-full p-5 rounded-lg shadow bg-white dark:bg-zinc-700">
+<div class="mb-8">
+    <!-- عنوان بخش -->
+    <div class="flex items-center gap-3 mb-4">
+        <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+        </svg>
+        <h2 class="font-MorabbaMedium text-xl lg:text-2xl border-b-2 border-green-500 pb-1.5">ارسال تیکت</h2>
+    </div>
+    
+    <!-- راهنمای ارسال پیام -->
+    <div class="  p-4 rounded-lg ">
+        <p class="text-gray-600 dark:text-gray-200 font-DanaMedium text-sm lg:text-base leading-loose">
+            <span class="text-green-500 dark:text-green-400">•</span> برای ارسال تیکت به فروشگاه خاص، فروشگاه مورد نظر را انتخاب کنید<br>
+            <span class="text-green-500 dark:text-green-400">•</span> برای ارتباط با پشتیبانی مرکزی، فیلد فروشگاه را خالی بگذارید
+        </p>
+    </div>
+</div>
+
+            <div class="flex flex-col lg:flex-row items-start gap-x-8">
+                <div class="w-full lg:w-3/4">
+                    
+                    <form class="w-full grid grid-cols-12 gap-4 mx-auto" method="POST" action="{% url 'dashboard:tickets-create' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {{ form.subject }}
+                        <div class="col-span-6">
+
+                        {{ form.store }}
+                        </div>
+                        <div class="col-span-12">
+
+                        {{ form.media }}
+                        {{ form.content }}
+                        </div>
+
+                        <button type="submit" class="mx-auto rounded-lg col-span-12 w-32 p-2 bg-green-500 hover:bg-green-600 text-white transition-all">
+                            ارسال تیکت
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'Base/Base.html' %}
+
+{% block title %}
+    کد تایید شماره همراه
+{% endblock %}
+
+{% block breadcrumb %}
+	
+    <li class="flex items-center gap-x-2">
+        <a>صفحه کابری</a>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>
+    <li class="flex items-center gap-x-2">
+        <a>فعال سازی حساب کاربری</a>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>    
+    <li class="flex items-center gap-x-2">
+        <a>صفحه تایید حساب</a>
+
+    </li>
+{% endblock %}
+
+{% block content %}
+    <main class="container flex items-center flex-col justify-center mt-8">
+        <div class="max-w-lg w-full shadow">
+            <div class="bg-white dark:bg-zinc-700 rounded-lg overflow-hidden">
+                <div class="p-3 lg:p-8">
+                    <p class="mt-2 lg:mt-4 text-center text-gray-400">
+                        لطفا کد ارسال شده به شماره <span dir='ltr'>{{ user.PhoneNumber }}</span> را وارد نمایید
+                    </p>
+                    <form method="POST" action="" class="mt-8 space-y-6">
+
+                        {% csrf_token %}
+                        <div class="grid grid-cols-12 child:col-span-3 gap-x-2 xs:gap-x-8  child:text-lg w-full child:bg-gray-100 child:dark:bg-zinc-500/30 child:rounded-lg child:pr-10 child:h-16">
+                            {{ form.forth_digit }}
+                            {{ form.third_digit }}
+                            {{ form.second_digit }}
+                            {{ form.first_digit }}
+                        </div>
+
+
+                        <div class="flex mt-4">
+                            <div class="text-sm flex flex-col space-y-2">
+                                <a class="font-medium text-blue-500 hover:text-blue-500" id="link-OTP">
+                                    زمان باقی مانده تا ارسال مجدد کد : <span id="counter-OTP">{{ time }}</span> ثانیه
+                                </a>
+                                <a class="font-medium text-blue-500 hover:text-blue-500"
+                                   href="{% url 'user:register' %}">
+                                    عوض کردن شماره
+                                </a>
+
+                            </div>
+                            <div class="text-sm flex flex-col space-y-2">
+
+
+                            </div>
+                        </div>
+                        <script>
+                            document.querySelectorAll('.digit-input').forEach((input, index, inputs) => {
+                                // تغییر جهت فوکوس به چپ (index-1 به جای index+1)
+                                input.addEventListener('input', (e) => {
+                                    if (e.target.value.length === 1 && index > 0) {
+                                        inputs[index - 1].focus(); // به فیلد قبلی (سمت چپ) برو
+                                    }
+                                });
+
+                                // تغییر جهت Backspace به راست (index+1 به جای index-1)
+                                input.addEventListener('keydown', (e) => {
+                                    if (e.key === 'Backspace' && e.target.value === '') {
+                                        if (index < inputs.length - 1) {
+                                            inputs[index + 1].focus(); // به فیلد بعدی (سمت راست) برو
+                                        }
+                                    }
+                                });
+                            });
+                            const timer = setInterval(function () {
+                                let counter_elem = document.getElementById("counter-OTP");
+                                if (counter_elem.textContent <= "0") {
+                                    document.getElementById("link-OTP").innerText = 'ارسال دوباره کد';
+                                    document.getElementById("link-OTP").onclick = function () {
+                                        location.reload();
+                                    }
+                                }
+                                counter_elem.innerText = counter_elem.innerText - 1;
+
+                            }, 1000)
+
+
+                        </script>
+                        <div>
+                            <button
+                                    class="group transition-colors relative w-full flex justify-center py-3 px-4 border border-transparent font-DanaMedium rounded-lg text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                    type="submit">
+                                تایید
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+{% endblock %}

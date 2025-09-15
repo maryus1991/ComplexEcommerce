@@ -1,0 +1,158 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    لیست برندها
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">برندها</li>
+{% endblock %}
+
+{% block body %}
+    <div class="container" style="margin-top: 20px;">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-primary"> {# Replaced card with panel #}
+                    <div class="box-header with-border panel-heading">
+                        <h3 class="box-title panel-title text-center"> جستجو</h3>
+                    </div>
+                    <div id="searchCollapse" class="panel-body collapse in">
+                        {# Bootstrap 3 collapse target, 'in' makes it open by default #}
+                        <form method="GET" action="" class="form-horizontal">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat">{{ form.name.label }}</span>
+                            </span>
+                                        {{ form.name }}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat">{{ form.is_active.label }}</span>
+                            </span>
+                                        {{ form.is_active }}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat">{{ form.ordering.label }}</span>
+                            </span>
+                                        {{ form.ordering }}
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <br>
+                            <div class="row clearfix">
+                                <div class="col-md-12 text-center">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-search"></i> جستجو
+                                    </button>
+                                    <button type="reset" class="btn btn-default">
+                                        {# Changed btn-outline-secondary to btn-default #}
+                                        <i class="fa fa-undo"></i> بازنشانی
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            {# mt-4 is Bootstrap 4, consider using margin-top directly or a custom CSS class for spacing in B3 #}
+            <div class="col-md-12">
+                <div class="panel panel-default"> {# Replaced card with panel #}
+                    <div class="panel-heading">
+                        <h3 class="panel-title pull-right">لیست برندها</h3> {# Added pull-right for RTL #}
+                        <div class="pull-left"> {# Pagination for RTL #}
+                            <ul class="pagination pagination-sm" style="margin: 0;"> {# Bootstrap 3 pagination #}
+                                {% if page_obj.has_previous %}
+                                    <li><a href="?page={{ page_obj.previous_page_number }}"><i
+                                            class="fa fa-chevron-right"></i></a></li>
+                                {% endif %}
+                                {% for page_number in page_obj.paginator.page_range %}
+                                    <li {% if page_number == page_obj.number %}class="active"{% endif %}>
+                                        <a href="?page={{ page_number }}">
+                                            {{ page_number }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                    <li><a href="?page={{ page_obj.next_page_number }}"><i
+                                            class="fa fa-chevron-left"></i></a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="panel-body p-0"> {# p-0 is Bootstrap 4, consider removing or adding custom CSS #}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>نام برند</th>
+                                    <th>تعداد محصولات</th>
+                                    <th>مشاهده محصولات</th>
+                                    <th>وضعیت</th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for brand in brands %}
+                                    <tr>
+                                        <td>{{ brand.id }}</td>
+                                        <td>{{ brand.name }}</td>
+                                        <td>{{ brand.product_count }}</td>
+                                        <td>
+                                            <a class="btn btn-sm btn-success"
+                                                    {# Changed btn-outline-success to btn-success #}
+                                               href="{% url 'product:list' %}?brand={{ brand.id }}">
+                                                <i class="fa fa-eye"></i> مشاهده
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {% if brand.is_active %}
+                                                <span class="label label-success">فعال</span>
+                                                {# Changed badge to label #}
+                                            {% else %}
+                                                <span class="label label-danger">غیرفعال</span>
+                                                {# Changed badge to label #}
+                                            {% endif %}
+                                        </td>
+
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // Toggle icon on collapse show/hide events
+            $('#searchCollapse').on('show.bs.collapse', function () {
+                $(this).prev('.panel-heading').find('.fa').removeClass('fa-plus').addClass('fa-minus');
+            }).on('hide.bs.collapse', function () {
+                $(this).prev('.panel-heading').find('.fa').removeClass('fa-minus').addClass('fa-plus');
+            });
+
+            // Initialize tooltips (if you're using them with Bootstrap 3's built-in tooltip)
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+{% endblock %}
+
+

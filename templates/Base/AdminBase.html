@@ -1,0 +1,967 @@
+{% load static %}
+{% load static %}
+{% load store_tags %}
+{% load jalali_tags %}
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>
+        {% block title %}
+
+        {% endblock %}
+    </title>
+    <link rel="stylesheet" href="{% url 'site:fonts.css' %}"/>
+
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+    <!-- Bootstrap rtl -->
+    <link rel="stylesheet" href="/static/dist/css/rtl.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="/static/node_modules/ionicons/dist/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+    <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
+          page. However, you can choose any other skin. Make sure you
+          apply the skin class to the body tag so the changes take effect. -->
+    <link rel="stylesheet" href="/static/dist/css/skins/skin-blue.min.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="/static/ckeditor/ckeditor/ckeditor.js"></script>
+
+    {% block header_reference %}
+
+    {% endblock %}
+
+    <!-- Google Font -->
+
+</head>
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to get the
+desired effect
+|---------------------------------------------------------|
+| SKINS         | skin-blue                               |
+|               | skin-black                              |
+|               | skin-purple                             |
+|               | skin-yellow                             |
+|               | skin-red                                |
+|               | skin-green                              |
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | fixed                                   |
+|               | layout-boxed                            |
+|               | layout-top-nav                          |
+|               | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div class="wrapper">
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <!-- Logo -->
+        <a href="/" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini">پنل</span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>
+                {% if user.is_superuser and 'admin' in request.path %}
+                    مدیریت سایت
+                {% else %}
+                    {{ user.store.name }}
+                {% endif %} 
+            </b></span>
+        </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+
+
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    {% if user.is_staff and user.store and 'admin' not in request.path %}
+                        <!-- Messages: style can be found in dropdown.less-->
+                        <li id="messages-menu" onclick="hideOrShowMenus(this)" class="dropdown messages-menu">
+                            <a class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-envelope-o"></i>
+                                {% if user.store.tickets.exists %}
+
+                                    <span class="label label-success">{{ user.store.tickets|ticket_count_response }}</span>
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                {# Assuming this is part of a dropdown, otherwise a standard <ul> would work #}
+                                {% if user.store.tickets.exists %}
+
+                                    {% for item in user.store.tickets|ticket_obj_response %}
+                                        {% if forloop.counter <= 5 %}
+
+                                            <li>
+                                                <a href="{% url 'store:response-received-ticket' item.id %}"
+                                                   class="clearfix">
+                                                    <p class="pull-left">
+                                                        {{ item.user.get_full_name }}
+                                                        <br>
+                                                        <small class="text-muted"><i
+                                                                class="fa fa-clock-o"></i> {{ item.message.last.date|to_jalali:'%H:%m - %Y/%M/%d ' }}
+                                                        </small>
+                                                    </p>
+                                                    {# You could add a snippet of the last message here for more context #}
+                                                    {# <p class="text-muted pull-right">{{ item.message.last.content|truncatechars:50 }}</p> #}
+                                                </a>
+                                            </li>
+                                        {% endif %}
+
+                                        {% if not forloop.last %}
+                                            <li role="separator" class="divider"></li>
+                                            {# Adds a separator between items #}
+                                        {% endif %}
+                                    {% empty %}
+                                        <li class="text-center" style="padding: 10px;">
+                                            <p class="text-muted">هنوز پیامی دریافت نکردید</p>
+                                        </li>
+                                    {% endfor %}
+                                {% endif %}
+
+                                <li class="footer text-center">
+                                    <a href="{% url 'store:list-received-ticket' %}">نمایش تمام پیام ها</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <!-- Notifications: style can be found in dropdown.less -->
+                        <li id="notifications-menu" onclick="hideOrShowMenus(this)" class="dropdown notifications-menu">
+                            <a class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-bell-o"></i>
+                                <span class="label label-warning">
+                                    {% if user.store.orders.exists %}
+
+                                        {{ user.store.orders|orders_count }}</span>
+                                    {% endif %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="header">
+                                    {% if user.store.orders.exists %}
+
+                                        {{ user.store.orders|orders_count }} سفارش جدید</li>
+                                    {% endif %}
+                                <li>
+                                    <!-- inner menu: contains the actual data -->
+                                    <ul class="menu">
+                                        {% if user.store.orders.exists %}
+                                            {% for order in user.store.orders|orders_obj %}
+
+
+                                                <li>
+                                                    <a href="{% url 'store:orders-detail' order.id %}">
+                                                        <i class="fa fa-shopping-cart text-green"></i>
+                                                        سفارش شماره {{ order.id }}
+                                                    </a>
+                                                </li>
+
+                                                {% if not forloop.last %}
+                                                    <li role="separator" class="divider"></li>
+
+                                                {% endif %}
+
+                                            {% empty %}
+                                                <li class="text-center" style="padding: 10px;">
+                                                    <p class="text-muted">هنوز پیامی دریافت نکردید</p>
+                                                </li>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                                <li class="footer"><a href="{% url 'store:orders-list-wait-for-sending-list' %}">نمایش
+                                    همه</a></li>
+                            </ul>
+                        </li>
+                        <!-- Tasks: style can be found in dropdown.less -->
+                        <li id="tasks-menu" onclick="hideOrShowMenus(this)" class="dropdown tasks-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-flag-o"></i>
+                                <span class="label label-danger">
+                                    {% if  user.tickets.exists %}
+
+                                        {{ user.tickets|ticket_count_request }}</span>
+                                    {% endif %}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="header">
+                                    {% if  user.tickets.exists %}
+
+                                        {{ user.tickets|ticket_count_request }}پاسخ تیکیت های ارسالی</li>
+                                    {% endif %}
+                                <li>
+                                    <!-- inner menu: contains the actual data -->
+                                    <ul class="menu">
+                                        {% if  user.tickets.exists %}
+
+                                            {% for item in user.tickets|ticket_obj_request %}
+                                                <li class="">
+                                                    <a href="{% url 'store:conversation-ticket' item.id %}"
+                                                       class="clearfix">
+                                                        <p class="pull-right">
+                                                            {{ item.user.get_full_name }}
+                                                            <br>
+                                                            <small class="text-muted"><i
+                                                                    class="fa fa-clock-o"></i> {{ item.message.last.date|to_jalali:'%H:%m - %Y/%M/%d ' }}
+                                                            </small>
+                                                        </p>
+                                                        {# You could add a snippet of the last message here for more context #}
+                                                        {# <p class="text-muted pull-right">{{ item.message.last.content|truncatechars:50 }}</p> #}
+                                                    </a>
+                                                </li>
+                                                {% if not forloop.last %}
+                                                    <li role="separator" class="divider"></li>
+                                                    {# Adds a separator between items #}
+                                                {% endif %}
+                                            {% empty %}
+                                                <li class="text-center" style="padding: 10px;">
+                                                    <p class="text-muted">هنوز پیامی دریافت نکردید</p>
+                                                </li>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </ul>
+
+                                </li>
+                                <li class="footer">
+                                    <a href="{% url 'store:list-sended-ticket' %}">نمایش همه</a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    <!-- User Account: style can be found in dropdown.less -->
+                    <li id="user-menu" onclick="hideOrShowMenus(this)" class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span class="hidden-xs">{{ user.get_full_name }}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+
+                                <p>
+                                    {{ user.get_full_name }}
+                                    <small>
+                                        {% if user.is_staff and user.store is not None and not user.is_store_admin %}
+                                            {{ user.store.name }} کاربر
+                                        {% elif user.is_staff and user.store is not None and not user.is_store_admin %}
+                                            {{ user.store.name }} مدیریت
+                                        {% elif user.is_superuser %}
+                                            مدیریت کل سایت
+                                        {% endif %}
+                                    </small>
+                                </p>
+                            </li>
+                            <!-- Menu Body -->
+
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="{% url 'dashboard:account' %}" class="btn btn-default btn-flat">پروفایل</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="{% url 'user:logout' %}" class="btn btn-default btn-flat">خروج</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Control Sidebar Toggle Button -->
+                    <script>
+                        // بستن همه منوها
+                        function hideAllMenus() {
+                            const menus = ['messages-menu', 'notifications-menu', 'tasks-menu', 'user-menu'];
+                            menus.forEach(id => {
+                                const menu = document.getElementById(id);
+                                if (menu) {
+                                    menu.classList.remove('open');
+                                }
+                            });
+                        }
+
+                        // کنترل نمایش یا پنهان کردن یک منو
+                        function hideOrShowMenus(elem) {
+                            const isOpen = elem.classList.contains('open');
+                            hideAllMenus();
+
+                            if (!isOpen) {
+                                elem.classList.add('open');
+                            }
+                        }
+
+                        // کلیک خارج از منوها باعث بسته شدن همه منوها شود
+                        document.addEventListener('click', function (event) {
+                            const clickedInsideMenu = event.target.closest('#messages-menu, #notifications-menu, #tasks-menu, #user-menu');
+                            if (!clickedInsideMenu) {
+                                hideAllMenus();
+                            }
+                        });
+
+
+                    </script>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    {% if messages %}
+        <div class="col-md-12" style="margin-top: 40px; margin-bottom: 20px; color: white; z-index: 100 !important;">
+            <div class="col-md-1"></div>
+            <div class="col-md-11 pull-right">
+                {% for message in messages %}
+                    <div class="btn btn-block btn-lg"
+                            {% if message.tags == 'success' %}
+                         style='background-color: #00a65a'
+                            {% elif message.tags == 'error' %}
+                         style='background-color: red'
+                            {% elif message.tags == 'info' %}
+                         style='background-color: #00c0ef'
+                            {% elif message.tags == 'warning' %}
+                         style='background-color: #ff7700'
+                            {% endif %}
+                    >{{ message }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+    {% endif %}
+    <!-- right side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
+
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+
+
+            <!-- search form (Optional) -->
+
+            <!-- /.search form -->
+
+            <!-- Sidebar Menu -->
+
+            <ul class="sidebar-menu" data-widget="tree">
+                {#                <li class="header">تیتر</li>#}
+
+                {% if user.is_staff and user.store and 'store' in request.path and 'admin' not in request.path %}
+                    {% if user.store.can_stores_add_product_category or user.store.can_stores_add_product_brand or user.store.can_stores_add_product %}
+                        <li class="treeview">
+                            <a><i class="fa fa-link"></i> <span>محصولات</span>
+                                <span class="pull-left-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                          </span>
+                            </a>
+                            <ul class="treeview-menu">
+
+                                <li class="link-activator"><a href="{% url 'store:list-product' %}"><i
+                                        class="fa fa-link"></i>
+                                    <span> محصولات</span></a>
+                                </li>                 
+                                <li class="link-activator"><a href="{% url 'store:product-fast-panel-list' %}"><i
+                                        class="fa fa-link"></i>
+                                    <span> پنل سریع</span></a>
+                                </li>
+                                {% if user.store.can_stores_add_product %}
+
+                                    <li class="link-activator"><a href="{% url 'store:add-product' %}"><i
+                                            class="fa fa-link"></i>
+                                        <span>اضافه کردن محصول</span></a></li>
+                                {% endif %}
+                                <li class="link-activator"><a href="{% url 'store:list-brands' %}"><i
+                                        class="fa fa-link"></i>
+                                    <span>لیست برندها</span></a></li>
+                                {% if user.store.can_stores_add_product_brand %}
+
+                                    <li class="link-activator"><a href="{% url 'store:add-brands' %}"><i
+                                            class="fa fa-link"></i>
+                                        <span>اضافه کردن برند</span></a></li>
+                                {% endif %}
+                                <li class="link-activator"><a href="{% url 'store:list-category' %}"><i
+                                        class="fa fa-link"></i>
+                                    <span>لیست دسته بندی های موجود</span></a></li>
+                                {% if user.store.can_stores_add_product_category %}
+
+                                    <li class="link-activator"><a href="{% url 'store:add-category' %}"><i
+                                            class="fa fa-link"></i>
+                                        <span>اضافه کردن دسته بندی</span></a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {% if user.store.can_store_add_blog_category or user.store.can_store_add_blog_post %}
+                        <li class="treeview">
+                            <a><i class="fa fa-link"></i>
+                                <span>بلاگ</span>
+                                <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                {% if user.store.can_store_add_blog_post %}
+
+                                    <li class="link-activator">
+                                        <a href="{% url 'store:blog-add' %}"><i class="fa fa-link"></i>
+                                            <span>افزودن پست</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li class="link-activator">
+                                    <a href="{% url 'store:blog-list' %}"><i class="fa fa-link"></i>
+                                        <span>لیست پست های وبلاگ</span>
+                                    </a>
+                                </li>
+                                {% if user.store.can_store_add_blog_category %}
+
+                                    <li class="link-activator">
+                                        <a href="{% url 'store:blog-add-category' %}"><i class="fa fa-link"></i>
+                                            <span>افزودن دسته بندی برای وبلاگ</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                <li class="link-activator">
+                                    <a href="{% url 'store:blog-list-category' %}"><i class="fa fa-link"></i>
+                                        <span>لیست دسته بندی وبلاگ</span>
+                                    </a>
+                                </li>
+
+
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                    {% if user.is_store_admin and user.store.can_store_add_users %}
+                        <li class="treeview">
+                            <a><i class="fa fa-link"></i>
+                                <span>کاربران فروشگاه</span>
+                                <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li class="link-activator"><a href="{% url 'store:user-list' %}"><i
+                                        class="fa fa-link"></i>
+                                    <span>لیست کاربران فروشگاه</span></a>
+                                </li>
+                                <li class="link-activator"><a href="{% url 'store:user-add' %}"><i
+                                        class="fa fa-link"></i>
+                                    <span>اضافه کردن کاربر فروشگاهی</span></a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                    {% endif %}
+
+
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
+                            <span>تیکت ها</span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="link-activator">
+                                <a href="{% url 'store:send-ticket' %}"><i class="fa fa-link"></i>
+                                    <span>ارسال تیکت </span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'store:list-sended-ticket' %}">
+                                    <i class="fa fa-link"></i>
+                                    <span> لیست تیکت های ارسالی </span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'store:list-received-ticket' %}">
+                                    <i class="fa fa-link"></i>
+                                    <span> لیست تیکت های دریافتی </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
+                            <span style="color: #ff7700">سفارشات</span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="link-activator">
+                                <a href="{% url 'store:orders-list-wait-for-sending-list' %}"><i class="fa fa-link"></i>
+                                    <span style="color: #ff7700"> سفارشات </span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'store:orders-soled' %}"><i class="fa fa-link"></i>
+                                    <span style="color: #ff7700">تصفیه توسط ادمین</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'store:specifics-list' %}"><i class="fa fa-link"></i>
+                                    <span style="color: #ff7700">فاکتور های خاص</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'store:return-order-list' %}"><i class="fa fa-link"></i>
+                                    <span style="color: #ff7700">سفارشات مرجوعی</span>
+                                </a>
+                            </li>
+
+
+                        </ul>
+                    </li>
+
+
+
+                    <li class="link-activator"><a href="{% url 'store:update' %}"><i class="fa fa-link"></i> <span>ویرایش اطلاعات فروشگاه</span></a>
+                    </li>
+                    {% if user.store.can_store_add_apps %}
+
+                        <li class="link-activator">
+                            <a href="{% url 'store:app-list' %}"><i class="fa fa-link"></i>
+                                <span>برنامه های کاربردی</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+
+                    <li class="link-activator"><a href="{% url 'store:home' %}"><i class="fa fa-link"></i> <span>صفحه فروشگاه</span></a>
+                    </li>
+                    <li><a href="/"><i class="fa fa-link"></i> <span>صفحه اصلی سایت</span></a></li>
+
+                    {% if user.is_superuser %}
+                        <li class="link-activator">
+                            <a href="{% url 'admin_panel:main' %}"><i class="fa fa-link"></i>
+                                <span>صفحه مدیریت سایت</span></a>
+                        </li>
+
+                    {% endif %}
+
+                {% elif user.is_superuser %}
+
+                    <li class="link-activator" style="width: 100%;">
+                        <div class="btn-group" style="width: 100%">
+                            <a title="دانلود بکاپ مدیا" href="{% url 'admin_panel:backup-media' %}"
+                               class="btn btn-success"
+                               style="width: 33%;  color: #FFFFFF">
+                                <i class="fa fa-download"></i> <span></span>
+                            </a>
+                            <a title="پاک سازی فایل های موقت" href="{% url 'admin_panel:backup-clean-temp_file' %}"
+                               class="btn btn-warning"
+                               style="width: 33%; color: #FFFFFF">
+                                <i class="fa fa-trash"></i> <span></span>
+                            </a>
+                            <a title="دانلود بکاپ" href="{% url 'admin_panel:backup' %}" class="btn btn-danger"
+                               style="width: 33%; color: #FFFFFF">
+                                <i class="fa fa-download"></i> <span></span>
+                            </a>
+
+                        </div>
+                    </li>
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
+                            <span>محصولات</span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:product-list' %}"><i class="fa fa-link"></i>
+                                    <span>محصولات</span>
+                                </a>
+                            </li>
+                            <li class="link-activator"><a href="{% url 'admin_panel:product-create' %}"><i
+                                    class="fa fa-link"></i>
+                                <span>اضافه کردن محصول</span></a></li>
+
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:product-category-list' %}"><i class="fa fa-link"></i>
+                                    <span>دسته بندی ها</span>
+                                </a>
+                            </li>
+
+                            <li class="link-activator"><a href="{% url 'admin_panel:product-category-create' %}"><i
+                                    class="fa fa-link"></i>
+                                <span>اضافه کردن دسته بندی</span></a></li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:product-brand-list' %}"><i class="fa fa-link"></i>
+                                    <span>برند ها</span>
+                                </a>
+                            </li>
+                            <li class="link-activator"><a href="{% url 'admin_panel:product-brand-create' %}"><i
+                                    class="fa fa-link"></i>
+                                <span>اضافه کردن برند</span></a></li>
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
+                            <span>تنظیمات </span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:update-site-setting' %}"><i class="fa fa-link"></i>
+                                    <span>تنظیمات سایت</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:sliders-list' %}"><i class="fa fa-link"></i>
+                                    <span>اسلایدر های صفحه اصلی</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:banners-list' %}"><i class="fa fa-link"></i>
+                                    <span>بنر های صفحه اصلی</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:font-manager' %}"><i class="fa fa-link"></i>
+                                    <span>فونت ها</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:site-law-list' %}"><i class="fa fa-link"></i>
+                                    <span>قوانین</span>
+                                </a>
+                            </li>
+                            <li class="link-activator"><a href="{% url 'admin_panel:fast-links-list' %}"><i
+                                    class="fa fa-link"></i> <span>
+                        لینک های سریع
+                    </span></a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:backup-media-restore' %}"><i class="fa fa-link"></i>
+                                    <span>برگرداندن  فایل های اپلود شده</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:backup-restore' %}"><i class="fa fa-link"></i>
+                                    <span>برگرداندن اطلاعات دیتابیس</span>
+                                </a>
+                            </li>
+
+
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
+                            <span>تیکت ها </span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:ticket-received-list' %}"><i class="fa fa-link"></i>
+                                    <span>تیکت های دریافتی</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:ticket-send-list' %}"><i class="fa fa-link"></i>
+                                    <span>تیکت های ارسالی</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:ticket-create' %}"><i class="fa fa-link"></i>
+                                    <span>ارسال تیکت </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
+                            <span>بلاگ </span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:blog-list' %}"><i class="fa fa-link"></i>
+                                    <span>پست ها</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:blog-create' %}"><i class="fa fa-link"></i>
+                                    <span>افزودن پست</span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:blog-category-list' %}"><i class="fa fa-link"></i>
+                                    <span>دسته بندی ها</span>
+                                </a>
+                            </li>
+
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:blog-category-create' %}"><i class="fa fa-link"></i>
+                                    <span>افزودن دسته بندی </span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
+                            <span style="color: #ff7700">سفارشات </span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="link-activator"><a href="{% url 'admin_panel:orders-sold-list' %}"><i
+                                    class="fa fa-link"></i> <span>
+                        تصفیه
+                            </span></a></li>
+                            <li class="link-activator"><a href="{% url 'admin_panel:orders-list' %}"><i
+                                    class="fa fa-link"></i> <span>
+                            سفارشات
+                        </span></a></li>
+                            <li class="link-activator"><a href="{% url 'admin_panel:specifics-list' %}"><i
+                                    class="fa fa-link"></i> <span>
+                            فاکتور های خاص
+                        </span></a></li>
+                            <li class="link-activator"><a href="{% url 'admin_panel:return-order-list' %}"><i
+                                    class="fa fa-link"></i> <span>
+سفارشات مرجوعی
+                        </span></a></li>
+
+
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
+                            <span>کاربران </span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:user-send-message' %}"><i
+                                        class="fa fa-link"></i>
+                                    <span>
+                                         ارسال پیامک خدماتی انبوه
+                                    </span>
+                                </a>
+                            </li>
+
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:user-list' %}">
+                                    <i class="fa fa-link"></i>
+                                    <span>
+                                  کاربران
+                                </span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:user-list-message-history' %}">
+                                    <i class="fa fa-link"></i>
+                                    <span>
+                                  تاریخچه ارسال پیامک ها
+                                </span>
+                                </a>
+                            </li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:user-news-letters' %}">
+                                    <i class="fa fa-link"></i>
+                                    <span>
+                                  خبرنامه
+                                </span>
+                                </a>
+                            </li>
+
+
+                        </ul>
+                    </li>
+
+                    <li class="link-activator">
+                        <a href="{% url 'admin_panel:discount-list' %}">
+                            <i class="fa fa-link"></i>
+                            <span>
+                                    کد تخفیف ها
+                             </span>
+                        </a>
+                    </li>
+
+
+
+                    <li class="link-activator"><a href="{% url 'admin_panel:store-list' %}"><i
+                            class="fa fa-link"></i> <span>
+                        فروشگاها
+                    </span></a>
+                    </li>
+                    <li class="link-activator"><a href="{% url 'admin_panel:Q&A-list' %}"><i class="fa fa-link"></i>
+                        <span>
+                        سوال جواب
+                    </span></a>
+                    <li class="link-activator"><a href="{% url 'admin_panel:apps-list' %}"><i class="fa fa-link"></i>
+                        <span>
+برنامه ها
+                    </span></a>
+                    </li>
+                    <li class="link-activator"><a href="{% url 'admin_panel:contact-list' %}"><i class="fa fa-link"></i>
+                        <span>
+پیام ها (صفحه تماس با ما)
+                    </span></a>
+                    </li>
+                    <li class="link-activator">
+                        <a href="{% url 'admin_panel:main' %}"><i class="fa fa-link"></i>
+                            <span>صفحه مدیریت سایت</span></a>
+                    </li>
+                    {% if user.is_staff and user.store %}
+                        <li class="link-activator"><a href="{% url 'store:home' %}"><i class="fa fa-link"></i> <span>صفحه فروشگاه</span></a>
+                        </li>
+                    {% endif %}
+                    <li class="link-activator"><a href="/"><i class="fa fa-link"></i> <span>صفحه اصلی سایت</span></a>
+                    </li>
+
+
+                {% endif %}
+
+                <script>
+                    links = window.location.href;
+                    elements = document.getElementsByClassName("link-activator");
+                    for (elem of elements) {
+
+                        if (elem.children[0].href === links) {
+                            elem.classList.add("active");
+                            elem.parentNode.parentNode.classList.add("active");
+                        }
+                    }
+                </script>
+
+
+            </ul>
+
+            <!-- /.sidebar-menu -->
+        </section>
+
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+
+        <section class="content-header" id="content-header-1233">
+
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i> خانه</a></li>
+                <li class="active">داشبورد</li>
+                {% block breadcrumb %}
+
+                {% endblock %}
+
+            </ol>
+
+
+        </section>
+
+        <!-- Main content -->
+        <section class="content container-fluid">
+            {% block body %}
+
+            {% endblock %}
+            <!--------------------------
+              | Your Page Content Here |
+              -------------------------->
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Main Footer -->
+
+
+    <!-- Control Sidebar -->
+    <!-- /.control-sidebar -->
+    <!-- Add the sidebar's background. This div must be placed
+    immediately after the control sidebar -->
+    <div class="control-sidebar-bg"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<!-- jQuery 3 -->
+<script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/static/dist/js/adminlte.min.js"></script>
+
+{% block footer_reference %}
+
+{% endblock %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // گرفتن همه inputهای عددی
+        const numberInputs = document.querySelectorAll(
+            'input[type="number"], input.number-input-tdc, input[data-numeric-input]'
+        );
+
+        numberInputs.forEach(originalInput => {
+            // پنهان کردن input اصلی
+            originalInput.style.display = 'none';
+
+            // ساختن input جایگزین
+            const fakeInput = document.createElement('input');
+            fakeInput.type = 'text';
+            fakeInput.className = originalInput.className + ' visible-number-input';  // حفظ استایل
+            fakeInput.placeholder = originalInput.placeholder || '';
+            fakeInput.style.marginBottom = '4px';
+
+            // مقدار اولیه
+            const initialVal = originalInput.value || '';
+            fakeInput.value = formatWithCommas(initialVal);
+
+            // گذاشتن input جدید جلوی input مخفی
+            originalInput.parentNode.insertBefore(fakeInput, originalInput.nextSibling);
+
+            // هنگام تایپ در input جدید
+            fakeInput.addEventListener('input', function () {
+                // پاک‌سازی کاراکترهای غیرعددی
+                const raw = this.value.replace(/,/g, '').replace(/[^\d]/g, '');
+                // نمایش با کاما
+                this.value = formatWithCommas(raw);
+                // مقدار خام به input اصلی بره
+                originalInput.value = raw;
+            });
+        });
+
+        // تابع فرمت سه‌رقمی
+        function formatWithCommas(val) {
+            if (!val) return '';
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+    });
+</script>
+
+</body>
+</html>

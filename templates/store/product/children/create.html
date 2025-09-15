@@ -1,0 +1,966 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    اضافه کردن محصول
+{% endblock %}
+
+{% block header_reference %}
+
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/static/dist/css/rtl.css">
+    <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
+    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+    <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+
+
+    <link rel="stylesheet" href=/static/dist/css/bootstrap-theme.css">
+
+    <link rel="stylesheet" href=/static/dist/css/rtl.css">
+
+    <link rel="stylesheet" href=/static/node_modules/font-awesome/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href=/static/node_modules/ionicons/dist/css/ionicons-core.min.css">
+
+    <link rel="stylesheet" href=/static/dist/css/AdminLTE.min.css">
+
+    <link rel="stylesheet" href=/static/dist/css/skins/_all-skins.min.css">
+
+    <link rel="stylesheet" href=/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+
+
+    <style>.cke {
+        visibility: hidden;
+    }</style>
+    <link rel="stylesheet" type="text/css" id="u0"
+          href="/static/dist/js/lightgray.js">
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/config.js?t=E8PB"></script>
+    {#    <script type="text/javascript"#}
+    {#            src="/static/dist/js/bootstrapck-skin.js"></script>#}
+    <link rel="stylesheet" type="text/css"
+          href="/static/dist/css/bootstrapck-editor_gecko.css">
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/lang/fa.js?t=E8PB"></script>
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/styles.js?t=E8PB"></script>
+    <script type="text/javascript"
+            src="/static/dist/js/wpmore-plugin.js"></script>
+
+
+
+{% endblock %}
+
+
+{% block breadcrumb %}
+    <li class="active"> اضافه کردن محصول</li>
+{% endblock %}
+
+{% block body %}
+    {% if form.errors %}
+        <div class="col-xs-12 bg-red"
+             style="margin-bottom: 20px; margin-top: 20px; border-radius: 10px; padding: 15px;">
+            {{ form.errors }}
+        </div>
+    {% endif %}
+
+    <!-- Main content -->
+    <section class="content" style="min-height: 600px; margin-top: 20px;">
+        <div class="row">
+            <div class="col-xs-12">
+                <!-- بخش دسته‌بندی و برند -->
+                <div class="row">
+                    <!-- فرم دسته‌بندی -->
+                    {% if user.store.can_stores_add_product_category %}
+                        <div class="col-sm-6">
+                            <div class="box box-primary">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">اضافه کردن دسته بندی</h3>
+                                    <div class="pull-right box-tools">
+                                        <button type="button" class="btn btn-info btn-sm" data-widget="collapse">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="box-body" style="display: none;">
+                                    <form role="form" method="POST" action="{% url 'store:add-category' %}"
+                                          enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="id_name">نام:</label>
+                                            {{ category_form.name }}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_parent">دسته بندی مادر:</label>
+                                            {{ category_form.parent }}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_image">لوگو</label>
+                                            {{ category_form.image }}
+                                        </div>
+                                        <div class="checkbox">
+                                            <label>
+                                                {{ category_form.is_active }} فعال کردن دسته بندی
+                                            </label>
+                                        </div>
+                                        <div class="box-footer">
+                                            <button type="submit" class="btn btn-primary">ارسال</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if user.store.can_stores_add_product_brand %}
+                        <!-- فرم برند -->
+                        <div class="col-sm-6">
+                            <div class="box box-primary">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">اضافه کردن برند</h3>
+                                    <div class="pull-right box-tools">
+                                        <button type="button" class="btn btn-info btn-sm" data-widget="collapse">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="box-body" style="display: none;">
+                                    <form role="form" method="POST" action="{% url 'store:add-brands' %}"
+                                          enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="id_name_2">نام:</label>
+                                            {{ brand_form.name }}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="id_image_2">لوگو</label>
+                                            {{ brand_form.image }}
+                                        </div>
+                                        <div class="checkbox">
+                                            <label>
+                                                {{ brand_form.is_active }} فعال کردن برند
+                                            </label>
+                                        </div>
+                                        <div class="box-footer">
+                                            <button type="submit" class="btn btn-primary">ارسال</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <!-- فرم محصول -->
+                <div class="box box-info">
+                    <div class="box-header">
+                        <h3 class="box-title">اضافه کردن محصول</h3>
+
+                        <div class="pull-right box-tools">
+                            <button type="button" class="btn btn-info btn-sm" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            {% if product %}
+                                <a class="btn btn-sm btn-success" href="{% url 'product:detail' product.id %}">
+                                    مشاهده
+                                </a>
+                                <a class="btn btn-sm btn-warning"
+                                   href="{% url 'store:list-gallery-images-product' product.id %}">
+                                    ترتیب گالری
+                                </a>
+                                <a class="btn btn-sm btn-purple"
+                                   href="{% url 'store:active-deactivate-product' product.id %}">
+                                    {% if product.is_active %}غیر فعال کردن{% else %}فعال کردن{% endif %}
+                                </a>
+                                <a class="btn btn-sm btn-danger" href="{% url 'store:remove-product' product.pk %}">
+                                    حذف کردن
+                                </a>
+                            {% endif %}
+                        </div>
+                        <br>
+                        <br>
+                        <span style="font-size: smaller" class="text-muted">
+                        نام و تگ ها و مشخصات و ویژگی های محصول نباید بیشتر از 1000 کاراکتر باشد در غیر این صورت محصول شما سیو نخواهد شد
+                    </span> <br>
+                        <span style="font-size: smaller" class="text-muted">
+فیلد های اجباری برای ثبت اولیه محصول عنوان  دسته و برند تعداد و وزن می باشد حال پیشنهاد می شود که اول موارد ضروری پر بشه و محصول به صورت اولیه ثبت بشه و بعد در مراحل بعدی اقدام به ثبت توضیحات و عکس و گالری بشه
+                    </span>
+                        <br>
+                        <span style="font-size: smaller" class="text-muted">
+                محدودیت گالری تا 10 عکس می باشد که با نگه داشت کلید کنترل کیبورد میشه انتخاب کرد و جهت نمایش بهتر محصول شما در گوگل از عکسای کم حجم استفاده کنید
+                    </span>
+                        <br>
+                    </div>
+
+                    <div class="box-body pad">
+                        <form enctype="multipart/form-data" method="post" action="">
+                            {% csrf_token %}
+
+                            <!-- ردیف اول فرم محصول -->
+                            <div class="row">
+                                <div class="col-sm-12 col-md-4 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-warning btn-flat">عنوان محصول:</span>
+                                    </span>
+                                        {{ form.name }}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-2 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-purple btn-flat">قیمت:</span>
+                                    </span>
+                                        {{ form.price }}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-3 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-info btn-flat">عکس اصلی</span>
+                                    </span>
+                                        {{ form.picture }}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-3 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-success btn-flat">گالری محصول</span>
+                                    </span>
+                                        {{ form.gallery }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ردیف دوم فرم محصول -->
+                            <div class="row">
+                                <div class="col-sm-6 col-md-3 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-flat" style="background-color: #ed59f4; color: white;">دسته بندی:</span>
+                                    </span>
+                                        {{ form.category }}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-md-3 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-flat" style="background-color: #0000ff; color: white;">برند:</span>
+                                    </span>
+                                        {{ form.brand }}
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-md-6 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-addon">
+                                        تخفیف: {{ form.have_discount }}
+                                    </span>
+                                        {{ form.discount }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ردیف سوم فرم محصول -->
+                            <div class="row">
+                                <div class="col-sm-6 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-flat" style="background-color: #f56954; color: white;">تعداد:</span>
+                                    </span>
+                                        {{ form.count }}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-flat" style="background-color: #726204; color: white;">وزن (گرم):</span>
+                                    </span>
+                                        {{ form.weight }}
+                                    </div>
+                                </div>
+                                {#                                <div class="col-sm-4 form-group">#}
+                                {#                                    <div class="input-group">#}
+                                {#                                    <span class="input-group-btn">#}
+                                {#                                        <span class="btn btn-flat" style="background-color: #726204; color: white;">تعداد در بسته:</span>#}
+                                {#                                    </span>#}
+                                {#                                        {{ form.displacement_unit }}#}
+                                {#                                    </div>#}
+                                {#                                </div>#}
+                            </div>
+
+                            <!-- ردیف چهارم فرم محصول -->
+                            <div class="row">
+                                <div class="col-sm-4 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-flat" style="background-color: #f56954; color: white;">ارتفاع (سانتی متر):</span>
+                                    </span>
+                                        {{ form.length }}
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-flat" style="background-color: #726204; color: white;">طول (سانتی متر):</span>
+                                    </span>
+                                        {{ form.width }}
+                                    </div>
+                                </div>
+                                <div class="col-sm-4 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-flat" style="background-color: #726204; color: white;">عرض (سانتی متر):</span>
+                                    </span>
+                                        {{ form.height }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ویژگی‌های محصول -->
+                            <div class="row form-group">
+                                <div class="col-sm-12 col-md-3">
+                                    <div class="input-group input-group-sm">
+                                        {{ form.features }}
+                                        <span class="input-group-btn">
+                <button type="button" onclick="addFeature()" class="btn btn-info btn-flat">ثبت</button>
+            </span>
+                                    </div>
+                                    <p> برای ویرایش دوبار کلیک کنید و هر چه نزدیک دکمه هم رنگ باشد یعنی اولویت در نمایش
+                                        ان بیشتر است برای جابه جایی هم انرا نگه دارید</p>
+                                </div>
+                                <div class="col-sm-12 col-md-9 container-sortable" id="features-container">
+                                    {% if product %}
+                                        {% for feature in product.features.all %}
+                                            <span class="tag-wrapper" draggable="true"
+                                                  ondragstart="handleDragStart(event)"
+                                                  ondragover="handleDragOver(event)"
+                                                  ondrop="handleDrop(event)"
+                                                  ondragend="handleDragEnd(event)">
+                    <span class="btn btn-default form-group feature-tag tag-item"
+                          ondblclick="editTag(this)"
+                          data-original="{{ feature.title }}">
+                        {{ feature.title }}
+                        <button class="tag-delete" onclick="removeTag(this.parentElement.parentElement)"
+                                title="حذف">×</button>
+                    </span>
+                </span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- مشخصات فنی محصول -->
+                            <div class="row form-group">
+                                <div class="col-sm-12 col-md-3">
+                                    <div class="input-group input-group-sm">
+                                        {{ form.specs }}
+                                        <span class="input-group-btn">
+                <button type="button" onclick="addSpec()" class="btn  btn-success">ثبت</button>
+            </span>
+                                    </div>
+                                    <p> برای ویرایش دوبار کلیک کنید و هر چه نزدیک دکمه هم رنگ باشد یعنی اولویت در نمایش
+                                        ان بیشتر است برای جابه جایی هم انرا نگه دارید</p>
+                                </div>
+                                <div class="col-sm-12 col-md-9 container-sortable" id="specs-container">
+                                    {% if product %}
+                                        {% for spec in product.specs.all %}
+                                            <span class="tag-wrapper" draggable="true"
+                                                  ondragstart="handleDragStart(event)"
+                                                  ondragover="handleDragOver(event)"
+                                                  ondrop="handleDrop(event)"
+                                                  ondragend="handleDragEnd(event)">
+                    <span class="btn btn-default form-group spec-tag tag-item"
+                          ondblclick="editTag(this)"
+                          data-original="{{ spec.name }}">
+                        {{ spec.name }}
+                        <button class="tag-delete" onclick="removeTag(this.parentElement.parentElement)"
+                                title="حذف">×</button>
+                    </span>
+                </span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- تگ‌های محصول -->
+                            <div class="row form-group">
+                                <div class="col-sm-12 col-md-3">
+                                    <div class="input-group input-group-sm">
+                                        {{ form.tags }}
+                                        <span class="input-group-btn">
+                <button type="button" onclick="addTag()" class="btn btn-info btn-warning">ثبت</button>
+            </span>
+                                    </div>
+                                    <p> برای ویرایش دوبار کلیک کنید و هر چه نزدیک دکمه هم رنگ باشد یعنی اولویت در نمایش
+                                        ان بیشتر است برای جابه جایی هم انرا نگه دارید</p>
+                                </div>
+                                <div class="col-sm-12 col-md-9 container-sortable" id="tags-container">
+                                    {% if product %}
+                                        {% for tag in product.tags.all %}
+                                            <span class="tag-wrapper" draggable="true"
+                                                  ondragstart="handleDragStart(event)"
+                                                  ondragover="handleDragOver(event)"
+                                                  ondrop="handleDrop(event)"
+                                                  ondragend="handleDragEnd(event)">
+                    <span class="btn btn-default form-group tag tag-item"
+                          ondblclick="editTag(this)"
+                          data-original="{{ tag.name }}">
+                        {{ tag.name }}
+                        <button class="tag-delete" onclick="removeTag(this.parentElement.parentElement)"
+                                title="حذف">×</button>
+                    </span>
+                </span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <style>
+                                .tag-wrapper {
+                                    position: relative;
+                                    display: inline-block;
+                                    margin: 3px;
+                                    cursor: grab;
+                                }
+
+                                .tag-wrapper:active {
+                                    cursor: grabbing;
+                                }
+
+                                .tag-wrapper.dragging {
+                                    opacity: 0.5;
+                                    transform: rotate(5deg);
+                                    z-index: 1000;
+                                }
+
+                                .tag-item {
+                                    position: relative;
+                                    padding: 6px 25px 6px 12px !important;
+                                    border-radius: 15px;
+                                    cursor: pointer;
+                                    transition: all 0.2s ease;
+                                    user-select: none;
+                                }
+
+                                .tag-item:hover {
+                                    opacity: 0.8;
+                                    transform: translateY(-1px);
+                                }
+
+                                .container-sortable {
+                                    min-height: 40px;
+                                    border: 2px dashed transparent;
+                                    border-radius: 5px;
+                                    padding: 5px;
+                                    transition: all 0.3s ease;
+                                }
+
+                                .container-sortable.drag-over {
+                                    border-color: #007bff;
+                                    background-color: rgba(0, 123, 255, 0.1);
+                                }
+
+                                .sort-placeholder {
+                                    width: 2px;
+                                    height: 30px;
+                                    background: #007bff;
+                                    display: inline-block;
+                                    margin: 0 5px;
+                                    border-radius: 1px;
+                                }
+
+                                .tag-delete {
+                                    position: absolute;
+                                    top: 2px;
+                                    right: 5px;
+                                    background: rgba(255, 255, 255, 0.9);
+                                    border: none;
+                                    border-radius: 50%;
+                                    width: 18px;
+                                    height: 18px;
+                                    font-size: 12px;
+                                    line-height: 1;
+                                    cursor: pointer;
+                                    color: #d9534f;
+                                    font-weight: bold;
+                                }
+
+                                .tag-delete:hover {
+                                    background: #d9534f;
+                                    color: white;
+                                }
+
+                                .feature-tag {
+                                    background: #5bc0de !important;
+                                    color: white !important;
+                                    border-color: #46b8da !important;
+                                }
+
+                                .spec-tag {
+                                    background: #5cb85c !important;
+                                    color: white !important;
+                                    border-color: #4cae4c !important;
+                                }
+
+                                .tag {
+                                    background: #f0ad4e !important;
+                                    color: white !important;
+                                    border-color: #eea236 !important;
+                                }
+
+                                .editing {
+                                    background: #fff !important;
+                                    color: #333 !important;
+                                    border: 2px solid #007bff !important;
+                                    outline: none;
+                                    min-width: 100px;
+                                }
+                            </style>
+
+                            <script>
+                                // حذف تگ
+                                function removeTag(wrapper) {
+                                    wrapper.remove();
+                                }
+
+                                // ویرایش تگ
+                                function editTag(tagElement) {
+                                    if (tagElement.classList.contains('editing')) return;
+
+                                    const originalText = tagElement.dataset.original || tagElement.textContent.trim();
+                                    tagElement.classList.add('editing');
+                                    tagElement.setAttribute('data-original', originalText);
+                                    tagElement.innerText = originalText;
+                                    tagElement.contentEditable = true;
+                                    tagElement.focus();
+
+                                    // انتخاب متن
+                                    const range = document.createRange();
+                                    range.selectNodeContents(tagElement);
+                                    const selection = window.getSelection();
+                                    selection.removeAllRanges();
+                                    selection.addRange(range);
+
+                                    // ذخیره با Enter
+                                    tagElement.addEventListener('keypress', function (e) {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            saveEdit(tagElement);
+                                        }
+                                    });
+
+                                    // لغو با Escape
+                                    tagElement.addEventListener('keydown', function (e) {
+                                        if (e.key === 'Escape') {
+                                            e.preventDefault();
+                                            cancelEdit(tagElement);
+                                        }
+                                    });
+
+                                    // ذخیره با blur
+                                    tagElement.addEventListener('blur', function () {
+                                        saveEdit(tagElement);
+                                    });
+                                }
+
+                                function saveEdit(tagElement) {
+                                    const newText = tagElement.textContent.trim();
+                                    tagElement.classList.remove('editing');
+                                    tagElement.contentEditable = false;
+
+                                    if (newText !== '') {
+                                        tagElement.dataset.original = newText;
+                                        tagElement.innerText = newText;
+                                        addDeleteButton(tagElement);
+                                    } else {
+                                        cancelEdit(tagElement);
+                                    }
+                                }
+
+                                function cancelEdit(tagElement) {
+                                    const originalText = tagElement.getAttribute('data-original');
+                                    tagElement.classList.remove('editing');
+                                    tagElement.contentEditable = false;
+                                    tagElement.innerText = originalText;
+                                    addDeleteButton(tagElement);
+                                }
+
+                                function addDeleteButton(tagElement) {
+                                    const wrapper = tagElement.parentElement;
+                                    let delBtn = wrapper.querySelector('.tag-delete');
+
+                                    if (!delBtn) {
+                                        delBtn = document.createElement('button');
+                                        delBtn.className = 'tag-delete';
+                                        delBtn.innerText = '×';
+                                        delBtn.title = 'حذف';
+                                        delBtn.onclick = function () {
+                                            removeTag(wrapper);
+                                        };
+                                        wrapper.appendChild(delBtn);
+                                    }
+                                }
+
+                                // افزودن تگ عمومی (برای ویژگی، مشخصه، تگ)
+                                function addTagGeneric(inputId, containerId, tagClass) {
+                                    const input = document.getElementById(inputId);
+                                    const container = document.getElementById(containerId);
+
+                                    if (input.value.trim() !== "") {
+                                        const wrapper = document.createElement("span");
+                                        wrapper.className = "tag-wrapper";
+                                        wrapper.draggable = true;
+                                        wrapper.ondragstart = handleDragStart;
+                                        wrapper.ondragover = handleDragOver;
+                                        wrapper.ondrop = handleDrop;
+                                        wrapper.ondragend = handleDragEnd;
+
+                                        const newTag = document.createElement("span");
+                                        newTag.className = `btn btn-default form-group tag-item ${tagClass}`;
+                                        newTag.innerText = input.value;
+                                        newTag.setAttribute('data-original', input.value);
+                                        newTag.ondblclick = function () {
+                                            editTag(this);
+                                        };
+
+                                        wrapper.appendChild(newTag);
+                                        container.appendChild(wrapper);
+                                        addDeleteButton(newTag);
+                                        input.value = "";
+                                    }
+                                }
+
+                                // توابع اختصاصی
+                                function addFeature() {
+                                    addTagGeneric("id_features", "features-container", "feature-tag");
+                                }
+
+                                function addSpec() {
+                                    addTagGeneric("id_specs", "specs-container", "spec-tag");
+                                }
+
+                                function addTag() {
+                                    addTagGeneric("id_tags", "tags-container", "tag");
+                                }
+
+                                // قابلیت دراگ
+                                let draggedElement = null;
+                                let placeholder = null;
+
+                                function handleDragStart(e) {
+                                    draggedElement = e.target.closest(".tag-wrapper");
+                                    draggedElement.classList.add("dragging");
+                                    e.dataTransfer.effectAllowed = "move";
+                                }
+
+                                function handleDragOver(e) {
+                                    e.preventDefault();
+                                    const container = e.target.closest(".container-sortable");
+                                    if (!container) return;
+
+                                    const afterElement = getDragAfterElement(container, e.clientX);
+                                    if (!placeholder) {
+                                        placeholder = document.createElement("span");
+                                        placeholder.className = "sort-placeholder";
+                                        placeholder.style.width = draggedElement.offsetWidth + "px";
+                                        placeholder.style.height = draggedElement.offsetHeight + "px";
+                                    }
+
+                                    if (afterElement == null) {
+                                        container.appendChild(placeholder);
+                                    } else {
+                                        container.insertBefore(placeholder, afterElement);
+                                    }
+                                }
+
+                                function handleDrop(e) {
+                                    e.preventDefault();
+                                    const container = e.target.closest(".container-sortable");
+                                    if (!container) return;
+
+                                    if (draggedElement && placeholder) {
+                                        container.insertBefore(draggedElement, placeholder);
+                                        placeholder.remove();
+                                        placeholder = null;
+                                    }
+                                    draggedElement.classList.remove("dragging");
+                                    draggedElement = null;
+                                }
+
+                                function handleDragEnd() {
+                                    if (draggedElement) draggedElement.classList.remove("dragging");
+                                    if (placeholder && placeholder.parentNode) placeholder.remove();
+                                    draggedElement = null;
+                                    placeholder = null;
+                                }
+
+                                function getDragAfterElement(container, x) {
+                                    const elements = [...container.querySelectorAll('.tag-wrapper:not(.dragging)')];
+                                    return elements.reduce((closest, child) => {
+                                        const box = child.getBoundingClientRect();
+                                        const offset = x - box.left - box.width / 2;
+                                        if (offset < 0 && offset > closest.offset) {
+                                            return {offset: offset, element: child};
+                                        } else {
+                                            return closest;
+                                        }
+                                    }, {offset: Number.NEGATIVE_INFINITY}).element;
+                                }
+
+                                // آماده سازی قبل از ارسال فرم
+                                function prepareFormData() {
+                                    ['features', 'tags', 'specs'].forEach(field => {
+                                        const container = document.getElementById(`${field}-container`);
+                                        const input = document.getElementById(`id_${field}`);
+                                        const values = [...container.querySelectorAll(`.${field === 'features' ? 'feature-tag' : field === 'specs' ? 'spec-tag' : 'tag'}`)]
+                                            .map(el => el.dataset.original || el.textContent.trim());
+                                        input.value = values.join('**');
+                                    });
+                                }
+
+                                // فعال‌سازی رویدادهای دراپ
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    document.querySelectorAll('.container-sortable').forEach(container => {
+                                        container.addEventListener('dragover', handleDragOver);
+                                        container.addEventListener('drop', handleDrop);
+                                    });
+                                });
+                            </script>
+
+
+                            <!-- توضیحات محصول -->
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    {{ form.media }}
+                                    {{ form.description }}
+                                </div>
+                            </div>
+                            <script>
+                                fetch('{% url "admin_panel:font_list_json" %}')
+                                    .then(response => response.json())
+                                    .then(fontList => {
+                                        const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
+                                        CKEDITOR.instances['{{ form.description.id_for_label }}'].destroy(true);
+
+                                        CKEDITOR.replace('{{ form.description.id_for_label }}', {
+                                            toolbar: [
+                                                ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
+                                                    'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
+                                                    'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
+                                                    'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
+                                                    'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
+                                                    'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
+                                                    'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
+                                                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
+                                                    'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
+                                                    'Styles', 'Format', 'Font', 'FontSize'],
+
+                                            ],
+                                            width: 750,
+                                            height: 200,
+                                            skin: 'moono',
+                                            extraPlugins: 'font',
+                                            contentsCss: ['{% url 'admin_panel:fonts.css' %}'],
+                                            font_names: fontNamesStr +
+                                                'Arial/Arial, Helvetica, sans-serif;' +
+                                                'Courier New/Courier New, Courier, monospace;' +
+                                                'Georgia/Georgia, serif;' +
+                                                'Tahoma/Tahoma, Geneva, sans-serif;' +
+                                                'Times New Roman/Times New Roman, Times, serif;' +
+                                                'Verdana/Verdana, Geneva, sans-serif;'
+                                        });
+                                    });
+                            </script>
+
+
+                            <!-- دکمه ثبت -->
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <br>
+                                    <button type="submit" onclick="prepareFormData()" class="btn btn-success btn-block">
+                                        ثبت
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- نمایش عکس‌های محصول (اگر وجود داشته باشد) -->
+                        {% if product %}
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <h6>برای عوض کردن عکس اصلی کافیه عکس جدید را اپلود کنید و عکس اصلی حذف خواهد شد و
+                                        عکس جدید جایگزین ان می شود</h6>
+                                    <h6>و برای عوض کردن عکس های گالری انهارو حذف کنید و دوباره اپلود میشود و
+                                        <span class="" style="background-color: red; color: white">با کلیک روی عکس های گالری محصول حذف می شوند</span>
+                                    </h6>
+                                    <div class="col-xs-12 col-sm-6 col-md-3">
+                                        <h6>عکس اصلی محصول:</h6>
+                                        {% if product.picture %}
+
+                                            <img src="{{ product.picture.url }}" alt=""
+                                                 class="img-thumbnail img-responsive"
+                                                 style="max-height: 250px; width: 100%;">
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="col-xs-12 col-sm-6 col-md-9">
+                                        <h6>گالری محصول:</h6>
+                                        {% for img in product.gallery.all %}
+                                            <a href="{% url 'store:remove-img-edit-product' pk=product.id img_id=img.id %}"
+                                               style="display: inline-block; margin: 5px;">
+                                                <img src="{{ img.image.url }}" alt=""
+                                                     style="height: 150px; width: 150px;">
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .btn-purple {
+            background-color: rebeccapurple;
+            color: white;
+        }
+
+        .feature-tag, .spec-tag, .tag {
+            margin: 5px;
+        }
+    </style>
+
+{% endblock %}
+
+
+{% block footer_reference %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script src="/static/node_modules/moment/min/moment.min.js"></script>
+    <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#tarikh').persianDatepicker({
+                altField: '#tarikhAlt',
+                altFormat: 'X',
+                format: 'D MMMM YYYY HH:mm a',
+                observer: true,
+                timePicker: {
+                    enabled: true
+                },
+            });
+        });
+        $(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
+            //Money Euro
+            $('[data-mask]').inputmask()
+
+            //Date range picker
+            $('#reservation').daterangepicker()
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                format: 'MM/DD/YYYY h:mm A'
+            })
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                }
+            )
+
+            //Date picker
+            $('#datepicker').datepicker({
+                autoclose: true
+            })
+
+            //iCheck for checkbox and radio inputs
+            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue'
+            })
+            //Red color scheme for iCheck
+            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                checkboxClass: 'icheckbox_minimal-red',
+                radioClass: 'iradio_minimal-red'
+            })
+            //Flat red color scheme for iCheck
+            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            })
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false
+            })
+        })
+    </script>
+    {#    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>#}
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
+    <script src="/dist/js/adminlte.min.js"></script>
+    <script src="/static/dist/js/demo.js"></script>
+    <script src="/static/node_modules/ckeditor/ckeditor.js"></script>
+    <script src="/static/node_modules/tinymce/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea#mytextarea',
+            plugins: 'advlist autolink link lists preview table code pagebreak',
+            menubar: false,
+            language: 'fa',
+            height: 300,
+            relative_urls: false,
+            toolbar: 'undo redo | removeformat preview code | fontsizeselect bullist numlist | alignleft aligncenter alignright alignjustify | bold italic | pagebreak table link',
+        });
+        $(function () {
+            // Replace the <textarea id="editor1"> with a CKEditor
+            // instance, using default configuration.
+            CKEDITOR.replace('editor1')
+            //bootstrap WYSIHTML5 - text editor
+            $('.textarea').wysihtml5()
+        })
+    </script>
+{% endblock %}

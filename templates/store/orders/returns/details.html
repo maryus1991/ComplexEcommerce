@@ -1,0 +1,201 @@
+{% extends 'Base/AdminBase.html' %}
+{% load jalali_tags %}
+{% load products_tags %}
+
+{% block title %}
+    سفارش مرجوعی شماره
+    {{ item.id }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="active">سفارشات مرجوعی</li>
+    <li class="active"> سفارش مرجوعی شماره
+        {{ item.id }}</li>
+{% endblock %}
+
+{% block body %}
+    <div class="" style="margin-top: 70px;">
+        <div class="panel panel-primary">
+            <div class="panel-heading text-center">
+                <h3 class="panel-title"> سفارش مرجوعی شماره
+                    {{ item.id }}</h3>
+                <div class="pull-left">
+                            <a href="{% url 'store:orders-detail' item.order.id %}"
+                               class="btn btn-sm btn-success"
+                               data-toggle="tooltip">
+                                سفارش شماره
+                                {{ item.order.id }}
+                            </a>
+                    <a href="{% url 'store:return-accept-by-store' item.id %}" class="btn btn-sm btn-info"
+                       data-toggle="tooltip" title="قبول کردن">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <a href="{% url 'store:return-order-send-to-admin' item.id %}" class="btn btn-sm btn-warning"
+                       data-toggle="tooltip" title="ارسال شده به ادمین جهت برگشت">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                                                <a href="{% url 'store:return-order-close' item.id %}"
+                               class="btn btn-sm btn-info"
+                               data-toggle="tooltip" title="تایید نهایی">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-body">
+
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <tbody>
+                        <tr>
+                            <td class="col-md-3 col-sm-6 col-xs-12"><strong>کاربر:</strong> <span
+                                    dir="ltr">{{ item.user.PhoneNumber }}</span></td>
+                            <td class="col-md-3 col-sm-6 col-xs-12"><strong>نام فروشگاه:</strong> {{ item.order.store.name }}
+                            </td>
+                            <td class="col-md-3 col-sm-6 col-xs-12"><strong>قیمت :</strong> <span
+                                    class="text-success">{{ item.order.get_payment_price|tdc }}</span></td>
+
+
+                        </tr>
+                        <tr>
+                            <td class="col-md-3 col-sm-6 col-xs-12"><strong>شماره کارت:</strong> <span
+                                    dir="ltr">{{ item.card_number }}</span></td>
+                            <td class="col-md-3 col-sm-6 col-xs-12"><strong>نام کارت:</strong> {{ item.cart_name }}
+                            </td>
+                            <td class="col-md-3 col-sm-6 col-xs-12">
+                                {% if item.send_request_to_return_this_order_by_admin %}
+                                    <span class="label label-success">ارسال شده به ادمین جهت برگشت</span>
+
+                                {% endif %}
+                            </td>
+
+                        </tr>
+
+                        <tr>
+                            <td class="col-md-3 col-sm-6 col-xs-12"><strong>تاریخ باز شدن
+                                :</strong> {{ item.date_open_request|to_jalali:' %H/%M - %Y/%m/%d ' }}</td>
+                            <td class="col-md-3 col-sm-6 col-xs-12"><strong>تاریخ بسته شدن
+                                :</strong> {{ item.date_close_request|to_jalali:' %H/%M - %Y/%m/%d ' }}
+                            </td>
+                            <td class="col-md-3 col-sm-6 col-xs-12">
+                                {% if item.accept_by_store %}
+                                    <span class="label label-success">قبول شده توسط فروشگاه</span>
+                                {% else %}
+                                    <span class="label label-primary">قبول نشده توسط فروشگاه</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="col-md-3 col-sm-6 col-xs-12"><strong>توضیحات
+                                :</strong> {{ item.descriptions|default:'-' }}</td>
+
+                        </tr>
+
+
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_reference %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script src="/static/node_modules/moment/min/moment.min.js"></script>
+    <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#tarikh').persianDatepicker({
+                altField: '#tarikhAlt',
+                altFormat: 'X',
+                format: 'D MMMM YYYY HH:mm a',
+                observer: true,
+                timePicker: {
+                    enabled: true
+                },
+            });
+        });
+        $(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
+            //Money Euro
+            $('[data-mask]').inputmask()
+
+            //Date range picker
+            $('#reservation').daterangepicker()
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                format: 'MM/DD/YYYY h:mm A'
+            })
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                }
+            )
+
+            //Date picker
+            $('#datepicker').datepicker({
+                autoclose: true
+            })
+
+            //iCheck for checkbox and radio inputs
+            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue'
+            })
+            //Red color scheme for iCheck
+            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                checkboxClass: 'icheckbox_minimal-red',
+                radioClass: 'iradio_minimal-red'
+            })
+            //Flat red color scheme for iCheck
+            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            })
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false
+            })
+        })
+    </script>
+{% endblock %}
+

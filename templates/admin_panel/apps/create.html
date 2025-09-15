@@ -1,0 +1,498 @@
+{% extends 'Base/AdminBase.html' %}
+
+{% block title %}
+    بروز رسانی یا اپلود برنامه جدید
+{% endblock %}
+
+{% block header_reference %}
+
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/static/dist/css/rtl.css">
+    <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
+    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+    <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+
+
+    <link rel="stylesheet" href=/static/dist/css/bootstrap-theme.css">
+
+    <link rel="stylesheet" href=/static/dist/css/rtl.css">
+
+    <link rel="stylesheet" href=/static/node_modules/font-awesome/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href=/static/node_modules/ionicons/dist/css/ionicons-core.min.css">
+
+    <link rel="stylesheet" href=/static/dist/css/AdminLTE.min.css">
+
+    <link rel="stylesheet" href=/static/dist/css/skins/_all-skins.min.css">
+
+    <link rel="stylesheet" href=/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+
+    <style>.cke {
+        visibility: hidden;
+    }</style>
+    <link rel="stylesheet" type="text/css" id="u0"
+          href="/static/dist/js/lightgray.js">
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/config.js?t=E8PB"></script>
+    {#    <script type="text/javascript"#}
+    {#            src="/static/dist/js/bootstrapck-skin.js"></script>#}
+    <link rel="stylesheet" type="text/css"
+          href="/static/dist/css/bootstrapck-editor_gecko.css">
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/lang/fa.js?t=E8PB"></script>
+    <script type="text/javascript"
+            src="/static/node_modules/ckeditor/styles.js?t=E8PB"></script>
+    <script type="text/javascript"
+            src="/static/dist/js/wpmore-plugin.js"></script>
+
+
+
+{% endblock %}
+
+
+{% block breadcrumb %}
+    <li class="active">
+        صفحه مدیریت
+    </li>
+    <li class="active">برنامه ها
+
+    </li>
+    <li class="active"> بروز رسانی یا اپلود برنامه
+        جدید
+
+    </li>
+{% endblock %}
+
+{% block body %}
+    <style>
+        .no-padding {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group-addon.custom-addon {
+            min-width: 120px;
+            text-align: right;
+            background: #5cb85c;
+            color: white;
+            border-color: #4cae4c;
+        }
+
+        .btn-upload {
+            margin-top: 10px;
+        }
+
+        .progress-container {
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+
+
+    <!-- Main content -->
+    <section class="content" style="min-height: 600px; margin-top: 20px;">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            <i class="fa fa-plus-circle"></i> بروز رسانی یا اپلود برنامه جدید
+                        </h3>
+
+                        {% if item %}
+                            <div class="box-tools pull-left">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                <a href="{{ item.get_absolute_url }}" class="btn btn-box-tool text-green"
+                                   data-toggle="tooltip" title="مشاهده">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <a href="{% url 'admin_panel:apps-active-deactivate' item.id %}"
+                                   class="btn btn-box-tool text-yellow"
+                                   data-toggle="tooltip"
+                                   title="{% if item.admin_verified %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                    <i class="fa fa-power-off"></i>
+                                </a>
+                                <a href="{% url 'admin_panel:apps-delete' item.id %}" class="btn btn-box-tool text-red"
+                                   data-toggle="tooltip" title="حذف">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <form enctype="multipart/form-data" method="post" action="" class="form-horizontal">
+                            {% csrf_token %}
+                            <input type="hidden" name="uploaded_filename" id="uploaded_filename">
+
+                            <div class="form-section">
+                                <h4 class="form-header"><i class="fa fa-info-circle"></i> اطلاعات پایه</h4>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4">{{ form.name.label }}</label>
+                                            <div class="col-md-8">
+                                                {{ form.name }}
+                                                <span class="help-block">نام برنامه را وارد کنید</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4">فروشگاه</label>
+                                            <div class="col-md-8">
+                                                {{ form.store }}
+                                                <span class="help-block">فروشگاه برنامه را انتخاب کنید</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4">عکس</label>
+                                            <div class="col-md-8">
+                                                {{ form.image }}
+                                                <span class="help-block">عکس برنامه را انتخاب کنید</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4">فایل</label>
+                                            <div class="col-md-8">
+                                                <input type="file" name="file" class="form-control"
+                                                       placeholder="برنامه را وارد کنید" id="id_file">
+                                                <div class="progress-container" id="progress-wrapper">
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-success progress-bar-striped active"
+                                                             id="progress-bar"
+                                                             role="progressbar"
+                                                             style="width: 0%">
+                                                            0%
+                                                        </div>
+                                                    </div>
+                                                    <div id="upload-speed"
+                                                         style="margin-top: 5px; font-size: 12px;"></div>
+                                                </div>
+                                                <div class="btn-group btn-upload">
+                                                    <button type="button" class="btn btn-success btn-xs"
+                                                            onclick="startUpload()">
+                                                        <i class="fa fa-upload"></i> شروع آپلود
+                                                    </button>
+                                                    <button type="button" class="btn btn-warning btn-xs"
+                                                            onclick="pauseUpload()">
+                                                        <i class="fa fa-pause"></i> توقف
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary btn-xs"
+                                                            onclick="resumeUpload()">
+                                                        <i class="fa fa-play"></i> ادامه
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h4 class="form-header"><i class="fa fa-align-left"></i> توضیحات </h4>
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        {{ form.short_description }}
+                                        {{ form.media }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-12 text-center">
+                                    <button type="submit" onclick="submitForm()" class="btn btn-success btn-lg">
+                                        <i class="fa fa-save"></i> ثبت اطلاعات
+                                    </button>
+                                </div>
+                            </div>
+
+                            {% if item and item.image %}
+                                <img src="{{ item.image.url }}" height="200px" width="200px" alt="">
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        let uploadPaused = false;
+        let currentChunk = 0;
+        let totalChunks = 0;
+        let chunkSize = 1024 * 1024; // 1MB
+        let file = null;
+        let startTime = null;
+
+        function startUpload() {
+            file = document.getElementById('id_file').files[0];
+            if (!file) {
+                alert("لطفاً یک فایل انتخاب کنید.");
+                return;
+            }
+            document.getElementById('uploaded_filename').value = file.name;
+            totalChunks = Math.ceil(file.size / chunkSize);
+            currentChunk = 0;
+            uploadPaused = false;
+            document.getElementById('progress-wrapper').style.display = 'block';
+            startTime = Date.now();
+            uploadNextChunk();
+        }
+
+        function pauseUpload() {
+            uploadPaused = true;
+        }
+
+        function resumeUpload() {
+            if (uploadPaused) {
+                uploadPaused = false;
+                uploadNextChunk();
+            }
+        }
+
+        function uploadNextChunk() {
+            if (uploadPaused || currentChunk >= totalChunks) return;
+
+            const chunk = file.slice(currentChunk * chunkSize, (currentChunk + 1) * chunkSize);
+            const formData = new FormData();
+            formData.append('file', chunk);
+            formData.append('chunkNumber', currentChunk + 1);
+            formData.append('totalChunks', totalChunks);
+            formData.append('filename', file.name);
+
+            const start = Date.now();
+
+            fetch("{% url 'admin_panel:apps-chunk-upload' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const now = Date.now();
+                    const elapsed = (now - start) / 1000;
+                    const speed = (chunk.size / 1024 / 1024 / elapsed).toFixed(2);
+                    const percent = Math.round(((currentChunk + 1) / totalChunks) * 100);
+
+                    document.getElementById('progress-bar').style.width = percent + '%';
+                    document.getElementById('progress-bar').innerText = percent + '%';
+                    document.getElementById('upload-speed').innerText = `سرعت: ${speed} مگابایت بر ثانیه`;
+
+                    if (percent === 100) {
+                        document.getElementById('id_file').remove();
+                    }
+
+                    currentChunk++;
+                    uploadNextChunk();  // ادامه آپلود chunk بعدی
+                })
+                .catch(error => {
+                    console.error('خطا در chunk:', error);
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const id = 'id_short_description';
+            const el = document.getElementById(id);
+            if (el) {
+                fetch('{% url "admin_panel:font_list_json" %}')
+                    .then(response => response.json())
+                    .then(fontList => {
+                        const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
+
+                        // نابود کردن اگر قبلاً auto-init شده باشه
+                        if (CKEDITOR.instances[id]) {
+                            CKEDITOR.instances[id].destroy(true);
+                        }
+
+                        CKEDITOR.replace(id, {
+                            toolbar: [
+                                ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
+                                    'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
+                                    'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
+                                    'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
+                                    'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
+                                    'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
+                                    'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
+                                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
+                                    'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
+                                    'Styles', 'Format', 'Font', 'FontSize'],
+
+                            ],
+                            width: 750,
+                            height: 200,
+                            skin: 'moono',
+                            extraPlugins: 'font',
+                            contentsCss: ['{% url "admin_panel:fonts.css" %}'],
+                            font_names: fontNamesStr +
+                                'Arial/Arial, Helvetica, sans-serif;' +
+                                'Courier New/Courier New, Courier, monospace;' +
+                                'Georgia/Georgia, serif;' +
+                                'Tahoma/Tahoma, Geneva, sans-serif;' +
+                                'Times New Roman/Times New Roman, Times, serif;' +
+                                'Verdana/Verdana, Geneva, sans-serif;'
+                        });
+                    });
+            }
+        });
+
+    </script>
+
+{% endblock %}
+
+{% block footer_reference %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script src="/static/node_modules/moment/min/moment.min.js"></script>
+    <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+
+
+
+    <script>
+        $(document).ready(function () {
+            $('#tarikh').persianDatepicker({
+                altField: '#tarikhAlt',
+                altFormat: 'X',
+                format: 'D MMMM YYYY HH:mm a',
+                observer: true,
+                timePicker: {
+                    enabled: true
+                },
+            });
+        });
+        $(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
+            //Money Euro
+            $('[data-mask]').inputmask()
+
+            //Date range picker
+            $('#reservation').daterangepicker()
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                format: 'MM/DD/YYYY h:mm A'
+            })
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                }
+            )
+
+            //Date picker
+            $('#datepicker').datepicker({
+                autoclose: true
+            })
+
+            //iCheck for checkbox and radio inputs
+            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue'
+            })
+            //Red color scheme for iCheck
+            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                checkboxClass: 'icheckbox_minimal-red',
+                radioClass: 'iradio_minimal-red'
+            })
+            //Flat red color scheme for iCheck
+            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            })
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false
+            })
+        })
+    </script>
+    {#    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>#}
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
+    <script src="/dist/js/adminlte.min.js"></script>
+    <script src="/static/dist/js/demo.js"></script>
+    <script src="/static/node_modules/ckeditor/ckeditor.js"></script>
+    <script src="/static/node_modules/tinymce/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea#mytextarea',
+            plugins: 'advlist autolink link lists preview table code pagebreak',
+            menubar: false,
+            language: 'fa',
+            height: 300,
+            relative_urls: false,
+            toolbar: 'undo redo | removeformat preview code | fontsizeselect bullist numlist | alignleft aligncenter alignright alignjustify | bold italic | pagebreak table link',
+        });
+        $(function () {
+            // Replace the <textarea id="editor1"> with a CKEditor
+            // instance, using default configuration.
+            CKEDITOR.replace('editor1')
+            //bootstrap WYSIHTML5 - text editor
+            $('.textarea').wysihtml5()
+        })
+    </script>
+
+{% endblock %}
