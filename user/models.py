@@ -40,6 +40,12 @@ class User(AbstractUser):
     email_verified = models.BooleanField(default=False)
     phone_number_verified = models.BooleanField(default=False)
 
+    # colleague users 
+
+    colleague_user = models.BooleanField(default=False)
+    colleague_request = models.BooleanField(default=False)
+    colleague_percent = models.PositiveBigIntegerField(default=0)
+
     # legal person infos
     legal_person = models.BooleanField(default=False, db_index=True)
     legal_person_economic_number = models.CharField(

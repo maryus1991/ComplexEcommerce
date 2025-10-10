@@ -198,9 +198,9 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 if DEBUG:
-    STATICFILES_DIRS = [BASE_DIR / "static"]
+    # STATICFILES_DIRS = [BASE_DIR / "static"]
 
-    # STATIC_ROOT = BASE_DIR / "static"
+    STATIC_ROOT = BASE_DIR / "static"
 else:
     STATIC_ROOT = BASE_DIR / "static"
 
@@ -393,12 +393,12 @@ CELERY_TASK_ROUTES = {
 
 
 # email config
-EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
-EMAIL_HOST = os.getenv("EMAIL_HOST")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS") == "True"
+# EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
+# EMAIL_HOST = os.getenv("EMAIL_HOST")
+# EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
+# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+# EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS") == "True"
 
 
 # csp config 

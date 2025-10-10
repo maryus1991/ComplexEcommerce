@@ -9,7 +9,7 @@
 notes.txt
 *.png
 /static-cdn
-stage.yml
+*.yml
 /static/admin/
 *.zip
 /static/ckeditor/
