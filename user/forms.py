@@ -102,6 +102,126 @@ class RegistrationForm(forms.Form):
             )
 
 
+class RegistrationColleagueForm(forms.Form):
+
+    first_name
+    last_name
+    store_name
+    personal_id
+    personal_address
+    store_address
+
+    store_image = forms.ImageField(
+
+    )
+    
+
+    phone_number = PhoneNumberField(
+        required=True,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "appearance-none bg-transparent w-full py-3",
+                "placeholder": "شماره همراه",
+                "autocomplete": "tel",
+                "dir": "rtl",
+            }
+        ),
+    )    
+    phone_number2 = PhoneNumberField(
+        required=True,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "appearance-none bg-transparent w-full py-3",
+                "placeholder": "شماره تلفن ثابت",
+                "autocomplete": "tel",
+                "dir": "rtl",
+            }
+        ),
+    )
+
+    email = forms.EmailField(
+        required=False,
+        widget=forms.EmailInput(
+            attrs={
+                "class": "appearance-none bg-transparent w-full py-3",
+                "placeholder": "ایمیل ( اختیاری )",
+                "autocomplete": "email",
+            }
+        ),
+        validators=[validate_email],
+    )
+
+    password = forms.CharField(
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "appearance-none bg-transparent w-full py-3 ",
+                "placeholder": "رمز عبور",
+                "autocomplete": "password",
+            }
+        ),
+    )
+
+    conform_password = forms.CharField(
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "appearance-none bg-transparent w-full py-3",
+                "placeholder": "تایید رمز عبور",
+            }
+        ),
+    )
+
+    def clean_conform_password(self):
+        conform_password = self.cleaned_data["conform_password"]
+        password = self.cleaned_data.get("password")
+
+        if password and password != conform_password:
+
+            raise forms.ValidationError("رمز عبور شما به صورت یکسان وارد نشده است")
+        else:
+            return conform_password
+
+    def clean_password(self):
+        password = self.cleaned_data["password"]
+        if len(password) < 8:
+            raise forms.ValidationError("رمز شما باید حداقل 8 کاراکتر باشد")
+
+        if password.isdigit():
+            raise forms.ValidationError(
+                "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
+            )
+
+        if password.isupper():
+            raise forms.ValidationError(
+                "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
+            )
+
+        if password.islower():
+            raise forms.ValidationError(
+                "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
+            )
+
+        return password
+
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data["phone_number"]
+        validate_phonenumber(phone_number)
+
+        return phone_number
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from sitesetting.models import SiteSetting
+        from django_recaptcha import fields, widgets
+        if SiteSetting.objects.first().active_google_reCAPTCHA:
+            self.fields['recaptcha']=fields.ReCaptchaField(
+                widget=widgets.ReCaptchaV3(action='signup'),
+            )
+
+
+
 class ForgotPasswordForm(forms.Form):
     phone_number = PhoneNumberField(
         required=True,

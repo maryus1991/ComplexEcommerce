@@ -1,0 +1,118 @@
+{% extends 'Base/Base.html' %}
+
+{% block title %}
+    خوش امدید
+{% endblock %}
+
+{% block breadcrumb %}
+
+    <li class="flex items-center gap-x-2">
+        <a>صفحه کابری</a>
+        <svg class="w-4 h-4">
+            <use href="#chevron-left"></use>
+        </svg>
+    </li>
+    <li class="flex items-center gap-x-2">
+        <a>ثبت نام به عنوان همکار</a>
+
+    </li>
+
+{% endblock %}
+
+{% block content %}
+
+    <main class="container flex items-center flex-col justify-center mt-8">
+        <div class="max-w-lg w-full shadow">
+            <div class="bg-white dark:bg-zinc-700 rounded-lg overflow-hidden">
+                <div class="p-3 lg:p-8">
+                    <h2 class="text-center text-xl lg:text-3xl font-DanaMedium">
+                        خوش آمدید
+                    </h2>
+                    <p class="mt2 lg:mt-4 text-center text-gray-400">ایجاد حساب کاربری</p>
+
+                    <form method="POST" action="" class="mt-8 space-y-6" data-recaptcha="true" data-recaptcha-action="signup" >
+                        {% csrf_token %}
+                        {{ form.recaptcha }}
+                        <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
+                            {{ form.phone_number }}
+                            <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
+                                <use href="#user"></use>
+                            </svg>
+                        </div>                   
+                        <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
+                            {{ form.email }}
+                            <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
+                                <use href="#user"></use>
+                            </svg>
+                        </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                function getAllQueryParams(paramName) {
+                                    const params = new URLSearchParams(window.location.search);
+                                    return params.getAll(paramName); // این متد تمام مقادیر یک پارامتر را برمی‌گرداند
+                                }
+
+                                const tel = getAllQueryParams('tel');
+                                if (tel.length > 0) {
+                                    document.getElementById('id_phone_number').value = tel;
+                                }
+                                const email = getAllQueryParams('email');
+                                if (email.length > 0) {
+                                    document.getElementById('id_email').value = email;
+                                }
+                            })
+                        </script>
+                        <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
+                            {{ form.password }}
+                            <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
+                                <use href="#lock"></use>
+                            </svg>
+                        </div>
+
+                        <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
+                            {{ form.conform_password }}
+                            <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
+                                <use href="#lock"></use>
+                            </svg>
+                        </div>
+                        <p class="mt2 mt-2 mb-2 text-center text-xs text-gray-400">
+                            رمز شما باید حداقل 8 کاراکتر باشد و باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد
+                        </p>
+                        <div>
+                            <button
+                                    class="group transition-colors relative w-full flex justify-center py-3 px-4 border border-transparent font-DanaMedium rounded-lg text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                    type="submit">
+                                عضویت
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="px-8 py-4 text-sm flex items-center justify-between">
+                    <span class="text-gray-400">
+                        قبلا ثبت نام کرده اید؟
+                    </span>
+                    <a class="font-medium text-green-500 hover:text-green-400" href="{% url 'user:login' %}"> وارد
+                        شوید</a>
+
+                    <span class="text-gray-400 ">ورود افراد حقیقی؟</span>
+                    <a class="font-medium text-green-500 hover:text-green-400"
+                       href="{% url 'user:help-legal-person' %}">راهنمایی</a>
+                </div>
+                <div class="px-8 py-4 text-sm flex items-center justify-between">
+
+ 
+                    <a class="font-medium text-green-500 hover:text-green-400"
+                       href="{% url 'user:help-legal-person' %}">ثبت نام به عنوان همکار</a>
+                </div>
+            <p class="px-6 py-3 text-center text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-zinc-700 border-t dark:border-zinc-600">
+                شما با ورود به سایت تمامی
+                <a href="{% url 'site:site-law' %}" class="text-blue-400 hover:text-blue-500 transition-colors duration-300">
+                    قوانین و مقررات
+                </a>
+                مورد پذیرش شما تلقی می شود
+            </p>
+            </div>
+        </div>
+
+    </main>
+{% endblock %}

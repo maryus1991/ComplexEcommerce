@@ -13,6 +13,7 @@ from .views import (
     LegalPersonHelpText,
 LoginWithEmailView,
 ForgotPasswordWithEmail,
+RegisterAsColleagueUser
 )
 
 
@@ -25,6 +26,7 @@ urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("login-with-email/", LoginWithEmailView.as_view(), name="login-with-email"),
     path("register/", RegisterView.as_view(), name="register"),
+    path('register-colleague-user/', RegisterAsColleagueUser.as_view(), name='register-colleague'),
     path("reset-password/", ForgotPassword.as_view(), name="reset_password"),
     path("reset-password-with-email/", ForgotPasswordWithEmail.as_view(), name="reset_password_with_email"),
     path("active-account/", ActiveAccount.as_view(), name="active_account"),

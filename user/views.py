@@ -30,6 +30,12 @@ from sitesetting.models import SiteSetting
 User = get_user_model()
 
 
+class RegisterAsColleagueUser(View):
+    """for register a specifics users that colleague to store"""
+    def get(self, request):
+        return render(request, 'auth/colleague-user/colleague-user-register.html')
+
+
 class VerifyEmailWIthPrivateCode(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         private_code = kwargs.get('private_code')
@@ -92,7 +98,7 @@ class LoginView(View):
             phone_number = form.cleaned_data["phone_number"]
             password = form.cleaned_data["password"]
 
-            user = User.objects.filter(PhoneNumber=phone_number)
+            user = User.objects.filter(PhoneNumber=phone_ncolleague_userumber)
             if not user.exists() or user.count() != 1:
                 messages.error(request, 'کاربر پیدا نشد')
                 return render(request, self.template_name, {"login_form": LoginForm(request.POST)})
