@@ -236,6 +236,7 @@ class ProductCreateView(AdminUserMixin, CreateView):
             sort_number_newest_products=form.cleaned_data["sort_number_newest_products"],
             sort_number_most_sell=form.cleaned_data["sort_number_most_sell"],
             sort_number_discount=form.cleaned_data["sort_number_discount"],
+            colleague_users_price=form.cleaned_data["colleague_users_price"],
         )
         tags = form.cleaned_data["tags"].split("**")
         features = form.cleaned_data["features"].split("**")
@@ -380,6 +381,7 @@ class ProductUpdateView(AdminUserMixin, UpdateView):
         product.sort_number_newest_products=int(form.cleaned_data.get("sort_number_newest_products"))
         product.sort_number_most_sell=int(form.cleaned_data.get("sort_number_most_sell"))
         product.sort_number_discount=int(form.cleaned_data.get("sort_number_discount"))
+        product.colleague_users_price=int(form.cleaned_data.get("colleague_users_price"))
 
         if form.cleaned_data["picture"]:  # اگر تصویر جدید ارسال شده است
             product.picture = form.cleaned_data["picture"]
@@ -658,8 +660,6 @@ class ProductCategoryListView(AdminUserMixin, ListView):
         context["form"] = BrandAndCategorySearchForm()
 
         return context
-
-
 
 
 class ProductCategoryChangeSortNumber(AdminUserMixin, RedirectView):

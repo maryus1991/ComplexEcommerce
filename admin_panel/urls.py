@@ -291,6 +291,13 @@ urlpatterns = [
     path("users/admin-login/<int:pk>", views.AdminLoginToOtherUsersAccounts.as_view(), name="user-admin-login"),
     path("users/verify/<int:pk>", views.UserVerifyView.as_view(), name="user-verify"),
     path(
+        "users/colleague/conform/<int:user_id>",
+        views.ConformTheColleagueRequests.as_view(), name="user-colleague-requests",),
+    path(
+        "users/colleague/remove/<int:user_id>",
+        views.RemoveTheColleagueRequests.as_view(), name="user-colleague-requests-remove",),
+
+    path(
         "users/active-deactivate/<int:pk>",
         views.UserActiveDeactivateView.as_view(),
         name="user-active-deactivate",

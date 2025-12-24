@@ -21,98 +21,169 @@
 
 {% block content %}
 
-    <main class="container flex items-center flex-col justify-center mt-8">
-        <div class="max-w-lg w-full shadow">
-            <div class="bg-white dark:bg-zinc-700 rounded-lg overflow-hidden">
-                <div class="p-3 lg:p-8">
-                    <h2 class="text-center text-xl lg:text-3xl font-DanaMedium">
-                        خوش آمدید
-                    </h2>
-                    <p class="mt2 lg:mt-4 text-center text-gray-400">ایجاد حساب کاربری</p>
+    {% if not request.user_agent.is_mobile %}
 
-                    <form method="POST" action="" class="mt-8 space-y-6" data-recaptcha="true" data-recaptcha-action="signup" >
+    <main class="container child:mt-8">
+        <!-- Breadcrumbs -->
+
+        <!-- CONTACT US -->
+        <section class="w-full p-5 rounded-lg shadow bg-white dark:bg-zinc-700">
+            <h2 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1">ثبت درخواست همکاری با فروشگاه</h2>
+
+            <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-4 mb-1 text-sm lg:text-base">
+                شما با ثبت درخواست همکاری با فروشگاه می توانید از تخفیف های ویژه برای همکاران فروشگاه برخوردار شوید
+
+            </p>
+                                <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-1 mb-8 text-sm lg:text-base">شما با افتتاح حساب در سایت تمامی <a href="{% url 'site:site-law' %}" class="text-blue-400">قوانین و مقررات </a>مورد پذیرش شما تلقی می شود</p>
+
+
+
+            <div class="flex flex-col lg:flex-row items-start gap-x-8">
+                <div class="w-full">
+                    <form class="w-full grid grid-cols-12 gap-4" method="post" action="" enctype="multipart/form-data">
                         {% csrf_token %}
+                        {{ form.first_name }}
+        {{ form.last_name }}
+
+
+                    <div class="col-span-6">
+                        <div class="relative ">
+                                                    {{ form.store_image }}
+
+                            <div id="about-image-upload" class="w-full px-4 py-2 bg-gray-50 dark:bg-zinc-600 border border-gray-300 dark:border-zinc-500 rounded-lg text-gray-500 dark:text-gray-400 border-dashed hover:border-green-500 hover:bg-green-50 dark:hover:bg-zinc-600 transition-all cursor-pointer">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                    <span> عکس ( فروشگاه یا کارت ویزیت ) </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+<!-- About Image Upload -->
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('about-image-upload');
+    const fileInput = document.querySelector('input[name="store_image"]');
+
+    if (uploadArea && fileInput) {
+        uploadArea.addEventListener('click', function() {
+            fileInput.click();
+        });
+    }
+});
+</script>
+                        {{ form.store_address }}
+                        {{ form.personal_id }}
+
+                        {{ form.phone_number }}
+                        {{ form.email }}
+                        {{ form.password }}
+                        {{ form.conform_password }}
+                        {{form.media}}
                         {{ form.recaptcha }}
-                        <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
-                            {{ form.phone_number }}
-                            <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
-                                <use href="#user"></use>
-                            </svg>
-                        </div>                   
-                        <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
-                            {{ form.email }}
-                            <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
-                                <use href="#user"></use>
-                            </svg>
-                        </div>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                function getAllQueryParams(paramName) {
-                                    const params = new URLSearchParams(window.location.search);
-                                    return params.getAll(paramName); // این متد تمام مقادیر یک پارامتر را برمی‌گرداند
-                                }
+                        <button type="submit"
+                                class="mx-auto rounded-lg col-span-12 w-32 p-2 bg-green-500 hover:bg-green-600 text-white transition-all">
+                            ارسال
+                        </button>
 
-                                const tel = getAllQueryParams('tel');
-                                if (tel.length > 0) {
-                                    document.getElementById('id_phone_number').value = tel;
-                                }
-                                const email = getAllQueryParams('email');
-                                if (email.length > 0) {
-                                    document.getElementById('id_email').value = email;
-                                }
-                            })
-                        </script>
-                        <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
-                            {{ form.password }}
-                            <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
-                                <use href="#lock"></use>
-                            </svg>
-                        </div>
-
-                        <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">
-                            {{ form.conform_password }}
-                            <svg class="h-5 w-5 text-gray-500 dark:text-gray-200">
-                                <use href="#lock"></use>
-                            </svg>
-                        </div>
-                        <p class="mt2 mt-2 mb-2 text-center text-xs text-gray-400">
-                            رمز شما باید حداقل 8 کاراکتر باشد و باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد
-                        </p>
-                        <div>
-                            <button
-                                    class="group transition-colors relative w-full flex justify-center py-3 px-4 border border-transparent font-DanaMedium rounded-lg text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                                    type="submit">
-                                عضویت
-                            </button>
-                        </div>
                     </form>
                 </div>
-                <div class="px-8 py-4 text-sm flex items-center justify-between">
-                    <span class="text-gray-400">
-                        قبلا ثبت نام کرده اید؟
-                    </span>
-                    <a class="font-medium text-green-500 hover:text-green-400" href="{% url 'user:login' %}"> وارد
-                        شوید</a>
 
-                    <span class="text-gray-400 ">ورود افراد حقیقی؟</span>
-                    <a class="font-medium text-green-500 hover:text-green-400"
-                       href="{% url 'user:help-legal-person' %}">راهنمایی</a>
-                </div>
-                <div class="px-8 py-4 text-sm flex items-center justify-between">
+            </div>
+        </section>
+    </main>
+        {% else %}
+        <main class="container child:mt-8">
+    <!-- Breadcrumbs -->
 
- 
-                    <a class="font-medium text-green-500 hover:text-green-400"
-                       href="{% url 'user:help-legal-person' %}">ثبت نام به عنوان همکار</a>
-                </div>
-            <p class="px-6 py-3 text-center text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-zinc-700 border-t dark:border-zinc-600">
-                شما با ورود به سایت تمامی
-                <a href="{% url 'site:site-law' %}" class="text-blue-400 hover:text-blue-500 transition-colors duration-300">
-                    قوانین و مقررات
-                </a>
-                مورد پذیرش شما تلقی می شود
-            </p>
+    <!-- CONTACT US -->
+    <section class="w-full p-5 rounded-lg shadow bg-white dark:bg-zinc-700">
+        <h2 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1"> ثبت درخواست افتتاح فروشگاه</h2>
+
+        <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-4 mb-1 text-sm lg:text-base">
+            قبل ثبت درخواست لطفا <a class="text-green-500" href="{% url 'site:Q&A' %}">سوالات متداول</a> را مطالعه نمایید
+        </p>
+        <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-1 mb-8 text-sm lg:text-base">
+            شما با افتتاح فروشگاه در سایت تمامی <a href="{% url 'site:site-law' %}" class="text-blue-400">قوانین و مقررات </a>مورد پذیرش شما تلقی می شود
+        </p>
+
+        <div class="flex flex-col lg:flex-row items-start gap-x-8">
+            <div class="w-full">
+                <form class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4" method="post" action="" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Name Field - Full width on mobile, spans 12 columns on desktop -->
+                    <div class="md:col-span-2 lg:col-span-12">
+                        {{ form.first_name }}
+                    </div>
+                                        <div class="md:col-span-1 lg:col-span-4">
+                            {{ form.last_name }}
+
+                    </div>
+
+                    <!-- Logo Upload - Full width on mobile, spans 3 columns on desktop -->
+                    <div class="md:col-span-1 lg:col-span-3">
+                        <div class="relative">
+                                                    {{ form.store_image }}
+
+                            <div class="w-full px-4 py-2 bg-gray-50 dark:bg-zinc-600 border border-gray-300 dark:border-zinc-500 rounded-lg text-gray-500 dark:text-gray-400 border-dashed hover:border-green-500 hover:bg-green-50 dark:hover:bg-zinc-600 transition-all cursor-pointer">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                    <span> لوگو </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- About Image Upload - Full width on mobile, spans 3 columns on desktop -->
+
+
+                    <!-- Other fields - Full width on mobile, span appropriate columns on desktop -->
+                    <div class="md:col-span-1 lg:col-span-3">
+                        {{ form.store }}
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-3">
+                        {{ form.personal_id }}
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-4">
+                        {{ form.store_address }}
+                    </div>
+
+                    <div class="md:col-span-1 lg:col-span-4">
+                        {{ form.phone_number }}
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-6">
+                        {{ form.phone_number2 }}
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-6">
+                        {{ form.email }}
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-6">
+                        {{ form.password }}
+                    </div>                    <div class="md:col-span-1 lg:col-span-6">
+                        {{ form.conform_password }}
+                    </div>
+
+                    <!-- Submit Button - Full width on all devices -->
+                    <div class="col-span-full text-center mt-4">
+                        <button class="rounded-lg w-full md:w-32 p-2 bg-green-500 hover:bg-green-600 text-white transition-all">
+                            ارسال
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
+    </section>
+</main>
+    {% endif %}
 
-    </main>
 {% endblock %}

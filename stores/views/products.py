@@ -257,6 +257,8 @@ class StoreAddProduct(UserStoreStaffMixin, FormView):
             short_name=form.cleaned_data["short_name"],
             group_name=form.cleaned_data["group_name"],
             parent=form.cleaned_data["parent"],
+            colleague_users_price=form.cleaned_data["colleague_users_price"],
+
 
         )
 
@@ -425,6 +427,7 @@ class StoreEditProductView(UserStoreStaffMixin, UpdateView):
         product.length = form.cleaned_data["length"]
         product.width = form.cleaned_data["width"]
         product.height = form.cleaned_data["height"]
+        product.colleague_users_price = form.cleaned_data["colleague_users_price"]
 
         product.group_name = form.cleaned_data["group_name"]
 

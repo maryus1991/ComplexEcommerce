@@ -308,7 +308,16 @@
                                             <p class="mt-1"> تضمین کیفیت</p>
                                         </li>
                                     </ul>
-                                    {% if product.product.have_discount %}
+                               {% if user.colleague_user %}
+                                    <p class="text-2xl font-DanaDemiBold">{{ product.product|colleague:request }}</p>
+                                    <p class="">تومان</p>
+                                    <br>
+                                    <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                                        {{ order.product.price|tdc }}
+                                        <span class="font-Dana text-sm">تومان</span>
+                                    </del>
+                                {% else %}
+                                  {% if product.product.have_discount %}
                                         <span class="flex items-center gap-x-1 text-green-500 mt-4">
                                         <p class="font-DanaMedium text-xl">{{ product.get_item_price|tdc }}</p>
                                             <p class="text-lg">تومان</p>
@@ -320,7 +329,9 @@
                                             <p class="text-lg">تومان</p>
                                        </span>
                                     {% endif %}
-                                    <span
+
+                                {% endif %}
+                              <span
                                             class="absolute bottom-3 left-0 text-blue-500 flex sm:hidden items-center gap-x-1 text-sm cursor-pointer">
 
                                     <svg class="w-4 h-4">
@@ -513,7 +524,7 @@
                                         تومان</p>
                                 </li>
                                 <li>
-                                    <p> تخفیف های اعمال شده از طرف فروشگاه :</p>
+                                    <p> تخفیف های اعمال شده :</p>
                                     <p class="font-DanaMedium text-red-400">{{ order.get_items_discount_amount|tdc }}
                                         تومان </p>
                                 </li>
@@ -567,9 +578,17 @@
                                 </li>
 
                                 <li class="border-t-2 border-dashed border-gray-400 pt-8">
-                                    <p> مبلغ قابل پرداخت :</p>
+                                    {% if user.colleague_user %}
+                                        <p>مبلغ قابل پرداخت ( همکار ) :</p>
                                     <p class="font-DanaMedium text-green-500">{{ order.get_payment_price|tdc }}
                                         تومان</p>
+
+                                    	{% else %}
+                                        <p> مبلغ قابل پرداخت :</p>
+                                    <p class="font-DanaMedium text-green-500">{{ order.get_payment_price|tdc }}
+                                        تومان</p>
+                                    {% endif %}
+
                                 </li>
                             </ul>
 

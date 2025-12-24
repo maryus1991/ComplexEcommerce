@@ -64,6 +64,29 @@
                             <i class="fa fa-trash"></i>
                         </a>
                     </td>
+                                                    <td class="text-center">
+                                    <strong>
+                                        {% if item.colleague_user %}
+                                            <span class="btn btn-sm btn-warning">
+                                                <a href="{% url 'admin_panel:user-colleague-requests-remove' item.id %}">
+همکار
+                                                </a>
+                                    </span>
+                                        {% elif item.colleague_request %}
+                                                                                    <span class="btn btn-sm btn-warning">
+                                                                                        <a class="" href="{% url 'admin_panel:user-colleague-requests' item.id %}">
+                                    درخواست همکاری
+                                                                                        </a>
+                                    </span>
+                                        {% else %}
+                                            <span class="btn btn-sm btn-warning">
+                                                                                                                                        <a class="" href="{% url 'admin_panel:user-colleague-requests' item.id %}">
+                                    همکار نمی باشد
+                                                                                        </a>
+                                    </span>
+                                        {% endif %}
+                                    </strong>
+                                </td>
                 </tabel>
             {% endif %}
 
@@ -235,6 +258,82 @@
             </div>
         </form>
     </div>
+{% if item %}
+    {% if item.colleague_request or item.colleague_user %}
+        <div class="container">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <i class="glyphicon glyphicon-user"></i>
+                        اطلاعات همکار
+                    </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <!-- تصویر فروشگاه -->
+                        <div class="col-md-4 text-center">
+                            <div class="thumbnail">
+                                <img src="{% if item.store_image %}{{ item.store_image.url }} {% endif %}"
+                                     class="img-responsive img-rounded"
+                                     alt=" عکس ( فروشگاه یا کارت ویزیت ) خالی می باشد "
+                                     style="max-height: 200px; margin: 0 auto;">
+                                <div class="caption">
+                                    <small> عکس ( فروشگاه یا کارت ویزیت ) </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- اطلاعات متنی -->
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            <i class="glyphicon glyphicon-envelope"></i>
+                                            ایمیل:
+                                        </label>
+                                        <div class="well well-sm">
+                                            {{ item.email }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">
+                                            <i class="glyphicon glyphicon-credit-card"></i>
+                                            کد ملی:
+                                        </label>
+                                        <div class="well well-sm">
+                                            {{ item.colleague_id }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">
+                                    <i class="glyphicon glyphicon-home"></i>
+                                    آدرس فروشگاه:
+                                </label>
+                                <div class="well">
+                                    {{ item.store_address }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- فوتر پنل (اختیاری) -->
+                {% comment %}
+                <div class="panel-footer text-muted small">
+                    آخرین به‌روزرسانی: {{ item.updated_at|date:"Y/m/d" }}
+                </div>
+                {% endcomment %}
+            </div>
+        </div>
+    {% endif %}
+{% endif %}
 
 {% endblock %}
 

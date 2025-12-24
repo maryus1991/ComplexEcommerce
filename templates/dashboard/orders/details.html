@@ -377,13 +377,13 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-DanaDemiBold text-gray-900 dark:text-white">
                                         {% if item.product.have_discount and not item.order.canceled and not item.order.is_paid %}
-                                            {{ item.get_price|tdc }}
+                                            {{ item.product|colleague:request }}
                                             <span class="text-xs font-DanaLight">تومان</span>
                                             <del class="text-xs font-DanaLight text-red-500">
                                                 {{ item.product.price|tdc }}
                                             </del>
                                         {% else %}
-                                            {{ item.get_price|tdc }} <span class="text-xs font-DanaLight">تومان</span>
+                                            {{ item.product|colleague:request }} <span class="text-xs font-DanaLight">تومان</span>
                                         {% endif %}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap border-0">

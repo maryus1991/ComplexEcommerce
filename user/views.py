@@ -4,8 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import logout, authenticate, get_user_model, login
 from django.contrib import messages
 from django.utils import timezone
-from django.http import HttpResponse
-from utils.send_email_task import send_email_task
+from django.db.models import Q
 from utils.send_otp import send_message
 from user.mixins.logins import CustomLoginRequiredMixin
 
@@ -22,7 +21,8 @@ from .forms import (
     LegalPersonForm,
     ActiveAccountFormWithRecaptcha,
     ForgotPasswordForm,
-    ForgotPasswordWithEmailForm
+    ForgotPasswordWithEmailForm,
+    RegistrationColleagueForm
 )
 from .forms import ActiveAccountForm as ChangeNumberForm
 from sitesetting.models import SiteSetting
@@ -32,8 +32,169 @@ User = get_user_model()
 
 class RegisterAsColleagueUser(View):
     """for register a specifics users that colleague to store"""
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.is_verified:
+            messages.info(request, "شما قبلا وارد شده اید")
+            return redirect("dashboard:dashboard")
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request):
-        return render(request, 'auth/colleague-user/colleague-user-register.html')
+        form = RegistrationColleagueForm(request.POST )
+        return render(request, 'auth/colleague-user/colleague-user-register.html', {'form': form})
+
+    def post(self, request):
+        form = RegistrationColleagueForm(request.POST  or None, request.FILES or None)
+        if form.is_valid():
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
+            personal_id = form.cleaned_data.get('personal_id')
+            store_address = form.cleaned_data.get('store_address')
+            store_image = form.cleaned_data.get('store_image')
+            phone_number = form.cleaned_data.get('phone_number')
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+
+            user = User.objects.filter(Q(email=email) | Q(PhoneNumber=phone_number)|Q(colleague_id=personal_id))
+
+            if user.exists():
+                messages.error(
+                    request, 'کاربری با این شماره یا ایمیل یا کد ملی قبلا ثیت نام شده است'
+                )
+                return render(request, 'auth/colleague-user/colleague-user-register.html', {'form': form})
+
+            user = User.objects.create_user(
+                phone_number,
+                password,
+                email if email else None,
+                first_name=first_name,
+                last_name=last_name,
+                colleague_id=personal_id,
+                store_address=store_address,
+                store_image=store_image,
+                colleague_request=True,
+                is_active=True,
+            )
+            user.verify_email(request)
+            site = SiteSetting.objects.first()
+
+            if site and site.is_active:
+                messages.success(
+                    request,
+                    'کاربر ساخته شد'
+                )
+                login(request, user)
+                return redirect("user:otp")
+
+        else:
+            messages.error(
+                request,form.errors.as_text()
+            )
+
+        return render(request, 'auth/colleague-user/colleague-user-register.html', {'form': form})
+
+
+
+class RegisterView(View):
+    """
+    Register user page
+    """
+
+    template_name = "auth/signup.html"
+    form_class = RegistrationForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.is_verified:
+            messages.info(request, "شما قبلا وارد شده اید")
+            return redirect("dashboard:dashboard")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        return render(request, self.template_name, {"form": self.form_class})
+
+    def post(self, request):
+        form = self.form_class(request.POST or None)
+        if form.is_valid():
+            phone_number = form.cleaned_data["phone_number"]
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
+
+            user = User.objects.filter(PhoneNumber=phone_number)
+
+            user_email = User.objects.filter(email=email)
+            if user_email.exists():
+                messages.error(
+                    request, 'این ایمیل قبلا استفاده شده است'
+                )
+                return render(request, self.template_name, {"form": self.form_class(request.POST or None)})
+
+            if not user.exists():
+                User.objects.create_user(
+                    is_active=True,
+                    PhoneNumber=phone_number,
+                    password=password,
+
+                )
+
+                user = User.objects.get(PhoneNumber=phone_number)
+
+                if email:
+                    user.email = email
+                    user.save()
+                    user.verify_email(request)
+                    messages.success(request, 'ایمیل فعال سازی ارسال شد')
+
+                user.save()
+
+                messages.success(request, "کاربر با موفقیت ساخته شد")
+
+                site = SiteSetting.objects.first()
+
+                if site and not site.force_user_to_verify_with_message and site.is_active:
+                    user.is_verified = True
+                    user.message_verified = False
+                    user.save()
+
+                    if site.is_active:
+                        login(request, user)
+
+                    if user.email is None or user.first_name is None or user.last_name is None:
+                        messages.warning(
+                            request, 'لطفا ایمیل , نام و نام خانوادگی را وارد کنید'
+                        )
+                        return redirect("dashboard:account")
+
+                    elif user.address.count() <= 0:
+                        messages.warning(
+                            request, 'لطفا ادرس خود را وارد کنید'
+                        )
+                        return redirect("dashboard:create_address")
+
+                    else:
+                        return redirect("product:list")
+
+                if site and site.is_active:
+                    login(request, user)
+
+                    return redirect("user:otp")
+                else:
+                    messages.warning(
+                        request, 'ثبت نام شما انجام شده است ولی ورود به سایت غیر فعال می باشد'
+                    )
+                    return redirect("/")
+
+            else:
+                messages.error(request, "کاربری با این شماره موجود میباشد")
+                return render(request, self.template_name, {"form": self.form_class(request.POST or None)})
+
+
+        else:
+            messages.error(
+                request,
+                form.errors.as_text(),
+            )
+
+            return render(request, self.template_name, {"form": self.form_class(request.POST or None)})
 
 
 class VerifyEmailWIthPrivateCode(RedirectView):
@@ -98,7 +259,7 @@ class LoginView(View):
             phone_number = form.cleaned_data["phone_number"]
             password = form.cleaned_data["password"]
 
-            user = User.objects.filter(PhoneNumber=phone_ncolleague_userumber)
+            user = User.objects.filter(PhoneNumber=phone_number)
             if not user.exists() or user.count() != 1:
                 messages.error(request, 'کاربر پیدا نشد')
                 return render(request, self.template_name, {"login_form": LoginForm(request.POST)})
@@ -228,110 +389,6 @@ class LogoutView(LoginRequiredMixin, View):
         logout(request)
         messages.success(request, "با موفقیت از سایت خارج شدید")
         return redirect("user:login")
-
-
-class RegisterView(View):
-    """
-    Register user page
-    """
-
-    template_name = "auth/signup.html"
-    form_class = RegistrationForm
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and request.user.is_verified:
-            messages.info(request, "شما قبلا وارد شده اید")
-            return redirect("dashboard:dashboard")
-        return super().dispatch(request, *args, **kwargs)
-
-    def get(self, request):
-        if request.user.is_authenticated:
-            logout(request)
-        return render(request, self.template_name, {"form": self.form_class})
-
-    def post(self, request):
-        form = self.form_class(request.POST or None)
-        if form.is_valid():
-            phone_number = form.cleaned_data["phone_number"]
-            email = form.cleaned_data["email"]
-            password = form.cleaned_data["password"]
-
-            user = User.objects.filter(PhoneNumber=phone_number)
-
-            user_email = User.objects.filter(email=email)
-            if user_email.exists():
-                messages.error(
-                    request, 'این ایمیل قبلا استفاده شده است'
-                )
-                return render(request, self.template_name, {"form": self.form_class(request.POST or None)})
-
-            if not user.exists():
-                User.objects.create_user(
-                    is_active=True,
-                    PhoneNumber=phone_number,
-                    password=password,
-
-                )
-
-                user = User.objects.get(PhoneNumber=phone_number)
-
-                if email:
-                    user.email = email
-                    user.save()
-                    user.verify_email(request)
-                    messages.success(request, 'ایمیل فعال سازی ارسال شد')
-
-                user.save()
-
-                messages.success(request, "کاربر با موفقیت ساخته شد")
-
-                site = SiteSetting.objects.first()
-
-                if site and not site.force_user_to_verify_with_message and site.is_active:
-                    user.is_verified = True
-                    user.message_verified = False
-                    user.save()
-
-                    if site.is_active:
-                        login(request, user)
-
-                    if user.email is None or user.first_name is None or user.last_name is None:
-                        messages.warning(
-                            request, 'لطفا ایمیل , نام و نام خانوادگی را وارد کنید'
-                        )
-                        return redirect("dashboard:account")
-
-                    elif user.address.count() <= 0:
-                        messages.warning(
-                            request, 'لطفا ادرس خود را وارد کنید'
-                        )
-                        return redirect("dashboard:create_address")
-
-                    else:
-                        return redirect("product:list")
-
-                if site and site.is_active:
-                    login(request, user)
-
-                    return redirect("user:otp")
-                else:
-                    messages.warning(
-                        request, 'ثبت نام شما انجام شده است ولی ورود به سایت غیر فعال می باشد'
-                    )
-                    return redirect("/")
-
-            else:
-                messages.error(request, "کاربری با این شماره موجود میباشد")
-                return render(request, self.template_name, {"form": self.form_class(request.POST or None)})
-
-
-        else:
-            messages.error(
-                request,
-                form.errors.as_text(),
-            )
-
-            return render(request, self.template_name, {"form": self.form_class(request.POST or None)})
 
 
 class OTP(LoginRequiredMixin, View):

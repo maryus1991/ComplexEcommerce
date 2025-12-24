@@ -19,7 +19,7 @@ from django.core.exceptions import ValidationError
 
 class StorePermissionsUpdateView(AdminUserMixin, UpdateView):
     """
-    for update a store
+    for update a store permissions page
     """
 
     model = Store
@@ -122,6 +122,14 @@ class StoreCreateView(AdminUserMixin, CreateView):
 
                 city = form.cleaned_data["orgin_city"]
                 province = form.cleaned_data.get('province')
+
+                if province is None or city is None:
+                    messages.error(
+                        self.request,
+                        'نام استان و شهر رو وارد کنید'
+                    )
+                    return redirect(self.request.META.get("HTTP_REFERER", '/'))
+
                 validate_city_result = search_city(province, city)
 
                 if validate_city_result[0] == 0:

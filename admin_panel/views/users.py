@@ -21,6 +21,49 @@ from django.db.models import Q
 
 User = get_user_model()
 
+class ConformTheColleagueRequests(AdminUserMixin, RedirectView):
+    """
+    Conforms the Colleague Requests page
+    """
+    def get_redirect_url(self, *args, **kwargs):
+
+        request = self.request
+        user_id = self.kwargs['user_id']
+        user = User.objects.filter(id=user_id)
+
+        if user.exists() and user.count() == 1:
+            user = user.first()
+            user.colleague_user = True
+            user.colleague_request = False
+            user.save()
+            messages.success(self.request, "هکاری با {} تایید شد".format(str(user.PhoneNumber).replace(" ","")))
+
+        else:
+            messages.error(request, "کاربر پیدا نشد")
+
+        return reverse('admin_panel:user-list')
+
+class RemoveTheColleagueRequests(AdminUserMixin, RedirectView):
+    """
+    remove the Colleague Requests page
+    """
+    def get_redirect_url(self, *args, **kwargs):
+
+        request = self.request
+        user_id = self.kwargs['user_id']
+        user = User.objects.filter(id=user_id)
+
+        if user.exists() and user.count() == 1:
+            user = user.first()
+            user.colleague_user = False
+            user.colleague_request = False
+            user.save()
+            messages.success(self.request, "هکاری با {} باطل شد".format(str(user.PhoneNumber).replace(" ","")))
+
+        else:
+            messages.error(request, "کاربر پیدا نشد")
+
+        return reverse('admin_panel:user-list')
 
 class NumberNewsLetterDelete(AdminUserMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):

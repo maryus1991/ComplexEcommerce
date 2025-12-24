@@ -25,11 +25,13 @@ class User(AbstractUser):
         db_index=True,
         related_name="users",
     )
+
     otp = models.CharField(max_length=4, blank=True)
     otp_expiry_date = models.DateTimeField(null=True, blank=True)
     is_verified = models.BooleanField(default=False)
     is_store_admin = models.BooleanField(default=False)
     message_verified = models.BooleanField(default=True)
+    store_image=models.ImageField(upload_to='colleague/images/store/', null=True, blank=True)
 
     private_code = models.CharField(
         max_length=100,
@@ -44,7 +46,9 @@ class User(AbstractUser):
 
     colleague_user = models.BooleanField(default=False)
     colleague_request = models.BooleanField(default=False)
-    colleague_percent = models.PositiveBigIntegerField(default=0)
+    colleague_id = models.PositiveBigIntegerField(default=0)
+    store_address = models.TextField(blank=True, null=True)
+
 
     # legal person infos
     legal_person = models.BooleanField(default=False, db_index=True)

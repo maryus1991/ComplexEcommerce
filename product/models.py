@@ -55,6 +55,7 @@ class Product(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="products")
     name = models.CharField(max_length=1000)
     price = models.BigIntegerField()
+    colleague_users_price = models.BigIntegerField(default=0)
     have_discount = models.BooleanField(default=False)
     discount = models.IntegerField(default=0)
     picture = models.ImageField(upload_to=photo_path_upload_to, null=True, blank=True)
@@ -84,17 +85,24 @@ class Product(models.Model):
         return f"{self.id}-|-{self.name}"
 
     def calc_discount(self):
-
-        if self.have_discount:
-            price = self.price - (self.price * (self.discount / 100))
-        else:
-            price = self.price
-
+        if self.have_discount:price = self.price - (self.price * (self.discount / 100))
+        else:price = self.price
         return price
+
+    def get_product_price(self, user=None, request=None):
+        """for clac the price with the discount and colleague discount"""
+
+        if request and request.user.is_authenticated and user is None:
+            user = request.user
+
+        if user.colleague_user :
+            return self.colleague_users_price
+
+        else :
+            return self.calc_discount()
 
     def get_absolute_url(self):
         return reverse("product:detail", kwargs={"pk": self.id})
-
 
 class NotificationUserForProductAvailability(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

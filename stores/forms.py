@@ -901,7 +901,7 @@ class AddProductForm(forms.ModelForm):
             "parent",
             "short_name",
             "group_name",
-
+            "colleague_users_price",
         )
         widgets = {
             "name": forms.TextInput(
@@ -915,6 +915,9 @@ class AddProductForm(forms.ModelForm):
             ),
             "price": forms.NumberInput(
                 attrs={"class": "form-control number-input", "placeholder": "قیمت"}
+            ),
+            "colleague_users_price": forms.NumberInput(
+                attrs={"class": "form-control number-input", "placeholder": "قیمت همکار"}
             ),
             "length": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "ارتفاع"}

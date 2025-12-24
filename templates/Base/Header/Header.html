@@ -322,8 +322,8 @@
 
                         <!-- Text -->
                         <div class="flex items-center gap-x-1">
-                            {% if order.product.have_discount %}
-                                <p class="text-2xl font-DanaDemiBold">{{ order.product.price|clac_discount:order.product.discount }}</p>
+                            {% if user.is_authenticated and user.colleague_user %}
+                                <p class="text-2xl font-DanaDemiBold">{{ order.product|colleague:request }}</p>
                                 <p class="">تومان</p>
                                 <br>
                                 <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
@@ -331,10 +331,20 @@
                                     <span class="font-Dana text-sm">تومان</span>
                                 </del>
                             {% else %}
-                                <p class="text-2xl font-DanaDemiBold">{{ order.product.price|tdc }}</p>
-                                <p class="">تومان</p>
-
+                                {% if order.product.have_discount %}
+                                    <p class="text-2xl font-DanaDemiBold">{{ order.product.price|clac_discount:order.product.discount }}</p>
+                                    <p class="">تومان</p>
+                                    <br>
+                                    <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                                        {{ order.product.price|tdc }}
+                                        <span class="font-Dana text-sm">تومان</span>
+                                    </del>
+                                {% else %}
+                                    <p class="text-2xl font-DanaDemiBold">{{ order.product.price|tdc }}</p>
+                                    <p class="">تومان</p>
+                                {% endif %}
                             {% endif %}
+
                         </div>
                     </a>
 

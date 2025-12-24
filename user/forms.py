@@ -3,6 +3,9 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from phonenumber_field.formfields import PhoneNumberField
 from phonenumber_field.validators import validate_phonenumber
+from django.core.validators import FileExtensionValidator
+
+from stores.models import Store
 
 
 class RegistrationForm(forms.Form):
@@ -104,15 +107,58 @@ class RegistrationForm(forms.Form):
 
 class RegistrationColleagueForm(forms.Form):
 
-    first_name
-    last_name
-    store_name
-    personal_id
-    personal_address
-    store_address
+    first_name = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input col-span-6",
+                "placeholder": "نام",
+                "autocomplete": "password",
+            }
+        ),
+    )
+    last_name = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input col-span-6",
+                "placeholder": "نام خانوادگی",
+                "autocomplete": "password",
+            }
+        ),
+    )
+    personal_id = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input col-span-6",
+                "placeholder": " کد ملی",
+                "autocomplete": "password",
+            }
+        ),
+    )
+    store_address = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input col-span-6",
+                "placeholder": "ادرس فروشگاه ",
+                "autocomplete": "password",
+            }
+        ),
+    )
 
     store_image = forms.ImageField(
-
+        required=True,
+        label='عکس مغازه',
+        widget=forms.FileInput(
+            attrs={"class": "hidden", "placeholder": "لوگو"}
+        ),
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
     )
     
 
@@ -120,30 +166,20 @@ class RegistrationColleagueForm(forms.Form):
         required=True,
         widget=forms.NumberInput(
             attrs={
-                "class": "appearance-none bg-transparent w-full py-3",
+                "class": "tailwind-input col-span-6",
                 "placeholder": "شماره همراه",
                 "autocomplete": "tel",
                 "dir": "rtl",
             }
         ),
     )    
-    phone_number2 = PhoneNumberField(
-        required=True,
-        widget=forms.NumberInput(
-            attrs={
-                "class": "appearance-none bg-transparent w-full py-3",
-                "placeholder": "شماره تلفن ثابت",
-                "autocomplete": "tel",
-                "dir": "rtl",
-            }
-        ),
-    )
+
 
     email = forms.EmailField(
         required=False,
         widget=forms.EmailInput(
             attrs={
-                "class": "appearance-none bg-transparent w-full py-3",
+                "class": "tailwind-input col-span-6",
                 "placeholder": "ایمیل ( اختیاری )",
                 "autocomplete": "email",
             }
@@ -155,7 +191,7 @@ class RegistrationColleagueForm(forms.Form):
         required=True,
         widget=forms.PasswordInput(
             attrs={
-                "class": "appearance-none bg-transparent w-full py-3 ",
+                "class": "tailwind-input col-span-6",
                 "placeholder": "رمز عبور",
                 "autocomplete": "password",
             }
@@ -166,7 +202,7 @@ class RegistrationColleagueForm(forms.Form):
         required=True,
         widget=forms.PasswordInput(
             attrs={
-                "class": "appearance-none bg-transparent w-full py-3",
+                "class": "tailwind-input col-span-6",
                 "placeholder": "تایید رمز عبور",
             }
         ),
@@ -215,10 +251,11 @@ class RegistrationColleagueForm(forms.Form):
         super().__init__(*args, **kwargs)
         from sitesetting.models import SiteSetting
         from django_recaptcha import fields, widgets
-        if SiteSetting.objects.first().active_google_reCAPTCHA:
-            self.fields['recaptcha']=fields.ReCaptchaField(
-                widget=widgets.ReCaptchaV3(action='signup'),
-            )
+        if SiteSetting.objects.exists() :
+            if SiteSetting.objects.first().active_google_reCAPTCHA:
+                self.fields['recaptcha']=fields.ReCaptchaField(
+                    widget=widgets.ReCaptchaV3(action='signup'),
+                )
 
 
 
@@ -533,10 +570,14 @@ class ActiveAccountFormWITHRecaptchaWithoutEmail(forms.Form):
         super().__init__(*args, **kwargs)
         from sitesetting.models import SiteSetting
         from django_recaptcha import fields, widgets
-        if SiteSetting.objects.first().active_google_reCAPTCHA:
-            self.fields['recaptcha_field'] = fields.ReCaptchaField(
-                widget=widgets.ReCaptchaV3(action='signup'),
-            )
+        if SiteSetting.objects.exists() :
+            if SiteSetting.objects.first().active_google_reCAPTCHA:
+                self.fields['recaptcha']=fields.ReCaptchaField(
+                    widget=widgets.ReCaptchaV3(action='signup'),
+                )
+
+
+
 
 
 class ActiveAccountFormWithRecaptcha(forms.Form):

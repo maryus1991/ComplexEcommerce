@@ -416,12 +416,12 @@
                     </div>
                 {% endif %}
             {% endif %}
-        
-{% if product.child.exists and product.parent is None %}
-    <p class="font-medium text-gray-800 dark:text-white mb-2">{{ product.group_name|default:' ' }}</p>
-    <div class="flex gap-2 overflow-x-auto pb-3">
-        <div class="flex items-center rounded-lg p-2 transition-all border hover:shadow-sm min-w-[250px] sm:min-w-[280px] {% if request.resolver_match.kwargs.pk == product.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
-            <div class="flex-none w-7 sm:w-8 p-1.5 flex justify-center">
+
+            {% if product.child.exists and product.parent is None %}
+                <p class="font-medium text-gray-800 dark:text-white mb-2">{{ product.group_name|default:' ' }}</p>
+                <div class="flex gap-2 overflow-x-auto pb-3">
+                    <div class="flex items-center rounded-lg p-2 transition-all border hover:shadow-sm min-w-[250px] sm:min-w-[280px] {% if request.resolver_match.kwargs.pk == product.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
+                        <div class="flex-none w-7 sm:w-8 p-1.5 flex justify-center">
                 <span class="text-lg {% if request.resolver_match.kwargs.pk == product.id %} text-green-500 {% else %} text-primary-600 dark:text-primary-400 {% endif %}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -430,37 +430,49 @@
                         <path d="m12 13 9-5-9-5-9 5 9 5Z"></path>
                     </svg>
                 </span>
-            </div>
-            <div class="flex-1 min-w-0 pl-2">
-                <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
-                    {{ product.short_name }}
-                </h3>
-                <div class="mt-auto flex items-center gap-1">
-                    {% if product.have_discount %}
-                        <div class="flex flex-wrap items-baseline gap-1">
-                            <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
-                                {{ product.price|clac_discount:product.discount }}
-                            </span>
-                            <del class="text-xs text-rose-500">
-                                {{ product.price|tdc }}
-                            </del>
                         </div>
-                    {% else %}
-                        <div class="flex items-baseline gap-1">
+                        <div class="flex-1 min-w-0 pl-2">
+                            <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
+                                {{ product.short_name }}
+                            </h3>
+                            <div class="mt-auto flex items-center gap-1">
+                                {% if request.user.is_authenticated and user.colleague_user %}
+                                    <div class="flex flex-wrap items-baseline gap-1">
                             <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
-                                {{ product.price|tdc }}
+                                {{ product|colleague:request }}
                             </span>
-                        </div>
-                    {% endif %}
-                    <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
-                </div>
-            </div>
-        </div>
+                                        <del class="text-xs text-rose-500">
+                                            {{ product.price|tdc }}
+                                        </del>
+                                    </div>
+                                {% else %}
+                                    {% if product.have_discount %}
+                                        <div class="flex flex-wrap items-baseline gap-1">
+                                <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
+                                    {{ product.price|clac_discount:product.discount }}
+                                </span>
+                                            <del class="text-xs text-rose-500">
+                                                {{ product.price|tdc }}
+                                            </del>
+                                        </div>
+                                    {% else %}
+                                        <div class="flex items-baseline gap-1">
+                                <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
+                                    {{ product.price|tdc }}
+                                </span>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
 
-        {% for child in product.child|active_category %}
-            <a href="{% url 'product:detail' child.id %}" class="block min-w-[250px] sm:min-w-[280px]">
-                <div class="flex items-center border rounded-lg p-2 transition-all hover:shadow-sm {% if request.resolver_match.kwargs.pk == child.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
-                    <div class="flex-none w-7 sm:w-8 p-1.5 flex justify-center">
+                                <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% for child in product.child|active_category %}
+                        <a href="{% url 'product:detail' child.id %}" class="block min-w-[250px] sm:min-w-[280px]">
+                            <div class="flex items-center border rounded-lg p-2 transition-all hover:shadow-sm {% if request.resolver_match.kwargs.pk == child.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
+                                <div class="flex-none w-7 sm:w-8 p-1.5 flex justify-center">
                         <span class="text-lg {% if request.resolver_match.kwargs.pk == child.id %} text-green-500 {% else %} text-primary-600 dark:text-primary-400 {% endif %}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -470,42 +482,56 @@
                                 <path d="m12 13 9-5-9-5-9 5 9 5Z"></path>
                             </svg>
                         </span>
-                    </div>
-                    <div class="flex-1 min-w-0 pl-2">
-                        <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
-                            {{ child.short_name }}
-                        </h3>
-                        <div class="mt-auto flex items-center gap-1">
-                            {% if child.have_discount %}
-                                <div class="flex flex-wrap items-baseline gap-1">
+                                </div>
+                                <div class="flex-1 min-w-0 pl-2">
+                                    <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
+                                        {{ child.short_name }}
+                                    </h3>
+                                    <div class="mt-auto flex items-center gap-1">
+
+                                        {% if request.user.is_authenticated and user.colleague_user %}
+                                            <div class="flex flex-wrap items-baseline gap-1">
+                            <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
+                                {{ child|colleague:request }}
+                            </span>
+                                                <del class="text-xs text-rose-500">
+                                                    {{ child.price|tdc }}
+                                                </del>
+                                            </div>
+                                        {% else %}
+                                            {% if child.have_discount %}
+                                                <div class="flex flex-wrap items-baseline gap-1">
                                     <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                         {{ child.price|clac_discount:child.discount }}
                                     </span>
-                                    <del class="text-xs text-rose-500">
-                                        {{ child.price|tdc }}
-                                    </del>
-                                </div>
-                            {% else %}
-                                <div class="flex items-baseline gap-1">
+                                                    <del class="text-xs text-rose-500">
+                                                        {{ child.price|tdc }}
+                                                    </del>
+                                                </div>
+                                            {% else %}
+                                                <div class="flex items-baseline gap-1">
                                     <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                         {{ child.price|tdc }}
                                     </span>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+
+
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
+                                    </div>
                                 </div>
-                            {% endif %}
-                            <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
-                        </div>
-                    </div>
+                            </div>
+                        </a>
+                    {% endfor %}
                 </div>
-            </a>
-        {% endfor %}
-    </div>
-{% elif product.parent is not None %}
-    <p class="font-medium text-gray-800 dark:text-white mb-2">{{ product.parent.group_name|default:' ' }}</p>
-    
-    <div class="flex gap-2 overflow-x-auto pb-3">
-        <a href="{% url 'product:detail' product.parent.id %}" class="block min-w-[250px] sm:min-w-[280px]">
-            <div class="flex items-center border rounded-lg p-2 transition-all border-gray-200 hover:shadow-sm {% if request.resolver_match.kwargs.pk == product.parent.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
-                <div class="flex-none w-7 sm:w-8 p-1.5 flex justify-center">
+            {% elif product.parent is not None %}
+                <p class="font-medium text-gray-800 dark:text-white mb-2">{{ product.parent.group_name|default:' ' }}</p>
+
+                <div class="flex gap-2 overflow-x-auto pb-3">
+                    <a href="{% url 'product:detail' product.parent.id %}" class="block min-w-[250px] sm:min-w-[280px]">
+                        <div class="flex items-center border rounded-lg p-2 transition-all border-gray-200 hover:shadow-sm {% if request.resolver_match.kwargs.pk == product.parent.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
+                            <div class="flex-none w-7 sm:w-8 p-1.5 flex justify-center">
                     <span class="text-lg {% if request.resolver_match.kwargs.pk == product.parent.id %} text-green-500 {% else %} text-primary-600 dark:text-primary-400 {% endif %}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -514,38 +540,52 @@
                             <path d="m12 13 9-5-9-5-9 5 9 5Z"></path>
                         </svg>
                     </span>
-                </div>
-                <div class="flex-1 min-w-0 pl-2">
-                    <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
-                        {{ product.parent.short_name }}
-                    </h3>
-                    <div class="mt-auto flex items-center gap-1">
-                        {% if product.parent.have_discount %}
-                            <div class="flex flex-wrap items-baseline gap-1">
-                                <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
-                                    {{ product.parent.price|clac_discount:product.parent.discount }}
-                                </span>
-                                <del class="text-xs text-rose-500">
-                                    {{ product.parent.price|tdc }}
-                                </del>
                             </div>
-                        {% else %}
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
-                                    {{ product.parent.price|tdc }}
-                                </span>
-                            </div>
-                        {% endif %}
-                        <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
-                    </div>
-                </div>
-            </div>
-        </a>
+                            <div class="flex-1 min-w-0 pl-2">
+                                <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
+                                    {{ product.parent.short_name }}
+                                </h3>
+                                <div class="mt-auto flex items-center gap-1">
 
-        {% for child in product.parent.child|active_category %}
-            <a href="{% url 'product:detail' child.id %}" class="block min-w-[250px] sm:min-w-[280px]">
-                <div class="flex items-center border rounded-lg p-2 transition-all border-gray-200 hover:shadow-sm {% if request.resolver_match.kwargs.pk == child.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
-                    <div class="flex-none w-7 sm:w-8 p-1.5 flex justify-center">
+                                    {% if request.user.is_authenticated and user.colleague_user %}
+                                        <div class="flex flex-wrap items-baseline gap-1">
+                                    <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
+                                        {{ product.parent|colleague:request }}
+                                    </span>
+                                            <del class="text-xs text-rose-500">
+                                                {{ product.parent.price|tdc }}
+                                            </del>
+                                        </div>
+                                    {% else %}
+                                        {% if product.parent.have_discount %}
+                                            <div class="flex flex-wrap items-baseline gap-1">
+                                        <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
+                                            {{ product.parent.price|clac_discount:product.parent.discount }}
+                                        </span>
+                                                <del class="text-xs text-rose-500">
+                                                    {{ product.parent.price|tdc }}
+                                                </del>
+                                            </div>
+                                        {% else %}
+                                            <div class="flex items-baseline gap-1">
+                                        <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
+                                            {{ product.parent.price|tdc }}
+                                        </span>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+
+
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    {% for child in product.parent.child|active_category %}
+                        <a href="{% url 'product:detail' child.id %}" class="block min-w-[250px] sm:min-w-[280px]">
+                            <div class="flex items-center border rounded-lg p-2 transition-all border-gray-200 hover:shadow-sm {% if request.resolver_match.kwargs.pk == child.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
+                                <div class="flex-none w-7 sm:w-8 p-1.5 flex justify-center">
                         <span class="text-lg {% if request.resolver_match.kwargs.pk == child.id %} text-green-500 {% else %} text-primary-600 dark:text-primary-400 {% endif %}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -555,36 +595,51 @@
                                 <path d="m12 13 9-5-9-5-9 5 9 5Z"></path>
                             </svg>
                         </span>
-                    </div>
-                    <div class="flex-1 min-w-0 pl-2">
-                        <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
-                            {{ child.short_name }}
-                        </h3>
-                        <div class="mt-auto flex items-center gap-1">
-                            {% if child.have_discount %}
-                                <div class="flex flex-wrap items-baseline gap-1">
-                                    <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
-                                        {{ child.price|clac_discount:child.discount }}
-                                    </span>
-                                    <del class="text-xs text-rose-500">
-                                        {{ child.price|tdc }}
-                                    </del>
                                 </div>
-                            {% else %}
-                                <div class="flex items-baseline gap-1">
+                                <div class="flex-1 min-w-0 pl-2">
+                                    <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
+                                        {{ child.short_name }}
+                                    </h3>
+                                    <div class="mt-auto flex items-center gap-1">
+
+
+                                        {% if request.user.is_authenticated and user.colleague_user %}
+                                            <div class="flex flex-wrap items-baseline gap-1">
                                     <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
-                                        {{ child.price|tdc }}
+                                        {{ child|colleague:request }}
                                     </span>
+                                                <del class="text-xs text-rose-500">
+                                                    {{ child.price|tdc }}
+                                                </del>
+                                            </div>
+                                        {% else %}
+                                            {% if child.have_discount %}
+                                                <div class="flex flex-wrap items-baseline gap-1">
+                                        <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
+                                            {{ child.price|clac_discount:child.discount }}
+                                        </span>
+                                                    <del class="text-xs text-rose-500">
+                                                        {{ child.price|tdc }}
+                                                    </del>
+                                                </div>
+                                            {% else %}
+                                                <div class="flex items-baseline gap-1">
+                                        <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
+                                            {{ child.price|tdc }}
+                                        </span>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+
+
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
+                                    </div>
                                 </div>
-                            {% endif %}
-                            <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
-                        </div>
-                    </div>
+                            </div>
+                        </a>
+                    {% endfor %}
                 </div>
-            </a>
-        {% endfor %}
-    </div>
-{% endif %}
+            {% endif %}
             <!-- DESCRIPTION -->
             <div class="w-full space-y-8">
                 <!-- ... سایر بخش های قبلی ... -->
@@ -687,19 +742,32 @@
         <div class="w-full lg:w-1/4 lg:sticky top-5 flex flex-col gap-y-6">
 
             <div class="flex items-center gap-x-1">
-                {% if product.have_discount %}
-                    <p class="text-2xl font-DanaDemiBold">{{ product.price|clac_discount:product.discount }}</p>
+
+                {% if request.user.is_authenticated and user.colleague_user %}
+                    <p class="text-2xl font-DanaDemiBold">{{ product|colleague:request }}</p>
                     <p class="">تومان</p>
                     <br>
                     <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
                         {{ product.price|tdc }}
                         <span class="font-Dana text-sm">تومان</span>
                     </del>
-                {% else %}
-                    <p class="text-2xl font-DanaDemiBold">{{ product.price|tdc }}</p>
-                    <p class="">تومان</p>
 
+                {% else %}
+                    {% if product.have_discount %}
+                        <p class="text-2xl font-DanaDemiBold">{{ product.price|clac_discount:product.discount }}</p>
+                        <p class="">تومان</p>
+                        <br>
+                        <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                            {{ product.price|tdc }}
+                            <span class="font-Dana text-sm">تومان</span>
+                        </del>
+                    {% else %}
+                        <p class="text-2xl font-DanaDemiBold">{{ product.price|tdc }}</p>
+                        <p class="">تومان</p>
+                    {% endif %}
                 {% endif %}
+
+
             </div>
 
             <script>
@@ -719,15 +787,18 @@
 
             </script>
 
-            {% if product.count > 0 or user_order_detail.count > 0  %}
+            {% if product.count > 0 or user_order_detail.count > 0 %}
 
                 <form action="{% url 'orders:add' product.id %}" class="flex flex-col gap-y-5">
                     <div class="flex items-center justify-between rounded-lg border border-gray-200 dark:border-white/20 py-2 px-3">
                         <svg onclick="handle_input('+')" class="w-6 h-6 shrink-0 text-green-600">
                             <use href="#plus"></use>
                         </svg>
-                        
-                        <input type="number" name="count" id="customInput" min="0" {% if user_order_detail is not None %} max="{{ product.count|sum:user_order_detail.count }}" {% else %} max="{{ product.count }}" {% endif %}
+
+                        <input type="number" name="count" id="customInput" min="0"
+                                {% if user_order_detail is not None %}
+                               max="{{ product.count|sum:user_order_detail.count }}" {% else %}
+                               max="{{ product.count }}" {% endif %}
                                value="{{ user_order_detail.count|default:1 }}"
                                class="custom-input mx-4 w-10 text-lg bg-transparent text-center flex-1">
                         <svg onclick="handle_input('-')" class="w-6 h-6 shrink-0  text-red-500">
@@ -751,15 +822,13 @@
 
                 </form>
 
- 
+
             {% else %}
                 <button class="w-full flex items-center gap-x-1 justify-center bg-red-500 text-white hover:bg-red-600 transition-all rounded-lg shadow py-2">
                     موجودی این محصول تمام شده است
-
                 </button>
- 
-
             {% endif %}
+
             {% if user.is_authenticated %}
 
                 <a href="{% url 'dashboard:order_detail' user_order.id %}"
@@ -823,7 +892,7 @@
                     {{ comment_form.subject }}
                     {{ comment_form.suggest_product }}
 
-                    {#                    <input type="text" placeholder="عنوان" class="tailwind-input">#}
+                    {# <input type="text" placeholder="عنوان" class="tailwind-input">#}
 
                     <p class="text-gray-500 dark:text-white text-sm mb-4">این محصول را به دیگران پیشنهاد : </p>
                     <div class="grid grid-cols-12 child:col-span-6 gap-4 child:w-full  child:flex child:items-center child:justify-center child:gap-x-2 child:rounded-lg child:shadow child:py-2 mb-5 child:font-DanaMedium child:duration-300
@@ -846,7 +915,7 @@
                         </button>
                     </div>
                     {{ comment_form.comment }}
-                    {#                    <textarea class="" ></textarea>#}
+                    {# <textarea class=""></textarea>#}
                     <button type="submit"
                             class="rounded-lg p-2 lg:block block bg-green-500 hover:bg-green-600 text-white transition-all">
                         ثبت
@@ -993,21 +1062,36 @@
                                 {{ product.name }}
                             </a>
                             <div class="flex items-center gap-x-1 lg:gap-x-3">
-                                {% if not product.have_discount %}
+
+                                {% if request.user.is_authenticated and user.colleague_user %}
+
                                     <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
-                                        {{ product.price|tdc }}
-                                        <span class="font-Dana text-sm">تومان</span>
-                                    </p>
-                                {% else %}
-                                    <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
-                                        {{ product.price|clac_discount:product.discount }}
+                                        {{ product|colleague:request }}
                                         <span class="font-Dana text-sm">تومان</span>
                                     </p>
                                     <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
                                         {{ product.price|tdc }}
                                         <span class="">تومان</span>
                                     </del>
+                                {% else %}
+                                    {% if not product.have_discount %}
+                                        <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
+                                            {{ product.price|tdc }}
+                                            <span class="font-Dana text-sm">تومان</span>
+                                        </p>
+                                    {% else %}
+                                        <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
+                                            {{ product.price|clac_discount:product.discount }}
+                                            <span class="font-Dana text-sm">تومان</span>
+                                        </p>
+                                        <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                                            {{ product.price|tdc }}
+                                            <span class="">تومان</span>
+                                        </del>
+                                    {% endif %}
                                 {% endif %}
+
+
                             </div>
                         </div>
 

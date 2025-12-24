@@ -1,0 +1,9 @@
+fix the static loading with compress 
+fix the recapcha loading
+fix the lazy loading the images
+fix the search result paging nation
+fix the edit sotre page in store panel
+fix the db backup restore
+گزاشتن ورود با ارسال پیامک
+fix the pagination bar with filterd data
+round the price of the products

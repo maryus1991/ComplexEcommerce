@@ -125,3 +125,8 @@ def sort_number(orm):
 @register.filter
 def multiply(x, y):
     return "{:,}".format(int(x) * int(y))
+
+
+@register.filter
+def colleague(product, request):
+    return "{:,}".format(product.get_product_price(request=request))

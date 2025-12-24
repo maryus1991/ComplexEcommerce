@@ -20,7 +20,7 @@ import sys
 from django.utils.text import get_valid_filename
 from admin_panel.tasks import clean_temp_files
 from zipfly import ZipFly
-
+from django.db import transaction
 
 class StreamMediaZipView(AdminUserMixin, View):
     def get(self, request, *args, **kwargs):
@@ -162,7 +162,9 @@ class BackupRestoreInOneClickView(AdminUserMixin, View):
                 return redirect('admin_panel:backup-restore')
 
             try:
-                call_command('loaddata', backup_path, verbosity=0)
+                with transaction.atomic():
+                    call_command('flush', '--no-input', verbosity=0)  # همه داده‌ها پاک می‌شه
+                    call_command('loaddata', backup_path,verbosity=0)
                 cache.clear()
                 messages.success(request, 'بازیابی اطلاعات با موفقیت انجام شد!')
             except Exception as e:

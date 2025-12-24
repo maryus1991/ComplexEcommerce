@@ -171,6 +171,9 @@ class Order(models.Model):
 
 
     def calculate_total_price(self):
+        """
+        calculate price of products with there discounts
+        """
         if not self.is_paid and not self.canceled:
             details = self.details.all()
             total_price = 0
@@ -180,21 +183,26 @@ class Order(models.Model):
 
             self.total_price = total_price
             self.save()
-            return self.total_price
+            return total_price
         else:
             return self.total_price
 
     def calculate_total_price_with_out_discount(self):
+        """
+        calculate price of products without there discounts
+        """
 
-        details = self.details.all()
         total_price = 0
 
-        for item in details:
+        for item in self.details.all():
             total_price += item.get_item_price_without_discount()
 
         return total_price
 
     def get_total_weight(self):
+        """
+        calculate total weight of products
+        """
         if not self.is_paid and not self.canceled:
             details = self.details.all()
             total_weight = 0
@@ -209,6 +217,9 @@ class Order(models.Model):
             return self.total_weight
 
     def get_total_length(self):
+        """
+        calculate total length of products
+        """
         if not self.is_paid and not self.canceled:
             details = self.details.all()
             total_length = 0
@@ -223,6 +234,9 @@ class Order(models.Model):
             return self.total_length
 
     def get_total_width(self):
+        """
+        calculate total width of products
+        """
         if not self.is_paid and not self.canceled:
             details = self.details.all()
             total_width = 0
@@ -237,6 +251,9 @@ class Order(models.Model):
             return self.total_width
 
     def get_total_height(self):
+        """
+        calculate total height of products
+        """
         if not self.is_paid and not self.canceled:
             details = self.details.all()
             total_height = 0
@@ -251,6 +268,9 @@ class Order(models.Model):
             return self.total_height
 
     def calculate_total_volume(self):
+        """
+        for calculate total volume of products
+        """
         total_volume = 0
         for item in self.details.all():
             item_volume = item.product.height * item.product.width * item.product.length
@@ -258,24 +278,44 @@ class Order(models.Model):
         return total_volume
 
     def get_items_discount_amount(self):
+        """
+        for calculate discount amount of products
+        """
         total_amount = 0
-
         for item in self.details.all():
             total_amount += item.get_item_discount()
-
         return total_amount
 
     def get_total_discount_amount(self):
-        item_discount_amount = self.get_items_discount_amount()
-        result_amount = item_discount_amount
-
+        """
+        for calculate total discount amount
+        """
+        result_amount = self.get_items_discount_amount()
         if self.use_discount_code and self.discount:
             result_amount += self.discount_code_price
 
         return result_amount
 
-    def get_payment_price(self):
+    def get_total_products_with_no_discount_price(self):
+        return self.calculate_total_price_with_out_discount()
 
+    def check_count_of_products(self):
+        return all(
+            item.product.count >= 0
+            for item in self.details.select_related("product")
+        )
+
+    def mines_order_detail_count_from_products_count(self):
+        for item in self.details.all():
+            item.product.count = item.product.count - item.count
+            item.product.save()
+
+    def get_payment_price(self):
+        """
+
+        for calculate the payment price
+
+        """
         if not self.is_paid and not self.canceled:
             site = SiteSetting.objects.first()
 
@@ -314,27 +354,10 @@ class Order(models.Model):
 
             return self.total_payment_price
 
-    def check_count_of_products(self):
-        return all(
-            item.product.count >= 0
-            for item in self.details.select_related("product")
-        )
-
-    def mines_order_detail_count_from_products_count(self):
-        for item in self.details.all():
-            item.product.count = item.product.count - item.count
-            item.product.save()
-
     def __str__(self):
         return f"{self.user.PhoneNumber} - {self.store.name} - {self.id}"
 
-    def get_total_products_with_no_discount_price(self):
-        details = self.details.all()
-        total_price = 0
 
-        for item in details:
-            total_price += item.get_price_without_discount() * item.count
-        return total_price
 
 
 class OrderDetail(models.Model):
@@ -351,23 +374,35 @@ class OrderDetail(models.Model):
     added_date = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
+    def get_user_of_the_order(self):
+        return self.order.user
+
     def get_price(self):
+
+        """
+        for get the price of one product with discounts
+        """
+
         if not self.order.is_paid and not self.order.canceled:
-            self.product_price = self.product.calc_discount()
+            self.product_price = self.product.get_product_price(user=self.get_user_of_the_order())
             self.save()
             return self.product_price
         else:
             return self.product_price
 
     def get_price_without_discount(self):
+        """
+        for get the price of one product without discounts
+        """
         if not self.order.is_paid and not self.order.canceled:
             self.product_price_without_discount = self.product.price
             self.save()
-            return self.product.price
+            return self.product_price_without_discount
         else:
             return self.product_price_without_discount
 
     def decrease_product_stock_by_order(self):
+
         if not self.order.is_paid and not self.order.canceled:
             if self.product.count >= self.count:
                 self.product.count -= self.count
@@ -384,28 +419,32 @@ class OrderDetail(models.Model):
         return False
 
     def get_item_price(self):
+        """
+        for clac the price of the product and the order count with the product discounts
+        """
         if not self.order.is_paid and not self.order.canceled:
-            product = self.product.calc_discount()
+            product = self.get_price()
             price = product * self.count
-
             self.price = price
-            self.product_price = product
             self.save()
             return price
         else:
             return self.price
 
     def get_item_price_without_discount(self):
-        product = self.product_price_without_discount
-        price = product * self.count
+        """
 
-        return price
+        for clac the price of the product and the order count without the product discounts
+
+        """
+
+        return self.get_price_without_discount() * self.count
 
     def get_item_discount(self):
-        product_discount = self.get_price() * self.count
-        product_real_price = self.get_price_without_discount() * self.count
 
-        return product_real_price - product_discount
+        """for get the amount of discount"""
+
+        return self.get_item_price_without_discount() - self.get_item_price()
 
     def __str__(self):
         return f"{self.order.id} - {self.id}"

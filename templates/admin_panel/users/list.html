@@ -333,7 +333,7 @@
                             <th class="text-center" width="5%">وضعیت</th>
                             <th class="text-center" width="5%">وضعیت حساب</th>
                             <th class="text-center" width="5%">حقیقی / حقوقی</th>
-                            <th class="text-center" width="5%">وضعیت کارمندی</th>
+                            <th class="text-center" width="5%">درخواست همکاری</th>
                             <th class="text-center" width="5%">مدیریت فروشگاه</th>
                             <th class="text-center" width="20%">کاربر فروشگاه</th>
                             <th class="text-center" width="5%">مدیر سایت</th>
@@ -343,16 +343,13 @@
                         <tbody>
                         {% for item in items %}
                             <tr>
-                                <td class="text-center">{{ item.id }}
-                                </td>
+                                <td class="text-center">{{ item.id }}</td>
                                 <td class="text-center" dir="ltr">
                                     <strong>{{ item.PhoneNumber }}</strong>
                                 </td>
                                 <td class="text-center">
                                     <strong>{{ item.get_full_name|default:'-' }}</strong>
                                 </td>
-
-
                                 <td class="text-center">
                                     <strong>
                                         {% if item.is_active %}
@@ -400,13 +397,23 @@
                                 </td>
                                 <td class="text-center">
                                     <strong>
-                                        {% if item.is_staff %}
-                                            <span class="label label-success">
-                                    کارمند می باشد
+                                        {% if item.colleague_user %}
+                                            <span class="btn btn-sm btn-warning">
+                                                <a href="{% url 'admin_panel:user-colleague-requests-remove' item.id %}">
+همکار
+                                                </a>
+                                    </span>
+                                        {% elif item.colleague_request %}
+                                                                                    <span class="btn btn-sm btn-warning">
+                                                                                        <a class="" href="{% url 'admin_panel:user-colleague-requests' item.id %}">
+                                    درخواست همکاری
+                                                                                        </a>
                                     </span>
                                         {% else %}
-                                            <span class="label label-default">
-                                    کارمند نمی باشد
+                                            <span class="btn btn-sm ">
+                                                                                                                                        <a class="" href="{% url 'admin_panel:user-colleague-requests' item.id %}">
+                                    همکار نمی باشد
+                                                                                        </a>
                                     </span>
                                         {% endif %}
                                     </strong>

@@ -44,7 +44,7 @@ class UserManager(DjangoUserManager):
     def create_user(self, PhoneNumber, password, email=None, **extra_fields):
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
-        extra_fields.setdefault("is_active", False)
+        extra_fields.setdefault("is_active", True)
         return self._create_user(PhoneNumber, password, email, **extra_fields)
 
     def create_staff_user(self, PhoneNumber, password, email=None, **extra_fields):

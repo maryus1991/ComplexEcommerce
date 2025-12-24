@@ -1057,6 +1057,7 @@ class AddProductForm(forms.ModelForm):
             'sort_number_newest_products',
             'sort_number_most_sell',
             'sort_number_discount',
+            'colleague_users_price',
 
         )
         widgets = {
@@ -1064,6 +1065,9 @@ class AddProductForm(forms.ModelForm):
                 attrs={"class": "form-control", "placeholder": "عنوان"}
             ),
             "price": forms.NumberInput(
+                attrs={"class": "form-control", "placeholder": "قیمت"}
+            ),
+            "colleague_users_price": forms.NumberInput(
                 attrs={"class": "form-control", "placeholder": "قیمت"}
             ),
             "length": forms.NumberInput(
