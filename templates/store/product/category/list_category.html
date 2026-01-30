@@ -1,4 +1,5 @@
 {% extends 'Base/AdminBase.html' %}
+ {% load compress static %}
 
 {% block title %}
 لیست دسته‌بندی‌ها
@@ -6,23 +7,25 @@
 
 
 {% block header_reference %}
+    {% compress css %}
     <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
     <link rel="stylesheet" href="/static/dist/css/rtl.css">
     <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">
+{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
+{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
     <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">
+{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
     <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
     <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
     <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
     <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
     <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
     <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
-
+{% endcompress %}
 {% endblock %}
 
 {% block footer_reference %}
+    {% compress js %}
     <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
     <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
@@ -117,6 +120,7 @@
             })
         })
     </script>
+    {% endcompress %}
 {% endblock %}
 
 {% block breadcrumb %}

@@ -1,7 +1,7 @@
 {% extends 'Base/AdminBase.html' %}
 {% load jalali_tags %}
 {% load products_tags %}
-
+{% load compress static %}
 {% block title %}
     سفارش مرجوعی شماره
     {{ item.id }}
@@ -92,6 +92,7 @@
 {% endblock %}
 
 {% block footer_reference %}
+    {% compress js %}
     <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
     <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
@@ -186,5 +187,6 @@
             })
         })
     </script>
+    {% endcompress %}
 {% endblock %}
 

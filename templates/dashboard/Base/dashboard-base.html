@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load compress %}
 
 <!DOCTYPE html>
 <html lang="en" dir="rtl" class="dark">
@@ -8,12 +8,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- ==========================  FAVICON ============================= -->
-
+    {% compress css %}
     <!-- ==========================  STYLE APP ============================= -->
     <link rel="stylesheet" href="/static/styles/app.css">
     <!-- ==========================  SLIDER ============================= -->
     <link rel="stylesheet" href="/static/styles/swiper.css">
     <!-- ==========================  DARK MODE SCRPT ============================= -->
+{% endcompress %}
     <script type="text/javascript">
         if (
             localStorage.theme === "dark" ||

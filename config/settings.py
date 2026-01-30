@@ -104,9 +104,13 @@ INSTALLED_APPS = [
     "cachalot",
     "django_recaptcha",
 #    "csp",
+   "compressor",
 
 
 ]
+
+
+
 
 # auditlog config
 
@@ -127,8 +131,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_user_agents.middleware.UserAgentMiddleware",
     "auditlog.middleware.AuditlogMiddleware",
-#    "csp.middleware.CSPMiddleware",
-
+    "htmlmin.middleware.HtmlMinifyMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -196,13 +199,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "/static/"
-
-if DEBUG:
-    # STATICFILES_DIRS = [BASE_DIR / "static"]
-
-    STATIC_ROOT = BASE_DIR / "static"
-else:
-    STATIC_ROOT = BASE_DIR / "static"
+STATIC_ROOT = BASE_DIR / "static"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -391,6 +388,22 @@ CELERY_TASK_ROUTES = {
     'utils.send_email_task.send_email_task': {'queue': 'email', 'routing_key': 'email'},
 }
 
+# statics compress
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+]
+
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True  # در production حتماً True
+COMPRESS_URL = STATIC_URL
+COMPRESS_ROOT = STATIC_ROOT
+COMPRESS_FILTERS = {
+    'css': ['compressor.filters.css_default.CssAbsoluteFilter'],
+    'js': ['compressor.filters.jsmin.rJSMinFilter'],  # یا terser
+}
 
 # email config
 # EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")

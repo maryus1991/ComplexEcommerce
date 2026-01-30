@@ -66,6 +66,10 @@ class UserManager(DjangoUserManager):
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
         extra_fields.setdefault("is_verified", True)
+        extra_fields.setdefault("message_verified", True)
+        extra_fields.setdefault("phone_number_verified", True)
+        extra_fields.setdefault("email_verified", True)
+
         if extra_fields.get("is_staff") is not True:
             raise ValueError(_("Superuser must have is_staff=True."))
         if extra_fields.get("is_active") is not True:
