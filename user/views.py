@@ -22,7 +22,8 @@ from .forms import (
     ActiveAccountFormWithRecaptcha,
     ForgotPasswordForm,
     ForgotPasswordWithEmailForm,
-    RegistrationColleagueForm
+    RegistrationColleagueForm,
+    LoginWithOTPPhoneNumber
 )
 from .forms import ActiveAccountForm as ChangeNumberForm
 from sitesetting.models import SiteSetting
@@ -431,7 +432,8 @@ class OTP(LoginRequiredMixin, View):
 
                         user.phone_number_verified = True
                         user.is_verified = True
-                        messages.success(request, "شماره وارد شده تایید شد")
+
+                        messages.success(request, "خوش آمدید")
                         user.save()
 
                         if user.email is None or user.first_name is None or user.last_name is None:
@@ -625,7 +627,7 @@ class ActiveAccount(View):
                     messages.error(request, 'کاربر شما فعال نمی باشد لطفا با پشتیبانی تماس فرمایید')
                     return redirect("user:login")
 
-                if user.is_verified:
+                if user.is_verified and user.phone_number_verified:
                     messages.error(request, 'حساب شما فعال می باشد')
                     return redirect("user:login")
 
@@ -650,7 +652,7 @@ class ActiveAccount(View):
                     messages.error(request, 'کاربر شما فعال نمی باشد لطفا با پشتیبانی تماس فرمایید')
                     return redirect("user:login")
 
-                if user.is_verified:
+                if user.is_verified and user.email_verified:
                     messages.error(request, 'حساب شما فعال می باشد')
                     return redirect("user:login")
 
@@ -666,6 +668,50 @@ class ActiveAccount(View):
             messages.error(request, form.errors.as_text())
             context = {"login_form": ActiveAccountFormWithRecaptcha(request.POST or None)}
             return render(request, "auth/active_account.html", context)
+
+
+class LoginWithOTP(View):
+    """
+
+    for login with otp
+
+    """
+    def get(self, request):
+        context = {"login_form": LoginWithOTPPhoneNumber(request.POST or None)}
+        return render(request, "auth/login-with-otp.html", context)
+
+    def post(self, request, *args, **kwargs):
+        form = ActiveAccountFormWithRecaptcha(request.POST or None)
+
+        if form.is_valid():
+
+            if phone_number := form.cleaned_data["phone_number"]:
+
+                user = User.objects.filter(PhoneNumber=phone_number)
+                if not user.exists() or user.count() != 1:
+                    messages.error(request, 'کاربر پیدا نشد لطفا ثبت نام فرمایید')
+                    return self.get(request)
+
+                user = user.first()
+
+                if not user.is_active:
+                    messages.error(request, 'حساب شما فعال نمی باشد لطفا با پشتیبانی تماس فرمایید')
+                    return redirect("user:login")
+
+                user.is_verified = False
+                user.save()
+                login(request, user)
+                return redirect("user:otp")
+
+            else:
+                messages.error(request, "شماره پیدا نشد")
+                context = {"login_form": LoginWithOTPPhoneNumber(request.POST or None)}
+                return render(request, "auth/login-with-otp.html", context)
+
+        else:
+            messages.error(request, form.errors.as_text())
+            context = {"login_form": LoginWithOTPPhoneNumber(request.POST or None)}
+            return render(request, "auth/login-with-otp.html", context)
 
 
 class EditUserInformation(CustomLoginRequiredMixin, View):

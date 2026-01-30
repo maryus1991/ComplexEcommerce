@@ -5,7 +5,7 @@ app_name = "admin_panel"
 
 urlpatterns = [
     path("", views.HomePageView.as_view(), name="main"),
-    path("stats-api/", views.StatsApi.as_view(), name="stats-api"),
+    # path("stats-api/", views.StatsApi.as_view(), name="stats-api"),
 
 
     # return orders

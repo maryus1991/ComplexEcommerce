@@ -182,7 +182,7 @@ class FastLinks(models.Model):
     )
 
     is_active = models.BooleanField(default=True, verbose_name="فعال یا غیر فعال")
-    sort_number = models.PositiveIntegerField(default=0)
+    sort_number = models.PositiveIntegerField(default=0, verbose_name='ترتیب بندی')
 
     def __str__(self):
         return self.title

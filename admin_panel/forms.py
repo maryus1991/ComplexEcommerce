@@ -1393,6 +1393,7 @@ class FastLinksModelForm(forms.ModelForm):
 
         widgets = {
             "title": forms.TextInput(attrs={"class": "form-control"}),
+            "sort_number": forms.NumberInput(attrs={"class": "form-control"}),
             "link": forms.URLInput(attrs={"class": "form-control"}),
             "is_active": forms.CheckboxInput(),
         }

@@ -105,12 +105,10 @@ INSTALLED_APPS = [
     "django_recaptcha",
 #    "csp",
    "compressor",
+   "easy_thumbnails",
 
 
 ]
-
-
-
 
 # auditlog config
 
@@ -124,15 +122,32 @@ USER_AGENTS_CACHE = "default"
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+
     "django.middleware.common.CommonMiddleware",
+    "htmlmin.middleware.HtmlMinifyMiddleware",
+    "htmlmin.middleware.MarkRequestMiddleware",
+
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
     "django_user_agents.middleware.UserAgentMiddleware",
     "auditlog.middleware.AuditlogMiddleware",
-    "htmlmin.middleware.HtmlMinifyMiddleware",
 ]
+
+# html minify
+HTML_MINIFY = True
+HTML_MINIFY_EXCLUDE_EXTENSIONS = (
+    'json',
+    'xml',
+)
+HTML_MINIFY_IGNORE_COMMENTS = True
+
+# THUMBNAIL
+THUMBNAIL_OPTIMIZE = True
+THUMBNAIL_QUALITY = 70
+
 
 ROOT_URLCONF = "config.urls"
 

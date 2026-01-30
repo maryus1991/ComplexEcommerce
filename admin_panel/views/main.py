@@ -12,8 +12,8 @@ from user.mixins.logins import AdminUserMixin
 from admin_panel.forms import FastLinksModelForm, QuestionAndAnswerModelForm
 from sitesetting.models import FastLinks, QuestionAndAnswer
 from django.contrib import messages
-import psutil
-from django.http.response import JsonResponse
+# import psutil
+# from django.http.response import JsonResponse
 from product.models import Product
 from orders.models import Order, StoreSoldOrders
 from django.db.models import Count, Sum, Case, When, IntegerField
@@ -22,18 +22,18 @@ from django.db.models.functions import TruncDate, Coalesce
 from admin_panel.models import DailyViewCount
 
 
-class StatsApi(AdminUserMixin, View):
-    """for get the server data """
-    def get(self, request):
-        stats = {
-            'cpu': psutil.cpu_percent(),
-            'ram': psutil.virtual_memory().percent,
-            'disk': psutil.disk_usage('/').percent,
-            'upload': psutil.net_io_counters().bytes_sent,
-            'download': psutil.net_io_counters().bytes_recv
-        }
-
-        return JsonResponse(stats)
+# class StatsApi(AdminUserMixin, View):
+#     """for get the server data """
+#     def get(self, request):
+#         stats = {
+#             'cpu': psutil.cpu_percent(),
+#             'ram': psutil.virtual_memory().percent,
+#             'disk': psutil.disk_usage('/').percent,
+#             'upload': psutil.net_io_counters().bytes_sent,
+#             'download': psutil.net_io_counters().bytes_recv
+#         }
+#
+#         return JsonResponse(stats)
 
 
 class HomePageView(AdminUserMixin, TemplateView):

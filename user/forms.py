@@ -577,7 +577,31 @@ class ActiveAccountFormWITHRecaptchaWithoutEmail(forms.Form):
                 )
 
 
+class LoginWithOTPPhoneNumber(forms.Form):
+    """
+    for activating account
+    """
 
+    phone_number = PhoneNumberField(
+        required=True,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "appearance-none bg-transparent w-full py-3",
+                "placeholder": "شماره همراه",
+                "autocomplete": "tel",
+                'dir':"rtl"
+            }
+        ),validators=[validate_phonenumber]
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from sitesetting.models import SiteSetting
+        from django_recaptcha import fields, widgets
+        if SiteSetting.objects.first().active_google_reCAPTCHA:
+            self.fields['recaptcha'] = fields.ReCaptchaField(
+                widget=widgets.ReCaptchaV3(action='login'),
+            )
 
 
 class ActiveAccountFormWithRecaptcha(forms.Form):
