@@ -1255,6 +1255,13 @@ class SiteSettingModelForm(forms.ModelForm):
                     "class": "form-control",
                 }
             ),
+            "number_or_rounding": forms.NumberInput(
+
+                attrs={
+                    "class": "form-control",
+                    "min": 1,
+                }
+            ),
             "difference_between_post_and_tipax_price": forms.NumberInput(
                 attrs={
                     "class": "form-control",

@@ -19,7 +19,7 @@ from django.shortcuts import (
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.core.files.uploadedfile import UploadedFile
-
+from sitesetting.models import SiteSetting
 
 from stores.models import Store
 
@@ -987,14 +987,19 @@ class ProductFastPanelGropeChange(UserStoreStaffMixin, RedirectView):
             messages.error(self.request, "هیچ محصولی انتخاب نشده است.")
             return reverse("store:product-fast-panel-list")
 
+        number_or_rounding = int(SiteSetting.objects.first().number_or_rounding)
+        if number_or_rounding < 1:
+            number_or_rounding = 1
+
+
         # اعمال تغییرات بر روی محصولات
         if action_type == "fixed":
             for item in product_list:
-                item.price += amount
+                item.price = int((((item.price + amount) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
                 item.save()
         elif action_type == "percent":
             for item in product_list:
-                item.price += (item.price * (amount / 100))
+                item.price = int((((item.price + (item.price * (amount / 100))) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
                 item.save()
         else:
             messages.error(self.request, "نوع عمل انتخاب شده معتبر نیست.")

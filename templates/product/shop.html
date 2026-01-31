@@ -650,8 +650,10 @@
                                 {% else %}
                                     <span class="font-Dana text-sm bg-red-100 text-red-600   py-1 rounded-full inline-flex items-center"
                                           title="اتمام موجودی">
-                                        <svg class="w-6 h-6  " fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"></path>
+                                        <svg class="w-6 h-6  " fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                             xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M12 8v4m0 4h.01"></path>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                   d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
@@ -684,13 +686,20 @@
 
 
             </div>
-
+                        <script>
+                            function OrderingFilterForPagination(id) {
+                                const params = new URLSearchParams(window.location.search);
+                                params.set('page', id);
+                                window.location.search = params.toString();
+                            }
+                        </script>
             <!-- PAGINATION -->
             <div class="mt-10 w-full flex items-center justify-center">
                 <ul class="flex items-center gap-x-3 child:flex child:items-center child:justify-center child:w-8 child:h-8 child:cursor-pointer child:shadow child:rounded-lg child:transition-all child:duration-300">
                     {% if page_obj.has_previous %}
+
                         <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
-                            <a href="?page={{ page_obj.previous_page_number }}">
+                            <a onclick="OrderingFilterForPagination({{ page_obj.previous_page_number }})">
 
                                 <svg class="w-5 h-5">
                                     <use href="#chevron-right"></use>
@@ -701,7 +710,7 @@
 
                     {% for page_number in page_obj.paginator.page_range %}
                         <li class="dark:text-white {% if page_number == page_obj.number %} bg-green-500 text-white {% else %} bg-white dark:bg-zinc-700 {% endif %} ">
-                            <a href="?page={{ page_number }}" class="w-full text-center">
+                            <a  onclick="OrderingFilterForPagination({{ page_number}})" class="w-full text-center">
                                 {{ page_number }}
                             </a>
                         </li>
@@ -711,7 +720,7 @@
                     {% if page_obj.has_next %}
 
                         <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
-                            <a href="?page={{ page_obj.next_page_number }}">
+                            <a onclick="OrderingFilterForPagination({{ page_obj.next_page_number }})">
                                 <svg class="w-5 h-5">
                                     <use href="#chevron-left"></use>
                                 </svg>

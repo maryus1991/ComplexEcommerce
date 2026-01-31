@@ -1,8 +1,6 @@
-fix the search result pagenation
-fix the pagination bar with filterd data
 
 
 compress the images
-round the price of the products
+fix the view of the admin panel
 fix the recapcha loading
 fix the seo
