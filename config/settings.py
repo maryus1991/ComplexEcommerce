@@ -145,8 +145,13 @@ HTML_MINIFY_EXCLUDE_EXTENSIONS = (
 HTML_MINIFY_IGNORE_COMMENTS = True
 
 # THUMBNAIL
-THUMBNAIL_OPTIMIZE = True
-THUMBNAIL_QUALITY = 70
+THUMBNAIL_DEFAULT_OPTIONS = {
+    'format': 'WEBP',      # همیشه WebP تولید کنه
+    'quality': 70,         # کیفیت پیش‌فرض (می‌تونی تغییر بدی)
+    'crop': 'center',      # همیشه از مرکز crop کنه (اگر crop فعال باشه)
+    'optimize': True,      # بهینه‌سازی lossless با Pillow
+}
+
 
 
 ROOT_URLCONF = "config.urls"

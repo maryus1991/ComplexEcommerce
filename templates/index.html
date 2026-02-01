@@ -1,4 +1,5 @@
 {% extends 'Base/Base.html' %}
+{% load thumbnail %}
 
 
 {% load products_tags %}
@@ -156,13 +157,23 @@
 
                             <div class="swiper-slide absolute w-full">
                                 <a href="{{ Slider.link }}">
-
-                                    <picture>
-                                        <source class="w-full h-full object-cover"
-                                                srcset="{{ Slider.image.url|to_webp }}" type="image/webp">
-                                        <img src="{{ Slider.image.url }}" class="w-full h-full object-cover"
-                                             alt="{{ Slider.link }}" loading="lazy">
-                                    </picture>
+                                    {% if request.user_agent.is_mobile %}
+                                        <picture>
+                                            <source class="w-full h-full object-cover"
+                                                    srcset="{% thumbnail Slider.image '394x192' %}" type="image/webp">
+                                            <img src="{% thumbnail Slider.image '394x192' %}"
+                                                 class="w-full h-full object-cover"
+                                                 alt="{{ Slider.link }}" loading="lazy">
+                                        </picture>
+                                    {% else %}
+                                        <picture>
+                                            <source class="w-full h-full object-cover"
+                                                    srcset="{% thumbnail Slider.image '1850x450' %}" type="image/webp">
+                                            <img src="{% thumbnail Slider.image '1850x450' %}"
+                                                 class="w-full h-full object-cover"
+                                                 alt="{{ Slider.link }}" loading="lazy">
+                                        </picture>
+                                    {% endif %}
 
                                     <div class="flex items-start  flex-col absolute  right-5 top-5 md:right-10 md:top-10 lg:top-20 lg:right-40 xl:right-48  text-white">
                                         {% if Slider.name is not None %}
@@ -238,14 +249,26 @@
 
                         <a href="{% url 'product:list' %}?category={{ category.id }}" class="rounded-full">
 
-                            <picture>
-                                <source srcset="{{ category.image.url|to_webp }}"
-                                        class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                                        type="image/webp">
-                                <img src="{{ category.image.url }}" alt="{{ category.name }}"
-                                     class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                                     loading="lazy">
-                            </picture>
+{#                            {% if request.user_agent.is_mobile %}#}
+{#                                <picture>#}
+{#                                    <source srcset="{% thumbnail category.image '100x100' %}"#}
+{#                                            class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
+{#                                            type="image/webp">#}
+{#                                    <img src="{% thumbnail category.image '100x100' %}" alt="{{ category.name }}"#}
+{#                                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
+{#                                         loading="lazy">#}
+{#                                </picture>#}
+{#                            {% else %}#}
+                                <picture>
+                                    <source srcset="{% thumbnail category.image '200x200' %}"
+                                            class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
+                                            type="image/webp">
+                                    <img src="{% thumbnail category.image '200x200' %}" alt="{{ category.name }}"
+                                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
+                                         loading="lazy">
+                                </picture>
+{#                            {% endif %}#}
+
 
                             <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
                                 {{ category.name }}
@@ -277,14 +300,34 @@
 
 
                         <a href="{% url 'product:list' %}?brand={{ category.id }}" class="rounded-full">
-                            <picture>
-                                <source srcset="{{ category.image.url|to_webp }}"
-                                        class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                                        type="image/webp">
-                                <img src="{{ category.image.url }}" alt="{{ category.name }}"
-                                     class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                                     loading="lazy">
-                            </picture>
+{#                         {% if request.user_agent.is_mobile %}#}
+{#                                <picture>#}
+{#                                    <source srcset="{% thumbnail category.image '100x100' %}"#}
+{#                                            class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
+{#                                            type="image/webp">#}
+{#                                    <img src="{% thumbnail category.image '100x100' %}" alt="{{ category.name }}"#}
+{#                                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
+{#                                         loading="lazy">#}
+{#                                </picture>#}
+{#                            {% else %}#}
+                                <picture>
+                                    <source srcset="{% thumbnail category.image '200x200' %}"
+                                            class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
+                                            type="image/webp">
+                                    <img src="{% thumbnail category.image '200x200' %}" alt="{{ category.name }}"
+                                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
+                                         loading="lazy">
+                                </picture>
+{#                            {% endif %}#}
+
+{#                            <picture>#}
+{#                                <source srcset="{{ category.image.url|to_webp }}"#}
+{#                                        class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
+{#                                        type="image/webp">#}
+{#                                <img src="{{ category.image.url }}" alt="{{ category.name }}"#}
+{#                                     class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
+{#                                     loading="lazy">#}
+{#                            </picture>#}
                             <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
                                 {{ category.name }}
                             </p>
@@ -313,14 +356,33 @@
                         class="flex items-center justify-evenly lg:justify-between flex-wrap mt-10 child:mb-8 gap-x-8 child:flex child:items-center child:flex-col child-hover:-translate-y-5 child:duration-300 child:cursor-pointer child:gap-y-2.5">
                     {% for category in categories_blog %}
                         <a href="{% url 'blog:list' %}?category={{ category.id }}" class="rounded-full">
-                            <picture>
-                                <source srcset="{{ category.image.url|to_webp }}"
-                                        class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                                        type="image/webp">
-                                <img src="{{ category.image.url }}" alt="{{ category.name }}"
-                                     class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                                     loading="lazy">
-                            </picture>
+{#                                                 {% if request.user_agent.is_mobile %}#}
+{#                                <picture>#}
+{#                                    <source srcset="{% thumbnail category.image '100x100' %}"#}
+{#                                            class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
+{#                                            type="image/webp">#}
+{#                                    <img src="{% thumbnail category.image '100x100' %}" alt="{{ category.name }}"#}
+{#                                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
+{#                                         loading="lazy">#}
+{#                                </picture>#}
+{#                            {% else %}#}
+                                <picture>
+                                    <source srcset="{% thumbnail category.image '200x200' %}"
+                                            class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
+                                            type="image/webp">
+                                    <img src="{% thumbnail category.image '200x200' %}" alt="{{ category.name }}"
+                                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
+                                         loading="lazy">
+                                </picture>
+{#                            {% endif %}#}
+{#                            <picture>#}
+{#                                <source srcset="{{ category.image.url|to_webp }}"#}
+{#                                        class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
+{#                                        type="image/webp">#}
+{#                                <img src="{{ category.image.url }}" alt="{{ category.name }}"#}
+{#                                     class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
+{#                                     loading="lazy">#}
+{#                            </picture>#}
                             <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
                                 {{ category.name }}
                             </p>
@@ -367,20 +429,19 @@
                             <div class="swiper-slide group">
                                 <!-- PRODUCT IMGAE -->
                                 <a href="{% url 'product:detail' product.id %}">
-                                    
+
                                     <picture>
-                                    {% if product.picture %}
-                                    	
-                                        <source srcset="{{ product.picture.url|to_webp }}"
-                                                class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
-                                                type="image/webp">
-                                        <img src="{{ product.picture.url }}" alt="{{ product.name }}"
-                                             class="group-hover:scale-105 duration-300 w-full h-full lg:w-48 lg:h-48 mx-auto mb-3"
-                                             loading="lazy">
-                                    {% endif %} 
+                                        {% if product.picture %}
+
+                                            <source srcset="{% thumbnail product.picture '200x200' %}"
+                                                    class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
+                                                    type="image/webp">
+                                            <img src="{% thumbnail product.picture '200x200' %}" alt="{{ product.name }}"
+                                                 class="group-hover:scale-105 duration-300 w-full h-full lg:w-48 lg:h-48 mx-auto mb-3"
+                                                 loading="lazy">
+                                        {% endif %}
                                     </picture>
-                                    {#                                    <img src="{{ product.picture.url }}" alt="product-1"#}
-                                    {#                                         class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"/>#}
+
                                 </a>
 
                                 <!-- PRODUCT MAIN -->
@@ -456,14 +517,14 @@
                                 <a href="{% url 'product:detail' product.id %}">
 
                                     <picture>
-                                    {% if product.picture %}
-                                        
-                                        <source srcset="{{ product.picture.url|to_webp }}"
-                                                class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
-                                                type="image/webp">
-                                        <img src="{{ product.picture.url }}" alt="{{ product.name }}"
-                                             class="group-hover:scale-105 duration-300 w-full h-full lg:w-48 lg:h-48 mx-auto mb-3"
-                                             loading="lazy">
+                                        {% if product.picture %}
+
+                                            <source srcset="{% thumbnail product.picture '200x200' %}"
+                                                    class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
+                                                    type="image/webp">
+                                            <img src="{% thumbnail product.picture '200x200' %}" alt="{{ product.name }}"
+                                                 class="group-hover:scale-105 duration-300 w-full h-full lg:w-48 lg:h-48 mx-auto mb-3"
+                                                 loading="lazy">
                                         {% endif %}
                                     </picture>
                                 </a>
@@ -512,7 +573,7 @@
 
 
                         <a href="{{ Banner.link }}" class="banner  group child:duration-300"
-                           style="background: linear-gradient(270deg, rgba(0, 0, 0, 0.6) 33.85%, rgba(0, 0, 0, 0.1) 100%), url('{{ Banner.image.url }}');">
+                           style="background: linear-gradient(270deg, rgba(0, 0, 0, 0.6) 33.85%, rgba(0, 0, 0, 0.1) 100%), url(' {% if request.user_agent.is_mobile %} {% thumbnail product.picture "380x192" %} {% else %} {% thumbnail product.picture "1376x240" %} {% endif %}');">
                             {% if Banner.name %}
 
                                 <h2 class="font-MorabbaMedium text-xl lg:text-3xl group-hover:mr-5">
@@ -570,17 +631,17 @@
                                     <!-- PRODUCT IMGAE -->
                                     <a href="{% url 'product:detail' product.id %}">
 
-                                                                            <picture>
-                                                                                {% if product.picture %}
-                                                                                	
-                                        <source srcset="{{ product.picture.url|to_webp }}"
-                                                class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
-                                                type="image/webp">
-                                        <img src="{{ product.picture.url }}" alt="{{ product.name }}"
-                                             class="group-hover:scale-105 duration-300 w-full h-full lg:w-48 lg:h-48 mx-auto mb-3"
-                                             loading="lazy">
-                                                                                {% endif %} 
-                                    </picture>
+                                        <picture>
+                                            {% if product.picture %}
+
+                                                <source srcset="{% thumbnail product.picture '200x200' %}"
+                                                        class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
+                                                        type="image/webp">
+                                                <img src="{% thumbnail product.picture '200x200' %}" alt="{{ product.name }}"
+                                                     class="group-hover:scale-105 duration-300 w-full h-full lg:w-48 lg:h-48 mx-auto mb-3"
+                                                     loading="lazy">
+                                            {% endif %}
+                                        </picture>
                                     </a>
                                     <!-- PRODUCT MAIN -->
                                     <div class="px-2 lg:px-4 mb-3">
@@ -647,11 +708,11 @@
                             <div class="relative overflow-hidden rounded-lg">
                                 <a href="{% url 'blog:detail' blog.id %}">
                                     <picture>
-                                        <source srcset="{{ blog.image.url|to_webp }}"
-                                                 class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
+                                        <source srcset="{% thumbnail blog.image '200x200' %}"
+                                                class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
                                                 type="image/webp">
-                                        <img src="{{ blog.image.url }}" alt="{{ blog.title }}"
-                                              class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
+                                        <img src="{% thumbnail blog.image '200x200' %}" alt="{{ blog.title }}"
+                                             class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
                                              loading="lazy">
                                     </picture>
 

@@ -39,7 +39,7 @@ class StoreMainPage(UserStoreStaffMixin, DetailView):
         ).distinct().values('name', 'views_count')
 
         context['last_product'] = last_product
-        context['views'] = views
+        context['views'] = views[0:10]
         context['total_view'] = views.aggregate(total=Sum('views_count')).get('total')
 
         context['orders'] = Order.objects.filter(store=self.request.user.store).order_by('-id').all()[0:6]

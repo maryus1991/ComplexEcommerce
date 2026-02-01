@@ -1,4 +1,6 @@
 {% load to_webp %}
+{% load thumbnail %}
+
 <footer class="relative mt-14 lg:mt-32 text-gray-300 bg-zinc-800 pt-8">
 
     <div class="container">
@@ -46,11 +48,11 @@
                 <!-- LOGO -->
                 <a href="/" class="text-green-500 transition-colors w-fit block">
                     <picture>
-                        <source srcset="{{ site.logo.url|to_webp }}"
-                                class="w-24 h-15 rounded-full"
+                        <source srcset="{% thumbnail site.logo '100x100' %}"
+                                class="w-24 h-16 rounded-full"
                                 type="image/webp">
-                        <img src="{{ site.logo.url }}" alt="{{ site.title }}"
-                             class="w-24 h-15 rounded-full"
+                        <img src="{% thumbnail site.logo '100x100' %}" alt="{{ site.title }}"
+                             class="w-24 h-16 rounded-full"
                              loading="lazy">
                     </picture>
 

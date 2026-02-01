@@ -1087,6 +1087,7 @@ class AddStoreForm(forms.ModelForm):
             'card_name',
             'time_for_return_order_days',
             'have_freight_delivery',
+            'zero_the_count_of_all_product_of_store',
 
 
         )
@@ -1162,6 +1163,7 @@ class AddStoreForm(forms.ModelForm):
             "have_post_delivery": forms.CheckboxInput(attrs={}),
             "have_freight_delivery": forms.CheckboxInput(attrs={}),
             "have_tipax_delivery": forms.CheckboxInput(attrs={}),
+            "zero_the_count_of_all_product_of_store": forms.CheckboxInput(attrs={}),
             "have_in_same_city_delivery": forms.CheckboxInput(attrs={}),
             "have_physical_delivery": forms.CheckboxInput(attrs={}),
             "have_official_invoice": forms.CheckboxInput(attrs={}),

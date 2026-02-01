@@ -1,14 +1,10 @@
 from django.shortcuts import reverse, Http404, get_object_or_404, render, redirect
 from django.db import transaction
-from urllib.parse import urljoin
-from django.http import HttpResponseRedirect
-from django.views.generic import DetailView, ListView, RedirectView, View
+from django.views.generic import  RedirectView, View
 from user.mixins.logins import CustomLoginRequiredMixin as LoginRequiredMixin
 from django.utils import timezone
-from django.conf import settings
 from django.contrib import messages
 import json
-import uuid
 import requests
 from product.models import Product
 from sitesetting.models import SiteSetting
@@ -22,7 +18,6 @@ from config.settings import (
 from django.utils.timezone import now
 from stores.models import Store
 from dashboard.models import UserAddress
-from utils.tipax_price_calc import calculate_price
 from utils.send_otp import send_message
 
 
@@ -186,6 +181,17 @@ class AddOrder(LoginRequiredMixin, RedirectView):
         is_active=True, store__is_active=True, store__is_verified=True,
         admin_verified=True, brand__is_active=True, category__is_active=True)
 
+        if SiteSetting.objects.first().zero_the_count_of_all_product :
+            messages.info(
+                request,'فروش توسط ادمین بسته شده است و تمام موجودی کالا ها صفر شد لطفا با ادمین سایت در ارتباط باشید'
+            )
+            return referer
+
+        if product.store.zero_the_count_of_all_product_of_store :
+            messages.info(
+                request, f'فروش فروشگاه {product.store.name} بسته شده است و تمام موجودی محصولات ان صفر شد لطفا با فروشگاه در ارتباط باشید '
+            )
+            return referer
 
         order, _ = Order.objects.get_or_create(
             user=request.user,
@@ -766,6 +772,13 @@ class ConformPayment(LoginRequiredMixin, View):
 
     def dispatch(self, request, *args, **kwargs):
         try:
+            self.site = SiteSetting.objects.first()
+
+            if not self.site.active_zarinpal_payment or self.site.zero_the_count_of_all_product:
+                messages.warning(request, "درگاه پرداخت از طرف ادمین سایت غیر فعال شده است")
+                return redirect("/")
+
+
             self.pk = kwargs.get("pk")
             self.order = get_object_or_404(
                 Order,
@@ -775,7 +788,11 @@ class ConformPayment(LoginRequiredMixin, View):
                 is_active=True,
                 canceled=False,
             )
-            self.site = SiteSetting.objects.first()
+
+            if not self.order.store.zero_the_count_of_all_product_of_store :
+                messages.warning(request, f'فروش فروشگاه {self.order.store.name} بسته شده است و تمام موجودی محصولات ان صفر شد لطفا با فروشگاه در ارتباط باشید ')
+                return redirect("/")
+
             self.result = self.order.get_payment_price()
 
             self.site = SiteSetting.objects.first()
@@ -822,9 +839,7 @@ class ConformPayment(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
 
-        if not self.site.active_zarinpal_payment:
-            messages.warning(request, "درگاه پرداخت از طرف ادمین سایت غیر فعال شده است")
-            return redirect("/")
+
 
         pk = self.pk
         order = self.order

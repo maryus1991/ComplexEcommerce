@@ -1,47 +1,47 @@
 {% extends 'Base/AdminBase.html' %}
 {% load compress static %}
-
+{% load thumbnail %}
 {% block title %}
     اضافه کردن محصول
 {% endblock %}
 
 {% block header_reference %}
     {% compress css %}
-    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
-    <link rel="stylesheet" href="/static/dist/css/rtl.css">
-    <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
-    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
-    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
-    <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
-    <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
-    <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
-    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
-    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+        <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+        <link rel="stylesheet" href="/static/dist/css/rtl.css">
+        <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
+        {#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
+        {#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
+        <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+        {#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
+        <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+        <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+        <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
+        <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
+        <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+        <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
 
 
-{#    <link rel="stylesheet" href=/static/dist/css/bootstrap-theme.css">#}
-{##}
-{#    <link rel="stylesheet" href=/static/dist/css/rtl.css">#}
-{##}
-{#    <link rel="stylesheet" href=/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{##}
-{#    <link rel="stylesheet" href=/static/node_modules/ionicons/dist/css/ionicons-core.min.css">#}
-{##}
-{#    <link rel="stylesheet" href=/static/dist/css/AdminLTE.min.css">#}
-{##}
-{#    <link rel="stylesheet" href=/static/dist/css/skins/_all-skins.min.css">#}
-{##}
-{#    <link rel="stylesheet" href=/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">#}
+        {#    <link rel="stylesheet" href=/static/dist/css/bootstrap-theme.css">#}
+        {##}
+        {#    <link rel="stylesheet" href=/static/dist/css/rtl.css">#}
+        {##}
+        {#    <link rel="stylesheet" href=/static/node_modules/font-awesome/css/font-awesome.min.css">#}
+        {##}
+        {#    <link rel="stylesheet" href=/static/node_modules/ionicons/dist/css/ionicons-core.min.css">#}
+        {##}
+        {#    <link rel="stylesheet" href=/static/dist/css/AdminLTE.min.css">#}
+        {##}
+        {#    <link rel="stylesheet" href=/static/dist/css/skins/_all-skins.min.css">#}
+        {##}
+        {#    <link rel="stylesheet" href=/static/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">#}
 
 
-    <style>.cke {
-        visibility: hidden;
-    }</style>
-    <link rel="stylesheet" type="text/css"
-          href="/static/dist/css/bootstrapck-editor_gecko.css">
+        <style>.cke {
+            visibility: hidden;
+        }</style>
+        <link rel="stylesheet" type="text/css"
+              href="/static/dist/css/bootstrapck-editor_gecko.css">
     {% endcompress %}
 
 
@@ -403,9 +403,10 @@
                                     <div class="col-md-4">
                                         <div class="input-group">
                                             <span class="input-group-btn">
-                                                <span class="btn btn-flat" style="background-color: #f56954; color: white;">قیمت همکار</span>
+                                                <span class="btn btn-flat"
+                                                      style="background-color: #f56954; color: white;">قیمت همکار</span>
                                             </span>
-                                                {{ form.colleague_users_price }}
+                                            {{ form.colleague_users_price }}
 
 
                                         </div>
@@ -615,215 +616,215 @@
                                         min-width: 100px;
                                     }
                                 </style>
-<script>
-    // حذف تگ
-    function removeTag(wrapper) {
-        wrapper.remove();
-    }
+                                <script>
+                                    // حذف تگ
+                                    function removeTag(wrapper) {
+                                        wrapper.remove();
+                                    }
 
-    // ویرایش تگ
-    function editTag(tagElement) {
-        if (tagElement.classList.contains('editing')) return;
+                                    // ویرایش تگ
+                                    function editTag(tagElement) {
+                                        if (tagElement.classList.contains('editing')) return;
 
-        const originalText = tagElement.dataset.original || tagElement.textContent.trim();
-        tagElement.classList.add('editing');
-        tagElement.setAttribute('data-original', originalText);
-        tagElement.innerText = originalText;
-        tagElement.contentEditable = true;
-        tagElement.focus();
+                                        const originalText = tagElement.dataset.original || tagElement.textContent.trim();
+                                        tagElement.classList.add('editing');
+                                        tagElement.setAttribute('data-original', originalText);
+                                        tagElement.innerText = originalText;
+                                        tagElement.contentEditable = true;
+                                        tagElement.focus();
 
-        // انتخاب متن
-        const range = document.createRange();
-        range.selectNodeContents(tagElement);
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
+                                        // انتخاب متن
+                                        const range = document.createRange();
+                                        range.selectNodeContents(tagElement);
+                                        const selection = window.getSelection();
+                                        selection.removeAllRanges();
+                                        selection.addRange(range);
 
-        // ذخیره با Enter
-        tagElement.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                saveEdit(tagElement);
-            }
-        });
+                                        // ذخیره با Enter
+                                        tagElement.addEventListener('keypress', function (e) {
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                saveEdit(tagElement);
+                                            }
+                                        });
 
-        // لغو با Escape
-        tagElement.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                e.preventDefault();
-                cancelEdit(tagElement);
-            }
-        });
+                                        // لغو با Escape
+                                        tagElement.addEventListener('keydown', function (e) {
+                                            if (e.key === 'Escape') {
+                                                e.preventDefault();
+                                                cancelEdit(tagElement);
+                                            }
+                                        });
 
-        // ذخیره با blur
-        tagElement.addEventListener('blur', function () {
-            saveEdit(tagElement);
-        });
-    }
+                                        // ذخیره با blur
+                                        tagElement.addEventListener('blur', function () {
+                                            saveEdit(tagElement);
+                                        });
+                                    }
 
-    function saveEdit(tagElement) {
-        const newText = tagElement.textContent.trim();
-        tagElement.classList.remove('editing');
-        tagElement.contentEditable = false;
+                                    function saveEdit(tagElement) {
+                                        const newText = tagElement.textContent.trim();
+                                        tagElement.classList.remove('editing');
+                                        tagElement.contentEditable = false;
 
-        if (newText !== '') {
-            tagElement.dataset.original = newText;
-            tagElement.innerText = newText;
-            addDeleteButton(tagElement);
-        } else {
-            cancelEdit(tagElement);
-        }
-    }
+                                        if (newText !== '') {
+                                            tagElement.dataset.original = newText;
+                                            tagElement.innerText = newText;
+                                            addDeleteButton(tagElement);
+                                        } else {
+                                            cancelEdit(tagElement);
+                                        }
+                                    }
 
-    function cancelEdit(tagElement) {
-        const originalText = tagElement.getAttribute('data-original');
-        tagElement.classList.remove('editing');
-        tagElement.contentEditable = false;
-        tagElement.innerText = originalText;
-        addDeleteButton(tagElement);
-    }
+                                    function cancelEdit(tagElement) {
+                                        const originalText = tagElement.getAttribute('data-original');
+                                        tagElement.classList.remove('editing');
+                                        tagElement.contentEditable = false;
+                                        tagElement.innerText = originalText;
+                                        addDeleteButton(tagElement);
+                                    }
 
-    function addDeleteButton(tagElement) {
-        const wrapper = tagElement.parentElement;
-        let delBtn = wrapper.querySelector('.tag-delete');
+                                    function addDeleteButton(tagElement) {
+                                        const wrapper = tagElement.parentElement;
+                                        let delBtn = wrapper.querySelector('.tag-delete');
 
-        if (!delBtn) {
-            delBtn = document.createElement('button');
-            delBtn.className = 'tag-delete';
-            delBtn.innerText = '×';
-            delBtn.title = 'حذف';
-            delBtn.onclick = function () {
-                removeTag(wrapper);
-            };
-            wrapper.appendChild(delBtn);
-        }
-    }
+                                        if (!delBtn) {
+                                            delBtn = document.createElement('button');
+                                            delBtn.className = 'tag-delete';
+                                            delBtn.innerText = '×';
+                                            delBtn.title = 'حذف';
+                                            delBtn.onclick = function () {
+                                                removeTag(wrapper);
+                                            };
+                                            wrapper.appendChild(delBtn);
+                                        }
+                                    }
 
-    // افزودن تگ عمومی (برای ویژگی، مشخصه، تگ)
-    function addTagGeneric(inputId, containerId, tagClass) {
-        const input = document.getElementById(inputId);
-        const container = document.getElementById(containerId);
+                                    // افزودن تگ عمومی (برای ویژگی، مشخصه، تگ)
+                                    function addTagGeneric(inputId, containerId, tagClass) {
+                                        const input = document.getElementById(inputId);
+                                        const container = document.getElementById(containerId);
 
-        if (input.value.trim() !== "") {
-            const wrapper = document.createElement("span");
-            wrapper.className = "tag-wrapper";
-            wrapper.draggable = true;
-            wrapper.ondragstart = handleDragStart;
-            wrapper.ondragover = handleDragOver;
-            wrapper.ondrop = handleDrop;
-            wrapper.ondragend = handleDragEnd;
+                                        if (input.value.trim() !== "") {
+                                            const wrapper = document.createElement("span");
+                                            wrapper.className = "tag-wrapper";
+                                            wrapper.draggable = true;
+                                            wrapper.ondragstart = handleDragStart;
+                                            wrapper.ondragover = handleDragOver;
+                                            wrapper.ondrop = handleDrop;
+                                            wrapper.ondragend = handleDragEnd;
 
-            const newTag = document.createElement("span");
-            newTag.className = `btn btn-default form-group tag-item ${tagClass}`;
-            newTag.innerText = input.value;
-            newTag.setAttribute('data-original', input.value);
-            newTag.ondblclick = function () {
-                editTag(this);
-            };
+                                            const newTag = document.createElement("span");
+                                            newTag.className = `btn btn-default form-group tag-item ${tagClass}`;
+                                            newTag.innerText = input.value;
+                                            newTag.setAttribute('data-original', input.value);
+                                            newTag.ondblclick = function () {
+                                                editTag(this);
+                                            };
 
-            wrapper.appendChild(newTag);
-            container.appendChild(wrapper);
-            addDeleteButton(newTag);
-            input.value = "";
-        }
-    }
+                                            wrapper.appendChild(newTag);
+                                            container.appendChild(wrapper);
+                                            addDeleteButton(newTag);
+                                            input.value = "";
+                                        }
+                                    }
 
-    // توابع اختصاصی
-    function addFeature() {
-        addTagGeneric("id_features", "features-container", "feature-tag");
-    }
+                                    // توابع اختصاصی
+                                    function addFeature() {
+                                        addTagGeneric("id_features", "features-container", "feature-tag");
+                                    }
 
-    function addSpec() {
-        addTagGeneric("id_specs", "specs-container", "spec-tag");
-    }
+                                    function addSpec() {
+                                        addTagGeneric("id_specs", "specs-container", "spec-tag");
+                                    }
 
-    function addTag() {
-        addTagGeneric("id_tags", "tags-container", "tag");
-    }
+                                    function addTag() {
+                                        addTagGeneric("id_tags", "tags-container", "tag");
+                                    }
 
-    // قابلیت دراگ
-    let draggedElement = null;
-    let placeholder = null;
+                                    // قابلیت دراگ
+                                    let draggedElement = null;
+                                    let placeholder = null;
 
-    function handleDragStart(e) {
-        draggedElement = e.target.closest(".tag-wrapper");
-        draggedElement.classList.add("dragging");
-        e.dataTransfer.effectAllowed = "move";
-    }
+                                    function handleDragStart(e) {
+                                        draggedElement = e.target.closest(".tag-wrapper");
+                                        draggedElement.classList.add("dragging");
+                                        e.dataTransfer.effectAllowed = "move";
+                                    }
 
-    function handleDragOver(e) {
-        e.preventDefault();
-        const container = e.target.closest(".container-sortable");
-        if (!container) return;
+                                    function handleDragOver(e) {
+                                        e.preventDefault();
+                                        const container = e.target.closest(".container-sortable");
+                                        if (!container) return;
 
-        const afterElement = getDragAfterElement(container, e.clientX);
-        if (!placeholder) {
-            placeholder = document.createElement("span");
-            placeholder.className = "sort-placeholder";
-            placeholder.style.width = draggedElement.offsetWidth + "px";
-            placeholder.style.height = draggedElement.offsetHeight + "px";
-        }
+                                        const afterElement = getDragAfterElement(container, e.clientX);
+                                        if (!placeholder) {
+                                            placeholder = document.createElement("span");
+                                            placeholder.className = "sort-placeholder";
+                                            placeholder.style.width = draggedElement.offsetWidth + "px";
+                                            placeholder.style.height = draggedElement.offsetHeight + "px";
+                                        }
 
-        if (afterElement == null) {
-            container.appendChild(placeholder);
-        } else {
-            container.insertBefore(placeholder, afterElement);
-        }
-    }
+                                        if (afterElement == null) {
+                                            container.appendChild(placeholder);
+                                        } else {
+                                            container.insertBefore(placeholder, afterElement);
+                                        }
+                                    }
 
-    function handleDrop(e) {
-        e.preventDefault();
-        const container = e.target.closest(".container-sortable");
-        if (!container) return;
+                                    function handleDrop(e) {
+                                        e.preventDefault();
+                                        const container = e.target.closest(".container-sortable");
+                                        if (!container) return;
 
-        if (draggedElement && placeholder) {
-            container.insertBefore(draggedElement, placeholder);
-            placeholder.remove();
-            placeholder = null;
-        }
-        draggedElement.classList.remove("dragging");
-        draggedElement = null;
-    }
+                                        if (draggedElement && placeholder) {
+                                            container.insertBefore(draggedElement, placeholder);
+                                            placeholder.remove();
+                                            placeholder = null;
+                                        }
+                                        draggedElement.classList.remove("dragging");
+                                        draggedElement = null;
+                                    }
 
-    function handleDragEnd() {
-        if (draggedElement) draggedElement.classList.remove("dragging");
-        if (placeholder && placeholder.parentNode) placeholder.remove();
-        draggedElement = null;
-        placeholder = null;
-    }
+                                    function handleDragEnd() {
+                                        if (draggedElement) draggedElement.classList.remove("dragging");
+                                        if (placeholder && placeholder.parentNode) placeholder.remove();
+                                        draggedElement = null;
+                                        placeholder = null;
+                                    }
 
-    function getDragAfterElement(container, x) {
-        const elements = [...container.querySelectorAll('.tag-wrapper:not(.dragging)')];
-        return elements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            const offset = x - box.left - box.width / 2;
-            if (offset < 0 && offset > closest.offset) {
-                return {offset: offset, element: child};
-            } else {
-                return closest;
-            }
-        }, {offset: Number.NEGATIVE_INFINITY}).element;
-    }
+                                    function getDragAfterElement(container, x) {
+                                        const elements = [...container.querySelectorAll('.tag-wrapper:not(.dragging)')];
+                                        return elements.reduce((closest, child) => {
+                                            const box = child.getBoundingClientRect();
+                                            const offset = x - box.left - box.width / 2;
+                                            if (offset < 0 && offset > closest.offset) {
+                                                return {offset: offset, element: child};
+                                            } else {
+                                                return closest;
+                                            }
+                                        }, {offset: Number.NEGATIVE_INFINITY}).element;
+                                    }
 
-    // آماده سازی قبل از ارسال فرم
-    function prepareFormData() {
-        ['features', 'tags', 'specs'].forEach(field => {
-            const container = document.getElementById(`${field}-container`);
-            const input = document.getElementById(`id_${field}`);
-            const values = [...container.querySelectorAll(`.${field === 'features' ? 'feature-tag' : field === 'specs' ? 'spec-tag' : 'tag'}`)]
-                .map(el => el.dataset.original || el.textContent.trim());
-            input.value = values.join('**');
-        });
-    }
+                                    // آماده سازی قبل از ارسال فرم
+                                    function prepareFormData() {
+                                        ['features', 'tags', 'specs'].forEach(field => {
+                                            const container = document.getElementById(`${field}-container`);
+                                            const input = document.getElementById(`id_${field}`);
+                                            const values = [...container.querySelectorAll(`.${field === 'features' ? 'feature-tag' : field === 'specs' ? 'spec-tag' : 'tag'}`)]
+                                                .map(el => el.dataset.original || el.textContent.trim());
+                                            input.value = values.join('**');
+                                        });
+                                    }
 
-    // فعال‌سازی رویدادهای دراپ
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.container-sortable').forEach(container => {
-            container.addEventListener('dragover', handleDragOver);
-            container.addEventListener('drop', handleDrop);
-        });
-    });
-</script>
+                                    // فعال‌سازی رویدادهای دراپ
+                                    document.addEventListener('DOMContentLoaded', () => {
+                                        document.querySelectorAll('.container-sortable').forEach(container => {
+                                            container.addEventListener('dragover', handleDragOver);
+                                            container.addEventListener('drop', handleDrop);
+                                        });
+                                    });
+                                </script>
 
 
                                 <!-- توضیحات محصول -->
@@ -905,9 +906,11 @@
                                     <div class="col-md-3">
                                         <h6>عکس اصلی محصول:</h6>
                                         {% if product.picture %}
-                                            <img src="{{ product.picture.url }}" alt=""
-                                                 class="img-thumbnail img-responsive"
-                                                 style="height: 250px; width: 250px;">
+                                            <img src="{% thumbnail product.picture '250x250' %}" alt="" loading="lazy" class="img-thumbnail img-responsive">
+
+{#                                            <img src="{{ product.picture.url }}" alt=""#}
+{#                                                 class="img-thumbnail img-responsive"#}
+{#                                                 style="height: 250px; width: 250px;">#}
                                         {% endif %}
 
                                     </div>
@@ -915,8 +918,10 @@
                                         <h6>گالری محصول:</h6>
                                         {% for img in product.gallery.all %}
                                             <a href="{% url 'admin_panel:product-remove-image' pk=product.id img_id=img.id %}">
-                                                <img src="{{ img.image.url }}" alt=""
-                                                     style="height: 150px; width: 150px; margin: 5px;">
+                                            <img src="{% thumbnail img.image '150x150' %}" alt="" loading="lazy" class="img-thumbnail img-responsive" style="margin: 5px;">
+{#                                            #}
+{#                                                <img src="{{ img.image.url }}" alt=""#}
+{#                                                     style="height: 150px; width: 150px; margin: 5px;">#}
                                             </a>
                                         {% endfor %}
                                     </div>
@@ -937,125 +942,125 @@
 {% block footer_reference %}
     {% compress js %}
         <script type="text/javascript"
-            src="/static/dist/js/wpmore-plugin.js"></script>
-    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
-    <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
-    <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
-    <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
-    <script src="/static/node_modules/moment/min/moment.min.js"></script>
-    <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
-    <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-    <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+                src="/static/dist/js/wpmore-plugin.js"></script>
+        <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
+        <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
+        <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+        <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+        <script src="/static/node_modules/moment/min/moment.min.js"></script>
+        <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+        <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+        <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
 
 
-    <script>
-        $(document).ready(function () {
-            $('#tarikh').persianDatepicker({
-                altField: '#tarikhAlt',
-                altFormat: 'X',
-                format: 'D MMMM YYYY HH:mm a',
-                observer: true,
-                timePicker: {
-                    enabled: true
-                },
-            });
-        });
-        $(function () {
-            //Initialize Select2 Elements
-            $('.select2').select2()
-
-            //Datemask dd/mm/yyyy
-            $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
-            //Datemask2 mm/dd/yyyy
-            $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
-            //Money Euro
-            $('[data-mask]').inputmask()
-
-            //Date range picker
-            $('#reservation').daterangepicker()
-            //Date range picker with time picker
-            $('#reservationtime').daterangepicker({
-                timePicker: true,
-                timePickerIncrement: 30,
-                format: 'MM/DD/YYYY h:mm A'
-            })
-            //Date range as a button
-            $('#daterange-btn').daterangepicker(
-                {
-                    ranges: {
-                        'Today': [moment(), moment()],
-                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                        'This Month': [moment().startOf('month'), moment().endOf('month')],
-                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        <script>
+            $(document).ready(function () {
+                $('#tarikh').persianDatepicker({
+                    altField: '#tarikhAlt',
+                    altFormat: 'X',
+                    format: 'D MMMM YYYY HH:mm a',
+                    observer: true,
+                    timePicker: {
+                        enabled: true
                     },
-                    startDate: moment().subtract(29, 'days'),
-                    endDate: moment()
-                },
-                function (start, end) {
-                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
-                }
-            )
+                });
+            });
+            $(function () {
+                //Initialize Select2 Elements
+                $('.select2').select2()
 
-            //Date picker
-            $('#datepicker').datepicker({
-                autoclose: true
-            })
+                //Datemask dd/mm/yyyy
+                $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
+                //Datemask2 mm/dd/yyyy
+                $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
+                //Money Euro
+                $('[data-mask]').inputmask()
 
-            //iCheck for checkbox and radio inputs
-            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
-                checkboxClass: 'icheckbox_minimal-blue',
-                radioClass: 'iradio_minimal-blue'
-            })
-            //Red color scheme for iCheck
-            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
-                checkboxClass: 'icheckbox_minimal-red',
-                radioClass: 'iradio_minimal-red'
-            })
-            //Flat red color scheme for iCheck
-            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
-                checkboxClass: 'icheckbox_flat-green',
-                radioClass: 'iradio_flat-green'
-            })
+                //Date range picker
+                $('#reservation').daterangepicker()
+                //Date range picker with time picker
+                $('#reservationtime').daterangepicker({
+                    timePicker: true,
+                    timePickerIncrement: 30,
+                    format: 'MM/DD/YYYY h:mm A'
+                })
+                //Date range as a button
+                $('#daterange-btn').daterangepicker(
+                    {
+                        ranges: {
+                            'Today': [moment(), moment()],
+                            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                            'This Month': [moment().startOf('month'), moment().endOf('month')],
+                            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                        },
+                        startDate: moment().subtract(29, 'days'),
+                        endDate: moment()
+                    },
+                    function (start, end) {
+                        $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                    }
+                )
 
-            //Colorpicker
-            $('.my-colorpicker1').colorpicker()
-            //color picker with addon
-            $('.my-colorpicker2').colorpicker()
+                //Date picker
+                $('#datepicker').datepicker({
+                    autoclose: true
+                })
 
-            //Timepicker
-            $('.timepicker').timepicker({
-                showInputs: false
+                //iCheck for checkbox and radio inputs
+                $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                    checkboxClass: 'icheckbox_minimal-blue',
+                    radioClass: 'iradio_minimal-blue'
+                })
+                //Red color scheme for iCheck
+                $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                    checkboxClass: 'icheckbox_minimal-red',
+                    radioClass: 'iradio_minimal-red'
+                })
+                //Flat red color scheme for iCheck
+                $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                    checkboxClass: 'icheckbox_flat-green',
+                    radioClass: 'iradio_flat-green'
+                })
+
+                //Colorpicker
+                $('.my-colorpicker1').colorpicker()
+                //color picker with addon
+                $('.my-colorpicker2').colorpicker()
+
+                //Timepicker
+                $('.timepicker').timepicker({
+                    showInputs: false
+                })
             })
-        })
-    </script>
-    {#    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>#}
-    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
-{#    <script src="/dist/js/adminlte.min.js"></script>#}
-    <script src="/static/dist/js/demo.js"></script>
-    <script src="/static/node_modules/ckeditor/ckeditor.js"></script>
-    <script src="/static/node_modules/tinymce/tinymce.min.js"></script>
-    <script>
-        tinymce.init({
-            selector: 'textarea#mytextarea',
-            plugins: 'advlist autolink link lists preview table code pagebreak',
-            menubar: false,
-            language: 'fa',
-            height: 300,
-            relative_urls: false,
-            toolbar: 'undo redo | removeformat preview code | fontsizeselect bullist numlist | alignleft aligncenter alignright alignjustify | bold italic | pagebreak table link',
-        });
-        $(function () {
-            // Replace the <textarea id="editor1"> with a CKEditor
-            // instance, using default configuration.
-            CKEDITOR.replace('editor1')
-            //bootstrap WYSIHTML5 - text editor
-            $('.textarea').wysihtml5()
-        })
-    </script>
+        </script>
+        {#    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>#}
+        <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
+        {#    <script src="/dist/js/adminlte.min.js"></script>#}
+        <script src="/static/dist/js/demo.js"></script>
+        <script src="/static/node_modules/ckeditor/ckeditor.js"></script>
+        <script src="/static/node_modules/tinymce/tinymce.min.js"></script>
+        <script>
+            tinymce.init({
+                selector: 'textarea#mytextarea',
+                plugins: 'advlist autolink link lists preview table code pagebreak',
+                menubar: false,
+                language: 'fa',
+                height: 300,
+                relative_urls: false,
+                toolbar: 'undo redo | removeformat preview code | fontsizeselect bullist numlist | alignleft aligncenter alignright alignjustify | bold italic | pagebreak table link',
+            });
+            $(function () {
+                // Replace the <textarea id="editor1"> with a CKEditor
+                // instance, using default configuration.
+                CKEDITOR.replace('editor1')
+                //bootstrap WYSIHTML5 - text editor
+                $('.textarea').wysihtml5()
+            })
+        </script>
     {% endcompress %}
 {% endblock %}

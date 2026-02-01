@@ -1,5 +1,6 @@
 {% extends 'Base/Base.html' %}
 {% load to_webp %}
+{% load thumbnail %}
 
 {% block title %}
 
@@ -34,15 +35,15 @@
                 <span class="text-green-500 transition-colors w-fit  block">
                     {% if item.image %}
                         <picture>
-                <source srcset="{{ item.image.url|to_webp }}"
-                        class="w-24 h-24 rounded-full " height="6px"
-                        width="96px"
-                        type="image/webp">
-                <img src="{{ item.image.url }}" alt="{{ item.name }}"
-                     class="w-24 h-24 rounded-full " height="6px"
-                     width="96px"
-                     loading="lazy">
-            </picture>
+                            <source srcset="{% thumbnail item.image '64x64' %}"
+                                    class="w-24 h-24 rounded-full " height="64px"
+                                    width="96px"
+                                    type="image/webp">
+                            <img src="{% thumbnail item.image '64x64' %}" alt="{{ item.name }}"
+                                 class="w-24 h-24 rounded-full " height="64px"
+                                 width="96px"
+                                 loading="lazy">
+                        </picture>
 
                     {% endif %}
 
@@ -59,10 +60,11 @@
                 <br>
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-4 sm:gap-10 flex-wrap">
 
-                    <a {% if not site.active_google_reCAPTCHA %} href="{% url 'site:apps-download' item.id %}" {% else %} href="#" {% endif %}
-                                                             id="download-button"
-                                                             data-download-url="{% url 'site:apps-download' item.id %}"
-                                                             class="download-button bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-1.5 lg:p-2">
+                    <a {% if not site.active_google_reCAPTCHA %}
+                        href="{% url 'site:apps-download' item.id %}" {% else %} href="#" {% endif %}
+                        id="download-button"
+                        data-download-url="{% url 'site:apps-download' item.id %}"
+                        class="download-button bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-1.5 lg:p-2">
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
@@ -75,42 +77,42 @@
                         <script src="https://www.google.com/recaptcha/api.js?render={{ GOOGLE_RECAPTCHA_SITE_KEY }}"></script>
 
                         <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const buttons = document.querySelectorAll(".download-button");
+                            document.addEventListener("DOMContentLoaded", function () {
+                                const buttons = document.querySelectorAll(".download-button");
 
-    buttons.forEach(button => {
-        button.addEventListener("click", function (e) {
-            e.preventDefault();
+                                buttons.forEach(button => {
+                                    button.addEventListener("click", function (e) {
+                                        e.preventDefault();
 
-            grecaptcha.ready(function () {
-                grecaptcha.execute("{{ GOOGLE_RECAPTCHA_SITE_KEY }}", { action: "download" }).then(function (token) {
-                    fetch("{% url 'site:validate-recaptcha-v3' %}", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            token: token,
-                            action: "download"
-                        })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success && data.score > 0.5) {
-                            window.location.href = button.dataset.downloadUrl + "?dl_token=" + data.token;
-                        } else {
-                            alert("شناسایی ربات یا امتیاز پایین reCAPTCHA.");
-                        }
-                    })
-                    .catch(err => {
-                        console.error("reCAPTCHA validation error:", err);
-                        alert("خطا در بررسی reCAPTCHA");
-                    });
-                });
-            });
-        });
-    });
-});
+                                        grecaptcha.ready(function () {
+                                            grecaptcha.execute("{{ GOOGLE_RECAPTCHA_SITE_KEY }}", {action: "download"}).then(function (token) {
+                                                fetch("{% url 'site:validate-recaptcha-v3' %}", {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Content-Type": "application/json",
+                                                    },
+                                                    body: JSON.stringify({
+                                                        token: token,
+                                                        action: "download"
+                                                    })
+                                                })
+                                                    .then(res => res.json())
+                                                    .then(data => {
+                                                        if (data.success && data.score > 0.5) {
+                                                            window.location.href = button.dataset.downloadUrl + "?dl_token=" + data.token;
+                                                        } else {
+                                                            alert("شناسایی ربات یا امتیاز پایین reCAPTCHA.");
+                                                        }
+                                                    })
+                                                    .catch(err => {
+                                                        console.error("reCAPTCHA validation error:", err);
+                                                        alert("خطا در بررسی reCAPTCHA");
+                                                    });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
 
                         </script>
 

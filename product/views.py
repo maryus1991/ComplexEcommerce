@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, reverse, Http404
 from django.views.generic import ListView, DetailView, RedirectView
 from django.db.models import Q, Count
 from django.contrib import messages
-
+from django.utils.timezone import now
 from user.mixins.logins import CustomLoginRequiredMixin as LoginRequiredMixin
 
 from .models import (
@@ -190,7 +190,7 @@ class ProductListView(ListView):
             .order_by("-sort_number").distinct()
             .all()
         )
-
+        context["site_zero_the_count_of_all_product"] = SiteSetting.objects.first().zero_the_count_of_all_product
         context["brands"] = ProductBrand.objects.filter(is_active=True).order_by("-sort_number").all()
 
         if self.request.user.is_authenticated and self.request.user.is_verified:
@@ -244,23 +244,7 @@ class ProductDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
 
-        try:
-            ip, is_rout = get_client_ip(self.request)
-            product_view_object = ProductViews.objects.get_or_create(
-                user=self.request.user if self.request.user.is_authenticated else None,
-                product=self.object,
-                ip=ip,
-            )
-            if not product_view_object[1]:
-                product_view_object[0].count += 1
-                product_view_object[0].save()
 
-            if product_view_object[0].count == 0:
-                product_view_object[0].count = 1
-                product_view_object[0].save()
-
-        except Exception as e:
-            pass
 
         # check if the product is the user favorite or not
         if self.request.user.is_authenticated:
@@ -328,6 +312,27 @@ class ProductDetailView(DetailView):
             context["user_favorite"] = []
             context["user_order"] = []
             context["user_order_detail"] = []
+
+        try:
+            context["site_zero_the_count_of_all_product"] = SiteSetting.objects.first().zero_the_count_of_all_product
+
+            ip, is_rout = get_client_ip(self.request)
+            product_view_object = ProductViews.objects.get_or_create(
+                created_at__gte=now().replace(hour=0, minute=0, second=0, microsecond=0),
+                user=self.request.user if self.request.user.is_authenticated else None,
+                product=self.object,
+                ip=ip,
+            )
+            if not product_view_object[1]:
+                product_view_object[0].count += 1
+                product_view_object[0].save()
+
+            if product_view_object[0].count == 0:
+                product_view_object[0].count = 1
+                product_view_object[0].save()
+
+        except Exception as e:
+            pass
 
         return context
 

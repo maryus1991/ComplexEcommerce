@@ -84,6 +84,7 @@ class Store(models.Model):
     allowed_to_add_and_edit_posts_with_out_admin_per = models.BooleanField(default=False)
     allowed_to_activate_product_categories_with_out_admin_per = models.BooleanField(default=False)
     allowed_to_activate_product_brand_with_out_admin_per = models.BooleanField(default=False)
+    zero_the_count_of_all_product_of_store = models.BooleanField(default=False)
     allowed_to_activate_post_categories_with_out_admin_per = models.BooleanField(default=False)
 
     def calculate_store_sold_orders(self):

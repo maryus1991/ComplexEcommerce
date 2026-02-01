@@ -1,6 +1,6 @@
 {% extends 'Base/AdminBase.html' %}
 {% load compress static %}
-
+{% load thumbnail %}
 {% block title %}
     بروز رسانی یا ساخت بنر جدید
 {% endblock %}
@@ -242,7 +242,8 @@
                         	
                                                 عکس اپلود شده <br>   
                         برای عوض کردن ان عکس جدید را اپلود کنید
-                        <img height="100px" width="200px" src="{{ banner.image.url }}" alt="">
+{#                        <img height="100px" width="200px" src="{{ banner.image.url }}" alt="">#}
+                                <img src="{% thumbnail banner.image '200x200' %}" alt="" loading="lazy">
 
                         {% endif %} 
                     </div>

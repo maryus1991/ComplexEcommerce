@@ -170,6 +170,9 @@ class SiteSetting(models.Model):
         default=True, verbose_name="اولویت با محصولات موجود"
     )
 
+    zero_the_count_of_all_product = models.BooleanField(
+        default=False, verbose_name="صفر کردن موجودی تمام محصولات سایت"
+    )
 
 
     def __str__(self):

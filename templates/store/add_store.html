@@ -1,4 +1,5 @@
 {% extends 'Base/AdminBase.html' %}
+{% load thumbnail %}
 
 {% block title %}
     بروز رسانی یا اضافه کردن فروشگاه
@@ -57,7 +58,7 @@
             </div>
 
             <div class="box-body form-group flex col-md-12">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-info btn-flat">شماره کارت</button>
@@ -66,7 +67,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-info btn-flat">شبا کارت</button>
@@ -75,12 +76,20 @@
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="input-group input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-info btn-flat">نام دارنده کارت</button>
                     </span>
                         {{ form.card_name }}
+                    </div>
+                </div>
+                             <div class="col-md-3">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button"
+                                class="btn btn-block btn-flat">صفر کردن موجودی محصولات و بستن فروش : {{ form.zero_the_count_of_all_product_of_store }}</button>
+                    </span>
                     </div>
                 </div>
             </div>
@@ -174,7 +183,8 @@
                 <div class="col-md-3">
                     <div class="input-group input-group-sm">
                     <span class="input-group-btn">
-                        <button type="button" class="btn btn-warning btn-flat"> شماره برای  نمایش در فاکتور رسمی</button>
+                        <button type="button"
+                                class="btn btn-warning btn-flat"> شماره برای  نمایش در فاکتور رسمی</button>
                     </span>
                         {{ form.official_invoice_phone_number }}
                     </div>
@@ -217,7 +227,7 @@
                                 class="btn btn-block btn-flat">داشتن تحویل فیزیکی: {{ form.have_physical_delivery }}</button>
                     </span>
                     </div>
-                </div>             
+                </div>
                 <div class="col-md-2">
                     <div class="input-group input-group-sm">
                     <span class="input-group-btn">
@@ -380,10 +390,12 @@
 
             {% if item is not None %}
                 عکس مورد استفاده :
-                <img width="100px" height="100px" src="{{ item.about_image.url }}" alt="">
+{#                <img width="100px" height="100px" src="{{ item.about_image.url }}" alt="">#}
+                <img src="{% thumbnail item.about_image '100x100' %}" alt="" loading="lazy" class="img-thumbnail img-responsive" >
                 <br>
                 لوگو:
-                <img width="100px" height="100px" src="{{ item.logo.url }}" alt="">
+{#                <img width="100px" height="100px" src="{{ item.logo.url }}" alt="">#}
+                <img src="{% thumbnail item.logo '100x100' %}" alt="" loading="lazy" class="img-thumbnail img-responsive" >
             {% endif %}
             <!-- دکمه ثبت -->
             <div class="box-footer">

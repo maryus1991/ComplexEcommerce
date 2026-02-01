@@ -1,27 +1,28 @@
 {% extends 'Base/AdminBase.html' %}
- {% load compress static %}
+{% load compress static %}
+{% load thumbnail %}
 
 {% block title %}
     بروز رسانی یا اپلود برنامه جدید
 {% endblock %}
 
 {% block header_reference %}
-{% compress css %}
-    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
-    <link rel="stylesheet" href="/static/dist/css/rtl.css">
-    <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
-    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
-    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
-    <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
-    <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
-    <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
-    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
-    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+    {% compress css %}
+        <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+        <link rel="stylesheet" href="/static/dist/css/rtl.css">
+        <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
+        {#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
+        {#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
+        <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+        {#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
+        <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+        <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+        <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
+        <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
+        <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+        <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
 
-{% endcompress  %}
+    {% endcompress %}
 
 
 
@@ -99,7 +100,8 @@
                     <div class="box-body">
                         <form enctype="multipart/form-data" method="post" action="" class="form-horizontal">
                             {% csrf_token %}
-                            <input type="hidden" name="uploaded_filename" id="uploaded_filename" {% if item.file %} value="{{ item.file.name }}" {% endif %}>
+                            <input type="hidden" name="uploaded_filename" id="uploaded_filename" {% if item.file %}
+                                   value="{{ item.file.name }}" {% endif %}>
 
                             <div class="form-section">
                                 <h4 class="form-header"><i class="fa fa-info-circle"></i> اطلاعات پایه</h4>
@@ -182,154 +184,156 @@
                             </div>
                         </form>
                     </div>
-                                                {% if item and item.image %}
-                                <img src="{{ item.image.url }}" height="200px" width="200px" alt="">
-                            {% endif %}
+                    {% if item and item.image %}
+                        <img src="{% thumbnail item.image '200x200' %}" alt="" loading="lazy">
+
+{#                        <img src="{{ item.image.url }}" height="200px" width="200px" alt="">#}
+                    {% endif %}
                 </div>
             </div>
         </div>
     </section>
-            <script>
-let uploadPaused = false;
-let currentChunk = 0;
-let totalChunks = 0;
-let chunkSize = 1024 * 1024; // 1MB
-let file = null;
-let startTime = null;
-let xhr = null; // برای مدیریت درخواست‌های XMLHttpRequest
+    <script>
+        let uploadPaused = false;
+        let currentChunk = 0;
+        let totalChunks = 0;
+        let chunkSize = 1024 * 1024; // 1MB
+        let file = null;
+        let startTime = null;
+        let xhr = null; // برای مدیریت درخواست‌های XMLHttpRequest
 
-function startUpload() {
-    file = document.getElementById('id_file').files[0];
-    if (!file) {
-        alert("لطفاً یک فایل انتخاب کنید.");
-        return;
-    }
-    
-    // نمایش پیشرفت آپلود
-    document.getElementById('progress-wrapper').style.display = 'block';
-    
-    document.getElementById('uploaded_filename').value = file.name;
-    totalChunks = Math.ceil(file.size / chunkSize);
-    currentChunk = 0;
-    uploadPaused = false;
-    startTime = Date.now();
-    uploadNextChunk();
-}
-
-function pauseUpload() {
-    uploadPaused = true;
-    if (xhr) {
-        xhr.abort(); // لغو درخواست جاری
-        xhr = null;
-    }
-}
-
-function resumeUpload() {
-    if (uploadPaused && currentChunk < totalChunks) {
-        uploadPaused = false;
-        uploadNextChunk();
-    }
-}
-
-function uploadNextChunk() {
-    if (uploadPaused || currentChunk >= totalChunks) return;
-
-    const chunk = file.slice(currentChunk * chunkSize, (currentChunk + 1) * chunkSize);
-    const formData = new FormData();
-    formData.append('file', chunk);
-    formData.append('chunkNumber', currentChunk + 1);
-    formData.append('totalChunks', totalChunks);
-    formData.append('filename', file.name);
-
-    const start = Date.now();
-    
-    xhr = new XMLHttpRequest();
-    xhr.open('POST', "{% url 'store:app-upload-app' %}", true);
-    xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
-    
-    xhr.upload.onprogress = function(e) {
-        if (e.lengthComputable) {
-            const overallProgress = Math.round(((currentChunk * chunkSize + e.loaded) / file.size) * 100);
-            document.getElementById('progress-bar').style.width = overallProgress + '%';
-            document.getElementById('progress-bar').innerText = overallProgress + '%';
-            
-            // محاسبه سرعت آپلود
-            const elapsed = (Date.now() - startTime) / 1000;
-            const uploaded = currentChunk * chunkSize + e.loaded;
-            const speed = (uploaded / 1024 / 1024 / elapsed).toFixed(2);
-            document.getElementById('upload-speed').innerText = `سرعت: ${speed} مگابایت بر ثانیه`;
-        }
-    };
-    
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            const data = JSON.parse(xhr.responseText);
-            currentChunk++;
-            
-            if (currentChunk < totalChunks && !uploadPaused) {
-                uploadNextChunk();
-            } else if (currentChunk >= totalChunks) {
-                // آپلود کامل شد
-                document.getElementById('progress-bar').classList.remove('active');
-                document.getElementById('progress-bar').classList.add('progress-bar-success');
-                document.getElementById('upload-speed').innerText = 'آپلود با موفقیت انجام شد!';
+        function startUpload() {
+            file = document.getElementById('id_file').files[0];
+            if (!file) {
+                alert("لطفاً یک فایل انتخاب کنید.");
+                return;
             }
-        } else {
-            console.error('خطا در آپلود:', xhr.statusText);
+
+            // نمایش پیشرفت آپلود
+            document.getElementById('progress-wrapper').style.display = 'block';
+
+            document.getElementById('uploaded_filename').value = file.name;
+            totalChunks = Math.ceil(file.size / chunkSize);
+            currentChunk = 0;
+            uploadPaused = false;
+            startTime = Date.now();
+            uploadNextChunk();
         }
-    };
-    
-    xhr.onerror = function() {
-        console.error('خطا در اتصال شبکه');
-    };
-    
-    xhr.send(formData);
-}
 
-function submitForm() {
-    if (currentChunk < totalChunks) {
-        alert('لطفاً صبر کنید تا آپلود فایل کامل شود.');
-        return false;
-    }
-    return true;
-}
-        </script>
+        function pauseUpload() {
+            uploadPaused = true;
+            if (xhr) {
+                xhr.abort(); // لغو درخواست جاری
+                xhr = null;
+            }
+        }
 
-                            <script>
-                                fetch('{% url "admin_panel:font_list_json" %}')
-                                    .then(response => response.json())
-                                    .then(fontList => {
-                                        const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
-                                        CKEDITOR.instances['{{ form.short_description.id_for_label }}'].destroy(true);
+        function resumeUpload() {
+            if (uploadPaused && currentChunk < totalChunks) {
+                uploadPaused = false;
+                uploadNextChunk();
+            }
+        }
 
-                                        CKEDITOR.replace('{{ form.short_description.id_for_label }}', {
-                                            toolbar: [
-                                                ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
-                                                    'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
-                                                    'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
-                                                    'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
-                                                    'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
-                                                    'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
-                                                    'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
-                                                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
-                                                    'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
-                                                    'Styles', 'Format', 'Font', 'FontSize'],
+        function uploadNextChunk() {
+            if (uploadPaused || currentChunk >= totalChunks) return;
 
-                                            ],
-                                            width: 750,
-                                            height: 200,
-                                            skin: 'moono',
-                                            extraPlugins: 'font',
-                                            contentsCss: ['{% url 'admin_panel:fonts.css' %}'],
-                                            font_names: fontNamesStr +
-                                                'Arial/Arial, Helvetica, sans-serif;' +
-                                                'Courier New/Courier New, Courier, monospace;' +
-                                                'Georgia/Georgia, serif;' +
-                                                'Tahoma/Tahoma, Geneva, sans-serif;' +
-                                                'Times New Roman/Times New Roman, Times, serif;' +
-                                                'Verdana/Verdana, Geneva, sans-serif;'
-                                        });
-                                    });
-                            </script>
+            const chunk = file.slice(currentChunk * chunkSize, (currentChunk + 1) * chunkSize);
+            const formData = new FormData();
+            formData.append('file', chunk);
+            formData.append('chunkNumber', currentChunk + 1);
+            formData.append('totalChunks', totalChunks);
+            formData.append('filename', file.name);
+
+            const start = Date.now();
+
+            xhr = new XMLHttpRequest();
+            xhr.open('POST', "{% url 'store:app-upload-app' %}", true);
+            xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
+
+            xhr.upload.onprogress = function (e) {
+                if (e.lengthComputable) {
+                    const overallProgress = Math.round(((currentChunk * chunkSize + e.loaded) / file.size) * 100);
+                    document.getElementById('progress-bar').style.width = overallProgress + '%';
+                    document.getElementById('progress-bar').innerText = overallProgress + '%';
+
+                    // محاسبه سرعت آپلود
+                    const elapsed = (Date.now() - startTime) / 1000;
+                    const uploaded = currentChunk * chunkSize + e.loaded;
+                    const speed = (uploaded / 1024 / 1024 / elapsed).toFixed(2);
+                    document.getElementById('upload-speed').innerText = `سرعت: ${speed} مگابایت بر ثانیه`;
+                }
+            };
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const data = JSON.parse(xhr.responseText);
+                    currentChunk++;
+
+                    if (currentChunk < totalChunks && !uploadPaused) {
+                        uploadNextChunk();
+                    } else if (currentChunk >= totalChunks) {
+                        // آپلود کامل شد
+                        document.getElementById('progress-bar').classList.remove('active');
+                        document.getElementById('progress-bar').classList.add('progress-bar-success');
+                        document.getElementById('upload-speed').innerText = 'آپلود با موفقیت انجام شد!';
+                    }
+                } else {
+                    console.error('خطا در آپلود:', xhr.statusText);
+                }
+            };
+
+            xhr.onerror = function () {
+                console.error('خطا در اتصال شبکه');
+            };
+
+            xhr.send(formData);
+        }
+
+        function submitForm() {
+            if (currentChunk < totalChunks) {
+                alert('لطفاً صبر کنید تا آپلود فایل کامل شود.');
+                return false;
+            }
+            return true;
+        }
+    </script>
+
+    <script>
+        fetch('{% url "admin_panel:font_list_json" %}')
+            .then(response => response.json())
+            .then(fontList => {
+                const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
+                CKEDITOR.instances['{{ form.short_description.id_for_label }}'].destroy(true);
+
+                CKEDITOR.replace('{{ form.short_description.id_for_label }}', {
+                    toolbar: [
+                        ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
+                            'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
+                            'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
+                            'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
+                            'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
+                            'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
+                            'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
+                            'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
+                            'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
+                            'Styles', 'Format', 'Font', 'FontSize'],
+
+                    ],
+                    width: 750,
+                    height: 200,
+                    skin: 'moono',
+                    extraPlugins: 'font',
+                    contentsCss: ['{% url 'admin_panel:fonts.css' %}'],
+                    font_names: fontNamesStr +
+                        'Arial/Arial, Helvetica, sans-serif;' +
+                        'Courier New/Courier New, Courier, monospace;' +
+                        'Georgia/Georgia, serif;' +
+                        'Tahoma/Tahoma, Geneva, sans-serif;' +
+                        'Times New Roman/Times New Roman, Times, serif;' +
+                        'Verdana/Verdana, Geneva, sans-serif;'
+                });
+            });
+    </script>
 
 {% endblock %}

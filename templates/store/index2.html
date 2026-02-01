@@ -1,7 +1,8 @@
 {% extends 'Base/AdminBase.html' %}
 {% load jalali_tags %}
 {% load products_tags %}
- {% load compress static %}
+{% load compress static %}
+{% load thumbnail %}
 
 {% block title %}
     داشبورد
@@ -18,19 +19,19 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
     {% compress css %}
-    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
-    <!-- Bootstrap 3.3.7 -->
-    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
-    <!-- Bootstrap rtl -->
-    <link rel="stylesheet" href="/static/dist/css/rtl.css">
-    <link rel="stylesheet" href="/static/node_modules/ionicons/dist/css/ionicons.min.css">
-    <!-- jvectormap -->
-    <link rel="stylesheet" href="/static/node_modules/jvectormap/jquery-jvectormap.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
-    <!-- AdminLTE Skins. Choose a skin from the css/skins
-         folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+        <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+        <!-- Bootstrap 3.3.7 -->
+        <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+        <!-- Bootstrap rtl -->
+        <link rel="stylesheet" href="/static/dist/css/rtl.css">
+        <link rel="stylesheet" href="/static/node_modules/ionicons/dist/css/ionicons.min.css">
+        <!-- jvectormap -->
+        <link rel="stylesheet" href="/static/node_modules/jvectormap/jquery-jvectormap.css">
+        <!-- Theme style -->
+        <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+        <!-- AdminLTE Skins. Choose a skin from the css/skins
+             folder instead of downloading all of them to reduce the load. -->
+        <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
     {% endcompress %}
 
 
@@ -166,10 +167,11 @@
                                     <ul class="chart-legend clearfix" id="data-chart-views"
                                         data-total-number-of-views="{{ total_view }}">
                                         {% for view in views %}
-                                            
-                                            	
-                                            
-                                            <li data-value="{{ view.views_count }}" {% if forloop.counter > 8 %} style="display:none;" {% endif %} 
+
+
+
+                                            <li data-value="{{ view.views_count }}" {% if forloop.counter > 8 %}
+                                                style="display:none;" {% endif %}
                                                 data-color="{% cycle 'red' 'green' 'yellow' 'aqua' 'gray' '#0E2231' '#660e7a' '#4d06ff' %}">
                                                 <i class="fa fa-circle-o"
                                                    style="color: {% cycle 'red' 'green' 'yellow' 'aqua' 'gray' '#0E2231' '#660e7a' '#4d06ff' %} "></i>
@@ -223,9 +225,8 @@
                                     <li class="item">
                                         <div class="product-img">
                                             {% if item.picture %}
-                                            	
-                                            <img src="{{ item.picture.url }}">
-                                            {% endif %} 
+                                                <img src="{% thumbnail item.picture '50x50' %}" alt="" loading="lazy" class="img-thumbnail img-responsive">
+                                            {% endif %}
                                         </div>
                                         <div class="product-info">
                                             <a href="{% url 'product:detail' item.id %}"
@@ -287,29 +288,29 @@
                                     </thead>
                                     <tbody>
                                     {% for item in orders %}
-                                            <tr>
-                                                <td>
-                                        <a href="{% url 'store:orders-detail' item.id %}">{{ item.id }}
-                                        </a>
-                                                </td>
-                                                <td>{{ item.get_payment_price|tdc }}</td>
-                                                <td>
-                                                    {% if item.is_paid %}
-                                                        <span class="label label-success">پرداخت شده</span>
-                                                    {% elif item.canceled %}
-                                                        <span class="label label-danger">کنسل شده</span>
-                                                    {% else %}
-                                                        <span class="label label-warning">در انتظار</span>
-                                                    {% endif %}
-                                                </td>
-                                                <td>
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'store:orders-detail' item.id %}">{{ item.id }}
+                                                </a>
+                                            </td>
+                                            <td>{{ item.get_payment_price|tdc }}</td>
+                                            <td>
+                                                {% if item.is_paid %}
+                                                    <span class="label label-success">پرداخت شده</span>
+                                                {% elif item.canceled %}
+                                                    <span class="label label-danger">کنسل شده</span>
+                                                {% else %}
+                                                    <span class="label label-warning">در انتظار</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
                                                         <span dir="ltr">
                                                             {{ item.user.PhoneNumber }}
                                                         </span>
-                                                </td>
-                                                <td>{{ item.date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
-                                                <td>{{ item.second_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
-                                            </tr>
+                                            </td>
+                                            <td>{{ item.date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                                            <td>{{ item.second_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
+                                        </tr>
                                     {% endfor %}
 
                                     </tbody>
@@ -340,121 +341,121 @@
 
 {% block footer_reference %}
 
- {% compress js %}
-    <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
-    <script src="/static/node_modules/jquery-sparkline/jquery.sparkline.min.js"></script>
-    <script src="/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script src="/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-    <script src="/static/node_modules/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-    <script src="/static/dist/js/chartjs.js"></script>
-    <script src="/static/dist/js/pages/dashboard2.js"></script>
-    <script src="/static/dist/js/demo.js"></script>
+    {% compress js %}
+        <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
+        <script src="/static/node_modules/jquery-sparkline/jquery.sparkline.min.js"></script>
+        <script src="/static/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+        <script src="/static/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
+        <script src="/static/node_modules/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+        <script src="/static/dist/js/chartjs.js"></script>
+        <script src="/static/dist/js/pages/dashboard2.js"></script>
+        <script src="/static/dist/js/demo.js"></script>
         <script>
-// نمودار پای (Pie Chart) بدون متن
-var pieChartCanvas = document.getElementById('pieChart').getContext('2d');
-var PieData = [];
-var datas = document.getElementById('data-chart-views').children;
-var total_number_of_views = document.getElementById('data-chart-views').getAttribute('data-total-number-of-views');
+            // نمودار پای (Pie Chart) بدون متن
+            var pieChartCanvas = document.getElementById('pieChart').getContext('2d');
+            var PieData = [];
+            var datas = document.getElementById('data-chart-views').children;
+            var total_number_of_views = document.getElementById('data-chart-views').getAttribute('data-total-number-of-views');
 
-for (var data of datas) {
-    PieData.push({
-        data: [Math.round((parseInt(data.getAttribute('data-value')) / parseInt(total_number_of_views)) * 100)],
-        backgroundColor: data.getAttribute('data-color'),
-        borderColor: data.getAttribute('data-color'),
-        hoverBackgroundColor: data.getAttribute('data-color')
-    });
-}
-
-var pieChart = new Chart(pieChartCanvas, {
-    type: 'pie',
-    data: {
-        labels: [], // لیبل‌ها خالی می‌مانند
-        datasets: [{
-            data: PieData.map(item => item.data[0]),
-            backgroundColor: PieData.map(item => item.backgroundColor),
-            borderColor: PieData.map(item => item.borderColor),
-            hoverBackgroundColor: PieData.map(item => item.hoverBackgroundColor),
-            borderWidth: 1
-        }]
-    },
-    options: {
-    responsive: true,
-    plugins: {
-        legend: {
-            display: false
-        },
-        tooltip: {
-            callbacks: {
-                label: function(context) {
-                    return context.raw + '%';
-                }
+            for (var data of datas) {
+                PieData.push({
+                    data: [Math.round((parseInt(data.getAttribute('data-value')) / parseInt(total_number_of_views)) * 100)],
+                    backgroundColor: data.getAttribute('data-color'),
+                    borderColor: data.getAttribute('data-color'),
+                    hoverBackgroundColor: data.getAttribute('data-color')
+                });
             }
-        }
-    }
-}
-});
 
-// نمودار خطی (Sales Chart)
-var salesChartCanvas = document.getElementById('salesChart').getContext('2d');
-var chart_div_daily_sales = document.getElementById('chart_div_daily_sales').children;
-
-const dates_list = [];
-const price_list = [];
-
-for (var item of chart_div_daily_sales) {
-    dates_list.push(item.getAttribute('data-date'));
-    price_list.push(parseInt(item.getAttribute('data-price')));
-}
-
-var salesChart = new Chart(salesChartCanvas, {
-    type: 'line',
-    data: {
-        labels: dates_list,
-        datasets: [{
-            label: 'فروش',
-            data: price_list,
-            backgroundColor: 'rgba(230, 255, 0, 0.2)',
-            borderColor: 'rgba(171, 60, 188, 0.8)',
-            pointBackgroundColor: '#b2ba3b',
-            pointBorderColor: 'rgb(60, 244, 54)',
-            pointHoverBackgroundColor: '#f10909',
-            pointHoverBorderColor: 'rgb(60, 244, 54)',
-            borderWidth: 2,
-            tension: 0.1
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                display: true,
-                position: 'top',
-                rtl: true
-            },
-            tooltip: {
-                mode: 'index',
-                intersect: false
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    callback: function(value) {
-                        return value.toLocaleString() + ' تومان';
+            var pieChart = new Chart(pieChartCanvas, {
+                type: 'pie',
+                data: {
+                    labels: [], // لیبل‌ها خالی می‌مانند
+                    datasets: [{
+                        data: PieData.map(item => item.data[0]),
+                        backgroundColor: PieData.map(item => item.backgroundColor),
+                        borderColor: PieData.map(item => item.borderColor),
+                        hoverBackgroundColor: PieData.map(item => item.hoverBackgroundColor),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.raw + '%';
+                                }
+                            }
+                        }
                     }
                 }
-            },
-            x: {
-                grid: {
-                    display: false
-                }
+            });
+
+            // نمودار خطی (Sales Chart)
+            var salesChartCanvas = document.getElementById('salesChart').getContext('2d');
+            var chart_div_daily_sales = document.getElementById('chart_div_daily_sales').children;
+
+            const dates_list = [];
+            const price_list = [];
+
+            for (var item of chart_div_daily_sales) {
+                dates_list.push(item.getAttribute('data-date'));
+                price_list.push(parseInt(item.getAttribute('data-price')));
             }
-        }
-    }
-});
+
+            var salesChart = new Chart(salesChartCanvas, {
+                type: 'line',
+                data: {
+                    labels: dates_list,
+                    datasets: [{
+                        label: 'فروش',
+                        data: price_list,
+                        backgroundColor: 'rgba(230, 255, 0, 0.2)',
+                        borderColor: 'rgba(171, 60, 188, 0.8)',
+                        pointBackgroundColor: '#b2ba3b',
+                        pointBorderColor: 'rgb(60, 244, 54)',
+                        pointHoverBackgroundColor: '#f10909',
+                        pointHoverBorderColor: 'rgb(60, 244, 54)',
+                        borderWidth: 2,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            rtl: true
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return value.toLocaleString() + ' تومان';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
 
 
-    </script>
-{% endcompress %}
+        </script>
+    {% endcompress %}
 {% endblock %}

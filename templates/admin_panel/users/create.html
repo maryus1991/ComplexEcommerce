@@ -1,6 +1,6 @@
 {% extends 'Base/AdminBase.html' %}
  {% load compress static %}
-
+{% load thumbnail %}
 {% block title %}
     بروز رسانی یا اضافه کردن کاربر
 {% endblock %}
@@ -276,10 +276,15 @@
                             <!-- تصویر فروشگاه -->
                             <div class="col-md-4 text-center">
                                 <div class="thumbnail">
-                                    <img src="{% if item.store_image %}{{ item.store_image.url }} {% endif %}"
+
+
+
+                                    <img src="{% if item.store_image %} {% thumbnail item.store_image '200x200' %} {% endif %}"
                                          class="img-responsive img-rounded"
                                          alt=" عکس ( فروشگاه یا کارت ویزیت ) خالی می باشد "
-                                         style="max-height: 200px; margin: 0 auto;">
+                                         style="max-height: 200px; margin: 0 auto;" loading="lazy">
+
+
                                     <div class="caption">
                                         <small> عکس ( فروشگاه یا کارت ویزیت ) </small>
                                     </div>

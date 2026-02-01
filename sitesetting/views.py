@@ -39,6 +39,7 @@ from django.views.decorators.csrf import csrf_exempt
 import uuid
 from django.core.cache import cache
 from datetime import timedelta
+from easy_thumbnails.files import get_thumbnailer
 
 
 class SiteLawListView(ListView):
@@ -68,22 +69,46 @@ def robots_txt(request):
 
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
-
 def dynamic_favicon(request):
     try:
         site = SiteSetting.objects.first()
 
-        logo_path = site.logo.path
 
-        if logo_path:
-            with open(logo_path, 'rb') as f:
+        if site and site.logo:
+
+            thumbnail_options = {
+                'size': (32, 32),
+                'crop': 'center',
+                'quality': 90,
+                'format': 'PNG',
+                'optimize': True,
+            }
+
+
+            thumbnailer = get_thumbnailer(site.logo)
+            thumb = thumbnailer.get_thumbnail(thumbnail_options)
+
+
+            return HttpResponse(thumb.read(), content_type="image/png")
+
+        else:
+
+            default_path = BASE_DIR / '1111.jpg'
+            if default_path.exists():
+                with open(default_path, 'rb') as f:
+                    return HttpResponse(f.read(), content_type="image/png")
+            else:
+                raise FileNotFoundError
+
+    except Exception as e:
+
+        default_path = BASE_DIR / '1111.jpg'
+        if default_path.exists():
+            with open(default_path, 'rb') as f:
                 return HttpResponse(f.read(), content_type="image/png")
         else:
-            with open(BASE_DIR / '1111.jpg' ,'rb') as f:
-                return HttpResponse(f.read(), content_type="image/png")
-    except Exception as e:
-        with open(BASE_DIR / '1111.jpg', 'rb') as f:
-            return HttpResponse(f.read(), content_type="image/png")
+
+            return HttpResponse(status=404)
 
 
 class Main(TemplateView):

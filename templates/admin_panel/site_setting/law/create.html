@@ -1,5 +1,5 @@
 {% extends 'Base/AdminBase.html' %}
-
+{% load thumbnail %}
 {% block title %}
     اضافه کردن یا بروز رسانی قانون
 {% endblock %}
@@ -55,7 +55,7 @@
 
                     {{ form.name }}
                 </div>
-                
+
                 <div class="checkbox">
                     فعال کردن :
                     <label>
@@ -66,52 +66,52 @@
                 {{ form.description }}
             </div>
             <!-- /.box-body -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const id = 'id_description';
-    const el = document.getElementById(id);
-    if (el) {
-        fetch('{% url "admin_panel:font_list_json" %}')
-            .then(response => response.json())
-            .then(fontList => {
-                const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const id = 'id_description';
+                    const el = document.getElementById(id);
+                    if (el) {
+                        fetch('{% url "admin_panel:font_list_json" %}')
+                            .then(response => response.json())
+                            .then(fontList => {
+                                const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
 
-                // نابود کردن اگر قبلاً auto-init شده باشه
-                if (CKEDITOR.instances[id]) {
-                    CKEDITOR.instances[id].destroy(true);
-                }
+                                // نابود کردن اگر قبلاً auto-init شده باشه
+                                if (CKEDITOR.instances[id]) {
+                                    CKEDITOR.instances[id].destroy(true);
+                                }
 
-                CKEDITOR.replace(id, {
-                    toolbar: [
-            ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
-             'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
-             'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
-             'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
-             'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
-             'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
-             'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
-             'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
-             'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
-             'Styles', 'Format', 'Font', 'FontSize'],
+                                CKEDITOR.replace(id, {
+                                    toolbar: [
+                                        ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
+                                            'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
+                                            'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
+                                            'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
+                                            'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
+                                            'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
+                                            'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
+                                            'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
+                                            'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
+                                            'Styles', 'Format', 'Font', 'FontSize'],
 
-        ],
-                    width: 750,
-                    height: 200,
-                    skin: 'moono',
-                    extraPlugins: 'font',
-                    contentsCss: ['{% url "admin_panel:fonts.css" %}'],
-                    font_names: fontNamesStr +
-                        'Arial/Arial, Helvetica, sans-serif;' +
-                        'Courier New/Courier New, Courier, monospace;' +
-                        'Georgia/Georgia, serif;' +
-                        'Tahoma/Tahoma, Geneva, sans-serif;' +
-                        'Times New Roman/Times New Roman, Times, serif;' +
-                        'Verdana/Verdana, Geneva, sans-serif;'
+                                    ],
+                                    width: 750,
+                                    height: 200,
+                                    skin: 'moono',
+                                    extraPlugins: 'font',
+                                    contentsCss: ['{% url "admin_panel:fonts.css" %}'],
+                                    font_names: fontNamesStr +
+                                        'Arial/Arial, Helvetica, sans-serif;' +
+                                        'Courier New/Courier New, Courier, monospace;' +
+                                        'Georgia/Georgia, serif;' +
+                                        'Tahoma/Tahoma, Geneva, sans-serif;' +
+                                        'Times New Roman/Times New Roman, Times, serif;' +
+                                        'Verdana/Verdana, Geneva, sans-serif;'
+                                });
+                            });
+                    }
                 });
-            });
-    }
-});
-</script>
+            </script>
 
             <div class="box-footer">
                 <button type="submit" class="btn btn-primary">ارسال</button>
@@ -121,7 +121,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     {% if item and item.image.url %}
         عکس مورد استفاده :
-        <img src="{{ item.image.url }}" width="100px" height="100px" alt="">
+        {#        <img src="{{ item.image.url }}" width="100px" height="100px" alt="">#}
+
+        <img src="{% thumbnail item.image '100x100' %}" alt="" loading="lazy">
+
     {% endif %}
 
 {% endblock %}

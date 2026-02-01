@@ -1,5 +1,6 @@
 {% load products_tags %}
 {% load to_webp %}
+{% load thumbnail %}
 
 <head>
     {% block header %}
@@ -11,11 +12,11 @@
     <title>{{ title }}</title>
 
     <!-- آیکون‌ها -->
-    <link rel="icon" href="{{ site.logo.url }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ site.logo.url }}" type="image/x-icon">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ site.logo.url }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ site.logo.url }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ site.logo.url }}">
+    <link rel="icon" href="{% thumbnail site.logo '100x100' %}" type="image/x-icon">
+    <link rel="shortcut icon" href="{% thumbnail site.logo '100x100' %}" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% thumbnail site.logo '180x180' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% thumbnail site.logo '32x32' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% thumbnail site.logo '16x16' %}">
 
     <!-- توضیحات متا برای سئو -->
     <meta name="description" content="{{ site.short_description }}">
@@ -28,7 +29,7 @@
     <!-- Open Graph (برای فیسبوک، تلگرام، واتساپ و...) -->
     <meta property="og:title" content="{{ title }}">
     <meta property="og:description" content="{{ site.short_description }}">
-    <meta property="og:image" content="{{ site.logo.url }}">
+    <meta property="og:image" content="{% thumbnail site.logo '16x16' %}">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{ site.title }}">
@@ -37,7 +38,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ title }}">
     <meta name="twitter:description" content="{{ site.short_description }}">
-    <meta name="twitter:image" content="{{ site.logo.url }}">
+    <meta name="twitter:image" content="{% thumbnail site.logo '100x100' %}">
 
 
     <!-- Viewport برای موبایل -->
@@ -65,10 +66,10 @@
            class="flex items-center gap-x-1 dark:text-brown-300 text-brown-600 font-MorabbaMedium text-xl lg:text-3xl">
 
             <picture>
-                <source srcset="{{ site.logo.url|to_webp }}"
+                <source srcset="{% thumbnail site.logo '96x56' %}"
                         class="w-24 h-14 "
                         type="image/webp">
-                <img src="{{ site.logo.url }}" alt="{{ site.title }}"
+                <img src="{% thumbnail site.logo '96x56' %}" alt="{{ site.title }}"
                      class="w-24 h-14 "
                      loading="lazy">
             </picture>
@@ -314,11 +315,19 @@
                 <div class="flex items-center justify-between gap-4 border-b border-gray-200 pb-4 dark:border-white/10">
                     <a href="{% url 'product:detail' order.product.id %}" class="flex items-center gap-3 flex-grow">
                         <!-- Image -->
-                        <img
-                                src="{{ order.product.picture.url }}"
-                                class="w-20 h-20 object-cover rounded-lg"
-                                alt="{{ order.product.name }}"
-                        />
+{#                        <img#}
+{#                                src="{{ .url }}"#}
+{#                                class="w-20 h-20 object-cover rounded-lg"#}
+{#                                alt="{{ order.product.name }}"#}
+{#                        />#}
+                <picture>
+                    <source srcset="{% thumbnail order.product.picture '80x80' %}"
+                            class="w-20 h-20 object-cover rounded-lg"
+                            type="image/webp">
+                    <img src="{% thumbnail order.product.picture '80x80' %}" alt="{{ order.product.name }}"
+                         class="w-20 h-20 object-cover rounded-lg"
+                         loading="lazy">
+                </picture>
 
                         <!-- Text -->
                         <div class="flex items-center gap-x-1">
@@ -413,11 +422,11 @@
             <a href="/"
                class="flex items-center gap-x-1 dark:text-brown-300 text-brown-600 font-MorabbaMedium text-xl">
                 <picture>
-                    <source srcset="{{ site.logo.url|to_webp }}"
-                            class="w-20 h-15 rounded-full"
+                    <source srcset="{% thumbnail site.logo '96x56' %}"
+                            class="w-24 h-14 rounded-full"
                             type="image/webp">
-                    <img src="{{ site.logo.url }}" alt="{{ site.title }}"
-                         class="w-20 h-15 rounded-full"
+                    <img src="{% thumbnail site.logo '96x56' %}" alt="{{ site.title }}"
+                         class="w-24 h-14 rounded-full"
                          loading="lazy">
                 </picture>
 
@@ -562,15 +571,15 @@
     </div>
     <a href="/"
        class="flex items-center gap-x-1 dark:text-brown-300 text-brown-600 font-MorabbaMedium text-xl">
-        <picture>
-            <source srcset="{{ site.logo.url|to_webp }}"
-                    class="w-20 h-15 rounded-full"
-                    type="image/webp">
-            <img src="{{ site.logo.url }}" alt="{{ site.title }}"
-                 class="w-20 h-15 rounded-full"
-                 loading="lazy">
-        </picture>
 
+                <picture>
+                    <source srcset="{% thumbnail site.logo '96x56' %}"
+                            class="w-24 h-14 rounded-full"
+                            type="image/webp">
+                    <img src="{% thumbnail site.logo '96x56' %}" alt="{{ site.title }}"
+                         class="w-24 h-14 rounded-full"
+                         loading="lazy">
+                </picture>
 
     </a>
     <!-- OPEN SHOPPING CART BTN  -->

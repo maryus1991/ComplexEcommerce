@@ -1,6 +1,5 @@
+check the view of the admin panel
 
 
-compress the images
-fix the view of the admin panel
 fix the recapcha loading
 fix the seo

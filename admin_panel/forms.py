@@ -1335,6 +1335,7 @@ class SiteSettingModelForm(forms.ModelForm):
             'product_sort_by_brand_sort_number': forms.CheckboxInput(),
             'product_sort_by_existing_count': forms.CheckboxInput(),
             'active_freight_delivery': forms.CheckboxInput(),
+            'zero_the_count_of_all_product': forms.CheckboxInput(),
         }
 
 class BannersModelForm(forms.ModelForm):

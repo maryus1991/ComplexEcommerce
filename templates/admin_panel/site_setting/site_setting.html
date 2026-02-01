@@ -1,26 +1,26 @@
 {% extends 'Base/AdminBase.html' %}
 {% load compress static %}
-
+{% load thumbnail %}
 {% block title %}
     تغییر تنظیمات سایت
 {% endblock %}
 
 {% block header_reference %}
-{% compress css %}
-    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
-    <link rel="stylesheet" href="/static/dist/css/rtl.css">
-    <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
-    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
-    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
-    <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
-    <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
-    <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
-    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
-    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
-{% endcompress %}
+    {% compress css %}
+        <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+        <link rel="stylesheet" href="/static/dist/css/rtl.css">
+        <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
+        {#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
+        {#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
+        <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+        {#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
+        <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+        <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+        <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
+        <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
+        <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+        <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+    {% endcompress %}
 
 
 
@@ -788,174 +788,191 @@
 
                                         </div>
                                     </div>
+                                    <div class="col-md-4 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}>
+                                          <span>
+
+                                            {{ form.zero_the_count_of_all_product.label }}:
+
+                                            {{ form.zero_the_count_of_all_product }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
                                     <div class="">
-                                                                        <div class="col-md-8" dir="rtl">
-                                        <div class="input-group input-group">
+                                        <div class="col-md-4" dir="rtl">
+                                            <div class="input-group input-group">
                                         <span class="input-group-btn">
                                           <span class="btn btn-success">
                                             {{ form.number_or_rounding.label }}
 
                                           </span>
                                         </span>
-                                            {{ form.number_or_rounding }}
+                                                {{ form.number_or_rounding }}
+
+                                            </div>
 
                                         </div>
 
+
                                     </div>
-
- 
-
- 
-
                                 </div>
-                            </div>
-                            <p>
-                                ترتیب محصولات در صفحه لیست محصولات بر اساس :
-                            </p>
-                            <div class="col-md-12 form-group ">
-                                <div class="">
+                                <p>
+                                    ترتیب محصولات در صفحه لیست محصولات بر اساس :
+                                </p>
+                                <div class="col-md-12 form-group ">
+                                    <div class="">
 
-                                    <div class="col-md-3 no-padding" dir="rtl">
-                                        <div class="input-group">
+                                        <div class="col-md-3 no-padding" dir="rtl">
+                                            <div class="input-group">
                                           <span {% if not request.user_agent.is_mobile %}
                                               class="input-group-addon" {% endif %}
                                               style="background-color: #7f3ddb; color: white;">
                                             {{ form.product_sort_by_count.label }}:
                                             {{ form.product_sort_by_count }}
                                         </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-3 no-padding" dir="rtl">
-                                        <div class="input-group">
+                                        <div class="col-md-3 no-padding" dir="rtl">
+                                            <div class="input-group">
                                           <span {% if not request.user_agent.is_mobile %}
                                               class="input-group-addon" {% endif %}
                                               style="background-color: #db3d6c; color: white;">
                                             {{ form.product_sort_by_highest_price.label }}:
                                             {{ form.product_sort_by_highest_price }}
                                         </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-3 no-padding" dir="rtl">
-                                        <div class="input-group">
+                                        <div class="col-md-3 no-padding" dir="rtl">
+                                            <div class="input-group">
                                           <span {% if not request.user_agent.is_mobile %}
                                               class="input-group-addon" {% endif %}
                                               style="background-color: #db3d8f; color: white;">
                                             {{ form.product_sort_by_lowest_price.label }}:
                                             {{ form.product_sort_by_lowest_price }}
                                         </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-3 no-padding" dir="rtl">
-                                        <div class="input-group">
+                                        <div class="col-md-3 no-padding" dir="rtl">
+                                            <div class="input-group">
                                           <span {% if not request.user_agent.is_mobile %}
                                               class="input-group-addon" {% endif %}
                                               style="background-color: #dbc63d; color: white;">
                                             {{ form.product_sort_by_sort_number.label }}:
                                             {{ form.product_sort_by_sort_number }}
                                         </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-12 form-group ">
-                                <div class="">
+                                <div class="col-md-12 form-group ">
+                                    <div class="">
 
-                                    <div class="col-md-3 no-padding" dir="rtl">
-                                        <div class="input-group">
+                                        <div class="col-md-3 no-padding" dir="rtl">
+                                            <div class="input-group">
                                           <span {% if not request.user_agent.is_mobile %}
                                               class="input-group-addon" {% endif %}
                                               style="background-color: #7f3ddb; color: white;">
                                             {{ form.product_sort_by_category_sort_number.label }}:
                                             {{ form.product_sort_by_category_sort_number }}
                                         </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-3 no-padding" dir="rtl">
-                                        <div class="input-group">
+                                        <div class="col-md-3 no-padding" dir="rtl">
+                                            <div class="input-group">
                                           <span {% if not request.user_agent.is_mobile %}
                                               class="input-group-addon" {% endif %}
                                               style="background-color: #db3d6c; color: white;">
                                             {{ form.product_sort_by_brand_sort_number.label }}:
                                             {{ form.product_sort_by_brand_sort_number }}
                                         </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-3 no-padding" dir="rtl">
-                                        <div class="input-group">
+                                        <div class="col-md-3 no-padding" dir="rtl">
+                                            <div class="input-group">
                                           <span {% if not request.user_agent.is_mobile %}
                                               class="input-group-addon" {% endif %}
                                               style="background-color: #db3d8f; color: white;">
                                             {{ form.product_sort_by_existing_count.label }}:
                                             {{ form.product_sort_by_existing_count }}
                                         </span>
+                                            </div>
                                         </div>
+
                                     </div>
-
                                 </div>
-                            </div>
 
 
-                            <br>
-                            <br>
-                            {{ form.long_description }}
-                            {{ form.media }}
+                                <br>
+                                <br>
+                                {{ form.long_description }}
+                                {{ form.media }}
 
 
-                            <script>
-                                fetch('{% url "admin_panel:font_list_json" %}')
-                                    .then(response => response.json())
-                                    .then(fontList => {
-                                        const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
-                                        CKEDITOR.instances['{{ form.long_description.id_for_label }}'].destroy(true);
-                                        CKEDITOR.replace('{{ form.long_description.id_for_label }}', {
-                                            toolbar: [
-                                                ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
-                                                    'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
-                                                    'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
-                                                    'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
-                                                    'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
-                                                    'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
-                                                    'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
-                                                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
-                                                    'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
-                                                    'Styles', 'Format', 'Font', 'FontSize'],
+                                <script>
+                                    fetch('{% url "admin_panel:font_list_json" %}')
+                                        .then(response => response.json())
+                                        .then(fontList => {
+                                            const fontNamesStr = fontList.map(name => `${name}/${name}`).join(';') + ';';
+                                            CKEDITOR.instances['{{ form.long_description.id_for_label }}'].destroy(true);
+                                            CKEDITOR.replace('{{ form.long_description.id_for_label }}', {
+                                                toolbar: [
+                                                    ['Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-',
+                                                        'Templates', 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-',
+                                                        'Undo', 'Redo', 'Maximize', 'ShowBlocks', '-',
+                                                        'About', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat',
+                                                        'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField',
+                                                        'Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript',
+                                                        'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv',
+                                                        'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'Link', 'Unlink', 'Anchor',
+                                                        'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe',
+                                                        'Styles', 'Format', 'Font', 'FontSize'],
 
-                                            ],
-                                            width: 750,
-                                            height: 200,
-                                            skin: 'moono',
-                                            extraPlugins: 'font',
-                                            contentsCss: ['{% url 'admin_panel:fonts.css' %}'],
-                                            font_names: fontNamesStr +
-                                                'Arial/Arial, Helvetica, sans-serif;' +
-                                                'Courier New/Courier New, Courier, monospace;' +
-                                                'Georgia/Georgia, serif;' +
-                                                'Tahoma/Tahoma, Geneva, sans-serif;' +
-                                                'Times New Roman/Times New Roman, Times, serif;' +
-                                                'Verdana/Verdana, Geneva, sans-serif;'
+                                                ],
+                                                width: 750,
+                                                height: 200,
+                                                skin: 'moono',
+                                                extraPlugins: 'font',
+                                                contentsCss: ['{% url 'admin_panel:fonts.css' %}'],
+                                                font_names: fontNamesStr +
+                                                    'Arial/Arial, Helvetica, sans-serif;' +
+                                                    'Courier New/Courier New, Courier, monospace;' +
+                                                    'Georgia/Georgia, serif;' +
+                                                    'Tahoma/Tahoma, Geneva, sans-serif;' +
+                                                    'Times New Roman/Times New Roman, Times, serif;' +
+                                                    'Verdana/Verdana, Geneva, sans-serif;'
+                                            });
                                         });
-                                    });
-                            </script>
+                                </script>
 
-                            <div class="col-md-12">
-                                <br>
-                                <br>
-                                <br>
-                                <button type="submit" onclick="submitForm()" class="btn btn-success btn-block">ثبت
-                                </button>
-                            </div>
+                                <div class="col-md-12">
+                                    <br>
+                                    <br>
+                                    <br>
+                                    <button type="submit" onclick="submitForm()" class="btn btn-success btn-block">ثبت
+                                    </button>
+                                </div>
 
-                        </form>
+
+                        .</form>
                         {% if site.logo and site.about_image %}
 
                             عکس های ذخیره شده <br>برای عوض کردن انها عکس جدید اپلود کنید در غیر این صورت عکسی رو اپلود
                             نکنید
                             <br>
                             لوگو =>
-                            <img src="{{ site.logo.url }}" width="100px" height="100px" alt="">
+{#                            <img src="{{ site.logo.url }}" width="100px" height="100px" alt="">#}
+                            <img src="{% thumbnail site.logo '100x100' %}" alt="" loading="lazy">
+
                             <br>
                             عکس معرفی =>
-                            <img src="{{ site.about_image.url }}" width="100px" height="100px" alt="">
+{#                            <img src="{{ site.about_image.url }}" width="100px" height="100px" alt="">#}
+                            <img src="{% thumbnail site.about_image '100x100' %}" alt="" loading="lazy">
+
                         {% endif %}
 
                     </div>
@@ -971,125 +988,125 @@
 
 {% block footer_reference %}
     {% compress js %}
-    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
-    <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
-    <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
-    <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
-    <script src="/static/node_modules/moment/min/moment.min.js"></script>
-    <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
-    <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-    <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+        <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
+        <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
+        <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+        <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+        <script src="/static/node_modules/moment/min/moment.min.js"></script>
+        <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+        <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+        <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
 
 
 
-    <script>
-        $(document).ready(function () {
-            $('#tarikh').persianDatepicker({
-                altField: '#tarikhAlt',
-                altFormat: 'X',
-                format: 'D MMMM YYYY HH:mm a',
-                observer: true,
-                timePicker: {
-                    enabled: true
-                },
-            });
-        });
-        $(function () {
-            //Initialize Select2 Elements
-            $('.select2').select2()
-
-            //Datemask dd/mm/yyyy
-            $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
-            //Datemask2 mm/dd/yyyy
-            $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
-            //Money Euro
-            $('[data-mask]').inputmask()
-
-            //Date range picker
-            $('#reservation').daterangepicker()
-            //Date range picker with time picker
-            $('#reservationtime').daterangepicker({
-                timePicker: true,
-                timePickerIncrement: 30,
-                format: 'MM/DD/YYYY h:mm A'
-            })
-            //Date range as a button
-            $('#daterange-btn').daterangepicker(
-                {
-                    ranges: {
-                        'Today': [moment(), moment()],
-                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                        'This Month': [moment().startOf('month'), moment().endOf('month')],
-                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        <script>
+            $(document).ready(function () {
+                $('#tarikh').persianDatepicker({
+                    altField: '#tarikhAlt',
+                    altFormat: 'X',
+                    format: 'D MMMM YYYY HH:mm a',
+                    observer: true,
+                    timePicker: {
+                        enabled: true
                     },
-                    startDate: moment().subtract(29, 'days'),
-                    endDate: moment()
-                },
-                function (start, end) {
-                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
-                }
-            )
+                });
+            });
+            $(function () {
+                //Initialize Select2 Elements
+                $('.select2').select2()
 
-            //Date picker
-            $('#datepicker').datepicker({
-                autoclose: true
-            })
+                //Datemask dd/mm/yyyy
+                $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
+                //Datemask2 mm/dd/yyyy
+                $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
+                //Money Euro
+                $('[data-mask]').inputmask()
 
-            //iCheck for checkbox and radio inputs
-            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
-                checkboxClass: 'icheckbox_minimal-blue',
-                radioClass: 'iradio_minimal-blue'
-            })
-            //Red color scheme for iCheck
-            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
-                checkboxClass: 'icheckbox_minimal-red',
-                radioClass: 'iradio_minimal-red'
-            })
-            //Flat red color scheme for iCheck
-            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
-                checkboxClass: 'icheckbox_flat-green',
-                radioClass: 'iradio_flat-green'
-            })
+                //Date range picker
+                $('#reservation').daterangepicker()
+                //Date range picker with time picker
+                $('#reservationtime').daterangepicker({
+                    timePicker: true,
+                    timePickerIncrement: 30,
+                    format: 'MM/DD/YYYY h:mm A'
+                })
+                //Date range as a button
+                $('#daterange-btn').daterangepicker(
+                    {
+                        ranges: {
+                            'Today': [moment(), moment()],
+                            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                            'This Month': [moment().startOf('month'), moment().endOf('month')],
+                            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                        },
+                        startDate: moment().subtract(29, 'days'),
+                        endDate: moment()
+                    },
+                    function (start, end) {
+                        $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                    }
+                )
 
-            //Colorpicker
-            $('.my-colorpicker1').colorpicker()
-            //color picker with addon
-            $('.my-colorpicker2').colorpicker()
+                //Date picker
+                $('#datepicker').datepicker({
+                    autoclose: true
+                })
 
-            //Timepicker
-            $('.timepicker').timepicker({
-                showInputs: false
+                //iCheck for checkbox and radio inputs
+                $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                    checkboxClass: 'icheckbox_minimal-blue',
+                    radioClass: 'iradio_minimal-blue'
+                })
+                //Red color scheme for iCheck
+                $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                    checkboxClass: 'icheckbox_minimal-red',
+                    radioClass: 'iradio_minimal-red'
+                })
+                //Flat red color scheme for iCheck
+                $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                    checkboxClass: 'icheckbox_flat-green',
+                    radioClass: 'iradio_flat-green'
+                })
+
+                //Colorpicker
+                $('.my-colorpicker1').colorpicker()
+                //color picker with addon
+                $('.my-colorpicker2').colorpicker()
+
+                //Timepicker
+                $('.timepicker').timepicker({
+                    showInputs: false
+                })
             })
-        })
-    </script>
-    {#    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>#}
-    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
-{#    <script src="/dist/js/adminlte.min.js"></script>#}
-    <script src="/static/dist/js/demo.js"></script>
-    <script src="/static/node_modules/ckeditor/ckeditor.js"></script>
-    <script src="/static/node_modules/tinymce/tinymce.min.js"></script>
-    <script>
-        tinymce.init({
-            selector: 'textarea#mytextarea',
-            plugins: 'advlist autolink link lists preview table code pagebreak',
-            menubar: false,
-            language: 'fa',
-            height: 300,
-            relative_urls: false,
-            toolbar: 'undo redo | removeformat preview code | fontsizeselect bullist numlist | alignleft aligncenter alignright alignjustify | bold italic | pagebreak table link',
-        });
-        $(function () {
-            // Replace the <textarea id="editor1"> with a CKEditor
-            // instance, using default configuration.
-            CKEDITOR.replace('editor1')
-            //bootstrap WYSIHTML5 - text editor
-            $('.textarea').wysihtml5()
-        })
-    </script>
+        </script>
+        {#    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>#}
+        <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
+        {#    <script src="/dist/js/adminlte.min.js"></script>#}
+        <script src="/static/dist/js/demo.js"></script>
+        <script src="/static/node_modules/ckeditor/ckeditor.js"></script>
+        <script src="/static/node_modules/tinymce/tinymce.min.js"></script>
+        <script>
+            tinymce.init({
+                selector: 'textarea#mytextarea',
+                plugins: 'advlist autolink link lists preview table code pagebreak',
+                menubar: false,
+                language: 'fa',
+                height: 300,
+                relative_urls: false,
+                toolbar: 'undo redo | removeformat preview code | fontsizeselect bullist numlist | alignleft aligncenter alignright alignjustify | bold italic | pagebreak table link',
+            });
+            $(function () {
+                // Replace the <textarea id="editor1"> with a CKEditor
+                // instance, using default configuration.
+                CKEDITOR.replace('editor1')
+                //bootstrap WYSIHTML5 - text editor
+                $('.textarea').wysihtml5()
+            })
+        </script>
     {% endcompress %}
 {% endblock %}

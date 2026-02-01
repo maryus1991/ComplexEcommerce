@@ -1,25 +1,25 @@
 {% extends 'Base/AdminBase.html' %}
- {% load compress static %}
-
+{% load compress static %}
+{% load thumbnail %}
 {% block title %}
     بروز رسانی یا ساخت اسلایدر جدید
 {% endblock %}
 
 {% block header_reference %}
-{% compress css %}
-    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
-    <link rel="stylesheet" href="/static/dist/css/rtl.css">
-    <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
-    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
-    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
-    <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
-    <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
-    <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
-    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
-    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+    {% compress css %}
+        <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+        <link rel="stylesheet" href="/static/dist/css/rtl.css">
+        <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
+        {#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
+        {#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
+        <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+        {#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
+        <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+        <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+        <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
+        <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
+        <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+        <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
     {% endcompress %}
 {% endblock %}
 
@@ -70,33 +70,35 @@
                                     data-toggle="tooltip" title="" data-original-title="Collapse">
                                 <i class="fa fa-minus"></i></button>
                             {% if slider %}
-                            	 <td class="text-center">
-                            <a href="/" class="btn btn-sm btn-success"
-                               data-toggle="tooltip" title="مشاهده">
-                                <i class="fa fa-eye"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:sliders-update' slider.id %}" class="btn btn-sm btn-info"
-                               data-toggle="tooltip" title="ویرایش">
-                                <i class="fa fa-edit"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:sliders-active-deactivate' slider.id %}"
-                               class="btn btn-sm btn-warning"
-                               data-toggle="tooltip"
-                               title="{% if slider.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
-                                <i class="fa fa-power-off"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'admin_panel:sliders-delete' slider.id %}" class="btn btn-sm btn-danger"
-                               data-toggle="tooltip" title="حذف">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </td>
-                            {% endif %} 
+                                <td class="text-center">
+                                    <a href="/" class="btn btn-sm btn-success"
+                                       data-toggle="tooltip" title="مشاهده">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{% url 'admin_panel:sliders-update' slider.id %}"
+                                       class="btn btn-sm btn-info"
+                                       data-toggle="tooltip" title="ویرایش">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{% url 'admin_panel:sliders-active-deactivate' slider.id %}"
+                                       class="btn btn-sm btn-warning"
+                                       data-toggle="tooltip"
+                                       title="{% if slider.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                        <i class="fa fa-power-off"></i>
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a href="{% url 'admin_panel:sliders-delete' slider.id %}"
+                                       class="btn btn-sm btn-danger"
+                                       data-toggle="tooltip" title="حذف">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </td>
+                            {% endif %}
 
                         </div>
                         <!-- /. tools -->
@@ -134,7 +136,7 @@
 
                                         </div>
 
-                                    </div>                                    
+                                    </div>
                                     <div class="col-md-4" dir="rtl">
                                         <div class="input-group input-group">
                                         <span class="input-group-btn">
@@ -222,11 +224,13 @@
 
                         </form>
                         {% if slider %}
-                        	
-                        عکس اپلود شده <br>
-                        برای عوض کردن ان عکس جدید را اپلود کنید
-                        <img height="100px" width="200px" src="{{ slider.image.url }}" alt="">
-                        {% endif %} 
+
+                            عکس اپلود شده <br>
+                            برای عوض کردن ان عکس جدید را اپلود کنید
+{#                            <img height="100px" width="200px" src="{{ slider.image.url }}" alt="">#}
+                            <img src="{% thumbnail slider.image '200x200' %}" alt="" loading="lazy">
+
+                        {% endif %}
 
                     </div>
                 </div>
@@ -241,125 +245,125 @@
 
 {% block footer_reference %}
     {% compress js %}
-    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
-    <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
-    <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
-    <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
-    <script src="/static/node_modules/moment/min/moment.min.js"></script>
-    <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
-    <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-    <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+        <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
+        <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
+        <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+        <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+        <script src="/static/node_modules/moment/min/moment.min.js"></script>
+        <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+        <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+        <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
 
 
 
-    <script>
-        $(document).ready(function () {
-            $('#tarikh').persianDatepicker({
-                altField: '#tarikhAlt',
-                altFormat: 'X',
-                format: 'D MMMM YYYY HH:mm a',
-                observer: true,
-                timePicker: {
-                    enabled: true
-                },
-            });
-        });
-        $(function () {
-            //Initialize Select2 Elements
-            $('.select2').select2()
-
-            //Datemask dd/mm/yyyy
-            $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
-            //Datemask2 mm/dd/yyyy
-            $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
-            //Money Euro
-            $('[data-mask]').inputmask()
-
-            //Date range picker
-            $('#reservation').daterangepicker()
-            //Date range picker with time picker
-            $('#reservationtime').daterangepicker({
-                timePicker: true,
-                timePickerIncrement: 30,
-                format: 'MM/DD/YYYY h:mm A'
-            })
-            //Date range as a button
-            $('#daterange-btn').daterangepicker(
-                {
-                    ranges: {
-                        'Today': [moment(), moment()],
-                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                        'This Month': [moment().startOf('month'), moment().endOf('month')],
-                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        <script>
+            $(document).ready(function () {
+                $('#tarikh').persianDatepicker({
+                    altField: '#tarikhAlt',
+                    altFormat: 'X',
+                    format: 'D MMMM YYYY HH:mm a',
+                    observer: true,
+                    timePicker: {
+                        enabled: true
                     },
-                    startDate: moment().subtract(29, 'days'),
-                    endDate: moment()
-                },
-                function (start, end) {
-                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
-                }
-            )
+                });
+            });
+            $(function () {
+                //Initialize Select2 Elements
+                $('.select2').select2()
 
-            //Date picker
-            $('#datepicker').datepicker({
-                autoclose: true
-            })
+                //Datemask dd/mm/yyyy
+                $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
+                //Datemask2 mm/dd/yyyy
+                $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
+                //Money Euro
+                $('[data-mask]').inputmask()
 
-            //iCheck for checkbox and radio inputs
-            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
-                checkboxClass: 'icheckbox_minimal-blue',
-                radioClass: 'iradio_minimal-blue'
-            })
-            //Red color scheme for iCheck
-            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
-                checkboxClass: 'icheckbox_minimal-red',
-                radioClass: 'iradio_minimal-red'
-            })
-            //Flat red color scheme for iCheck
-            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
-                checkboxClass: 'icheckbox_flat-green',
-                radioClass: 'iradio_flat-green'
-            })
+                //Date range picker
+                $('#reservation').daterangepicker()
+                //Date range picker with time picker
+                $('#reservationtime').daterangepicker({
+                    timePicker: true,
+                    timePickerIncrement: 30,
+                    format: 'MM/DD/YYYY h:mm A'
+                })
+                //Date range as a button
+                $('#daterange-btn').daterangepicker(
+                    {
+                        ranges: {
+                            'Today': [moment(), moment()],
+                            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                            'This Month': [moment().startOf('month'), moment().endOf('month')],
+                            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                        },
+                        startDate: moment().subtract(29, 'days'),
+                        endDate: moment()
+                    },
+                    function (start, end) {
+                        $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                    }
+                )
 
-            //Colorpicker
-            $('.my-colorpicker1').colorpicker()
-            //color picker with addon
-            $('.my-colorpicker2').colorpicker()
+                //Date picker
+                $('#datepicker').datepicker({
+                    autoclose: true
+                })
 
-            //Timepicker
-            $('.timepicker').timepicker({
-                showInputs: false
+                //iCheck for checkbox and radio inputs
+                $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                    checkboxClass: 'icheckbox_minimal-blue',
+                    radioClass: 'iradio_minimal-blue'
+                })
+                //Red color scheme for iCheck
+                $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                    checkboxClass: 'icheckbox_minimal-red',
+                    radioClass: 'iradio_minimal-red'
+                })
+                //Flat red color scheme for iCheck
+                $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                    checkboxClass: 'icheckbox_flat-green',
+                    radioClass: 'iradio_flat-green'
+                })
+
+                //Colorpicker
+                $('.my-colorpicker1').colorpicker()
+                //color picker with addon
+                $('.my-colorpicker2').colorpicker()
+
+                //Timepicker
+                $('.timepicker').timepicker({
+                    showInputs: false
+                })
             })
-        })
-    </script>
-    {#    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>#}
-    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
-{#    <script src="/dist/js/adminlte.min.js"></script>#}
-    <script src="/static/dist/js/demo.js"></script>
-    <script src="/static/node_modules/ckeditor/ckeditor.js"></script>
-    <script src="/static/node_modules/tinymce/tinymce.min.js"></script>
-    <script>
-        tinymce.init({
-            selector: 'textarea#mytextarea',
-            plugins: 'advlist autolink link lists preview table code pagebreak',
-            menubar: false,
-            language: 'fa',
-            height: 300,
-            relative_urls: false,
-            toolbar: 'undo redo | removeformat preview code | fontsizeselect bullist numlist | alignleft aligncenter alignright alignjustify | bold italic | pagebreak table link',
-        });
-        $(function () {
-            // Replace the <textarea id="editor1"> with a CKEditor
-            // instance, using default configuration.
-            CKEDITOR.replace('editor1')
-            //bootstrap WYSIHTML5 - text editor
-            $('.textarea').wysihtml5()
-        })
-    </script>
+        </script>
+        {#    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>#}
+        <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
+        {#    <script src="/dist/js/adminlte.min.js"></script>#}
+        <script src="/static/dist/js/demo.js"></script>
+        <script src="/static/node_modules/ckeditor/ckeditor.js"></script>
+        <script src="/static/node_modules/tinymce/tinymce.min.js"></script>
+        <script>
+            tinymce.init({
+                selector: 'textarea#mytextarea',
+                plugins: 'advlist autolink link lists preview table code pagebreak',
+                menubar: false,
+                language: 'fa',
+                height: 300,
+                relative_urls: false,
+                toolbar: 'undo redo | removeformat preview code | fontsizeselect bullist numlist | alignleft aligncenter alignright alignjustify | bold italic | pagebreak table link',
+            });
+            $(function () {
+                // Replace the <textarea id="editor1"> with a CKEditor
+                // instance, using default configuration.
+                CKEDITOR.replace('editor1')
+                //bootstrap WYSIHTML5 - text editor
+                $('.textarea').wysihtml5()
+            })
+        </script>
     {% endcompress %}
 {% endblock %}

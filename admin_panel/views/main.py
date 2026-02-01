@@ -14,7 +14,7 @@ from sitesetting.models import FastLinks, QuestionAndAnswer
 from django.contrib import messages
 # import psutil
 # from django.http.response import JsonResponse
-from product.models import Product
+from product.models import Product, ProductViews
 from orders.models import Order, StoreSoldOrders
 from django.db.models import Count, Sum, Case, When, IntegerField
 from django.utils.timezone import timedelta, now
@@ -39,10 +39,6 @@ from admin_panel.models import DailyViewCount
 class HomePageView(AdminUserMixin, TemplateView):
     template_name = "admin_panel/index2.html"
 
-    from django.db.models import Count, Sum, Case, When, IntegerField
-    from django.db.models.functions import TruncDate
-    from datetime import timedelta
-    from django.utils.timezone import now
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -57,21 +53,20 @@ class HomePageView(AdminUserMixin, TemplateView):
             '-views_count'
         ).values('name', 'views_count')
 
-        context['views'] = views_qs
+        context['views'] = views_qs[0:10]
         total_view = views_qs.aggregate(total=Sum('views_count'))['total'] or 0
         context['total_view'] = total_view
+
 
 
         today = now().date()
         yesterday = today - timedelta(days=1)
 
-        total_view = total_view
 
-        DailyViewCount.objects.update_or_create(date=today,
-                                                defaults={
-                                                    'count':
-                                                        total_view
-                                                })
+        today_start = now().replace(hour=0, minute=0, second=0, microsecond=0)
+
+        sum_of_the_views_today = ProductViews.objects.filter(created_at__gte=today_start).count()
+        DailyViewCount.objects.update_or_create(date=today,defaults={'count':sum_of_the_views_today})
 
         yesterday_view = DailyViewCount.objects.filter(date=yesterday).first()
         yesterday_count = yesterday_view.count if yesterday_view else 0
