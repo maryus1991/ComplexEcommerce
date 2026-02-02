@@ -265,14 +265,14 @@
                             {% if product.picture %}
                                 <div class="flex-shrink-0 w-full snap-center">
                                     <img src="{% thumbnail product.picture '384x384' %}"
-                                         alt="{{ product.name }}" loading="lazy"
+                                         alt="{{ product.name }}" loading="lazy" width="384" height="384"
                                          class="w-full h-auto rounded-lg object-cover">
                                 </div>
                             {% endif %}
                             {% if product.parent %}
                                 {% for img in product.parent.gallery|sort_number %}
                                     <div class="flex-shrink-0 w-full snap-center">
-                                        <img src="{% thumbnail img.image '384x384' %}"
+                                        <img src="{% thumbnail img.image '384x384' %}"  width="384" height="384"
                                              alt="{{ product.parent.name }}" loading="lazy"
                                              class="w-full h-auto rounded-lg object-cover">
                                     </div>
@@ -281,7 +281,7 @@
                                 {% for img in product.gallery|sort_number %}
                                     <div class="flex-shrink-0 w-full snap-center">
                                         <img src="{% thumbnail img.image '384x384' %}"
-                                             alt="{{ product.name }}" loading="lazy"
+                                             alt="{{ product.name }}" loading="lazy"  width="384" height="384"
                                              class="w-full h-auto rounded-lg object-cover">
                                     </div>
                                 {% endfor %}
@@ -1061,7 +1061,7 @@
                             <picture>
                                 {% if product.picture %}
                                     <source srcset="{% thumbnail product.picture '200x200' %}" type="image/webp">
-                                    <img src="{% thumbnail product.picture '200x200' %}" alt="{{ product.name }}"
+                                    <img src="{% thumbnail product.picture '200x200' %}" alt="{{ product.name }}"  width="200" height="200"
                                          class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
                                          loading="lazy">
                                 {% endif %}
@@ -1078,8 +1078,7 @@
 
                                 {% if request.user.is_authenticated and user.colleague_user %}
 
-                                    <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
-                                        {{ product|colleague:request }}
+<p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                        {{ product|colleague:request }}
                                         <span class="font-Dana text-sm">تومان</span>
                                     </p>
                                     <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
@@ -1088,13 +1087,11 @@
                                     </del>
                                 {% else %}
                                     {% if not product.have_discount %}
-                                        <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
-                                            {{ product.price|tdc }}
+<p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                            {{ product.price|tdc }}
                                             <span class="font-Dana text-sm">تومان</span>
                                         </p>
                                     {% else %}
-                                        <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
-                                            {{ product.price|clac_discount:product.discount }}
+<p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                            {{ product.price|clac_discount:product.discount }}
                                             <span class="font-Dana text-sm">تومان</span>
                                         </p>
                                         <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
@@ -1112,7 +1109,7 @@
                         <div class="flex items-center justify-between px-2 lg:px-4 mb-3">
                             <div class="flex items-center gap-x-2 child:transition-all child:duration-300">
                                 {% if product.id in user_favorite %}
-                                    <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}">
+                                    <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}" aria-label=" حذف از محصولات مورد علاقه">
                                     <span class="hover:text-red-600">
                                         <svg class="w-4 h-4">
                                             <use href="#close"></use>
@@ -1120,7 +1117,7 @@
                                     </span>
                                     </a>
                                 {% else %}
-                                    <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}">
+                                    <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}" aria-label=" اضافه به محصولات مورد علاقه">
                                     <span class="hover:text-green-600">
                                         <svg class="w-4 h-4">
                                             <use href="#heart"></use>

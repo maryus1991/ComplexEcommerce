@@ -244,6 +244,7 @@ def dynamic_fonts_css(request):
 @font-face {{
     font-family: '{name}';
     src: url('{url}');
+    font-display: swap;
 }}
 """
     return HttpResponse(css, content_type='text/css')

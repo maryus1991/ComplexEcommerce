@@ -53,7 +53,7 @@
                         </svg>
                         <p class="font-DanaMedium text-gray-800 dark:text-white">فیلترها</p>
                     </span>
-                    <button type="reset" class="text-green-500 hover:text-green-600 transition-colors text-sm">حذف همه
+                    <button type="reset" class="text-zinc-900 dark:text-white hover:text-green-500 dark:hover:text-green-500 transition-colors text-sm">حذف همه
                     </button>
                 </div>
 
@@ -65,7 +65,7 @@
                 <!-- Add your filter components here -->
 
                 <button type="submit"
-                        class="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-DanaMedium transition-colors">
+                        class="mt-4 px-4 py-2 text-zinc-900 dark:text-white hover:bg-green-600 bg-green-500  rounded-lg font-DanaMedium transition-colors">
                     اعمال فیلترها
                 </button>
             </form>
@@ -97,7 +97,7 @@
                                                 <picture>
                                                     <source srcset="{% thumbnail app.image '64x64' %}"
                                                             type="image/webp">
-                                                    <img src="{% thumbnail app.image '64x64' %}" alt="{{ app.name }}"
+                                                    <img src="{% thumbnail app.image '64x64' %}" alt="{{ app.name }}" width="64" height="64"
                                                          class="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:border-gray-600"
                                                          loading="lazy">
                                                 </picture>

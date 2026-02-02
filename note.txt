@@ -1,5 +1,10 @@
-check the view of the admin panel
+
+add Microdata for every thing
+
+warning Links are not crawlable
+warning The page Meta Description is not optimized. Fix it!
+Title Coherence
+warning This title is not optimized. Fix it!
+Google Snippet
 
 
-fix the recapcha loading
-fix the seo

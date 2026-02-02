@@ -7,8 +7,8 @@
 
 {% compress css %}
 <link rel="stylesheet" href="/static/styles/app.css"/>
-<link rel="stylesheet" href="/static/styles/swiper.css"/>
-<link rel="stylesheet" href="/static/styles/swiper.css"/>
+<link rel="stylesheet" href="/static/styles/swiper.css" media="print" onload="this.media='all'"/>
+
 {% endcompress %}
 
 <link rel="stylesheet" href="{% url 'site:fonts.css' %}"/>

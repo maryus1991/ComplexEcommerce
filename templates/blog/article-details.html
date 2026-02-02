@@ -16,7 +16,7 @@
         </svg>
     </li>
     <li class="flex items-center gap-x-2">
-        <a>جزییات مقاله </a>
+        <p>جزییات مقاله </p>
     </li>
 {% endblock %}
 
@@ -84,7 +84,7 @@
                                 class="rounded-lg "
                                 type="image/webp">
                         <img src="{% thumbnail post.image '900x600' %}" alt="{{ post.title }}"
-                             class="rounded-lg "
+                             class="rounded-lg "  width="900" height="600"
                              loading="lazy">
                     </picture>
 
@@ -98,7 +98,7 @@
             <div
                     class="top-2 lg:sticky w-full lg:w-1/4 child:rounded-lg child:bg-white child:dark:bg-zinc-700 child:shadow child:p-4 space-y-5 child:flex child:flex-col child:gap-y-4">
                 <div>
-                    <h4 class="font-DanaMedium">جدیدترین مقالات : </h4>
+                    <h2 class="font-DanaMedium">جدیدترین مقالات : </h2>
                     <ul class="w-full child:flex child:items-center child:gap-x-2 child:cursor-pointer space-y-4 ">
                         {% for last_post in last_posts %}
                             <li>
@@ -108,13 +108,13 @@
                                                 class="w-24 h-16 object-cover rounded-lg"
                                                 type="image/webp">
                                         <img src="{% thumbnail last_post.image '96x64' %} " alt="{{ last_post.title }}"
-                                             class="w-24 h-16 object-cover rounded-lg"
+                                             class="w-24 h-16 object-cover rounded-lg"  width="96" height="64"
                                              loading="lazy">
                                     </picture>
                                 </a>
                                 <a href="{% url 'blog:detail' last_post.id %}" class="flex flex-col gap-y-2 ">
                                     <p class="line-clamp-1">{{ last_post.title }}</p>
-                                    <span class="flex items-center gap-x-1 text-sm text-gray-400">
+                                    <span class="flex items-center gap-x-1 text-sm text-zinc-900 dark:text-white">
                                     <svg class="w-4 h-4 mb-1">
                                         <use href="#calendar"></use>
                                     </svg>
@@ -125,7 +125,7 @@
                         {% endfor %}
 
                     </ul>
-                    <a href="{% url 'blog:list' %}" class="main-btn py-1.5 gap-x-1">مشاهده بیشتر
+                    <a href="{% url 'blog:list' %}" class="main-btn py-1.5 gap-x-1 text-zinc-900 dark:text-white">مشاهده بیشتر
                         <svg class="w-4 h-4">
                             <use href="#chevron-left"></use>
                         </svg>
@@ -140,7 +140,7 @@
                             <li class="group">
                                 <a href="{% url 'blog:list' %}?category={{ category.id }}"
                                    class="flex items-center justify-center gap-x-1 group-hover:pr-2 duration-300 transition-all group-hover:text-green-500">
-                                    <p>{{ category.name }}</p>
+                                    <p class="text-zinc-900 dark:text-white"> {{ category.name }}</p>
                                     <svg class="w-4 h-4">
                                         <use href="#chevron-left"></use>
                                     </svg>

@@ -392,13 +392,13 @@
                     <ul
                             class="flex items-center  gap-x-2 lg:gap-x-5 child:transition-all child:cursor-pointer child-hover:bg-gray-300/30 child:rounded-lg child:px-1 child:py-1 child:text-sm sm:child:text-base">
                         <li>
-                            <a onclick="updateOrdering(1); return false;">محبوب ترین</a>
+                            <a aria-label="محبوب ترین" href="#" onclick="updateOrdering(1); return false;">محبوب ترین</a>
                         </li>
                         <li>
-                            <a onclick="updateOrdering(2); return false;">جدید ترین</a>
+                            <a aria-label="جدید ترین" href="#" onclick="updateOrdering(2); return false;">جدید ترین</a>
                         </li>
                         <li>
-                            <a onclick="updateOrdering(3); return false;">پربازدید ترین</a>
+                            <a aria-label="پربازدید ترین" href="#" onclick="updateOrdering(3); return false;">پربازدید ترین</a>
                         </li>
 
                         <script>
@@ -443,19 +443,19 @@
                     {% for post in posts %}
                         <div class="group">
                             <div class="relative overflow-hidden rounded-lg">
-                                <a href="{% url 'blog:detail' post.id %}">
+                                <a href="{% url 'blog:detail' post.id %}" aria-label="{{ post.title }}">
                                     <picture>
-                                        <source srcset="{{ post.image.url|to_webp }}"
+                                        <source srcset="{% thumbnail post.image '384x384' %}"
                                                 class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
                                                 type="image/webp">
-                                        <img src="{{ post.image.url }}" alt="{{ post.title }}"
+                                        <img src="{% thumbnail post.image '384x384' %}" alt="{{ post.title }}"  width="384" height="384"
                                              class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
                                              loading="lazy">
                                     </picture>
-                                    <a href="{% url 'blog:detail' post.id %}">
+                                    <a href="{% url 'blog:detail' post.id %}" aria-label="{{ post.title }}">
                                         <div
                                                 class="absolute opacity-0 left-0 top-0 bottom-0 right-0 bg-black/60 flex items-center justify-center group-hover:opacity-100 duration-300 transition-all rounded-bl-3xl rounded-tr-3xl">
-                                            <a href="{% url 'blog:detail' post.id %}"
+                                            <a href="{% url 'blog:detail' post.id %}" aria-label="{{ post.title }}"
                                                class="flex items-center px-2 py-1 gap-x-1 font-DanaMedium rounded-lg border-2 border-white text-white">
                                                 <p>ادامه مطالب</p>
                                                 <svg class="w-4 h-4">
@@ -467,7 +467,7 @@
                                 </a>
 
                             </div>
-                            <a href="{% url 'blog:detail' post.id %}">
+                            <a href="{% url 'blog:detail' post.id %}" aria-label="{{ post.title }}">
                                 <div class="flex flex-col gap-y-1 my-2 px-1">
                                     <h2 class="font-DanaDemiBold">{{ post.title|truncatewords:5 }}</h2>
                                 </div>
@@ -477,10 +477,10 @@
                                 <svg class="w-4 h-4">
                                     <use href="#calendar"></use>
                                 </svg>
-                                <p class="mt-1">{{ post.updated_at|to_jalali:'%Y/%m/%d' }}</p>
+                                <p class="mt-1 font-DanaDemiBold text-zinc-700 dark:text-white">{{ post.updated_at|to_jalali:'%Y/%m/%d' }}</p>
                             </span>
                                     <span class="flex items-start gap-x-1 text-gray-400">
-                                <p class="font-DanaDemiBold">{{ post.view_count }}</p>
+                                <p class="font-DanaDemiBold text-zinc-700 dark:text-white">{{ post.view_count }}</p>
                                 <svg class="w-4 h-4">
                                     <use href="#eye"></use>
                                 </svg>

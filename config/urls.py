@@ -47,8 +47,8 @@ sitemaps.update(site_sitemaps)
 
 urlpatterns += [
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
-    path("sitemap1.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
-    path("sitemap2.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
-    path("sitemap3.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
+    path("sitemap1.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap1"),
+    path("sitemap2.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap2"),
+    path("sitemap3.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap3"),
     path("robots.txt", robots_txt, name="robots-txt"),
 ]

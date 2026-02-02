@@ -47,16 +47,26 @@
     <!-- زبان صفحه -->
     <meta http-equiv="Content-Language" content="fa">
 
-    {% if 'product/?' in request.path %}
-        <link rel="canonical" href="https://amvajsarmad.com/product/"/>
-    {% endif %}
+{# صفحات لیست محصول، اپ‌ها و بلاگ: canonical همیشه به نسخه بدون پارامتر #}
+{% if request.path == '/product/' or request.path == '/apps/' or request.path == '/blog/' %}
+    <link rel="canonical" href="https://amvajsarmad.com{{ request.path }}"/>
+{% endif %}
 
+{# صفحات دانلود اپ: self-referencing canonical (به URL کامل خودش، با query اگر داشته باشه) #}
+{% if request.path|slice:":15" == "/apps/download/" %}
+    <link rel="canonical" href="https://amvajsarmad.com{{ request.get_full_path }}"/>
+{% endif %}
+
+{# صفحات کاربر (لاگین، ریجستر، ریست پسورد و ...): noindex کامل #}
+{% if request.path|slice:":6" == "/user/" %}
+    <meta name="robots" content="noindex, nofollow">
+{% endif %}
     <!-- charset -->
     <meta charset="utf-8">
 
 </head>
 
-<body class="font-Dana bg-[#f3f4f6] text-zinc-900 dark:bg-zinc-900 dark:text-white overflow-x-hidden transition-all">
+<body class="font-Dana bg-[#f3f4f6] dark:bg-zinc-900 text-zinc-900  dark:text-white overflow-x-hidden transition-all">
 
 <!-- NAV BAR  -->
 <nav class="w-full hidden md:flex shadow py-5 bg-white dark:bg-zinc-700">
@@ -70,7 +80,7 @@
                         class="w-24 h-14 "
                         type="image/webp">
                 <img src="{% thumbnail site.logo '96x56' %}" alt="{{ site.title }}"
-                     class="w-24 h-14 "
+                     class="w-24 h-14 " width="96" height="56"
                      loading="lazy">
             </picture>
 
@@ -140,8 +150,8 @@
             <!-- TOGGLE BTN -->
 
 
-            <button class="toggle-theme" id="toggle-theme-odkqwpdkp" onclick="themToggle()">
-                <svg class="inline-block dark:hidden w-6 h-6">
+<button class="toggle-theme" id="toggle-theme-odkqwpdkp" onclick="themToggle()" aria-label="Toggle Dark Mode">
+    <svg class="inline-block dark:hidden w-6 h-6">
                     <use href="#moon"></use>
                 </svg>
                 <svg class="hidden dark:inline w-6 h-6">
@@ -183,14 +193,14 @@
             </button>
             <!-- SEARCH BTN -->
             <form action="{% url 'product:list' %}">
-                <button class="group relative flex justify-end">
+                <button class="group relative flex justify-end" aria-label="Submit Search">
                     <svg class="w-6 h-6">
                         <use href="#search"/>
                     </svg>
                     <div class="absolute top-20 flex items-center w-[350px] bg-white dark:bg-zinc-600 rounded-full opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:top-10 transition-all delay-100 child:rounded-full px-2 border dark:border-none border-gray-100 shadow py-1">
                         <input type="text" name="search" placeholder="نام محصول یا فروشگاه..."
                                class="bg-transparent w-full p-2"/>
-                        <a type="submit" class="bg-green-500  text-white text-sm py-2 px-3">جستجو</a>
+                        <input placeholder="جستجو" value="جستجو" type="submit" class="bg-green-500 rounded-circle  text-white text-sm py-2 px-3">
                     </div>
                 </button>
             </form>
@@ -294,14 +304,14 @@
 <!-- SHOPPING CART -->
 <div
         class="shopping-cart fixed -left-72 top-0 bottom-0 w-72 bg-white dark:bg-zinc-700 z-50 shadow transition-all duration-300 px-4">
-    <div class="flex items-center justify-between mt-4">
-        <h2 class="font-DanaMedium">سبد خرید</h2>
-        <a href="" class="close-shopping-cart__btn">
-            <svg class="w-6 h-6">
-                <use href="#close"/>
-            </svg>
-        </a>
-    </div>
+<div class="flex items-center justify-between mt-4">
+    <h2 class="font-DanaMedium">سبد خرید</h2>
+    <a href="#" class="close-shopping-cart__btn" aria-label="بستن سبد خرید">
+        <svg class="w-6 h-6">
+            <use href="#close"/>
+        </svg>
+    </a>
+</div>
     <!-- BORDER -->
     <span class="flex w-full border-t dark:border-white/10 border-gray-200 my-5"></span>
     <!-- ITEMS CART -->
@@ -315,17 +325,13 @@
                 <div class="flex items-center justify-between gap-4 border-b border-gray-200 pb-4 dark:border-white/10">
                     <a href="{% url 'product:detail' order.product.id %}" class="flex items-center gap-3 flex-grow">
                         <!-- Image -->
-{#                        <img#}
-{#                                src="{{ .url }}"#}
-{#                                class="w-20 h-20 object-cover rounded-lg"#}
-{#                                alt="{{ order.product.name }}"#}
-{#                        />#}
+
                 <picture>
                     <source srcset="{% thumbnail order.product.picture '80x80' %}"
                             class="w-20 h-20 object-cover rounded-lg"
                             type="image/webp">
                     <img src="{% thumbnail order.product.picture '80x80' %}" alt="{{ order.product.name }}"
-                         class="w-20 h-20 object-cover rounded-lg"
+                         class="w-20 h-20 object-cover rounded-lg" width="80" height="80"
                          loading="lazy">
                 </picture>
 
@@ -426,7 +432,7 @@
                             class="w-24 h-14 rounded-full"
                             type="image/webp">
                     <img src="{% thumbnail site.logo '96x56' %}" alt="{{ site.title }}"
-                         class="w-24 h-14 rounded-full"
+                         class="w-24 h-14 rounded-full" width="96" height="56"
                          loading="lazy">
                 </picture>
 
@@ -577,7 +583,7 @@
                             class="w-24 h-14 rounded-full"
                             type="image/webp">
                     <img src="{% thumbnail site.logo '96x56' %}" alt="{{ site.title }}"
-                         class="w-24 h-14 rounded-full"
+                         class="w-24 h-14 rounded-full" width="96" height="56"
                          loading="lazy">
                 </picture>
 

@@ -237,10 +237,12 @@ class ProductDetailView(DetailView):
                 admin_verified=True,
                 brand__is_active=True,
                 category__is_active=True,
-            ).prefetch_related("features", 'brand', 'category', 'favorite', 'comments', 'gallery', 'store', "tags", "specs", "child", 'parent').first()
+            ).prefetch_related("features", 'brand', 'category', 'favorite', 'comments', 'gallery', 'store', "tags", "specs", "child", 'parent')
 
+        if not product_obj.exists():
+            raise Http404()
 
-        return product_obj
+        return product_obj.first()
 
     def get_context_data(self, **kwargs):
 

@@ -162,7 +162,7 @@
                                             <source class="w-full h-full object-cover"
                                                     srcset="{% thumbnail Slider.image '394x192' %}" type="image/webp">
                                             <img src="{% thumbnail Slider.image '394x192' %}"
-                                                 class="w-full h-full object-cover"
+                                                 class="w-full h-full object-cover" width="394" height="192"
                                                  alt="{{ Slider.link }}" loading="lazy">
                                         </picture>
                                     {% else %}
@@ -170,7 +170,7 @@
                                             <source class="w-full h-full object-cover"
                                                     srcset="{% thumbnail Slider.image '1850x450' %}" type="image/webp">
                                             <img src="{% thumbnail Slider.image '1850x450' %}"
-                                                 class="w-full h-full object-cover"
+                                                 class="w-full h-full object-cover" width="1850" height="450"
                                                  alt="{{ Slider.link }}" loading="lazy">
                                         </picture>
                                     {% endif %}
@@ -249,25 +249,15 @@
 
                         <a href="{% url 'product:list' %}?category={{ category.id }}" class="rounded-full">
 
-{#                            {% if request.user_agent.is_mobile %}#}
-{#                                <picture>#}
-{#                                    <source srcset="{% thumbnail category.image '100x100' %}"#}
-{#                                            class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
-{#                                            type="image/webp">#}
-{#                                    <img src="{% thumbnail category.image '100x100' %}" alt="{{ category.name }}"#}
-{#                                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
-{#                                         loading="lazy">#}
-{#                                </picture>#}
-{#                            {% else %}#}
-                                <picture>
-                                    <source srcset="{% thumbnail category.image '200x200' %}"
-                                            class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                                            type="image/webp">
-                                    <img src="{% thumbnail category.image '200x200' %}" alt="{{ category.name }}"
-                                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                                         loading="lazy">
-                                </picture>
-{#                            {% endif %}#}
+                            <picture>
+                                <source srcset="{% thumbnail category.image '200x200' %}"
+                                        class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
+                                        type="image/webp">
+                                <img src="{% thumbnail category.image '200x200' %}" alt="{{ category.name }}"
+                                     class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
+                                     loading="lazy" width="200" height="200">
+                            </picture>
+
 
 
                             <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
@@ -300,34 +290,16 @@
 
 
                         <a href="{% url 'product:list' %}?brand={{ category.id }}" class="rounded-full">
-{#                         {% if request.user_agent.is_mobile %}#}
-{#                                <picture>#}
-{#                                    <source srcset="{% thumbnail category.image '100x100' %}"#}
-{#                                            class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
-{#                                            type="image/webp">#}
-{#                                    <img src="{% thumbnail category.image '100x100' %}" alt="{{ category.name }}"#}
-{#                                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
-{#                                         loading="lazy">#}
-{#                                </picture>#}
-{#                            {% else %}#}
-                                <picture>
-                                    <source srcset="{% thumbnail category.image '200x200' %}"
-                                            class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                                            type="image/webp">
-                                    <img src="{% thumbnail category.image '200x200' %}" alt="{{ category.name }}"
-                                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                                         loading="lazy">
-                                </picture>
-{#                            {% endif %}#}
 
-{#                            <picture>#}
-{#                                <source srcset="{{ category.image.url|to_webp }}"#}
-{#                                        class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
-{#                                        type="image/webp">#}
-{#                                <img src="{{ category.image.url }}" alt="{{ category.name }}"#}
-{#                                     class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
-{#                                     loading="lazy">#}
-{#                            </picture>#}
+                            <picture>
+                                <source srcset="{% thumbnail category.image '200x200' %}"
+                                        class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
+                                        type="image/webp">
+                                <img src="{% thumbnail category.image '200x200' %}" alt="{{ category.name }}"
+                                     class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
+                                     loading="lazy" width="200" height="200">
+                            </picture>
+
                             <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
                                 {{ category.name }}
                             </p>
@@ -356,33 +328,16 @@
                         class="flex items-center justify-evenly lg:justify-between flex-wrap mt-10 child:mb-8 gap-x-8 child:flex child:items-center child:flex-col child-hover:-translate-y-5 child:duration-300 child:cursor-pointer child:gap-y-2.5">
                     {% for category in categories_blog %}
                         <a href="{% url 'blog:list' %}?category={{ category.id }}" class="rounded-full">
-{#                                                 {% if request.user_agent.is_mobile %}#}
-{#                                <picture>#}
-{#                                    <source srcset="{% thumbnail category.image '100x100' %}"#}
-{#                                            class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
-{#                                            type="image/webp">#}
-{#                                    <img src="{% thumbnail category.image '100x100' %}" alt="{{ category.name }}"#}
-{#                                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
-{#                                         loading="lazy">#}
-{#                                </picture>#}
-{#                            {% else %}#}
-                                <picture>
-                                    <source srcset="{% thumbnail category.image '200x200' %}"
-                                            class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                                            type="image/webp">
-                                    <img src="{% thumbnail category.image '200x200' %}" alt="{{ category.name }}"
-                                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                                         loading="lazy">
-                                </picture>
-{#                            {% endif %}#}
-{#                            <picture>#}
-{#                                <source srcset="{{ category.image.url|to_webp }}"#}
-{#                                        class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
-{#                                        type="image/webp">#}
-{#                                <img src="{{ category.image.url }}" alt="{{ category.name }}"#}
-{#                                     class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"#}
-{#                                     loading="lazy">#}
-{#                            </picture>#}
+
+                            <picture>
+                                <source srcset="{% thumbnail category.image '200x200' %}"
+                                        class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
+                                        type="image/webp">
+                                <img src="{% thumbnail category.image '200x200' %}" alt="{{ category.name }}"
+                                     class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
+                                     loading="lazy" width="200" height="200">
+                            </picture>
+
                             <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
                                 {{ category.name }}
                             </p>
@@ -436,9 +391,10 @@
                                             <source srcset="{% thumbnail product.picture '200x200' %}"
                                                     class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
                                                     type="image/webp">
-                                            <img src="{% thumbnail product.picture '200x200' %}" alt="{{ product.name }}"
+                                            <img src="{% thumbnail product.picture '200x200' %}"
+                                                 alt="{{ product.name }}"
                                                  class="group-hover:scale-105 duration-300 w-full h-full lg:w-48 lg:h-48 mx-auto mb-3"
-                                                 loading="lazy">
+                                                 loading="lazy" width="200" height="200">
                                         {% endif %}
                                     </picture>
 
@@ -452,7 +408,7 @@
                                     </a>
                                     <div class="flex items-center gap-x-1 lg:gap-x-3">
                                         {% if product.have_discount %}
-                                            <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
+                                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
                                                 {{ product.calc_discount|tdc }}
                                                 <span class="font-Dana text-sm">تومان</span>
                                             </p>
@@ -461,7 +417,7 @@
                                                 <span class="">تومان</span>
                                             </del>
                                         {% else %}
-                                            <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
+                                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
                                                 {{ product.price|tdc }}
                                                 <span class="font-Dana text-sm">تومان</span>
                                             </p>
@@ -522,7 +478,8 @@
                                             <source srcset="{% thumbnail product.picture '200x200' %}"
                                                     class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
                                                     type="image/webp">
-                                            <img src="{% thumbnail product.picture '200x200' %}" alt="{{ product.name }}"
+                                            <img src="{% thumbnail product.picture '200x200' %}"
+                                                 alt="{{ product.name }}" width="200" height="200"
                                                  class="group-hover:scale-105 duration-300 w-full h-full lg:w-48 lg:h-48 mx-auto mb-3"
                                                  loading="lazy">
                                         {% endif %}
@@ -536,8 +493,7 @@
                                     </a>
                                     <div class="flex items-center gap-x-1 lg:gap-x-3">
                                         {% if product.have_discount %}
-                                            <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
-                                                {{ product.calc_discount|tdc }}
+                                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                                {{ product.calc_discount|tdc }}
                                                 <span class="font-Dana text-sm">تومان</span>
                                             </p>
                                             <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
@@ -545,8 +501,7 @@
                                                 <span class="">تومان</span>
                                             </del>
                                         {% else %}
-                                            <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
-                                                {{ product.price|tdc }}
+                                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                                {{ product.price|tdc }}
                                                 <span class="font-Dana text-sm">تومان</span>
                                             </p>
                                         {% endif %}
@@ -637,7 +592,8 @@
                                                 <source srcset="{% thumbnail product.picture '200x200' %}"
                                                         class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
                                                         type="image/webp">
-                                                <img src="{% thumbnail product.picture '200x200' %}" alt="{{ product.name }}"
+                                                <img src="{% thumbnail product.picture '200x200' %}"
+                                                     alt="{{ product.name }}" width="200" height="200"
                                                      class="group-hover:scale-105 duration-300 w-full h-full lg:w-48 lg:h-48 mx-auto mb-3"
                                                      loading="lazy">
                                             {% endif %}
@@ -651,8 +607,7 @@
                                         </a>
                                         <div class="flex items-center gap-x-1 lg:gap-x-3">
                                             {% if product.have_discount %}
-                                                <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
-                                                    {{ product.calc_discount|tdc }}
+                                                <p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                                    {{ product.calc_discount|tdc }}
                                                     <span class="font-Dana text-sm">تومان</span>
                                                 </p>
                                                 <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
@@ -660,8 +615,7 @@
                                                     <span class="">تومان</span>
                                                 </del>
                                             {% else %}
-                                                <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
-                                                    {{ product.price|tdc }}
+                                                <p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                                    {{ product.price|tdc }}
                                                     <span class="font-Dana text-sm">تومان</span>
                                                 </p>
                                             {% endif %}
@@ -713,7 +667,7 @@
                                                 type="image/webp">
                                         <img src="{% thumbnail blog.image '200x200' %}" alt="{{ blog.title }}"
                                              class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
-                                             loading="lazy">
+                                             loading="lazy" width="200" height="200">
                                     </picture>
 
                                 </a>

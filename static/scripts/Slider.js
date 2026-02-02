@@ -1,5 +1,7 @@
 // HEADER SLIDER
 var swiper = new Swiper(".mySwiper", {
+    observer: true,
+  observeParents: true,
   slidesPerView : 1,
   spaceBetween : 20 ,
   autoplay: {
@@ -17,6 +19,8 @@ var swiper = new Swiper(".mySwiper", {
 
 // Latest Products 
 var swiper = new Swiper(".LatestProducts", {
+    observer: true,
+  observeParents: true,
   slidesPerView: 1,
   spaceBetween: 30,
   breakpoints: {
@@ -59,6 +63,8 @@ var swiper = new Swiper(".LatestProducts", {
 
 // Best-selling SLIDER
 var swiper = new Swiper(".BestSelling", {
+    observer: true,
+  observeParents: true,
   slidesPerView: 1,
   spaceBetween: 30,
   breakpoints: {
@@ -102,6 +108,8 @@ var swiper = new Swiper(".BestSelling", {
 
 // Offer
 var swiper = new Swiper(".offerSlider", {
+    observer: true,
+  observeParents: true,
   slidesPerView: 1,
   spaceBetween: 30,
   loop : true ,
@@ -137,6 +145,8 @@ var swiper = new Swiper(".offerSlider", {
 
 
 var swiper = new Swiper(".porduct-details-slider", {
+    observer: true,
+  observeParents: true,
   spaceBetween: 20,
   pagination: {
     el: ".swiper-pagination",

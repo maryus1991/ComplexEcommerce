@@ -8,7 +8,6 @@ import os
 from wsgiref.util import FileWrapper
 from mimetypes import guess_type
 from django.db.models import Q
-from django.shortcuts import Http404
 from orders.models import OrderDetail
 from .forms import ContactForm
 from .models import (
@@ -23,9 +22,8 @@ SiteLaw
 from ipware import get_client_ip
 from stores.models import StoreApps
 from stores.models import UsedAppView as UsedAppViewModel
-from user.mixins.logins import CustomLoginRequiredMixin
 from config.settings import BASE_DIR
-from user.forms import ActiveAccountFormWITHRecaptchaWithoutEmail as NumberForAddToLettersForm
+from user.forms import NumberForAddToLettersForm
 from urllib.parse import quote
 from product.models import Product, ProductCategory, ProductBrand
 from blog.models import Blog, BlogCategory
@@ -38,7 +36,6 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 import uuid
 from django.core.cache import cache
-from datetime import timedelta
 from easy_thumbnails.files import get_thumbnailer
 
 
@@ -61,6 +58,10 @@ def robots_txt(request):
 
     # اجازه ایندکس بقیه مسیرها
     lines.append("Allow: /")
+    lines.append("Sitemap: https://amvajsarmad.com/sitemap.xml")
+    lines.append("Sitemap: https://amvajsarmad.com/sitemap1.xml")
+    lines.append("Sitemap: https://amvajsarmad.com/sitemap2.xml")
+    lines.append("Sitemap: https://amvajsarmad.com/sitemap3.xml")
 
     # لینک کامل sitemap با پروتکل صحیح
     sitemap_url = request.build_absolute_uri(reverse("sitemap"))
@@ -334,8 +335,6 @@ class ValidateRecaptchaView(View):
                 "action": result.get("action"),
                 "error": result.get("error-codes"),
             }, status=403)
-
-
 
 
 class DownloadUsedAppView(View):

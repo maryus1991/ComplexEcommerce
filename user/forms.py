@@ -577,6 +577,31 @@ class ActiveAccountFormWITHRecaptchaWithoutEmail(forms.Form):
                 )
 
 
+class NumberForAddToLettersForm(forms.Form):
+    """
+    for activating account
+    """
+
+    phone_number = PhoneNumberField(
+        required=True,
+        widget=forms.NumberInput(
+            attrs={
+                "class": "appearance-none bg-transparent w-full py-3",
+                "placeholder": "شماره همراه",
+                "autocomplete": "tel",
+                'dir':"rtl"
+            }
+        ),
+    )
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data["phone_number"]
+        validate_phonenumber(phone_number)
+        return phone_number
+
+
+
+
 class LoginWithOTPPhoneNumber(forms.Form):
     """
     for activating account
