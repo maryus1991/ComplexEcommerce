@@ -20,7 +20,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <!-- عنوان صفحه -->
     <title>{{ title }}</title>
     <script type="application/ld+json">
-        {{ microdata }}
+        {{
+            microdata
+        }}
     </script>
 
     <!-- آیکون‌ها -->
@@ -333,104 +335,161 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
     <!-- BORDER -->
     <span class="flex w-full border-t dark:border-white/10 border-gray-200 my-5"></span>
-    <!-- ITEMS CART -->
-    {% if orders.exists %}
-
-    <div class="flex flex-col gap-y-4">
-        {% for order in orders.all %}
 
 
-        <!-- ITEM -->
-        <div class="flex items-center justify-between gap-4 border-b border-gray-200 pb-4 dark:border-white/10">
-            <a href="{% url 'product:detail' order.product.id %}" class="flex items-center gap-3 flex-grow">
-                <!-- Image -->
 
+<!-- ITEMS CART -->
+{% if orders.exists %}
+<div class="flex flex-col gap-y-4 pb-20">  <!-- Added padding-bottom for button -->
+    {% for order in orders.all %}
+    <!-- ITEM -->
+    <div class="flex items-center justify-between gap-4 border-b border-gray-200 pb-4 dark:border-white/10">
+        <a href="{% url 'product:detail' order.product.id %}" class="flex items-center gap-4 flex-grow group">
+            <!-- Image -->
+            <div class="relative flex-shrink-0">
                 <picture>
-                    <source srcset="{% thumbnail order.product.picture '80x80' %}"
-                            class="w-20 h-20 object-cover rounded-lg"
-                            type="image/webp">
-                    <img src="{% thumbnail order.product.picture '80x80' %}" alt="{{ order.product.name }}"
-                         class="w-20 h-20 object-cover rounded-lg" width="80" height="80"
+                    <source srcset="{% thumbnail order.product.picture '80x80' %}" type="image/webp">
+                    <img src="{% thumbnail order.product.picture '80x80' %}"
+                         alt="{{ order.product.name }}"
+                         class="w-20 h-20 object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+                         width="80"
+                         height="80"
                          loading="lazy">
                 </picture>
 
-                <!-- Text -->
-                <div class="flex items-center gap-x-1">
+                <!-- Quantity Badge -->
+                <span class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                    {{ order.count }}
+                </span>
+            </div>
+
+            <!-- Product Info -->
+            <div class="flex flex-col flex-grow">
+                <!-- Product Name -->
+                <h3 class="font-DanaDemiBold text-sm lg:text-base text-gray-800 dark:text-gray-200 line-clamp-1 mb-1">
+                    {{ order.product.name }}
+                </h3>
+
+                <!-- Price Section -->
+                <div class="flex items-center gap-2 flex-wrap">
                     {% if user.is_authenticated and user.colleague_user %}
-                    <p class="text-2xl font-DanaDemiBold">{{ order.product|colleague:request }}</p>
-                    <p class="">تومان</p>
-                    <br>
-                    <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
-                        {{ order.product.price|tdc }}
-                        <span class="font-Dana text-sm">تومان</span>
-                    </del>
-                    {% else %}
-                    {% if order.product.have_discount %}
-                    <p class="text-2xl font-DanaDemiBold">{{ order.product.price|clac_discount:order.product.discount
-                        }}</p>
-                    <p class="">تومان</p>
-                    <br>
-                    <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
-                        {{ order.product.price|tdc }}
-                        <span class="font-Dana text-sm">تومان</span>
-                    </del>
-                    {% else %}
-                    <p class="text-2xl font-DanaDemiBold">{{ order.product.price|tdc }}</p>
-                    <p class="">تومان</p>
-                    {% endif %}
-                    {% endif %}
+                        <!-- Colleague Price -->
+                        <div class="flex items-center gap-1">
+                            <span class="text-xl font-DanaDemiBold text-emerald-600 dark:text-emerald-400">
+                                {{ order|colleague_header }}
+                            </span>
+                            <span class="text-sm text-gray-600 dark:text-gray-300">تومان</span>
+                        </div>
 
+                        <!-- Original Price -->
+                        <del class="text-xs lg:text-sm text-rose-500 dark:text-rose-400 hidden lg:inline">
+                            {{ order.get_item_price|tdc }}
+                        </del>
+
+                    {% else %}
+                        {% if order.product.have_discount %}
+                            <!-- Discount Price -->
+                            <div class="flex items-center gap-1">
+                                <span class="text-xl font-DanaDemiBold text-emerald-600 dark:text-emerald-400">
+                                    {{ order.get_item_price|tdc }}
+                                </span>
+                                <span class="text-sm text-gray-600 dark:text-gray-300">تومان</span>
+                            </div>
+
+                            <!-- Original Price -->
+                            <del class="text-xs lg:text-sm text-rose-500 dark:text-rose-400 hidden lg:inline">
+                                {{ order.get_item_price_without_discount|tdc }}
+                            </del>
+
+                            <!-- Discount Badge -->
+                            <span class="bg-rose-100 text-rose-700 text-xs px-2 py-1 rounded-full dark:bg-rose-900 text-red-600">
+                                تخفیف ویژه
+                            </span>
+                        {% else %}
+                            <!-- Regular Price -->
+                            <div class="flex items-center gap-1">
+                                <span class="text-xl font-DanaDemiBold text-gray-800 dark:text-gray-200">
+                                    {{ order.get_item_price|tdc }}
+                                </span>
+                                <span class="text-sm text-gray-600 dark:text-gray-300">تومان</span>
+                            </div>
+                        {% endif %}
+                    {% endif %}
                 </div>
-            </a>
 
-            <!-- Delete button -->
-            <a href="{% url 'orders:remove' order.id %}"
-               type="button"
-               class="text-red-500 hover:text-red-700 transition-colors p-2"
-               aria-label="حذف محصول"
-            >
+
+            </div>
+        </a>
+
+        <!-- Delete Form -->
+        <form action="{% url 'orders:remove' order.id %}" method="POST" class="flex-shrink-0">
+            {% csrf_token %}
+            <button type="submit"
+                    class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300
+                           transition-colors p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
+                    aria-label="حذف محصول از سبد خرید"
+                    onclick="return confirm('آیا از حذف «{{ order.product.name }}» از سبد خرید مطمئنید؟')">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                      stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                 </svg>
-            </a>
-        </div>
-        {% endfor %}
-
+            </button>
+        </form>
     </div>
-    <div class="w-full  absolute bottom-4 flex  place-items-end scroll-m-3 gap-x-10">
-        <!-- BORDER -->
+    {% endfor %}
+
+    <!-- Total Summary -->
+    <div class="sticky bottom-0 bg-white dark:bg-zinc-700 border-t   p-4 mt-4">
+
+
+        <!-- Order Button -->
         <a href="{% url 'dashboard:orders' %}"
-           class="py-2  px-3 rounded-lg transition-colors  bg-green-500 hover:bg-green-600 dark:hover:bg-green-600 text-white">
-            ثبت سفارش
+           class="block w-full py-3 px-4 rounded-lg transition-colors text-center
+                  bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700
+                  text-white font-DanaDemiBold shadow-lg hover:shadow-xl">
+            ثبت سفارش ({{ orders.count }} محصول)
         </a>
-
     </div>
+</div>
 
-
-    {% else %}
-
-    <div class="flex flex-col items-center justify-center py-8">
-        <div class="flex flex-col items-center gap-3 text-red-400">
-            <!-- Shopping Cart Icon -->
-            <svg class="w-12 h-12 text-red-400/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+{% else %}
+<!-- Empty Cart -->
+<div class="flex flex-col items-center justify-center py-12">
+    <!-- Shopping Cart Icon -->
+    <div class="relative mb-6">
+        <svg class="w-24 h-24 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <div class="absolute inset-0 flex items-center justify-center">
+            <svg class="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
-
-            <!-- Message -->
-            <p class="text-lg font-medium text-center">سبد خرید شما خالی میباشد</p>
-
-            <!-- Optional: Add a button to continue shopping -->
-            <a href="{% url 'product:list' %}"
-               class="mt-4 px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
-                بازگشت به فروشگاه
-            </a>
         </div>
     </div>
-    {% endif %}
 
+    <!-- Message -->
+    <p class="text-xl font-DanaDemiBold text-gray-700 dark:text-gray-300 mb-2">سبد خرید شما خالی است</p>
+    <p class="text-gray-500 dark:text-gray-400 text-center mb-8 max-w-md">
+        هنوز محصولی به سبد خرید خود اضافه نکرده‌اید. برای مشاهده محصولات و شروع خرید روی دکمه زیر کلیک کنید.
+    </p>
+
+    <!-- Button to continue shopping -->
+    <div class="flex gap-4">
+        <a href="{% url 'product:list' %}"
+           class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700
+                  transition-colors font-DanaDemiBold shadow-md hover:shadow-lg">
+            مشاهده محصولات
+        </a>
+        <a href="/"
+           class="px-8 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200
+                  rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-Dana">
+            بازگشت به صفحه اصلی
+        </a>
+    </div>
+</div>
+{% endif %}
     <!-- PRICE BTN -->
 </div>
 <!-- MOBILE NAVBAR -->
@@ -609,12 +668,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     </a>
     <!-- OPEN SHOPPING CART BTN  -->
-    <button class="open-shopping-cart__btn" title="سبد خرید">
+    <button class="open-shopping-cart__btn relative" title="سبد خرید">
+        {% if orders.exists %}
+
+        <span
+                class="absolute -top-2 -right-2 w-4 h-4 text-[10px] flex items-center justify-center bg-red-500 text-white rounded-full">
+                {{ orders.count }}
+                </span>
+        {% endif %}
         <svg class="w-6 h-6">
             <use href="#shopping-cart"/>
         </svg>
     </button>
 </nav>
+
 <script>
     document.getElementById("toggle-theme-mobile").addEventListener("click", function () {
         themToggle();

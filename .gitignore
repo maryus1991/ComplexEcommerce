@@ -24,7 +24,6 @@ data.json
 post_data.json
 ssl/*
 mailserver/
-default.conf
 snappymail/
 
 

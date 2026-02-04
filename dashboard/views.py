@@ -33,12 +33,16 @@ from .models import UserAddress, Ticket, TicketConversation
 from sitesetting.models import SiteSetting
 from utils.find_city import search_city
 from django.utils.timezone import datetime
+from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
+
+
 User = get_user_model()
 
 
 # Create your views here.
 
-
+@method_decorator(never_cache, name='dispatch')
 class UserSettingDashboard(LoginRequiredMixin, TemplateView):
     """
     for Show user settings
@@ -71,7 +75,7 @@ class UserSettingDashboard(LoginRequiredMixin, TemplateView):
 
         return context
 
-
+@method_decorator(never_cache, name='dispatch')
 class Dashboard(LoginRequiredMixin, TemplateView):
     """
     Create user dashboard
@@ -105,7 +109,7 @@ class Dashboard(LoginRequiredMixin, TemplateView):
 
 
 # return order
-
+@method_decorator(never_cache, name='dispatch')
 class ReturnOrderView(LoginRequiredMixin, View):
     """for send return order request"""
 
@@ -159,7 +163,7 @@ class ReturnOrderView(LoginRequiredMixin, View):
             )
         return redirect('dashboard:orders-returns-list')
 
-
+@method_decorator(never_cache, name='dispatch')
 class ReturnsOrderListView(LoginRequiredMixin, ListView):
     """for return order list"""
 
@@ -170,7 +174,7 @@ class ReturnsOrderListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return super().get_queryset().filter(user=self.request.user).order_by("-id")
 
-
+@method_decorator(never_cache, name='dispatch')
 class ReturnsOrderDelete(LoginRequiredMixin, RedirectView):
     """for return order detail"""
 
@@ -209,7 +213,7 @@ class ReturnsOrderDelete(LoginRequiredMixin, RedirectView):
 
 # order section in dashboard
 
-
+@method_decorator(never_cache, name='dispatch')
 class OrdersHistoryDashboard(LoginRequiredMixin, ListView):
     """
     for Show user orders history
@@ -224,7 +228,7 @@ class OrdersHistoryDashboard(LoginRequiredMixin, ListView):
             user=self.request.user,
         ).order_by("-id")
 
-
+@method_decorator(never_cache, name='dispatch')
 class OrdersDetailHistoryDashboard(LoginRequiredMixin, ListView):
     """
     for Show user orders history
@@ -260,7 +264,7 @@ class OrdersDetailHistoryDashboard(LoginRequiredMixin, ListView):
 
         return context
 
-
+@method_decorator(never_cache, name='dispatch')
 class GenerateOrderInvoice(LoginRequiredMixin, View):
     """
     for Show user order invoice
@@ -342,7 +346,7 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
 
 # user favorite product
 
-
+@method_decorator(never_cache, name='dispatch')
 class FavoriteProductsDashboard(LoginRequiredMixin, ListView):
     """
     for Show user favorite products
@@ -374,7 +378,7 @@ class FavoriteProductsDashboard(LoginRequiredMixin, ListView):
         )
         return context
 
-
+@method_decorator(never_cache, name='dispatch')
 class AddFavoriteProduct(LoginRequiredMixin, RedirectView):
     """
     for Add Favorite Product to User
@@ -391,7 +395,7 @@ class AddFavoriteProduct(LoginRequiredMixin, RedirectView):
             )
         return self.request.META.get("HTTP_REFERER", "/")
 
-
+@method_decorator(never_cache, name='dispatch')
 class RemoveFavoriteProduct(LoginRequiredMixin, RedirectView):
     """
     for Remove Favorite Product to User
@@ -417,7 +421,7 @@ class RemoveFavoriteProduct(LoginRequiredMixin, RedirectView):
 
 # user address
 
-
+@method_decorator(never_cache, name='dispatch')
 class UserAddressDashboard(LoginRequiredMixin, ListView):
     """
     for Show user address
@@ -430,7 +434,7 @@ class UserAddressDashboard(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return UserAddress.objects.filter(user=self.request.user).order_by("-id").all()
 
-
+@method_decorator(never_cache, name='dispatch')
 class CreateUserAddress(LoginRequiredMixin, FormView):
     """
     for Create User Address
@@ -493,7 +497,7 @@ class CreateUserAddress(LoginRequiredMixin, FormView):
             )
             return redirect(reverse_lazy("dashboard:address"))
 
-
+@method_decorator(never_cache, name='dispatch')
 class UpdateUserAddress(LoginRequiredMixin, UpdateView):
     """
     for Create User Address
@@ -553,7 +557,7 @@ class UpdateUserAddress(LoginRequiredMixin, UpdateView):
             )
             return redirect(reverse_lazy("dashboard:address"))
 
-
+@method_decorator(never_cache, name='dispatch')
 class DeleteUserAddress(LoginRequiredMixin, RedirectView):
     """
     for Delete User Address
@@ -570,7 +574,7 @@ class DeleteUserAddress(LoginRequiredMixin, RedirectView):
 
 # user ticket
 
-
+@method_decorator(never_cache, name='dispatch')
 class UserTicketDashboard(LoginRequiredMixin, ListView):
     """
     for Show user ticket
@@ -583,7 +587,7 @@ class UserTicketDashboard(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Ticket.objects.filter(user=self.request.user).order_by("-id").all()
 
-
+@method_decorator(never_cache, name='dispatch')
 class UserTicketConversation(LoginRequiredMixin, View):
     """
     for Show user ticket
@@ -639,7 +643,7 @@ class UserTicketConversation(LoginRequiredMixin, View):
             reverse("dashboard:tickets-conversation", kwargs={"pk": ticket_id})
         )
 
-
+@method_decorator(never_cache, name='dispatch')
 class CloseTicket(LoginRequiredMixin, RedirectView):
     """
     for Close Ticket
@@ -655,7 +659,7 @@ class CloseTicket(LoginRequiredMixin, RedirectView):
         messages.success(self.request, "تیکیت شما بسته شد")
         return reverse("dashboard:tickets-conversation", kwargs={"pk": ticket_id})
 
-
+@method_decorator(never_cache, name='dispatch')
 class DeleteMessageTicket(LoginRequiredMixin, RedirectView):
     """
     for delete message in conversation
@@ -677,7 +681,7 @@ class DeleteMessageTicket(LoginRequiredMixin, RedirectView):
             messages.success(self.request, "پیام با موفقیت حذف شد")
         return url
 
-
+@method_decorator(never_cache, name='dispatch')
 class CreateUserTicket(LoginRequiredMixin, FormView):
     """
     for Show user ticket

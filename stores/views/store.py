@@ -38,6 +38,7 @@ class StoreMainTemplateCreateView(CustomLoginRequiredMixin, View):
                 'phone': str(request.user.PhoneNumber).replace(' ', '')
             }
         )
+
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):

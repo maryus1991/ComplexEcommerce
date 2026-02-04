@@ -130,3 +130,7 @@ def multiply(x, y):
 @register.filter
 def colleague(product, request):
     return "{:,}".format(product.get_product_price(request=request))
+
+@register.filter
+def colleague_header(product):
+    return "{:,}".format(product.get_item_price())

@@ -8,8 +8,8 @@ from django.db.models import Q
 from utils.send_otp import send_message
 from user.mixins.logins import CustomLoginRequiredMixin
 
-from config import settings
-
+from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 from .forms import (
     LoginForm,
     LoginFormWithEmail,
@@ -30,7 +30,7 @@ from sitesetting.models import SiteSetting
 
 User = get_user_model()
 
-
+@method_decorator(never_cache, name='dispatch')
 class RegisterAsColleagueUser(View):
     """for register a specifics users that colleague to store"""
 
@@ -94,8 +94,7 @@ class RegisterAsColleagueUser(View):
 
         return render(request, 'auth/colleague-user/colleague-user-register.html', {'form': form})
 
-
-
+@method_decorator(never_cache, name='dispatch')
 class RegisterView(View):
     """
     Register user page
@@ -197,7 +196,7 @@ class RegisterView(View):
 
             return render(request, self.template_name, {"form": self.form_class(request.POST or None)})
 
-
+@method_decorator(never_cache, name='dispatch')
 class VerifyEmailWIthPrivateCode(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         private_code = kwargs.get('private_code')
@@ -220,7 +219,7 @@ class VerifyEmailWIthPrivateCode(RedirectView):
         )
         return reverse('product:list')
 
-
+@method_decorator(never_cache, name='dispatch')
 class LoginView(View):
     """
     login user page
@@ -302,7 +301,7 @@ class LoginView(View):
             messages.error(request, form.errors.as_text())
             return render(request, self.template_name, {"login_form": LoginForm(request.POST)})
 
-
+@method_decorator(never_cache, name='dispatch')
 class LoginWithEmailView(View):
     """
     login user page
@@ -384,14 +383,14 @@ class LoginWithEmailView(View):
             messages.error(request, email_form.errors.as_text())
             return render(request, self.template_name, {'login_form_with_email': LoginFormWithEmail(request.POST)})
 
-
+@method_decorator(never_cache, name='dispatch')
 class LogoutView(LoginRequiredMixin, View):
     def get(self, request):
         logout(request)
         messages.success(request, "با موفقیت از سایت خارج شدید")
         return redirect("user:login")
 
-
+@method_decorator(never_cache, name='dispatch')
 class OTP(LoginRequiredMixin, View):
     template_name = "auth/confirmation-form.html"
     model = User
@@ -460,7 +459,7 @@ class OTP(LoginRequiredMixin, View):
         messages.error(request, "کد وارد شده اشتباه هست")
         return redirect("user:otp")
 
-
+@method_decorator(never_cache, name='dispatch')
 class ForgotPassword(View):
     """
     Forgot password page
@@ -522,7 +521,7 @@ class ForgotPassword(View):
             request, "auth/forgot-password.html", {"form": ForgotPasswordForm(request.POST or None)}
         )
 
-
+@method_decorator(never_cache, name='dispatch')
 class ForgotPasswordWithEmail(View):
     """
     Forgot password page
@@ -581,7 +580,7 @@ class ForgotPasswordWithEmail(View):
         return render(request, "auth/forgot-password-with-email.html",
                       {"form": ForgotPasswordWithEmailForm(request.POST or None)})
 
-
+@method_decorator(never_cache, name='dispatch')
 class ActiveAccount(View):
     """
 
@@ -669,7 +668,7 @@ class ActiveAccount(View):
             context = {"login_form": ActiveAccountFormWithRecaptcha(request.POST or None)}
             return render(request, "auth/active_account.html", context)
 
-
+@method_decorator(never_cache, name='dispatch')
 class LoginWithOTP(View):
     """
 
@@ -713,7 +712,7 @@ class LoginWithOTP(View):
             context = {"login_form": LoginWithOTPPhoneNumber(request.POST or None)}
             return render(request, "auth/login-with-otp.html", context)
 
-
+@method_decorator(never_cache, name='dispatch')
 class EditUserInformation(CustomLoginRequiredMixin, View):
     """
     for edit user information
@@ -766,7 +765,7 @@ class EditUserInformation(CustomLoginRequiredMixin, View):
             messages.error(request, "لطفا در وارد کردن اطلاعات دقت فرمایید")
         return redirect("dashboard:account")
 
-
+@method_decorator(never_cache, name='dispatch')
 class ChangePassword(CustomLoginRequiredMixin, View):
     """
     change password
@@ -809,7 +808,7 @@ class ChangePassword(CustomLoginRequiredMixin, View):
             messages.error(request, form.errors.as_text())
         return redirect("dashboard:account")
 
-
+@method_decorator(never_cache, name='dispatch')
 class ChangeNumber(CustomLoginRequiredMixin, View):
     """
     change number
@@ -839,7 +838,7 @@ class ChangeNumber(CustomLoginRequiredMixin, View):
             messages.error(request, "لطفا در وارد کردن اطلاعات دقت فرمایید")
         return redirect("dashboard:account")
 
-
+@method_decorator(never_cache, name='dispatch')
 class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
     """
     for change legal person information
@@ -889,7 +888,7 @@ class ChangeLegalPersonInformation(CustomLoginRequiredMixin, View):
 
         return redirect("dashboard:account")
 
-
+@method_decorator(never_cache, name='dispatch')
 class LegalPersonHelpText(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):

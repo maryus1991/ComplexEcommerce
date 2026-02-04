@@ -19,7 +19,8 @@ from django.utils.timezone import now
 from stores.models import Store
 from dashboard.models import UserAddress
 from utils.send_otp import send_message
-
+from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
 
 def get_zarinpal_error_code_return_perian_message(code):
     import ZARINPAL_ERRORS
@@ -27,6 +28,7 @@ def get_zarinpal_error_code_return_perian_message(code):
 
 
 # Create your views here.
+@method_decorator(never_cache, name='dispatch')
 class SpecificsOrdersView(LoginRequiredMixin, View):
     """for list and payment the specifics orders"""
 
@@ -96,7 +98,7 @@ class SpecificsOrdersView(LoginRequiredMixin, View):
                 {"error": error_message, "order": order, "date": now(), 'specifics_order':True},
             )
 
-
+@method_decorator(never_cache, name='dispatch')
 class SpecificsOrdersVerifyPayment(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
@@ -155,7 +157,7 @@ class SpecificsOrdersVerifyPayment(LoginRequiredMixin, View):
                 {"error": error_message, "date": now(), "order": order, 'specifics_order':True},
             )
 
-
+@method_decorator(never_cache, name='dispatch')
 class AddOrder(LoginRequiredMixin, RedirectView):
     """
     اضافه‌کردن محصول به سبد خرید یا بروزرسانی آن
@@ -267,7 +269,7 @@ class AddOrder(LoginRequiredMixin, RedirectView):
         messages.success(request, "محصول با موفقیت به سبد خرید شما اضافه شد.")
         return referer
 
-
+@method_decorator(never_cache, name='dispatch')
 class CancelingOrder(LoginRequiredMixin, RedirectView):
     """
     for cansel product in order
@@ -298,7 +300,7 @@ class CancelingOrder(LoginRequiredMixin, RedirectView):
 
         return reverse("dashboard:orders")
 
-
+@method_decorator(never_cache, name='dispatch')
 class RemoveItemFromOrder(LoginRequiredMixin, RedirectView):
     """
     for remove product in order detail
@@ -326,7 +328,7 @@ class RemoveItemFromOrder(LoginRequiredMixin, RedirectView):
         messages.info(self.request, "ایتم مورد نظر با موفقیت از سبد خرید شما حذف شد ")
         return self.request.META.get("HTTP_REFERER", "/")
 
-
+@method_decorator(never_cache, name='dispatch')
 class RemoveProductFromOrder(LoginRequiredMixin, RedirectView):
     """
     for remove product in order detail with product
@@ -360,7 +362,7 @@ class RemoveProductFromOrder(LoginRequiredMixin, RedirectView):
         messages.info(self.request, "ایتم مورد نظر با موفقیت از سبد خرید شما حذف شد ")
         return self.request.META.get("HTTP_REFERER", "/")
 
-
+@method_decorator(never_cache, name='dispatch')
 class AddAddressToOrder(LoginRequiredMixin, View):
     """
     for add address to order detail
@@ -401,7 +403,7 @@ class AddAddressToOrder(LoginRequiredMixin, View):
 
         return redirect(reverse("dashboard:order_detail", kwargs={"pk": pk}))
 
-
+@method_decorator(never_cache, name='dispatch')
 class ChangeInvoiceToOfficial(LoginRequiredMixin, RedirectView):
     """
     for change invoice to official
@@ -440,7 +442,7 @@ class ChangeInvoiceToOfficial(LoginRequiredMixin, RedirectView):
                 order_obj.official_invoice = False
                 order_obj.save()
 
-                messages.warning(self.request, "دریافت فاکتور رسمی برای شما غیر فعال شد ")#
+                messages.warning(self.request, "دریافت فاکتور رسمی برای شما غیر فعال شد ")
             else :
                 order_obj.official_invoice = True
                 order_obj.save()
@@ -454,7 +456,7 @@ class ChangeInvoiceToOfficial(LoginRequiredMixin, RedirectView):
 
         return self.request.META.get("HTTP_REFERER", "/")
 
-
+@method_decorator(never_cache, name='dispatch')
 class OrderSetDiscount(LoginRequiredMixin, RedirectView):
     """
     for order set discount
@@ -616,7 +618,7 @@ class OrderSetDiscount(LoginRequiredMixin, RedirectView):
 
         return reverse("orders:payment-conform", kwargs={"pk": pk})
 
-
+@method_decorator(never_cache, name='dispatch')
 class OrderRemoveDiscount(LoginRequiredMixin, RedirectView):
     """
     for remove the discount from orders
@@ -646,7 +648,7 @@ class OrderRemoveDiscount(LoginRequiredMixin, RedirectView):
 
         return reverse("orders:payment-conform", kwargs={"pk": pk})
 
-
+@method_decorator(never_cache, name='dispatch')
 class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
     """
     for choose type of delivery
@@ -764,7 +766,7 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
 
         return reverse("orders:payment-conform", kwargs={"pk": pk})
 
-
+@method_decorator(never_cache, name='dispatch')
 class ConformPayment(LoginRequiredMixin, View):
     """
     for conform payment and then redirect it for payment page
@@ -933,7 +935,7 @@ class ConformPayment(LoginRequiredMixin, View):
             messages.warning(request, "لطفا نحوه ارسال  را انتخاب کنید")
             return redirect("orders:payment-conform", pk=pk)
 
-
+@method_decorator(never_cache, name='dispatch')
 class VerifyPayment(LoginRequiredMixin, View):
 
     def dispatch(self, request, *args, **kwargs):

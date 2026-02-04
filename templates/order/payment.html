@@ -400,15 +400,20 @@
                         </div>
 
 
-                        <p class="text-green-500">
                             {% if order.official_invoice %}
+                        <p class="text-green-500">
                                 هزینه دریافت فاکتور رسمی از این فروشگاه
                                 (
                                 {{ order.get_total_products_with_no_discount_price|clac_tax:order.store.official_invoice_price }}
                                 )
                                 تومان می باشد
-                            {% endif %}
                         </p>
+                    <br>
+                    <a href="{% url 'orders:invoice-status' store_id=order.store.id pk=order.id %}" class="text-red-600">
+                        حذف فاکتور رسمی (کلیک کنید )
+                    </a>
+                            {% endif %}
+
                     {% endif %}
                     <hr>
                     <span class="flex items-center gap-x-1 text-blue-500 dark:text-blue-400">
