@@ -22,6 +22,60 @@
     <script src="{% static 'admin/js/django_jalali.min.js' %}"></script>
 {% endblock %}
 
+{% block microdata %}
+
+{
+  "@context": "https://schema.org",
+  "@graph": [
+
+    {
+      "@type": "Blog",
+      "@id": "{{ request.build_absolute_uri }}#blog",
+      "name": "بلاگ امواج سرمد ",
+      "url": "{{ request.build_absolute_uri }}",
+      "description": "آخرین مقالات و آموزش‌ها"
+    },
+
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "خانه",
+          "item": "{{ request.scheme }}://{{ request.get_host }}/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "بلاگ",
+          "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'blog:list' %}"
+        }
+      ]
+    },
+
+    {
+      "@type": "ItemList",
+      "@id": "{{ request.build_absolute_uri }}#itemlist",
+      "itemListElement": [
+        {% for post in posts %}
+        {
+          "@type": "ListItem",
+          "position": {{ forloop.counter }},
+          "url": "{{ request.scheme }}://{{ request.get_host }}{{ post.get_absolute_url }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ]
+    }
+
+  ]
+}
+
+
+
+{% endblock %}
+
 
 {% block content %}
 

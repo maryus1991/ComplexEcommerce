@@ -17,7 +17,7 @@ from .models import (
     Newsletter,
     Slider,
     Banners,
-SiteLaw
+    SiteLaw
 )
 from ipware import get_client_ip
 from stores.models import StoreApps
@@ -70,10 +70,10 @@ def robots_txt(request):
 
     return HttpResponse("\n".join(lines), content_type="text/plain")
 
+
 def dynamic_favicon(request):
     try:
         site = SiteSetting.objects.first()
-
 
         if site and site.logo:
 
@@ -85,10 +85,8 @@ def dynamic_favicon(request):
                 'optimize': True,
             }
 
-
             thumbnailer = get_thumbnailer(site.logo)
             thumb = thumbnailer.get_thumbnail(thumbnail_options)
-
 
             return HttpResponse(thumb.read(), content_type="image/png")
 
@@ -120,7 +118,7 @@ class Main(TemplateView):
     template_name = "index.html"
 
     def get_context_data(self, **kwargs):
-
+        self.request.build_absolute_uri()
         context = super().get_context_data(**kwargs)
 
         products = Product.objects.filter(is_active=True, count__gt=0)
@@ -237,11 +235,10 @@ class UsedAppDetailView(DetailView):
     context_object_name = "item"
     template_name = "site/apps/apps-details.html"
 
-    def get_object(self, queryset = ...):
+    def get_object(self, queryset=...):
         return get_object_or_404(StoreApps, pk=self.kwargs["pk"], is_active=True, admin_verified=True)
 
     def get_context_data(self, **kwargs):
-
         context = super().get_context_data(**kwargs)
 
         context["site"] = SiteSetting.objects.filter(is_active=True).first()
@@ -342,7 +339,7 @@ class DownloadUsedAppView(View):
         self.site = SiteSetting.objects.filter(is_active=True).first()
         site = self.site
         if site and site.force_users_to_login_for_download_apps:
-            if not request.user.is_authenticated or not request.user.is_verified :
+            if not request.user.is_authenticated or not request.user.is_verified:
                 messages.warning(
                     request,
                     'ابتدا وارد حساب خود شوید'
@@ -417,8 +414,7 @@ def custom_404_page(request, exception=None):
     return render(request, "site/404.html")
 
 
-def header_render_partial(request, title=None):
-
+def header_render_partial(request, title=None, microdata=None):
     if request.user.is_authenticated:
         orders = OrderDetail.objects.filter(
             order__user=request.user,
@@ -434,7 +430,10 @@ def header_render_partial(request, title=None):
     return render(request, "Base/Header/Header.html", {
         "orders": orders, "site": site, 'title': title,
         "RECAPTCHA_PUBLIC_KEY": settings.RECAPTCHA_PUBLIC_KEY,
+        "microdata": microdata,
     })
+
+
 
 
 def footer_render_partial(request):

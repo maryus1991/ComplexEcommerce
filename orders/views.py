@@ -789,7 +789,7 @@ class ConformPayment(LoginRequiredMixin, View):
                 canceled=False,
             )
 
-            if not self.order.store.zero_the_count_of_all_product_of_store :
+            if self.order.store.zero_the_count_of_all_product_of_store :
                 messages.warning(request, f'فروش فروشگاه {self.order.store.name} بسته شده است و تمام موجودی محصولات ان صفر شد لطفا با فروشگاه در ارتباط باشید ')
                 return redirect("/")
 

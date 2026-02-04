@@ -8,6 +8,84 @@
     {{ post.title }}
 {% endblock %}
 
+
+{% block microdata %}
+
+{
+  "@context": "https://schema.org",
+  "@graph": [
+
+    {
+      "@type": "Article",
+      "@id": "{{ request.build_absolute_uri }}#article",
+      "headline": "{{ post.title|escapejs }}",
+      "description": "{{ post.title|escapejs }}",
+
+      "image": [
+        "{{ request.scheme }}://{{ request.get_host }}{{ post.image.url }}"
+      ],
+
+      "author": {
+        "@type": "Person",
+        "name": "{{ post.user.get_full_name|default:post.store.name|escapejs }}"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "{{ post.store.name|escapejs }}",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "{{ request.scheme }}://{{ request.get_host }}{{ post.store.logo.url }}"
+        }
+      },
+      "datePublished": "{{ post.created_at|date:'c' }}",
+      "dateModified": "{{ post.updated_at|date:'c' }}",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ request.build_absolute_uri }}#webpage"
+      }
+    },
+
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "خانه",
+          "item": "{{ request.scheme }}://{{ request.get_host }}/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "بلاگ",
+          "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'blog:list' %}"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ post.title|escapejs }}"
+        }
+      ]
+    },
+
+    {
+      "@type": "WebPage",
+      "@id": "{{ request.build_absolute_uri }}#webpage",
+      "name": "{{ post.title|escapejs }}",
+      "isPartOf": {
+        "@id": "{{ request.scheme }}://{{ request.get_host }}/#website"
+      }
+    }
+
+  ]
+}
+
+
+{% endblock %}
+
+
+
 {% block breadcrumb %}
     <li class="flex items-center gap-x-2">
         <a href="{% url 'blog:list' %}"> مقالات</a>

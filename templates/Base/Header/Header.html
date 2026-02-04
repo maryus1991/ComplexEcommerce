@@ -8,8 +8,20 @@
 
     {% include 'Base/Header/References/References.html' with site=site %}
 
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WVJNMP6C');
+    </script>
+    <!-- End Google Tag Manager -->
+
     <!-- عنوان صفحه -->
     <title>{{ title }}</title>
+    <script type="application/ld+json">
+        {{ microdata }}
+    </script>
 
     <!-- آیکون‌ها -->
     <link rel="icon" href="{% thumbnail site.logo '100x100' %}" type="image/x-icon">
@@ -47,26 +59,31 @@
     <!-- زبان صفحه -->
     <meta http-equiv="Content-Language" content="fa">
 
-{# صفحات لیست محصول، اپ‌ها و بلاگ: canonical همیشه به نسخه بدون پارامتر #}
-{% if request.path == '/product/' or request.path == '/apps/' or request.path == '/blog/' %}
+    {% if request.path == '/product/' or request.path == '/apps/' or request.path == '/blog/' %}
     <link rel="canonical" href="https://amvajsarmad.com{{ request.path }}"/>
-{% endif %}
+    {% endif %}
 
-{# صفحات دانلود اپ: self-referencing canonical (به URL کامل خودش، با query اگر داشته باشه) #}
-{% if request.path|slice:":15" == "/apps/download/" %}
+    {% if request.path|slice:":15" == "/apps/download/" %}
     <link rel="canonical" href="https://amvajsarmad.com{{ request.get_full_path }}"/>
-{% endif %}
+    {% endif %}
 
-{# صفحات کاربر (لاگین، ریجستر، ریست پسورد و ...): noindex کامل #}
-{% if request.path|slice:":6" == "/user/" %}
+    {% if request.path|slice:":6" == "/user/" %}
     <meta name="robots" content="noindex, nofollow">
-{% endif %}
+    {% endif %}
     <!-- charset -->
     <meta charset="utf-8">
+
 
 </head>
 
 <body class="font-Dana bg-[#f3f4f6] dark:bg-zinc-900 text-zinc-900  dark:text-white overflow-x-hidden transition-all">
+
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WVJNMP6C"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
 
 <!-- NAV BAR  -->
 <nav class="w-full hidden md:flex shadow py-5 bg-white dark:bg-zinc-700">
@@ -88,61 +105,61 @@
         </a>
         {% with request.path as url %}
 
-            <!-- MENU -->
-            <ul class="mt-2 flex items-center gap-x-4 lg:gap-x-10 font-DanaMedium lg:mr-30 xl:mr-32 child:z-30">
+        <!-- MENU -->
+        <ul class="mt-2 flex items-center gap-x-4 lg:gap-x-10 font-DanaMedium lg:mr-30 xl:mr-32 child:z-30">
 
 
-                <li class="nav-item {% if url == '/' %} text-green-500 {% endif %} ">
-                    <a href="{% url 'site:main' %}">صفحه اصلی</a>
-                </li>
-                <!-- ITEM HASE SUBMENU -->
-                <li class="relative group {% if url == '/product/' or url == '/store/' %} text-green-500 {% endif %}">
-                    <div class="flex items-center flex-row gap-x-1">
-                        <a>فروشگاه</a>
-                        <svg class="w-4 h-4 transition-transform duration-300 group-hover:rotate-180">
-                            <use href="#chevron-down"></use>
-                        </svg>
-                    </div>
-                    <!-- SUBMENU -->
-                    <div
-                            class="absolute bg-white flex flex-col gap-y-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:top-10 transition-all delay-100 dark:bg-zinc-700 top-20 w-52 rounded border-t-2 border-green-500 p-5 text-base shadow-md child-hover:text-green-500 child:transition-all">
-                        <a href="{% url 'product:list' %}">محصولات</a>
-                        <a href="{% url 'stores:main-template-list' %}">فروشگاها</a>
-                        <a href="{% url 'stores:main-template-create' %}">ثبت فروشگاه</a>
+            <li class="nav-item {% if url == '/' %} text-green-500 {% endif %} ">
+                <a href="{% url 'site:main' %}">صفحه اصلی</a>
+            </li>
+            <!-- ITEM HASE SUBMENU -->
+            <li class="relative group {% if url == '/product/' or url == '/store/' %} text-green-500 {% endif %}">
+                <div class="flex items-center flex-row gap-x-1">
+                    <a>فروشگاه</a>
+                    <svg class="w-4 h-4 transition-transform duration-300 group-hover:rotate-180">
+                        <use href="#chevron-down"></use>
+                    </svg>
+                </div>
+                <!-- SUBMENU -->
+                <div
+                        class="absolute bg-white flex flex-col gap-y-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:top-10 transition-all delay-100 dark:bg-zinc-700 top-20 w-52 rounded border-t-2 border-green-500 p-5 text-base shadow-md child-hover:text-green-500 child:transition-all">
+                    <a href="{% url 'product:list' %}">محصولات</a>
+                    <a href="{% url 'stores:main-template-list' %}">فروشگاها</a>
+                    <a href="{% url 'stores:main-template-create' %}">ثبت فروشگاه</a>
 
-                    </div>
-                </li>
-                <!-- ITEM HASE SUBMENU -->
-                <li class="nav-item {% if url == '/blog/' %} text-green-500 {% endif %}">
-                    <div class="flex items-center flex-row gap-x-1">
-                        <a href="{% url 'blog:list' %}">مقالات</a>
+                </div>
+            </li>
+            <!-- ITEM HASE SUBMENU -->
+            <li class="nav-item {% if url == '/blog/' %} text-green-500 {% endif %}">
+                <div class="flex items-center flex-row gap-x-1">
+                    <a href="{% url 'blog:list' %}">مقالات</a>
 
-                    </div>
-                    <!-- SUBMENU -->
+                </div>
+                <!-- SUBMENU -->
 
-                </li>
-                <li class="nav-item {% if url == '/contact-us' %} text-green-500 {% endif %}">
-                    <a href="{% url 'site:contact-us' %}">تماس با ما</a>
-                </li>
-                <li class="nav-item {% if url == '/about-us' %} text-green-500 {% endif %}">
-                    <a href="{% url 'site:about-us' %}">درباره ما</a>
-                </li>
-                <li class="nav-item {% if url == '/apps/' %} text-green-500 {% endif %}">
-                    <a href="{% url 'site:apps-list' %}">برنامه های کاربردی</a>
-                </li>
-                {% if request.user.is_authenticated and request.user.is_verified %}
-                    {% if request.user.is_staff and request.user.store is not None and request.user.store.is_active %}
-                        <li class="nav-item ">
-                            <a href="{% url 'store:home' %}">مدیریت فروشگاه</a>
-                        </li>
-                    {% endif %}
-                {% endif %}
-                {% if user.is_superuser and user.is_verified and user.is_active %}
-                    <li class="nav-item ">
-                        <a href="{% url 'admin_panel:main' %}">مدیریت سایت</a>
-                    </li>
-                {% endif %}
-            </ul>
+            </li>
+            <li class="nav-item {% if url == '/contact-us' %} text-green-500 {% endif %}">
+                <a href="{% url 'site:contact-us' %}">تماس با ما</a>
+            </li>
+            <li class="nav-item {% if url == '/about-us' %} text-green-500 {% endif %}">
+                <a href="{% url 'site:about-us' %}">درباره ما</a>
+            </li>
+            <li class="nav-item {% if url == '/apps/' %} text-green-500 {% endif %}">
+                <a href="{% url 'site:apps-list' %}">برنامه های کاربردی</a>
+            </li>
+            {% if request.user.is_authenticated and request.user.is_verified %}
+            {% if request.user.is_staff and request.user.store is not None and request.user.store.is_active %}
+            <li class="nav-item ">
+                <a href="{% url 'store:home' %}">مدیریت فروشگاه</a>
+            </li>
+            {% endif %}
+            {% endif %}
+            {% if user.is_superuser and user.is_verified and user.is_active %}
+            <li class="nav-item ">
+                <a href="{% url 'admin_panel:main' %}">مدیریت سایت</a>
+            </li>
+            {% endif %}
+        </ul>
         {% endwith %}
 
         <!-- ACTION BTN -->
@@ -150,8 +167,9 @@
             <!-- TOGGLE BTN -->
 
 
-<button class="toggle-theme" id="toggle-theme-odkqwpdkp" onclick="themToggle()" aria-label="Toggle Dark Mode">
-    <svg class="inline-block dark:hidden w-6 h-6">
+            <button class="toggle-theme" id="toggle-theme-odkqwpdkp" onclick="themToggle()"
+                    aria-label="Toggle Dark Mode">
+                <svg class="inline-block dark:hidden w-6 h-6">
                     <use href="#moon"></use>
                 </svg>
                 <svg class="hidden dark:inline w-6 h-6">
@@ -185,8 +203,8 @@
                 <!-- BADGE -->
                 {% if orders.exists %}
 
-                    <span
-                            class="absolute -top-2 -right-2 w-4 h-4 text-[10px] flex items-center justify-center bg-red-500 text-white rounded-full">
+                <span
+                        class="absolute -top-2 -right-2 w-4 h-4 text-[10px] flex items-center justify-center bg-red-500 text-white rounded-full">
                 {{ orders.count }}
                 </span>
                 {% endif %}
@@ -200,7 +218,8 @@
                     <div class="absolute top-20 flex items-center w-[350px] bg-white dark:bg-zinc-600 rounded-full opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:top-10 transition-all delay-100 child:rounded-full px-2 border dark:border-none border-gray-100 shadow py-1">
                         <input type="text" name="search" placeholder="نام محصول یا فروشگاه..."
                                class="bg-transparent w-full p-2"/>
-                        <input placeholder="جستجو" value="جستجو" type="submit" class="bg-green-500 rounded-circle  text-white text-sm py-2 px-3">
+                        <input placeholder="جستجو" value="جستجو" type="submit"
+                               class="bg-green-500 rounded-circle  text-white text-sm py-2 px-3">
                     </div>
                 </button>
             </form>
@@ -215,76 +234,76 @@
                 <div class="absolute dark:border-none border border-gray-100 w-52 p-4 bg-white text-zinc-900 dark:text-white flex flex-col gap-y-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:top-12 transition-all delay-100 dark:bg-zinc-800 top-20 rounded text-base shadow child:transition-all child:py-1 child:px-2">
                     {% if user.is_authenticated %}
 
-                        <a href="{% url 'dashboard:orders' %}"
-                           class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
-                            <svg class="h-5 w-5">
-                                <use href="#user"></use>
-                            </svg>
-                            سفارشات من
-                        </a>
-                        <a href="{% url 'dashboard:tickets' %}"
-                           class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
-                            <svg class="h-5 w-5">
-                                <use href="#envelope"></use>
-                            </svg>
-                            لیست تیکت ها
-                        </a>
-                        <a href="{% url 'dashboard:account' %}"
-                           class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
-                            <svg class="h-5 w-5">
-                                <use href="#cog"></use>
-                            </svg>
-                            اطلاعات کاربری
-                        </a>
-                        {% if request.user.is_authenticated and request.user.is_verified %}
-                            {% if request.user.is_staff and request.user.store is not None and request.user.store.is_active %}
+                    <a href="{% url 'dashboard:orders' %}"
+                       class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
+                        <svg class="h-5 w-5">
+                            <use href="#user"></use>
+                        </svg>
+                        سفارشات من
+                    </a>
+                    <a href="{% url 'dashboard:tickets' %}"
+                       class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
+                        <svg class="h-5 w-5">
+                            <use href="#envelope"></use>
+                        </svg>
+                        لیست تیکت ها
+                    </a>
+                    <a href="{% url 'dashboard:account' %}"
+                       class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
+                        <svg class="h-5 w-5">
+                            <use href="#cog"></use>
+                        </svg>
+                        اطلاعات کاربری
+                    </a>
+                    {% if request.user.is_authenticated and request.user.is_verified %}
+                    {% if request.user.is_staff and request.user.store is not None and request.user.store.is_active %}
 
-                                <a href="{% url 'store:home' %}"
-                                   class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
-                                    <svg class="h-5 w-5">
-                                        <use href="#cog"></use>
-                                    </svg>
-                                    مدیریت فروشگاه</a>
-                            {% endif %}
-                        {% endif %}
-                        {% if user.is_superuser and user.is_verified and user.is_active %}
+                    <a href="{% url 'store:home' %}"
+                       class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
+                        <svg class="h-5 w-5">
+                            <use href="#cog"></use>
+                        </svg>
+                        مدیریت فروشگاه</a>
+                    {% endif %}
+                    {% endif %}
+                    {% if user.is_superuser and user.is_verified and user.is_active %}
 
-                            <a href="{% url 'admin_panel:main' %}"
-                               class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
-                                <svg class="h-5 w-5">
-                                    <use href="#cog"></use>
-                                </svg>
-                                مدیریت سایت</a>
-                        {% endif %}
-                        <!--BORDER  -->
-                        <span class="border-t dark:border-gray-100/20 border-gray-100-gray-100"></span>
-                        <a href="{% url 'user:logout' %}"
-                           class="flex items-center gap-x-3 w-full hover:bg-red-400/20 dark:hover:bg-rose-500/20 rounded hover:text-rose-400">
-                            <svg class="h-5 w-5">
-                                <use href="#arrow-left-start-on-rectangle"></use>
-                            </svg>
-                            خروج از حساب
-                        </a>
+                    <a href="{% url 'admin_panel:main' %}"
+                       class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
+                        <svg class="h-5 w-5">
+                            <use href="#cog"></use>
+                        </svg>
+                        مدیریت سایت</a>
+                    {% endif %}
+                    <!--BORDER  -->
+                    <span class="border-t dark:border-gray-100/20 border-gray-100-gray-100"></span>
+                    <a href="{% url 'user:logout' %}"
+                       class="flex items-center gap-x-3 w-full hover:bg-red-400/20 dark:hover:bg-rose-500/20 rounded hover:text-rose-400">
+                        <svg class="h-5 w-5">
+                            <use href="#arrow-left-start-on-rectangle"></use>
+                        </svg>
+                        خروج از حساب
+                    </a>
                     {% else %}
-                        <a href="{% url 'user:login' %}"
-                           class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
-                            <svg class="h-5 w-5">
-                                <use href="#user"></use>
-                            </svg>
-                            ورود
-                        </a>
-                        <span class="border-t dark:border-gray-100/20 border-gray-100-gray-100"></span>
+                    <a href="{% url 'user:login' %}"
+                       class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
+                        <svg class="h-5 w-5">
+                            <use href="#user"></use>
+                        </svg>
+                        ورود
+                    </a>
+                    <span class="border-t dark:border-gray-100/20 border-gray-100-gray-100"></span>
 
-                        <a href="{% url 'user:register' %}"
-                           class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
-                            <svg class="h-5 w-5">
-                                <use href="#arrow-left-start-on-rectangle"></use>
+                    <a href="{% url 'user:register' %}"
+                       class="flex items-center gap-x-3 w-full hover:bg-green-500/20 hover:text-green-500 rounded">
+                        <svg class="h-5 w-5">
+                            <use href="#arrow-left-start-on-rectangle"></use>
 
-                            </svg>
-                            ثبت نام
+                        </svg>
+                        ثبت نام
 
-                        </a>
- 
+                    </a>
+
 
                     {% endif %}
 
@@ -304,27 +323,27 @@
 <!-- SHOPPING CART -->
 <div
         class="shopping-cart fixed -left-72 top-0 bottom-0 w-72 bg-white dark:bg-zinc-700 z-50 shadow transition-all duration-300 px-4">
-<div class="flex items-center justify-between mt-4">
-    <h2 class="font-DanaMedium">سبد خرید</h2>
-    <a href="#" class="close-shopping-cart__btn" aria-label="بستن سبد خرید">
-        <svg class="w-6 h-6">
-            <use href="#close"/>
-        </svg>
-    </a>
-</div>
+    <div class="flex items-center justify-between mt-4">
+        <h2 class="font-DanaMedium">سبد خرید</h2>
+        <a href="#" class="close-shopping-cart__btn" aria-label="بستن سبد خرید">
+            <svg class="w-6 h-6">
+                <use href="#close"/>
+            </svg>
+        </a>
+    </div>
     <!-- BORDER -->
     <span class="flex w-full border-t dark:border-white/10 border-gray-200 my-5"></span>
     <!-- ITEMS CART -->
     {% if orders.exists %}
 
-        <div class="flex flex-col gap-y-4">
-            {% for order in orders.all %}
+    <div class="flex flex-col gap-y-4">
+        {% for order in orders.all %}
 
 
-                <!-- ITEM -->
-                <div class="flex items-center justify-between gap-4 border-b border-gray-200 pb-4 dark:border-white/10">
-                    <a href="{% url 'product:detail' order.product.id %}" class="flex items-center gap-3 flex-grow">
-                        <!-- Image -->
+        <!-- ITEM -->
+        <div class="flex items-center justify-between gap-4 border-b border-gray-200 pb-4 dark:border-white/10">
+            <a href="{% url 'product:detail' order.product.id %}" class="flex items-center gap-3 flex-grow">
+                <!-- Image -->
 
                 <picture>
                     <source srcset="{% thumbnail order.product.picture '80x80' %}"
@@ -335,80 +354,81 @@
                          loading="lazy">
                 </picture>
 
-                        <!-- Text -->
-                        <div class="flex items-center gap-x-1">
-                            {% if user.is_authenticated and user.colleague_user %}
-                                <p class="text-2xl font-DanaDemiBold">{{ order.product|colleague:request }}</p>
-                                <p class="">تومان</p>
-                                <br>
-                                <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
-                                    {{ order.product.price|tdc }}
-                                    <span class="font-Dana text-sm">تومان</span>
-                                </del>
-                            {% else %}
-                                {% if order.product.have_discount %}
-                                    <p class="text-2xl font-DanaDemiBold">{{ order.product.price|clac_discount:order.product.discount }}</p>
-                                    <p class="">تومان</p>
-                                    <br>
-                                    <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
-                                        {{ order.product.price|tdc }}
-                                        <span class="font-Dana text-sm">تومان</span>
-                                    </del>
-                                {% else %}
-                                    <p class="text-2xl font-DanaDemiBold">{{ order.product.price|tdc }}</p>
-                                    <p class="">تومان</p>
-                                {% endif %}
-                            {% endif %}
+                <!-- Text -->
+                <div class="flex items-center gap-x-1">
+                    {% if user.is_authenticated and user.colleague_user %}
+                    <p class="text-2xl font-DanaDemiBold">{{ order.product|colleague:request }}</p>
+                    <p class="">تومان</p>
+                    <br>
+                    <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                        {{ order.product.price|tdc }}
+                        <span class="font-Dana text-sm">تومان</span>
+                    </del>
+                    {% else %}
+                    {% if order.product.have_discount %}
+                    <p class="text-2xl font-DanaDemiBold">{{ order.product.price|clac_discount:order.product.discount
+                        }}</p>
+                    <p class="">تومان</p>
+                    <br>
+                    <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                        {{ order.product.price|tdc }}
+                        <span class="font-Dana text-sm">تومان</span>
+                    </del>
+                    {% else %}
+                    <p class="text-2xl font-DanaDemiBold">{{ order.product.price|tdc }}</p>
+                    <p class="">تومان</p>
+                    {% endif %}
+                    {% endif %}
 
-                        </div>
-                    </a>
-
-                    <!-- Delete button -->
-                    <a href="{% url 'orders:remove' order.id %}"
-                       type="button"
-                       class="text-red-500 hover:text-red-700 transition-colors p-2"
-                       aria-label="حذف محصول"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                             stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                        </svg>
-                    </a>
                 </div>
-            {% endfor %}
-
-        </div>
-        <div class="w-full  absolute bottom-4 flex  place-items-end scroll-m-3 gap-x-10">
-            <!-- BORDER -->
-            <a href="{% url 'dashboard:orders' %}"
-               class="py-2  px-3 rounded-lg transition-colors  bg-green-500 hover:bg-green-600 dark:hover:bg-green-600 text-white">
-                ثبت سفارش
             </a>
 
+            <!-- Delete button -->
+            <a href="{% url 'orders:remove' order.id %}"
+               type="button"
+               class="text-red-500 hover:text-red-700 transition-colors p-2"
+               aria-label="حذف محصول"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </a>
         </div>
+        {% endfor %}
+
+    </div>
+    <div class="w-full  absolute bottom-4 flex  place-items-end scroll-m-3 gap-x-10">
+        <!-- BORDER -->
+        <a href="{% url 'dashboard:orders' %}"
+           class="py-2  px-3 rounded-lg transition-colors  bg-green-500 hover:bg-green-600 dark:hover:bg-green-600 text-white">
+            ثبت سفارش
+        </a>
+
+    </div>
 
 
     {% else %}
 
-        <div class="flex flex-col items-center justify-center py-8">
-            <div class="flex flex-col items-center gap-3 text-red-400">
-                <!-- Shopping Cart Icon -->
-                <svg class="w-12 h-12 text-red-400/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
+    <div class="flex flex-col items-center justify-center py-8">
+        <div class="flex flex-col items-center gap-3 text-red-400">
+            <!-- Shopping Cart Icon -->
+            <svg class="w-12 h-12 text-red-400/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
 
-                <!-- Message -->
-                <p class="text-lg font-medium text-center">سبد خرید شما خالی میباشد</p>
+            <!-- Message -->
+            <p class="text-lg font-medium text-center">سبد خرید شما خالی میباشد</p>
 
-                <!-- Optional: Add a button to continue shopping -->
-                <a href="{% url 'product:list' %}"
-                   class="mt-4 px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
-                    بازگشت به فروشگاه
-                </a>
-            </div>
+            <!-- Optional: Add a button to continue shopping -->
+            <a href="{% url 'product:list' %}"
+               class="mt-4 px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                بازگشت به فروشگاه
+            </a>
         </div>
+    </div>
     {% endif %}
 
     <!-- PRICE BTN -->
@@ -452,70 +472,70 @@
         </form>
         <!-- MENU  -->
         {% with request.path as url %}
-            <ul class="flex flex-col gap-y-6 text-zinc-700 dark:text-white">
+        <ul class="flex flex-col gap-y-6 text-zinc-700 dark:text-white">
 
-                <li class="{% if url == '/' %} text-green-500 {% endif %}">
-                    <a href="/" class="flex items-center gap-x-2">
+            <li class="{% if url == '/' %} text-green-500 {% endif %}">
+                <a href="/" class="flex items-center gap-x-2">
+                    <svg class="w-5 h-5">
+                        <use href="#home"></use>
+                    </svg>
+                    صفحه اصلی
+                </a>
+            </li>
+            <li class="{% if url == '/product/' or url == '/store/' %} text-green-500 {% endif %}">
+                <div class="open-submenu flex w-full items-center justify-between">
+                    <a class="transition-all flex items-center gap-x-2">
                         <svg class="w-5 h-5">
-                            <use href="#home"></use>
+                            <use href="#shopping-bag"></use>
                         </svg>
-                        صفحه اصلی
+                        فروشگاه
                     </a>
-                </li>
-                <li class="{% if url == '/product/' or url == '/store/' %} text-green-500 {% endif %}">
-                    <div class="open-submenu flex w-full items-center justify-between">
-                        <a class="transition-all flex items-center gap-x-2">
-                            <svg class="w-5 h-5">
-                                <use href="#shopping-bag"></use>
-                            </svg>
-                            فروشگاه
-                        </a>
-                        <svg class="w-3 h-3 arrow-submenu -rotate-90">
-                            <use href="#chevron-left"></use>
-                        </svg>
-                    </div>
-                    <div class="submenu hidden flex-col gap-y-3 mt-3 child:text-sm mr-7">
-                        <a class="{% if url == '/product/' %} text-green-500  {% endif %}"
-                           href="{% url 'product:list' %}">محصولات</a>
-                        <a class="{% if  url == '/store/' %} text-green-500  {% endif %}"
-                           href="{% url 'stores:main-template-list' %}">فروشگاها</a>
-                        <a href="{% url 'stores:main-template-create' %}">ثبت فروشگاه</a>
-                    </div>
+                    <svg class="w-3 h-3 arrow-submenu -rotate-90">
+                        <use href="#chevron-left"></use>
+                    </svg>
+                </div>
+                <div class="submenu hidden flex-col gap-y-3 mt-3 child:text-sm mr-7">
+                    <a class="{% if url == '/product/' %} text-green-500  {% endif %}"
+                       href="{% url 'product:list' %}">محصولات</a>
+                    <a class="{% if  url == '/store/' %} text-green-500  {% endif %}"
+                       href="{% url 'stores:main-template-list' %}">فروشگاها</a>
+                    <a href="{% url 'stores:main-template-create' %}">ثبت فروشگاه</a>
+                </div>
 
-                </li>
-                <li class="{% if url == '/blog/' %} text-green-500 {% endif %}">
-                    <a href="{% url 'blog:list' %}" class="flex items-center gap-x-2">
-                        <svg class="w-5 h-5">
-                            <use href="#document"></use>
-                        </svg>
-                        مقالات
-                    </a>
-                </li>
-                <li class="{% if url == '/contact-us' %} text-green-500 {% endif %}">
-                    <a href="{% url 'site:contact-us' %}" class="flex items-center gap-x-2">
-                        <svg class="w-5 h-5">
-                            <use href="#phone"></use>
-                        </svg>
-                        تماس با ما
-                    </a>
-                </li>
-                <li class="{% if url == '/about-us' %} text-green-500 {% endif %}">
-                    <a href="{% url 'site:about-us' %}" class="flex items-center gap-x-2">
-                        <svg class="w-5 h-5">
-                            <use href="#check"></use>
-                        </svg>
-                        درباره ما
-                    </a>
-                </li>
-                <li class="{% if url == '/apps/' %} text-green-500 {% endif %}">
-                    <a href="{% url 'site:apps-list' %}" class="flex items-center gap-x-2">
-                        <svg class="w-5 h-5">
-                            <use href="#document"></use>
-                        </svg>
-                        برنامه های کاربردی
-                    </a>
-                </li>
-            </ul>
+            </li>
+            <li class="{% if url == '/blog/' %} text-green-500 {% endif %}">
+                <a href="{% url 'blog:list' %}" class="flex items-center gap-x-2">
+                    <svg class="w-5 h-5">
+                        <use href="#document"></use>
+                    </svg>
+                    مقالات
+                </a>
+            </li>
+            <li class="{% if url == '/contact-us' %} text-green-500 {% endif %}">
+                <a href="{% url 'site:contact-us' %}" class="flex items-center gap-x-2">
+                    <svg class="w-5 h-5">
+                        <use href="#phone"></use>
+                    </svg>
+                    تماس با ما
+                </a>
+            </li>
+            <li class="{% if url == '/about-us' %} text-green-500 {% endif %}">
+                <a href="{% url 'site:about-us' %}" class="flex items-center gap-x-2">
+                    <svg class="w-5 h-5">
+                        <use href="#check"></use>
+                    </svg>
+                    درباره ما
+                </a>
+            </li>
+            <li class="{% if url == '/apps/' %} text-green-500 {% endif %}">
+                <a href="{% url 'site:apps-list' %}" class="flex items-center gap-x-2">
+                    <svg class="w-5 h-5">
+                        <use href="#document"></use>
+                    </svg>
+                    برنامه های کاربردی
+                </a>
+            </li>
+        </ul>
         {% endwith %}
         <!-- BORDER -->
         <span class="flex w-full border-t dark:border-white/10 border-gray-200 my-2"></span>
@@ -523,40 +543,40 @@
         <div
                 class="flex items-start flex-col gap-y-5 child:flex child:items-center child:gap-x-2 child:font-DanaMedium">
             {% if request.user.is_authenticated %}
-                {% if request.user.is_authenticated and request.user.is_verified %}
-                    {% if request.user.is_staff and request.user.store is not None %}
+            {% if request.user.is_authenticated and request.user.is_verified %}
+            {% if request.user.is_staff and request.user.store is not None %}
 
-                        <a href="{% url 'store:home' %}"
-                        >
-                            <svg class="h-5 w-5">
-                                <use href="#cog"></use>
-                            </svg>
-                            مدیریت فروشگاه</a>
-                    {% endif %}
-                {% endif %}
-                {% if user.is_superuser and user.is_verified and user.is_active %}
+            <a href="{% url 'store:home' %}"
+            >
+                <svg class="h-5 w-5">
+                    <use href="#cog"></use>
+                </svg>
+                مدیریت فروشگاه</a>
+            {% endif %}
+            {% endif %}
+            {% if user.is_superuser and user.is_verified and user.is_active %}
 
-                    <a href="{% url 'admin_panel:main' %}"
-                    >
-                        <svg class="h-5 w-5">
-                            <use href="#cog"></use>
-                        </svg>
-                        مدیریت سایت</a>
-                {% endif %}
-                <a href="{% url 'dashboard:dashboard' %}">
+            <a href="{% url 'admin_panel:main' %}"
+            >
+                <svg class="h-5 w-5">
+                    <use href="#cog"></use>
+                </svg>
+                مدیریت سایت</a>
+            {% endif %}
+            <a href="{% url 'dashboard:dashboard' %}">
 
-                    <svg class="w-5 h-5">
-                        <use href="#user"></use>
-                    </svg>
-                    حساب کاربری
-                </a>
+                <svg class="w-5 h-5">
+                    <use href="#user"></use>
+                </svg>
+                حساب کاربری
+            </a>
             {% else %}
-                <a href="{% url 'user:login' %}" class="">
-                    <svg class="w-5 h-5">
-                        <use href="#arrow-left-start-on-rectangle"></use>
-                    </svg>
-                    ورود | ثبت نام
-                </a>
+            <a href="{% url 'user:login' %}" class="">
+                <svg class="w-5 h-5">
+                    <use href="#arrow-left-start-on-rectangle"></use>
+                </svg>
+                ورود | ثبت نام
+            </a>
             {% endif %}
             <button onclick="themToggle()" id="toggle-theme-mobile" class="toggle-theme">
                         <span class="flex dark:hidden gap-x-1 items-center">
@@ -578,14 +598,14 @@
     <a href="/"
        class="flex items-center gap-x-1 dark:text-brown-300 text-brown-600 font-MorabbaMedium text-xl">
 
-                <picture>
-                    <source srcset="{% thumbnail site.logo '96x56' %}"
-                            class="w-24 h-14 rounded-full"
-                            type="image/webp">
-                    <img src="{% thumbnail site.logo '96x56' %}" alt="{{ site.title }}"
-                         class="w-24 h-14 rounded-full" width="96" height="56"
-                         loading="lazy">
-                </picture>
+        <picture>
+            <source srcset="{% thumbnail site.logo '96x56' %}"
+                    class="w-24 h-14 rounded-full"
+                    type="image/webp">
+            <img src="{% thumbnail site.logo '96x56' %}" alt="{{ site.title }}"
+                 class="w-24 h-14 rounded-full" width="96" height="56"
+                 loading="lazy">
+        </picture>
 
     </a>
     <!-- OPEN SHOPPING CART BTN  -->

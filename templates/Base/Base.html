@@ -7,7 +7,8 @@
 
 
 {% get_block_content 'title' as title_content %}
-{% render_partial 'sitesetting.views.header_render_partial' title=title_content  %}
+{% get_block_content 'microdata' as microdata_content %}
+{% render_partial 'sitesetting.views.header_render_partial' title=title_content  microdata=microdata_content %}
 
 <main class=" {% if request.path != '/' %} container {% endif %} child:mt-8 px-2">
     <!-- Breadcrumbs -->

@@ -4,6 +4,26 @@
     تماس با ما
 {% endblock %}
 
+{% block microdata %}
+ {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "{{ site.title|escapejs }}",
+  "url": "{{ request.scheme }}://{{ request.get_host }}/",
+  "telephone": "{{ site.phone }}",
+  "email": "{{ site.email }}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "{{ site.address }}",
+    "addressLocality": "قم",
+    "addressRegion": "قم",
+    "addressCountry": "IR"
+  },
+  "openingHours": "Mo-Su 00:00-23:59"
+}
+
+{% endblock %}
+
 {% block breadcrumb %}
     <li class="flex items-center gap-x-2">
         <a href="{% url 'site:contact-us' %}"> تماس با ما</a>
