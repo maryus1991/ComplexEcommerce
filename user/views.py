@@ -85,7 +85,7 @@ class RegisterAsColleagueUser(View):
                     'کاربر ساخته شد'
                 )
                 login(request, user)
-                return redirect("user:otp")
+                return redirect(reverse("user:otp"))
 
         else:
             messages.error(

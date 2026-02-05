@@ -163,10 +163,17 @@ class AddOrder(LoginRequiredMixin, RedirectView):
     اضافه‌کردن محصول به سبد خرید یا بروزرسانی آن
     """
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return super(LoginRequiredMixin).dispatch(request, *args, **kwargs)
+        else:
+            messages.warning(request, "لطفا وارد سایت شوید")
+            return redirect(reverse("user:login")+"?next={}".format(request.build_absolute_uri()))
+
     def get_redirect_url(self, *args, **kwargs):
         request = self.request
-        referer = request.META.get("HTTP_REFERER", "/")
         num_str = request.GET.get("count") or "1"
+        referer = request.META.get("HTTP_REFERER", "/")
 
         if not num_str.isdigit() or int(num_str) < 0:
             raise Http404()
@@ -776,7 +783,7 @@ class ConformPayment(LoginRequiredMixin, View):
         try:
             self.site = SiteSetting.objects.first()
 
-            if not self.site.active_zarinpal_payment or self.site.zero_the_count_of_all_product:
+            if self.site.active_zarinpal_payment or self.site.zero_the_count_of_all_product:
                 messages.warning(request, "درگاه پرداخت از طرف ادمین سایت غیر فعال شده است")
                 return redirect("/")
 
