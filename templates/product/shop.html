@@ -775,7 +775,7 @@
                     {% if page_obj.has_previous %}
 
                         <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
-                            <a onclick="OrderingFilterForPagination({{ page_obj.previous_page_number }})">
+                            <a href="#" onclick="OrderingFilterForPagination({{ page_obj.previous_page_number }})">
 
                                 <svg class="w-5 h-5">
                                     <use href="#chevron-right"></use>
@@ -786,7 +786,7 @@
 
                     {% for page_number in page_obj.paginator.page_range %}
                         <li class="dark:text-white {% if page_number == page_obj.number %} bg-green-500 text-white {% else %} bg-white dark:bg-zinc-700 {% endif %} ">
-                            <a onclick="OrderingFilterForPagination({{ page_number }})" class="w-full text-center">
+                            <a href="#" onclick="OrderingFilterForPagination({{ page_number }})" class="w-full text-center">
                                 {{ page_number }}
                             </a>
                         </li>
@@ -796,7 +796,7 @@
                     {% if page_obj.has_next %}
 
                         <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
-                            <a onclick="OrderingFilterForPagination({{ page_obj.next_page_number }})">
+                            <a href="#" onclick="OrderingFilterForPagination({{ page_obj.next_page_number }})">
                                 <svg class="w-5 h-5">
                                     <use href="#chevron-left"></use>
                                 </svg>

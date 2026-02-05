@@ -20,9 +20,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <!-- عنوان صفحه -->
     <title>{{ title }}</title>
     <script type="application/ld+json">
-        {{
-            microdata
-        }}
+        {{ microdat }}
     </script>
 
     <!-- آیکون‌ها -->
@@ -38,7 +36,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta name="author" content="{{ site.title }}">
 
     <!-- Canonical URL -->
-    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    {% if  '/product/' not in request.path and '/apps/' not in request.path and '/blog/' not in request.path %}
+        <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    {% endif %}
 
     <!-- Open Graph (برای فیسبوک، تلگرام، واتساپ و...) -->
     <meta property="og:title" content="{{ title }}">
