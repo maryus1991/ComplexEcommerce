@@ -164,11 +164,12 @@ class AddOrder(LoginRequiredMixin, RedirectView):
     """
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return super(LoginRequiredMixin).dispatch(request, *args, **kwargs)
-        else:
+        if not request.user.is_authenticated:
             messages.warning(request, "لطفا وارد سایت شوید")
             return redirect(reverse("user:login")+"?next={}".format(request.build_absolute_uri()))
+        else:
+            return super().dispatch(request, *args, **kwargs)
+
 
     def get_redirect_url(self, *args, **kwargs):
         request = self.request
