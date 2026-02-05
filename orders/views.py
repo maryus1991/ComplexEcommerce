@@ -784,9 +784,7 @@ class ConformPayment(LoginRequiredMixin, View):
         try:
             self.site = SiteSetting.objects.first()
 
-            if self.site.active_zarinpal_payment or self.site.zero_the_count_of_all_product:
-                messages.warning(request, "درگاه پرداخت از طرف ادمین سایت غیر فعال شده است")
-                return redirect("/")
+
 
 
             self.pk = kwargs.get("pk")
@@ -799,9 +797,13 @@ class ConformPayment(LoginRequiredMixin, View):
                 canceled=False,
             )
 
+            if not self.site.active_zarinpal_payment or self.site.zero_the_count_of_all_product:
+                messages.warning(request, "درگاه پرداخت از طرف ادمین سایت غیر فعال شده است")
+                return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
+
             if self.order.store.zero_the_count_of_all_product_of_store :
                 messages.warning(request, f'فروش فروشگاه {self.order.store.name} بسته شده است و تمام موجودی محصولات ان صفر شد لطفا با فروشگاه در ارتباط باشید ')
-                return redirect("/")
+                return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
 
             self.result = self.order.get_payment_price()
 
