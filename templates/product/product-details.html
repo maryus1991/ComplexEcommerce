@@ -1,7 +1,7 @@
 {% extends 'Base/Base.html' %}
 {% load products_tags %}
 {% load jalali_tags %}
-{% load to_webp %}
+
 {% load thumbnail %}
 
 {% block title %}
@@ -337,34 +337,112 @@
                     </div>
                     <div class="relative w-full">
                         <!-- ردیف اسلایدها -->
-                        <div id="slider"
-                             class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory rounded-lg scrollbar-hide">
-                            {% if product.picture %}
-                                <div class="flex-shrink-0 w-full snap-center">
-                                    <img src="{% thumbnail product.picture '384x384' %}"
-                                         alt="{{ product.name }}" loading="lazy" width="384" height="384"
-                                         class="w-full h-auto rounded-lg object-cover">
-                                </div>
-                            {% endif %}
-                            {% if product.parent %}
-                                {% for img in product.parent.gallery|sort_number %}
-                                    <div class="flex-shrink-0 w-full snap-center">
-                                        <img src="{% thumbnail img.image '384x384' %}"  width="384" height="384"
-                                             alt="{{ product.parent.name }}" loading="lazy"
-                                             class="w-full h-auto rounded-lg object-cover">
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                {% for img in product.gallery|sort_number %}
-                                    <div class="flex-shrink-0 w-full snap-center">
-                                        <img src="{% thumbnail img.image '384x384' %}"
-                                             alt="{{ product.name }}" loading="lazy"  width="384" height="384"
-                                             class="w-full h-auto rounded-lg object-cover">
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
+<!--                        <div id="slider"-->
+<!--                             class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory rounded-lg scrollbar-hide">-->
+<!--                            {% if product.picture %}-->
+<!--                                <div class="flex-shrink-0 w-full snap-center">-->
+<!--                                    <img src="{% thumbnail product.picture '384x384' %}"-->
+<!--                                         alt="{{ product.name }}" loading="lazy" width="384" height="384"-->
+<!--                                         class="w-full h-auto rounded-lg object-cover">-->
+<!--                                </div>-->
+<!--                            {% endif %}-->
+<!--                            {% if product.parent %}-->
+<!--                                {% for img in product.parent.gallery|sort_number %}-->
+<!--                                    <div class="flex-shrink-0 w-full snap-center">-->
+<!--                                        <img src="{% thumbnail img.image '384x384' %}"  width="384" height="384"-->
+<!--                                             alt="{{ product.parent.name }}" loading="lazy"-->
+<!--                                             class="w-full h-auto rounded-lg object-cover">-->
+<!--                                    </div>-->
+<!--                                {% endfor %}-->
+<!--                            {% else %}-->
+<!--                                {% for img in product.gallery|sort_number %}-->
+<!--                                    <div class="flex-shrink-0 w-full snap-center">-->
+<!--                                        <img src="{% thumbnail img.image '384x384' %}"-->
+<!--                                             alt="{{ product.name }}" loading="lazy"  width="384" height="384"-->
+<!--                                             class="w-full h-auto rounded-lg object-cover">-->
+<!--                                    </div>-->
+<!--                                {% endfor %}-->
+<!--                            {% endif %}-->
+<!--                        </div>-->
+<style>
+    @media (min-width: 768px) {
+        .zoom-image-container {
+            overflow: hidden;
+            border-radius: 0.5rem;
+            position: relative;
+            cursor: zoom-in;
+        }
 
+        .zoom-image {
+            transition: transform 0.3s ease;
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 0.5rem;
+        }
+
+        .zoom-image.zooming {
+            transition: none; /* هنگام حرکت موس انیمیشن نداشته باشد */
+        }
+    }
+</style>
+
+<div id="slider"
+     class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory rounded-lg scrollbar-hide">
+    {% if product.picture %}
+        <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
+            <img src="{% thumbnail product.picture '384x384' %}"
+                 alt="{{ product.name }}" loading="lazy" width="384" height="384"
+                 class="zoom-image">
+        </div>
+    {% endif %}
+    {% if product.parent %}
+        {% for img in product.parent.gallery|sort_number %}
+            <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
+                <img src="{% thumbnail img.image '384x384' %}"  width="384" height="384"
+                     alt="{{ product.parent.name }}" loading="lazy"
+                     class="zoom-image">
+            </div>
+        {% endfor %}
+    {% else %}
+        {% for img in product.gallery|sort_number %}
+            <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
+                <img src="{% thumbnail img.image '384x384' %}"
+                     alt="{{ product.name }}" loading="lazy"  width="384" height="384"
+                     class="zoom-image">
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<script>
+function zoomOnMouse(event, container) {
+    const img = container.querySelector('.zoom-image');
+    const containerRect = container.getBoundingClientRect();
+
+    // موقعیت موس نسبت به container
+    const x = event.clientX - containerRect.left;
+    const y = event.clientY - containerRect.top;
+
+    // درصد موقعیت موس
+    const xPercent = (x / containerRect.width) * 100;
+    const yPercent = (y / containerRect.height) * 100;
+
+    // اضافه کردن کلاس برای حذف transition هنگام حرکت موس
+    img.classList.add('zooming');
+
+    // تنظیم transform-origin براساس موقعیت موس
+    img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+    img.style.transform = 'scale(2)'; // میزان زوم
+}
+
+function resetZoom(container) {
+    const img = container.querySelector('.zoom-image');
+    img.classList.remove('zooming');
+    img.style.transformOrigin = 'center center';
+    img.style.transform = 'scale(1)';
+}
+</script>
                         <div class="flex justify-between mt-2 w-full">
                             <button onclick="document.getElementById('slider').scrollBy({left: 384, behavior: 'smooth'})"
                                     class="relative  flex m-1 items-center justify-center w-10 h-10 rounded-full bg-gray-800 dark:text-white  shadow-md hover:bg-gray-700 transition">

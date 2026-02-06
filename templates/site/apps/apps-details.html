@@ -1,5 +1,5 @@
 {% extends 'Base/Base.html' %}
-{% load to_webp %}
+
 {% load thumbnail %}
 
 {% block title %}
@@ -84,16 +84,23 @@
                 <!-- LOGO -->
                 <span class="text-green-500 transition-colors w-fit  block">
                     {% if item.image %}
-                        <picture>
-                            <source srcset="{% thumbnail item.image '64x64' %}"
-                                    class="w-24 h-24 rounded-full " height="64px"
-                                    width="96px"
-                                    type="image/webp">
-                            <img src="{% thumbnail item.image '64x64' %}" alt="{{ item.name }}"
-                                 class="w-24 h-24 rounded-full " height="64px"
-                                 width="96px"
-                                 loading="lazy">
-                        </picture>
+<picture>
+    <!-- نسخه WebP با رزولوشن‌های مختلف -->
+    <source srcset="{% thumbnail site.logo '96x56' %} 1x,
+                    {% thumbnail site.logo '192x112' %} 2x,
+                    {% thumbnail site.logo '288x168' %} 3x"
+            type="image/webp">
+
+    <!-- fallback (همون WebP، چون پشتیبانی WebP الان بالای ۹۷٪ هست) -->
+    <img src="{% thumbnail site.logo '192x112' %}"
+         srcset="{% thumbnail site.logo '96x56' %} 1x,
+                 {% thumbnail site.logo '192x112' %} 2x,
+                 {% thumbnail site.logo '288x168' %} 3x"
+         alt="{{ site.title }}"
+         class="w-24 h-14 rounded-full"
+         width="96" height="56"
+         loading="lazy">
+</picture>
 
                     {% endif %}
 

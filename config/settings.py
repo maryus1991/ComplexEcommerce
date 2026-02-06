@@ -134,6 +134,7 @@ MIDDLEWARE = [
 
     "django_user_agents.middleware.UserAgentMiddleware",
     "auditlog.middleware.AuditlogMiddleware",
+    "config.middleware.ProductCookieMiddleware",
 ]
 
 # html minify

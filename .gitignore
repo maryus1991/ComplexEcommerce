@@ -25,5 +25,5 @@ post_data.json
 ssl/*
 mailserver/
 snappymail/
-
+backups/*
 

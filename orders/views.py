@@ -1,26 +1,32 @@
-from django.shortcuts import reverse, Http404, get_object_or_404, render, redirect
-from django.db import transaction
-from django.views.generic import  RedirectView, View
-from user.mixins.logins import CustomLoginRequiredMixin as LoginRequiredMixin
-from django.utils import timezone
-from django.contrib import messages
 import json
+
 import requests
-from product.models import Product
-from sitesetting.models import SiteSetting
-from .models import Order, OrderDetail, Discount, StoreSoldOrders, SpecificsOrders
+from django.contrib import messages
+from django.db import transaction
+from django.http import HttpResponseRedirect
+from django.shortcuts import reverse, Http404, get_object_or_404, render, redirect
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.utils.timezone import now
+from django.views.decorators.cache import never_cache
+from django.views.generic import RedirectView, View
+
 from config.settings import (
     MERCHANT_ID,
     ZARINPAL_SEND_DATA_URL,
     ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE,
     ZARINPAL_VERIFY_PAYMENT,
+    DEBUG
 )
-from django.utils.timezone import now
-from stores.models import Store
 from dashboard.models import UserAddress
+from product.models import Product
+from sitesetting.models import SiteSetting
+from stores.models import Store
+from user.mixins.logins import CustomLoginRequiredMixin as LoginRequiredMixin
 from utils.send_otp import send_message
-from django.views.decorators.cache import never_cache
-from django.utils.decorators import method_decorator
+from .models import Order, OrderDetail, Discount, StoreSoldOrders, SpecificsOrders
+import urllib.parse
+
 
 def get_zarinpal_error_code_return_perian_message(code):
     import ZARINPAL_ERRORS
@@ -95,8 +101,9 @@ class SpecificsOrdersView(LoginRequiredMixin, View):
             return render(
                 request,
                 "order/payment-failed.html",
-                {"error": error_message, "order": order, "date": now(), 'specifics_order':True},
+                {"error": error_message, "order": order, "date": now(), 'specifics_order': True},
             )
+
 
 @method_decorator(never_cache, name='dispatch')
 class SpecificsOrdersVerifyPayment(LoginRequiredMixin, View):
@@ -154,8 +161,9 @@ class SpecificsOrdersVerifyPayment(LoginRequiredMixin, View):
             return render(
                 request,
                 "order/payment-failed.html",
-                {"error": error_message, "date": now(), "order": order, 'specifics_order':True},
+                {"error": error_message, "date": now(), "order": order, 'specifics_order': True},
             )
+
 
 @method_decorator(never_cache, name='dispatch')
 class AddOrder(LoginRequiredMixin, RedirectView):
@@ -164,17 +172,70 @@ class AddOrder(LoginRequiredMixin, RedirectView):
     """
 
     def dispatch(self, request, *args, **kwargs):
+        self.product = get_object_or_404(Product, pk=kwargs.get("pk"),
+                                    is_active=True, store__is_active=True, store__is_verified=True,
+                                    admin_verified=True, brand__is_active=True, category__is_active=True)
+
+        self.num_str = request.GET.get("count") or "1"
+        self.referer = request.META.get("HTTP_REFERER", "/")
+
+
+        if SiteSetting.objects.first().zero_the_count_of_all_product:
+            messages.info(
+                request, 'فروش توسط ادمین بسته شده است و تمام موجودی کالا ها صفر شد لطفا با ادمین سایت در ارتباط باشید'
+            )
+            return self.referer
+
+        if self.product.store.zero_the_count_of_all_product_of_store:
+            messages.info(
+                request,
+                f'فروش فروشگاه {self.product.store.name} بسته شده است و تمام موجودی محصولات ان صفر شد لطفا با فروشگاه در ارتباط باشید '
+            )
+            return self.referer
+
+
         if not request.user.is_authenticated:
-            messages.warning(request, "لطفا وارد سایت شوید")
-            return redirect(reverse("user:login")+"?next={}".format(request.build_absolute_uri()))
+            product_pk = str(kwargs.get("pk"))
+            cookie_name = "added_to_order_products_before_login"
+
+            old_cookie = request.COOKIES.get(cookie_name, "")
+
+
+            decoded_value = urllib.parse.unquote(old_cookie)
+
+
+            if decoded_value:
+
+                cleaned_value = decoded_value.replace('\\054', ',')
+                products = cleaned_value.split(",")
+            else:
+                products = []
+
+
+            if product_pk not in products:
+                products.append(product_pk)
+
+
+            new_value = ",".join(products)
+
+            response = HttpResponseRedirect(reverse("user:login"))
+            response.set_cookie(
+                cookie_name,
+                new_value,
+                max_age=60 * 60,
+                httponly=True,
+                samesite='Lax',
+                secure=True if not DEBUG else False,
+            )
+            messages.warning(request, "لطفا وارد سایت شوید تا محصول به سبد خرید اضافه شود")
+            return response
         else:
             return super().dispatch(request, *args, **kwargs)
 
-
     def get_redirect_url(self, *args, **kwargs):
         request = self.request
-        num_str = request.GET.get("count") or "1"
-        referer = request.META.get("HTTP_REFERER", "/")
+        num_str = self.num_str
+        referer = self.referer
 
         if not num_str.isdigit() or int(num_str) < 0:
             raise Http404()
@@ -183,25 +244,11 @@ class AddOrder(LoginRequiredMixin, RedirectView):
             num = int(num_str)
         except Exception:
             messages.error(
-                self.request,'در عدد ارسالی مشکلی پیش اومد لطفا دوباره امتحان کنید'
+                self.request, 'در عدد ارسالی مشکلی پیش اومد لطفا دوباره امتحان کنید'
             )
             return referer
 
-        product = get_object_or_404(Product, pk=kwargs.get("pk"),
-        is_active=True, store__is_active=True, store__is_verified=True,
-        admin_verified=True, brand__is_active=True, category__is_active=True)
-
-        if SiteSetting.objects.first().zero_the_count_of_all_product :
-            messages.info(
-                request,'فروش توسط ادمین بسته شده است و تمام موجودی کالا ها صفر شد لطفا با ادمین سایت در ارتباط باشید'
-            )
-            return referer
-
-        if product.store.zero_the_count_of_all_product_of_store :
-            messages.info(
-                request, f'فروش فروشگاه {product.store.name} بسته شده است و تمام موجودی محصولات ان صفر شد لطفا با فروشگاه در ارتباط باشید '
-            )
-            return referer
+        product = self.product
 
         order, _ = Order.objects.get_or_create(
             user=request.user,
@@ -277,6 +324,7 @@ class AddOrder(LoginRequiredMixin, RedirectView):
         messages.success(request, "محصول با موفقیت به سبد خرید شما اضافه شد.")
         return referer
 
+
 @method_decorator(never_cache, name='dispatch')
 class CancelingOrder(LoginRequiredMixin, RedirectView):
     """
@@ -308,6 +356,7 @@ class CancelingOrder(LoginRequiredMixin, RedirectView):
 
         return reverse("dashboard:orders")
 
+
 @method_decorator(never_cache, name='dispatch')
 class RemoveItemFromOrder(LoginRequiredMixin, RedirectView):
     """
@@ -336,6 +385,7 @@ class RemoveItemFromOrder(LoginRequiredMixin, RedirectView):
         messages.info(self.request, "ایتم مورد نظر با موفقیت از سبد خرید شما حذف شد ")
         return self.request.META.get("HTTP_REFERER", "/")
 
+
 @method_decorator(never_cache, name='dispatch')
 class RemoveProductFromOrder(LoginRequiredMixin, RedirectView):
     """
@@ -362,13 +412,13 @@ class RemoveProductFromOrder(LoginRequiredMixin, RedirectView):
             obj.count += order_detail.count
             obj.save()
 
-
             order_detail.delete()
         else:
             raise Http404()
 
         messages.info(self.request, "ایتم مورد نظر با موفقیت از سبد خرید شما حذف شد ")
         return self.request.META.get("HTTP_REFERER", "/")
+
 
 @method_decorator(never_cache, name='dispatch')
 class AddAddressToOrder(LoginRequiredMixin, View):
@@ -411,6 +461,7 @@ class AddAddressToOrder(LoginRequiredMixin, View):
 
         return redirect(reverse("dashboard:order_detail", kwargs={"pk": pk}))
 
+
 @method_decorator(never_cache, name='dispatch')
 class ChangeInvoiceToOfficial(LoginRequiredMixin, RedirectView):
     """
@@ -439,7 +490,7 @@ class ChangeInvoiceToOfficial(LoginRequiredMixin, RedirectView):
             store_id=store_id,
         )
 
-        if not order_obj.store.have_official_invoice :
+        if not order_obj.store.have_official_invoice:
             order_obj.official_invoice = False
             order_obj.save()
             messages.warning(self.request, "دریافت فاکتور رسمی برای این فروشگاه غیر فعال هست ")
@@ -451,7 +502,7 @@ class ChangeInvoiceToOfficial(LoginRequiredMixin, RedirectView):
                 order_obj.save()
 
                 messages.warning(self.request, "دریافت فاکتور رسمی برای شما غیر فعال شد ")
-            else :
+            else:
                 order_obj.official_invoice = True
                 order_obj.save()
 
@@ -463,6 +514,7 @@ class ChangeInvoiceToOfficial(LoginRequiredMixin, RedirectView):
             messages.warning(self.request, "دریافت فاکتور رسمی توسط ادمین سایت غیر فعال شده است ")
 
         return self.request.META.get("HTTP_REFERER", "/")
+
 
 @method_decorator(never_cache, name='dispatch')
 class OrderSetDiscount(LoginRequiredMixin, RedirectView):
@@ -626,6 +678,7 @@ class OrderSetDiscount(LoginRequiredMixin, RedirectView):
 
         return reverse("orders:payment-conform", kwargs={"pk": pk})
 
+
 @method_decorator(never_cache, name='dispatch')
 class OrderRemoveDiscount(LoginRequiredMixin, RedirectView):
     """
@@ -656,6 +709,7 @@ class OrderRemoveDiscount(LoginRequiredMixin, RedirectView):
 
         return reverse("orders:payment-conform", kwargs={"pk": pk})
 
+
 @method_decorator(never_cache, name='dispatch')
 class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
     """
@@ -678,7 +732,6 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
             user=user,
             store_id=store_id,
         )
-
 
         if not order.details.exists():
             messages.error(
@@ -774,6 +827,7 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
 
         return reverse("orders:payment-conform", kwargs={"pk": pk})
 
+
 @method_decorator(never_cache, name='dispatch')
 class ConformPayment(LoginRequiredMixin, View):
     """
@@ -783,9 +837,6 @@ class ConformPayment(LoginRequiredMixin, View):
     def dispatch(self, request, *args, **kwargs):
         try:
             self.site = SiteSetting.objects.first()
-
-
-
 
             self.pk = kwargs.get("pk")
             self.order = get_object_or_404(
@@ -801,8 +852,9 @@ class ConformPayment(LoginRequiredMixin, View):
                 messages.warning(request, "درگاه پرداخت از طرف ادمین سایت غیر فعال شده است")
                 return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
 
-            if self.order.store.zero_the_count_of_all_product_of_store :
-                messages.warning(request, f'فروش فروشگاه {self.order.store.name} بسته شده است و تمام موجودی محصولات ان صفر شد لطفا با فروشگاه در ارتباط باشید ')
+            if self.order.store.zero_the_count_of_all_product_of_store:
+                messages.warning(request,
+                                 f'فروش فروشگاه {self.order.store.name} بسته شده است و تمام موجودی محصولات ان صفر شد لطفا با فروشگاه در ارتباط باشید ')
                 return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
 
             self.result = self.order.get_payment_price()
@@ -851,8 +903,6 @@ class ConformPayment(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
 
-
-
         pk = self.pk
         order = self.order
 
@@ -881,7 +931,7 @@ class ConformPayment(LoginRequiredMixin, View):
             if result <= self.site.min_payment:
                 messages.warning(
                     request,
-                     ' قیمت سفارش شما نباید کمتر از {:,} تومان باشد '.format(self.site.min_payment)
+                    ' قیمت سفارش شما نباید کمتر از {:,} تومان باشد '.format(self.site.min_payment)
                 )
                 return redirect('orders:payment-conform', pk=pk)
 
@@ -945,6 +995,7 @@ class ConformPayment(LoginRequiredMixin, View):
             messages.warning(request, "لطفا نحوه ارسال  را انتخاب کنید")
             return redirect("orders:payment-conform", pk=pk)
 
+
 @method_decorator(never_cache, name='dispatch')
 class VerifyPayment(LoginRequiredMixin, View):
 
@@ -998,7 +1049,6 @@ class VerifyPayment(LoginRequiredMixin, View):
                 order.sending = True
                 order.second_date = now()
                 order.save()
-
 
                 obj = StoreSoldOrders.objects.get_or_create(
                     order=order, price=order.total_price, store=order.store
