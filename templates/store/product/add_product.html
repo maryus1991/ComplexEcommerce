@@ -177,6 +177,8 @@
                             توضیحات ثبت کنید؛
                             این اطلاعات به طور خودکار از محصول مادر گرفته و نمایش داده می‌شوند.
                         </div>
+                        <br>
+                        <div class="small bg-warning text-white p-2 rounded"> ️⚠️ توجه: خیلی مهم است که از عکس های کم حجم استفاده کنید تا لود سایت با تاخیر حاصل نشه و حتما با فرمت webp باشد و حجم مناسب برای عکس باید حدود ۱۰KB الی ۱۰۰KB باشد</div>
 
                     </div>
 
@@ -186,7 +188,7 @@
 
                             <!-- ردیف اول فرم محصول -->
                             <div class="row">
-                                <div class="col-sm-12 col-md-4 form-group">
+                                <div class="col-sm-12 col-md-6 form-group">
                                     <div class="input-group">
                                     <span class="input-group-btn">
                                         <span class="btn btn-warning btn-flat">عنوان محصول:</span>
@@ -194,23 +196,8 @@
                                         {{ form.name }}
                                     </div>
                                 </div>
-                                <div class="col-sm-6 col-md-2 form-group">
-                                    <div class="input-group">
-                                    <span class="input-group-btn">
-                                        <span class="btn btn-purple btn-flat">قیمت:</span>
-                                    </span>
-                                        {{ form.price }}
-                                    </div>
-                                </div>
-                                <div class="col-sm-6 col-md-3 form-group">
-                                    <div class="input-group">
-                                    <span class="input-group-btn">
-                                        <span class="btn btn-info btn-flat">عکس اصلی</span>
-                                    </span>
-                                        {{ form.picture }}
-                                    </div>
-                                </div>
-                                <div class="col-sm-6 col-md-3 form-group">
+
+                                                                                                <div class=" col-sm-3 form-group">
                                     <div class="input-group">
                                     <span class="input-group-btn">
                                         <span class="btn btn-success btn-flat">گالری محصول</span>
@@ -218,24 +205,44 @@
                                         {{ form.gallery }}
                                     </div>
                                 </div>
+                                <div class="  col-md-3 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-info btn-flat">عکس اصلی</span>
+                                    </span>
+                                        {{ form.picture }}
+                                    </div>
+                                </div>
+
+
                             </div>
 
                             <!-- ردیف دوم فرم محصول -->
                             <div class="row">
+
                                 <div class="col-sm-6 col-md-3 form-group">
                                     <div class="input-group">
                                     <span class="input-group-btn">
-                                        <span class="btn btn-flat" style="background-color: #ed59f4; color: white;">دسته بندی:</span>
+                                        <span class="btn btn-purple btn-flat">قیمت مصرف کننده :</span>
                                     </span>
-                                        {{ form.category }}
+                                        {{ form.price }}
                                     </div>
                                 </div>
-                                <div class="col-sm-6 col-md-3 form-group">
+                                                                                                <div class="col-sm-12 col-md-3 form-group">
                                     <div class="input-group">
                                     <span class="input-group-btn">
-                                        <span class="btn btn-flat" style="background-color: #0000ff; color: white;">برند:</span>
+                                        <span class="btn btn-purple btn-flat">قیمت همکار:</span>
                                     </span>
-                                        {{ form.brand }}
+                                        {{ form.colleague_users_price }}
+                                    </div>
+                                </div>
+
+                                                                <div class="col-sm-12 col-md-3 form-group">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-flat" style="background-color: #f56954; color: white;">تعداد:</span>
+                                    </span>
+                                        {{ form.count }}
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-3 form-group">
@@ -246,27 +253,20 @@
                                         {{ form.discount }}
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-md-3 form-group">
-                                    <div class="input-group">
-                                    <span class="input-group-btn">
-                                        <span class="btn btn-purple btn-flat">قیمت همکار:</span>
-                                    </span>
-                                        {{ form.colleague_users_price }}
-                                    </div>
-                                </div>
+
                             </div>
 
                             <!-- ردیف سوم فرم محصول -->
                             <div class="row">
-                                <div class="col-sm-6 form-group">
+                                <div class="col-sm-4 form-group">
                                     <div class="input-group">
                                     <span class="input-group-btn">
-                                        <span class="btn btn-flat" style="background-color: #f56954; color: white;">تعداد:</span>
+                                        <span class="btn btn-flat" style="background-color: #0000ff; color: white;">برند:</span>
                                     </span>
-                                        {{ form.count }}
+                                        {{ form.brand }}
                                     </div>
                                 </div>
-                                <div class="col-sm-6 form-group">
+                                <div class="col-sm-4  form-group">
                                     <div class="input-group">
                                     <span class="input-group-btn">
                                         <span class="btn btn-flat" style="background-color: #726204; color: white;">وزن (گرم):</span>
@@ -274,7 +274,14 @@
                                         {{ form.weight }}
                                     </div>
                                 </div>
-
+                                <div class="col-sm-4 form-group ">
+                                    <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <span class="btn btn-flat" style="background-color: #ed59f4; color: white;">دسته بندی:</span>
+                                    </span>
+                                        {{ form.category }}
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- ردیف چهارم فرم محصول -->
