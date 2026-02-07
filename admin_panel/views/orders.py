@@ -48,10 +48,19 @@ class CancelingOrderByAdmin(AdminUserMixin, RedirectView):
             Order, pk=self.kwargs["pk"]
         )
 
-        if order.store_sold_orders.is_returned_by_admin:
-            messages.info(
+        try:
+            if  order.store_sold_orders.is_returned_by_admin:
+                messages.info(
+                    self.request,
+                    'شما این سفارش را تصفیه کرید'
+                )
+                return self.request.META.get("HTTP_REFERER")
+        except Exception as e: print(self.__class__.__name__, e)
+
+        if order.is_paid or order.canceled :
+            messages.error(
                 self.request,
-                'شما این سفارش را تصفیه کرید'
+                'این سفارش  قبلا تعیین تکلیف شده'
             )
             return self.request.META.get("HTTP_REFERER")
 
@@ -60,7 +69,12 @@ class CancelingOrderByAdmin(AdminUserMixin, RedirectView):
         order.canceled_by_admin = True
         order.second_date = now()
         order.save()
-        order.store_sold_orders.delete()
+
+        try:
+            if  order.store_sold_orders:
+                order.store_sold_orders.delete()
+        except Exception as e: print(self.__class__.__name__, e)
+
 
         messages.info(
             self.request,

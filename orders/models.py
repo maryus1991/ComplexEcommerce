@@ -332,7 +332,7 @@ class Order(models.Model):
                     self.store.have_official_invoice and
                     site.active_receive_official_invoice
             ):
-                total_payment_price += total_amount_of_items * (
+                total_payment_price += total_payment_price * (
                         self.store.official_invoice_price / 100
                 )
 
@@ -340,12 +340,12 @@ class Order(models.Model):
                 total_payment_price += self.store.additional_price
 
             if self.store.additional_tax:
-                total_payment_price += total_amount_of_items * (
+                total_payment_price += total_payment_price * (
                         self.store.additional_tax / 100
                 )
 
             # site
-            total_payment_price += total_amount_of_items * (site.tax / 100)
+            total_payment_price += total_payment_price * (site.tax / 100)
 
             self.total_payment_price = total_payment_price
             self.save()
@@ -470,6 +470,7 @@ class Discount(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.id}"
+
 
 
 class StoreSoldOrders(models.Model):
