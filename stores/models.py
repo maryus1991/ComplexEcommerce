@@ -1,5 +1,5 @@
 from datetime import timedelta
-
+from easy_thumbnails.fields import ThumbnailerImageField
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -28,7 +28,7 @@ class Store(models.Model):
         blank=True,
     )
 
-    logo = models.ImageField(null=True, blank=True)
+    logo = ThumbnailerImageField(null=True, blank=True)
     address = models.CharField(max_length=200, null=True)
     zip_code = models.CharField(null=True, blank=True, max_length=20)
     province = models.CharField(null=True, blank=True, max_length=20)
@@ -43,7 +43,7 @@ class Store(models.Model):
     is_verified = models.BooleanField(default=True)
 
     description = RichTextUploadingField(null=True, blank=True)
-    about_image = models.ImageField(null=True, blank=True)
+    about_image = ThumbnailerImageField(null=True, blank=True)
 
     # official invoice
     have_official_invoice = models.BooleanField(default=True)
@@ -111,7 +111,7 @@ class StoreApps(models.Model):
         blank=True,verbose_name='توضیحات'
     )
     admin_verified = models.BooleanField(default=True)
-    image = models.ImageField(
+    image = ThumbnailerImageField(
         upload_to="site/apps/logo/", null=True, verbose_name="عکس", blank=True
     )
 

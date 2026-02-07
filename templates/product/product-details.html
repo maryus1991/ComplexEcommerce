@@ -294,8 +294,8 @@
                                     document.getElementById("copy_text_message").innerText = 'ادرس مورد نظر کپی شد';
                                 }
                             </script>
-                            <a href="#" class="share-btn-copy-123" onclick="copyText()">
-                                <button class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
+                            <a href="#" aria-label=' اشتراک گذاری' class="share-btn-copy-123" onclick="copyText()">
+                                <button aria-label=' اشتراک گذاری' class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
                                     <svg class="w-5 h-5">
                                         <use href="#share"></use>
                                     </svg>
@@ -322,8 +322,8 @@
                             </div>
                         {% else %}
                             <div class="tooltip">
-                                <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}">
-                                    <button class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
+                                <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}" aria-label=' افزودن به علاقمندی'>
+                                    <button aria-label=' افزودن به علاقمندی' class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
                                         <svg class="w-5 h-5">
                                             <use href="#heart"></use>
                                         </svg>
@@ -362,30 +362,60 @@
 
 <div id="slider"
      class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory rounded-lg scrollbar-hide">
-    {% if product.picture %}
-        <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
-            <img src="{% thumbnail product.picture '384x384' %}"
-                 alt="{{ product.name }}" loading="lazy" width="384" height="384"
-                 class="zoom-image">
-        </div>
-    {% endif %}
-    {% if product.parent %}
-        {% for img in product.parent.gallery|sort_number %}
-            <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
-                <img src="{% thumbnail img.image '384x384' %}"  width="384" height="384"
-                     alt="{{ product.parent.name }}" loading="lazy"
-                     class="zoom-image">
-            </div>
-        {% endfor %}
-    {% else %}
-        {% for img in product.gallery|sort_number %}
-            <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
-                <img src="{% thumbnail img.image '384x384' %}"
-                     alt="{{ product.name }}" loading="lazy"  width="384" height="384"
-                     class="zoom-image">
-            </div>
-        {% endfor %}
-    {% endif %}
+{% if product.picture %}
+<div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
+  <img 
+    src="{% thumbnail product.picture '384x384' %}"
+    srcset="
+      {% thumbnail product.picture '384x384' %} 384w,
+      {% thumbnail product.picture '768x768' %} 768w,
+      {% thumbnail product.picture '1152x1152' %} 1152w
+    "
+    sizes="(max-width: 640px) 100vw, 384px"
+    alt="{{ product.name }}" 
+    loading="lazy" 
+    width="384" 
+    height="384"
+    class="zoom-image">
+</div>
+{% endif %}
+{% if product.parent %}
+{% for img in product.parent.gallery|sort_number %}
+<div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
+  <img 
+    src="{% thumbnail img.image '384x384' %}"
+    srcset="
+      {% thumbnail img.image '384x384' %} 384w,
+      {% thumbnail img.image '768x768' %} 768w,
+      {% thumbnail img.image '1152x1152' %} 1152w
+    "
+    sizes="(max-width: 640px) 100vw, 384px"
+    alt="{{ product.parent.name }}" 
+    loading="lazy" 
+    width="384" 
+    height="384"
+    class="zoom-image">
+</div>
+{% endfor %}
+{% else %}
+{% for img in product.gallery|sort_number %}
+<div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
+  <img 
+    src="{% thumbnail img.image '384x384' %}"
+    srcset="
+      {% thumbnail img.image '384x384' %} 384w,
+      {% thumbnail img.image '768x768' %} 768w,
+      {% thumbnail img.image '1152x1152' %} 1152w
+    "
+    sizes="(max-width: 640px) 100vw, 384px"
+    alt="{{ product.name }}" 
+    loading="lazy" 
+    width="384" 
+    height="384"
+    class="zoom-image">
+</div>
+{% endfor %}
+{% endif %}
 </div>
 
 <script>
@@ -928,21 +958,30 @@ function resetZoom(container) {
                 {% if product.count > 0 or user_order_detail.count > 0 %}
 
                     <form action="{% url 'orders:add' product.id %}" class="flex flex-col gap-y-5">
-                        <div class="flex items-center justify-between rounded-lg border border-gray-200 dark:border-white/20 py-2 px-3">
-                            <svg onclick="handle_input('+')" class="w-6 h-6 shrink-0 text-green-600">
-                                <use href="#plus"></use>
-                            </svg>
-
-                            <input type="number" name="count" id="customInput" min="0"
-                                    {% if user_order_detail is not None %}
-                                   max="{{ product.count|sum:user_order_detail.count }}" {% else %}
-                                   max="{{ product.count }}" {% endif %}
-                                   value="{{ user_order_detail.count|default:1 }}"
-                                   class="custom-input mx-4 w-10 text-lg bg-transparent text-center flex-1">
-                            <svg onclick="handle_input('-')" class="w-6 h-6 shrink-0  text-red-500">
-                                <use href="#minus"></use>
-                            </svg>
-                        </div>
+<div class="flex items-center justify-between rounded-lg border border-gray-200 dark:border-white/20 py-2 px-3">
+  <svg onclick="handle_input('+')" class="w-6 h-6 shrink-0 text-green-600 cursor-pointer" role="button" aria-label="افزایش تعداد" tabindex="0">
+    <use href="#plus"></use>
+  </svg>
+  
+  <input 
+    type="number" 
+    name="count" 
+    id="customInput" 
+    min="0"
+    {% if user_order_detail is not None %}
+    max="{{ product.count|sum:user_order_detail.count }}" 
+    {% else %}
+    max="{{ product.count }}" 
+    {% endif %}
+    value="{{ user_order_detail.count|default:1 }}"
+    class="custom-input mx-4 w-10 text-lg bg-transparent text-center flex-1"
+    aria-label="تعداد کالا"
+  >
+  
+  <svg onclick="handle_input('-')" class="w-6 h-6 shrink-0 text-red-500 cursor-pointer" role="button" aria-label="کاهش تعداد" tabindex="0">
+    <use href="#minus"></use>
+  </svg>
+</div>
 
                         <button type="submit"
                                 class="w-full  gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">

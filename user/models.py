@@ -12,6 +12,8 @@ from utils.send_email_task import send_email_task
 from utils.send_otp import send_otp
 from utils.send_email_task import send_email_task
 from django.shortcuts import reverse
+from easy_thumbnails.fields import ThumbnailerImageField
+
 
 class User(AbstractUser):
     username = None
@@ -31,7 +33,7 @@ class User(AbstractUser):
     is_verified = models.BooleanField(default=False)
     is_store_admin = models.BooleanField(default=False)
     message_verified = models.BooleanField(default=True)
-    store_image=models.ImageField(upload_to='colleague/images/store/', null=True, blank=True)
+    store_image=ThumbnailerImageField(upload_to='colleague/images/store/', null=True, blank=True)
 
     private_code = models.CharField(
         max_length=100,

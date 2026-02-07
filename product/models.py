@@ -7,7 +7,7 @@ import os
 from django.shortcuts import reverse
 from stores.models import Store
 from django.utils.timezone import now
-
+from easy_thumbnails.fields import ThumbnailerImageField
 
 def photo_path_upload_to(instance, filename):
     basename = os.path.basename(filename)
@@ -19,7 +19,7 @@ User = get_user_model()
 
 class ProductBrand(models.Model):
     name = models.CharField(max_length=1000)
-    image = models.ImageField(upload_to=photo_path_upload_to, null=True)
+    image = ThumbnailerImageField(upload_to=photo_path_upload_to, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
     sort_number = models.PositiveSmallIntegerField(default=0)
@@ -37,7 +37,7 @@ class ProductCategory(models.Model):
         "self", on_delete=models.SET_NULL, null=True, blank=True, related_name="child"
     )
     name = models.CharField(max_length=1000)
-    image = models.ImageField(upload_to=photo_path_upload_to, null=True)
+    image = ThumbnailerImageField(upload_to=photo_path_upload_to, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
     sort_number = models.PositiveSmallIntegerField(default=0)
@@ -58,7 +58,7 @@ class Product(models.Model):
     colleague_users_price = models.BigIntegerField(default=0)
     have_discount = models.BooleanField(default=False)
     discount = models.IntegerField(default=0)
-    picture = models.ImageField(upload_to=photo_path_upload_to, null=True, blank=True)
+    picture = ThumbnailerImageField(upload_to=photo_path_upload_to, null=True, blank=True)
     brand = models.ForeignKey(
         ProductBrand, on_delete=models.SET_NULL, null=True, related_name="products"
     )
@@ -116,7 +116,7 @@ class ProductGallery(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="gallery"
     )
-    image = models.ImageField(upload_to=photo_path_upload_to)
+    image = ThumbnailerImageField(upload_to=photo_path_upload_to)
     sort_number = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):

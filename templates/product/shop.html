@@ -11,7 +11,7 @@
 {% block breadcrumb %}
 
     <li class="flex items-center gap-x-2">
-        <a href="{% url 'product:list' %}">محصولات</a>
+        <a href="{% url 'product:list' %}" aria-label='محصولات'>محصولات</a>
     </li>
 {% endblock breadcrumb %}
 
@@ -216,7 +216,7 @@
 
 
                     {% if request.user_agent.is_mobile %}
-                        <a id="filterToggleBtn" class="flex justify-between w-full">
+                        <a id="filterToggleBtn" class="flex justify-between w-full" href='#' aria-label='فیلتر ها' >
                                                 <span class="flex items-center gap-x-1">
                         <svg class="w-5 h-5">
                             <use href="#filter"></use>
@@ -409,18 +409,31 @@
                     </div>
 
                     <br>
-                    <!-- CHECK BOX -->
-                    <a id="available-toggle"
-                       class="flex my-2 w-full flex-col h-auto gap-y-5 child:flex child:items-center child:justify-between child:font-DanaMedium"
-                       href="#">
-                        <div>
-                            <p>فقط کالاهای موجود</p>
-                            <label class="switch">
-                                <input id="available-checkbox" name="available" type="checkbox">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </a>
+<!-- CHECK BOX - نسخه اصلاح‌شده با حفظ ظاهر اصلی و RTL -->
+<div class="my-2 w-full">
+  <label 
+    class="switch-container flex items-center justify-between w-full cursor-pointer select-none font-DanaMedium"
+    for="available-checkbox">
+ 
+    <span class="text-base">فقط کالاهای موجود</span>
+    
+ 
+    <div class="relative inline-block w-12 h-7">  
+      <input 
+        id="available-checkbox" 
+        name="available" 
+        type="checkbox"
+        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer peer z-10"
+        role="switch"
+      />
+      
+ 
+      <span class="slider absolute inset-0 rounded-full bg-gray-400 transition-colors duration-300 peer-checked:bg-green-600 peer-focus:ring-4 peer-focus:ring-green-300"></span>
+      
+ 
+    </div>
+  </label>
+</div>
 
                     <script>
                         document.addEventListener("DOMContentLoaded", function () {
@@ -633,7 +646,7 @@
                 {% for product in products %}
                     <div class="group">
                         <!-- PRODUCT IMGAE -->
-                        <a href="{% url 'product:detail' product.id %}">{% if product.have_discount %}
+                        <a href="{% url 'product:detail' product.id %}" aria-label=' {{ product.name }}'> {% if product.have_discount %}
 
                             <span class="absolute top-5 right-5 flex items-center justify-center w-8 h-8 text-xs bg-green-500  rounded-full text-white z-30">{{ product.discount }}%</span>
                         {% endif %}
@@ -654,7 +667,7 @@
 
                             <!-- PRODUCT MAIN -->
                             <div class="px-2 lg:px-4 mb-3">
-                                <a href="{% url 'product:detail' pk=product.id %}"
+                                <a href="{% url 'product:detail' pk=product.id %}" aria-label=' {{ product.name }}'
                                    class="line-clamp-3 font-DanaMedium mb-2 text-sm">
                                     {{ product.name }}
                                 </a>
@@ -775,7 +788,7 @@
                     {% if page_obj.has_previous %}
 
                         <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
-                            <a href="#" onclick="OrderingFilterForPagination({{ page_obj.previous_page_number }})">
+                            <a href="#" onclick="OrderingFilterForPagination({{ page_obj.previous_page_number }})" aria-label=' رفتن به صفحه قبل'>
 
                                 <svg class="w-5 h-5">
                                     <use href="#chevron-right"></use>
@@ -786,7 +799,7 @@
 
                     {% for page_number in page_obj.paginator.page_range %}
                         <li class="dark:text-white {% if page_number == page_obj.number %} bg-green-500 text-white {% else %} bg-white dark:bg-zinc-700 {% endif %} ">
-                            <a href="#" onclick="OrderingFilterForPagination({{ page_number }})" class="w-full text-center">
+                            <a href="#" onclick="OrderingFilterForPagination({{ page_number }})" class="w-full text-center" aria-label=' شماره صفحه'>
                                 {{ page_number }}
                             </a>
                         </li>
@@ -796,7 +809,7 @@
                     {% if page_obj.has_next %}
 
                         <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
-                            <a href="#" onclick="OrderingFilterForPagination({{ page_obj.next_page_number }})">
+                            <a href="#" onclick="OrderingFilterForPagination({{ page_obj.next_page_number }})" aria-label=' رفتن به صفحه بعد'>
                                 <svg class="w-5 h-5">
                                     <use href="#chevron-left"></use>
                                 </svg>

@@ -3,6 +3,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor_uploader.fields import RichTextUploadingField
 from stores.models import Store
 from django.utils.crypto import get_random_string
+from easy_thumbnails.fields import ThumbnailerImageField
 
 
 def photo_path_upload_to(*args, **kwargs):
@@ -33,7 +34,7 @@ class SiteSetting(models.Model):
         max_length=100, default="0", verbose_name="ایدی اینستاگرام"
     )
 
-    logo = models.ImageField(
+    logo = ThumbnailerImageField(
         upload_to="site/logo/", null=True, verbose_name="لوگو", blank=True
     )
     short_description = models.TextField(default="0", verbose_name="توضیحات کوتاه")
@@ -42,7 +43,7 @@ class SiteSetting(models.Model):
         default="0", verbose_name="توضیحات طولانی"
     )
 
-    about_image = models.ImageField(
+    about_image = ThumbnailerImageField(
         upload_to="site/about_image/", null=True, verbose_name="عکس معرفی", blank=True
     )
 
@@ -228,7 +229,7 @@ class ContactUs(models.Model):
 
 
 class Slider(models.Model):
-    image = models.ImageField(upload_to=photo_path_upload_to, verbose_name="عکس")
+    image = ThumbnailerImageField(upload_to=photo_path_upload_to, verbose_name="عکس")
     name = models.CharField(
         max_length=100, null=True, blank=True, verbose_name="عنوان اول"
     )
@@ -258,7 +259,7 @@ class SiteLaw(models.Model):
 
 
 class Banners(models.Model):
-    image = models.ImageField(upload_to=photo_path_upload_to, verbose_name="عکس")
+    image = ThumbnailerImageField(upload_to=photo_path_upload_to, verbose_name="عکس")
     name = models.CharField(
         max_length=100, null=True, blank=True, verbose_name="عنوان اول"
     )
