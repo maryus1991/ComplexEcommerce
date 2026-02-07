@@ -7,8 +7,6 @@ urlpatterns = [
     path("", views.StoreMainPage.as_view(), name="home"),
 
     # product fast panel colleague price
-    path('product/fast-panel/colleague/list/', views.ProductColleagueFastPanelListView.as_view(), name='product-fast-panel-list-colleague'),
-    path('product/fast-panel/colleague/change-group/', views.ProductFastPanelGropeChangeColleaguePrice.as_view(),name='product-fast-panel-group-change-colleague'),
     path('product/fast-panel/colleague/change/price-amount/<int:pk>/', views.ProductFastPanelChangeColleaguePrice.as_view(),name='product-fast-panel-change-price-colleague'),
 
     # product fast panel
@@ -16,6 +14,7 @@ urlpatterns = [
     path('product/fast-panel/change-group/', views.ProductFastPanelGropeChange.as_view(), name='product-fast-panel-group-change'),
     path('product/fast-panel/change/price-amount/<int:pk>/', views.ProductFastPanelChangePrice.as_view(), name='product-fast-panel-change-price'),
     path('product/fast-panel/change/count-amount/<int:pk>/', views.ProductFastPanelChangeCount.as_view(), name='product-fast-panel-change-count'),
+    path('product/fast-panel/change/row/<int:pk>/', views.ProductFastPanelRowChange.as_view(), name='product-fast-panel-change-row'),
 
     # children of product
     path('product/children/<int:pk>/list/', views.ProductChildrenListView.as_view(), name='product-children-list'),

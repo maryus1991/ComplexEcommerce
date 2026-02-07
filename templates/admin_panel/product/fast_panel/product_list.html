@@ -1,0 +1,844 @@
+{% extends 'Base/AdminBase.html' %}
+ {% load compress static %}
+
+{% load products_tags %}
+
+{% block title %}
+    محصولات
+{% endblock %}
+
+{% block header_reference %}
+    {% compress css %}
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/static/dist/css/rtl.css">
+    <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+    <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+{% endcompress %}
+{% endblock %}
+
+
+
+{% block breadcrumb %}
+    <li class="active">محصولات</li>
+{% endblock %}
+
+{% block body %}
+    <section class="content" style="margin-top: 30px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-primary">
+                    <div class="box-header with-border panel-heading">
+                        <h3 class="box-title panel-title text-center">فرم جستجوی پیشرفته محصول</h3>
+                        <div class="pull-right box-tools">
+                            <button type="button" class="btn btn-info btn-sm" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="box-body" style="display: none;">
+                        <form class="form-horizontal" method="GET" enctype="multipart/form-data">
+                            <div class="panel panel-primary">
+                                <div class="panel-body">
+                                    {% csrf_token %}
+
+                                    <!-- ردیف اول -->
+                                    <div class="row">
+                                        <div class="col-sm-6 col-md-3">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-warning btn-flat">{{ search_form.name.label }}</span>
+                                                </span>
+                                                    {{ search_form.name }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6 col-md-3">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #f56954; color: white;">
+                                                    {{ search_form.have_discount.label }}
+                                                </span>
+                                                    {{ search_form.have_discount }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 col-md-3">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #f56954; color: white;">
+                                                    {{ search_form.admin_verify.label }}
+                                                </span>
+                                                    {{ search_form.admin_verify }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6 col-md-3">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #f56954; color: white;">
+                                                    {{ search_form.is_active.label }}
+                                                </span>
+                                                    {{ search_form.is_active }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ردیف دوم - تخفیف -->
+                                    <div class="row">
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #f56954; color: white;">
+                                                    {{ search_form.discount_min.label }}
+                                                </span>
+                                                    {{ search_form.discount_min }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #f56954; color: white;">
+                                                    {{ search_form.discount_max.label }}
+                                                </span>
+                                                    {{ search_form.discount_max }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ردیف سوم - دسته‌بندی و برند -->
+                                    <div class="row">
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #ed59f4; color: white;">
+                                                    {{ search_form.category.label }}
+                                                </span>
+                                                    {{ search_form.category }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #0000ff; color: white;">
+                                                    {{ search_form.brand.label }}
+                                                </span>
+                                                    {{ search_form.brand }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ردیف چهارم - تعداد -->
+                                    <div class="row">
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #f56954; color: white;">
+                                                    {{ search_form.count_min.label }}
+                                                </span>
+                                                    {{ search_form.count_min }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #f56954; color: white;">
+                                                    {{ search_form.count_max.label }}
+                                                </span>
+                                                    {{ search_form.count_max }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ردیف پنجم - وزن -->
+                                    <div class="row">
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #726204; color: white;">
+                                                    {{ search_form.weight_min.label }}
+                                                </span>
+                                                    {{ search_form.weight_min }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #726204; color: white;">
+                                                    {{ search_form.weight_max.label }}
+                                                </span>
+                                                    {{ search_form.weight_max }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ردیف ششم - قیمت -->
+                                    <div class="row">
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="btn btn-info input-group-addon btn-flat">
+                                                    {{ search_form.price_min.label }}
+                                                </span>
+                                                    {{ search_form.price_min }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-6 col-md-6">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-success btn-flat">
+                                                    {{ search_form.price_max.label }}
+                                                </span>
+                                                    {{ search_form.price_max }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ردیف هفتم - ابعاد -->
+                                    <div class="row">
+                                        <div class="col-sm-4 col-md-4">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #f56954; color: white;">
+                                                    {{ search_form.height_min.label }}
+                                                </span>
+                                                    {{ search_form.height_min }}
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #f56954; color: white;">
+                                                    {{ search_form.height_max.label }}
+                                                </span>
+                                                    {{ search_form.height_max }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-4 col-md-4">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #726204; color: white;">
+                                                    {{ search_form.length_min.label }}
+                                                </span>
+                                                    {{ search_form.length_min }}
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #726204; color: white;">
+                                                    {{ search_form.length_max.label }}
+                                                </span>
+                                                    {{ search_form.length_max }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-4 col-md-4">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #726204; color: white;">
+                                                    {{ search_form.width_min.label }}
+                                                </span>
+                                                    {{ search_form.width_min }}
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-addon btn btn-flat"
+                                                      style="background-color: #726204; color: white;">
+                                                    {{ search_form.width_max.label }}
+                                                </span>
+                                                    {{ search_form.width_max }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ردیف هشتم - ویژگی‌ها -->
+                                    <div class="row">
+                                        <div class="col-sm-4 col-md-4">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-warning btn-flat">{{ search_form.feature.label }}</span>
+                                                </span>
+                                                    {{ search_form.feature }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-4 col-md-4">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-warning btn-flat">{{ search_form.tag.label }}</span>
+                                                </span>
+                                                    {{ search_form.tag }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-4 col-md-4">
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <span class="btn btn-warning btn-flat">{{ search_form.ordering.label }}</span>
+                                                </span>
+                                                    {{ search_form.ordering }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="panel-footer text-center">
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        جستجوی محصول
+                                    </button>
+                                    <button type="reset" class="btn btn-warning btn-lg">
+                                        حذف
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- جدول محصولات -->
+<div class="row">
+    <div class="col-xs-12">
+        <!-- فرم عملیات گروهی -->
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">عملیات گروهی روی محصولات</h3>
+            </div>
+            <div class="box-body">
+                <form id="bulkActionForm" method="GET" action="{% url 'admin_panel:product-fast-panel-group-change' %}">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>انتخاب محصولات:</label>
+                                <select class="form-control" name="selection_type" id="selectionType">
+                                    <option value="all">همه محصولات</option>
+                                    <option value="manual">انتخاب دستی محصولات</option>
+                                </select>
+
+                                 <div id="manualSelection" class="hidden" style="display: none; margin-top: 10px;">
+                                    <select multiple="multiple" class="form-control" name="product_ids" style="width: 100%; height: 120px;">
+                                        {% for product in products %}
+                                            <option value="{{ product.id }}">{{ product.name }} (کد: {{ product.id }})</option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="text-muted">برای انتخاب چندگانه، کلید Ctrl را نگه دارید</small>
+                                </div>  
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>همکار یا مصرف کننده :</label>
+                                <select class="form-control" name="type_of_price">
+                                    <option value="regulare_user">قیمت مصرف کننده</option>
+                                    <option value="colleague_user">قیمت همکار</option>
+                                </select>
+ 
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>نوع تغییر قیمت:</label>
+                                <select class="form-control" name="action_type" id="actionType">
+                                    <option value="percent">درصدی</option>
+                                    <option value="fixed">مبلغ ثابت</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label id="amountLabel">درصد تغییر:</label>
+                                <input type="text" step="0.01" class="form-control" name="amount" placeholder="مثال: 10 برای افزایش 10%">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group" style="margin-top: 25px;">
+                                <button type="submit" class="btn btn-primary btn-block">اعمال تغییرات</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">محصولات  </h3>
+            </div>
+
+            <div class="box-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectAll">
+                            </th>
+                            <th class="text-center">کد محصول</th>
+                            <th class="text-center">نام محصول</th>
+                            <th class="text-center">قیمت همکار</th>
+                            <th class="text-center"> قیمت مصرف کننده</th>
+                            <th class="text-center">تعداد</th>
+                            <th class="text-center">ثبت همگانی</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                                                <script>
+                        function setAllChanges(path,id){
+                            let count = document.getElementById("count"+id).value;
+                            let price = document.getElementById("price"+id).value;
+                            let colleague_price = document.getElementById("colleague_users_price"+id).value;
+                            
+                            const url = new URL(path, window.location.origin);
+                            url.searchParams.set("price", price);
+                            url.searchParams.set("count", count);
+                            url.searchParams.set("colleague_price", colleague_price);
+
+                            window.location.href = url.toString();
+                        }
+                    </script>
+                        {% for product in products %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="productCheckbox" name="selected_products" value="{{ product.id }}">
+                                </td>
+                                <td class="text-center"><a href="{% url 'admin_panel:product-update' product.id %}">{{ product.id }}</a></td>
+                                <td class="text-center"><a href="{% url 'product:detail' product.id %}">{{ product.name }}</a></td>
+
+                                <td class="text-center" style="min-width: 200px;">
+                                    <form action="{% url "admin_panel:product-fast-panel-change-price-colleague" product.id %}" method="POST" class="form-inline">
+                                        {% csrf_token %}
+                                        <div class="input-group input-group-sm">
+                                            <input type="text" value="{{ product.colleague_users_price }}" id="colleague_users_price{{product.id}}" class="form-control input-sm" name="price" style="width: 120px; display: inline-block;">
+                                            <div class="input-group-btn">
+                                                <button type="submit" class="btn btn-success btn-sm sort-down">
+                                                    <i class="fa fa-hand-pointer-o"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </td>
+
+                                <td class="text-center" style="min-width: 200px;">
+                                    <form action="{% url "admin_panel:product-fast-panel-change-price" product.id %}" method="POST" class="form-inline">
+                                        {% csrf_token %}
+                                        <div class="input-group input-group-sm">
+                                            <input type="text" value="{{ product.price }}" id="price{{product.id}}" class="form-control input-sm" name="price" style="width: 120px; display: inline-block;">
+                                            <div class="input-group-btn">
+                                                <button type="submit" class="btn btn-success btn-sm sort-down">
+                                                    <i class="fa fa-hand-pointer-o"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </td>
+
+                                <td class="text-center" style="min-width: 200px;">
+                                    <form action="{% url "admin_panel:product-fast-panel-change-count" product.id %}" method="POST" class="form-inline">
+                                        {% csrf_token %}
+                                        <div class="input-group input-group-sm">
+                                            <input type="text" value="{{ product.count }}" id="count{{product.id}}" name="count" class="form-control input-sm" style="width: 120px; display: inline-block;">
+                                            <div class="input-group-btn">
+                                                <button type="submit" class="btn btn-success btn-sm sort-down">
+                                                    <i class="fa fa-hand-pointer-o"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </td>
+                                <td class="text-center"> 
+                     
+                                    <a   title="اول قیمت های مصرف کننده و همکار رو وارد کنید همراه با تعداد و بعد ثبت را بزنید تا همگی ثبت بشوند" onclick="setAllChanges('{% url "admin_panel:product-fast-panel-change-row" product.id %}' , {{product.id}})" class="btn btn-success btn-sm sort-down">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %} 
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- صفحه‌بندی -->
+                <div class="row">
+                    <div class="col-sm-5">
+                        <h5 class="text-muted">تعداد کل محصولات: {{ product_count }}</h5>
+                        <h5 class="text-muted">تعداد نمایش شده در این صفحه: {{ products.count }}</h5>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="dataTables_paginate paging_simple_numbers">
+                            <ul class="pagination">
+                                {% if page_obj.has_previous %}
+                                    <li class="paginate_button previous">
+                                        <a href="?page={{ page_obj.previous_page_number }}">قبلی</a>
+                                    </li>
+                                {% endif %}
+
+                                {% for page_number in page_obj.paginator.page_range %}
+                                    <li class="paginate_button {% if page_number == page_obj.number %}active{% endif %}">
+                                        <a href="?page={{ page_number }}">{{ page_number }}</a>
+                                    </li>
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                    <li class="paginate_button next">
+                                        <a href="?page={{ page_obj.next_page_number }}">بعدی</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- اسکریپت برای مدیریت انتخاب محصولات و تغییر برچسب فیلد -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // عناصر مورد نیاز
+        const selectionType = document.getElementById('selectionType');
+        const manualSelection = document.getElementById('manualSelection');
+        const actionType = document.getElementById('actionType');
+        const amountLabel = document.getElementById('amountLabel');
+        const amountInput = document.querySelector('input[name="amount"]');
+        const selectAll = document.getElementById('selectAll');
+        const productCheckboxes = document.querySelectorAll('.productCheckbox');
+        const productIdsSelect = document.querySelector('select[name="product_ids"]');
+        const bulkActionForm = document.getElementById('bulkActionForm');
+
+        // نمایش/پنهان کردن انتخاب دستی بر اساس نوع انتخاب
+        if (selectionType && manualSelection) {
+           selectionType.addEventListener('change', function() {
+                manualSelection.style.display = this.value === 'manual' ? 'block' : 'none';
+            });
+
+            // مقدار اولیه
+            manualSelection.style.display = selectionType.value === 'manual' ? 'block' : 'none';
+        }
+
+        // تغییر برچسب فیلد بر اساس نوع عمل
+        if (actionType && amountLabel && amountInput) {
+            actionType.addEventListener('change', function() {
+                if (this.value === 'percent') {
+                    amountLabel.textContent = 'درصد تغییر:';
+                    amountInput.placeholder = 'مثال: 10 برای افزایش 10%';
+                } else {
+                    amountLabel.textContent = 'مبلغ تغییر:';
+                    amountInput.placeholder = 'مثال: 5000 برای افزایش 5000 تومان';
+                }
+            });
+
+            // مقدار اولیه
+            if (actionType.value === 'fixed') {
+                amountLabel.textContent = 'مبلغ تغییر:';
+                amountInput.placeholder = 'مثال: 5000 برای افزایش 5000 تومان';
+            }
+        }
+
+        // انتخاب همه/هیچ
+        if (selectAll) {
+            selectAll.addEventListener('click', function() {
+                const isChecked = this.checked;
+                productCheckboxes.forEach(function(checkbox) {
+                    checkbox.checked = isChecked;
+                });
+                updateProductIdsSelect();
+            });
+        }
+
+        // به روز رسانی هنگام تغییر چک‌باکس‌ها
+        productCheckboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                updateProductIdsSelect();
+                updateSelectAllState();
+            });
+        });
+
+        function updateSelectAllState() {
+            if (selectAll) {
+                const allChecked = Array.from(productCheckboxes).every(cb => cb.checked);
+                const someChecked = Array.from(productCheckboxes).some(cb => cb.checked);
+
+                selectAll.checked = allChecked;
+                selectAll.indeterminate = someChecked && !allChecked;
+
+                // به روز رسانی selectionType
+                if (selectionType) {
+                    selectionType.value = allChecked ? 'all' : 'manual';
+                    if (manualSelection) {
+                        manualSelection.style.display = allChecked ? 'none' : 'block';
+                    }
+                }
+            }
+        }
+
+        function updateProductIdsSelect() {
+            if (!productIdsSelect) return;
+
+            // پاک کردن انتخاب‌های قبلی
+            Array.from(productIdsSelect.options).forEach(option => {
+                option.selected = false;
+            });
+
+            // انتخاب آیتم‌های مربوط به چک‌باکس‌های انتخاب شده
+            const selectedIds = Array.from(productCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            Array.from(productIdsSelect.options).forEach(option => {
+                if (selectedIds.includes(option.value)) {
+                    option.selected = true;
+                }
+            });
+        }
+
+        // به روز رسانی چک‌باکس‌ها هنگام تغییر Select
+        if (productIdsSelect) {
+            productIdsSelect.addEventListener('change', function() {
+                const selectedIds = Array.from(this.selectedOptions).map(option => option.value);
+
+                // عدم انتخاب همه
+                if (selectAll) {
+                    selectAll.checked = false;
+                    selectAll.indeterminate = selectedIds.length > 0;
+                }
+
+                // انتخاب چک‌باکس‌های مربوطه
+                productCheckboxes.forEach(function(checkbox) {
+                    checkbox.checked = selectedIds.includes(checkbox.value);
+                });
+
+                // به روز رسانی selectionType
+                if (selectionType) {
+                    selectionType.value = 'manual';
+                    if (manualSelection) {
+                        manualSelection.style.display = 'block';
+                    }
+                }
+            });
+        }
+
+        // مدیریت ارسال فرم - نسخه اصلاح شده
+        if (bulkActionForm) {
+            bulkActionForm.addEventListener('submit', function(e) {
+                // اعتبارسنجی
+                const amountValue = parseFloat(amountInput.value);
+                if (isNaN(amountValue)) {
+                    e.preventDefault();
+                    alert('لطفا مقدار تغییر را به درستی وارد کنید.');
+                    return;
+                }
+
+                // دریافت product_ids از چک‌باکس‌های انتخاب شده
+                const selectedProductIds = Array.from(productCheckboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+
+                // پاک کردن select قبلی و ایجاد select جدید با مقادیر انتخاب شده
+                if (productIdsSelect) {
+                    // حذف تمام option های فعلی
+                    while (productIdsSelect.firstChild) {
+                        productIdsSelect.removeChild(productIdsSelect.firstChild);
+                    }
+
+                    // اضافه کردن option های جدید فقط برای محصولات انتخاب شده
+                    selectedProductIds.forEach(productId => {
+                        const option = document.createElement('option');
+                        option.value = productId;
+                        option.selected = true;
+                        option.textContent = 'محصول ' + productId; // یا می‌توانید نام محصول را هم اضافه کنید
+                        productIdsSelect.appendChild(option);
+                    });
+                }
+
+                // اگر هیچ محصولی انتخاب نشده
+                if (selectedProductIds.length === 0 && selectionType.value === 'manual') {
+                    e.preventDefault();
+                    alert('لطفا حداقل یک محصول را انتخاب کنید.');
+                    return;
+                }
+
+                // اگر حالت "همه محصولات" انتخاب شده، select را غیرفعال می‌کنیم
+                if (selectionType.value === 'all') {
+                    if (productIdsSelect) productIdsSelect.disabled = true;
+
+                    // اضافه کردن فیلد مخفی برای نشان دادن انتخاب همه
+                    const allProductsInput = document.createElement('input');
+                    allProductsInput.type = 'hidden';
+                    allProductsInput.name = 'all_products';
+                    allProductsInput.value = 'true';
+                    bulkActionForm.appendChild(allProductsInput);
+                }
+            });
+        }
+
+        // مقداردهی اولیه
+        updateSelectAllState();
+    });
+</script>
+<!-- استایل برای بهتر نمایش داده شدن فرم -->
+<style>
+    .box-primary {
+        border-top-color: #3c8dbc;
+        margin-bottom: 20px;
+    }
+    select[multiple] {
+        min-height: 120px;
+    }
+</style>
+{% endblock %}
+
+{% block footer_reference %}
+    {% compress js %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script src="/static/node_modules/moment/min/moment.min.js"></script>
+    <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#tarikh').persianDatepicker({
+                altField: '#tarikhAlt',
+                altFormat: 'X',
+                format: 'D MMMM YYYY HH:mm a',
+                observer: true,
+                timePicker: {
+                    enabled: true
+                },
+            });
+        });
+        $(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
+            //Money Euro
+            $('[data-mask]').inputmask()
+
+            //Date range picker
+            $('#reservation').daterangepicker()
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                format: 'MM/DD/YYYY h:mm A'
+            })
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                }
+            )
+
+            //Date picker
+            $('#datepicker').datepicker({
+                autoclose: true
+            })
+
+            //iCheck for checkbox and radio inputs
+            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue'
+            })
+            //Red color scheme for iCheck
+            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                checkboxClass: 'icheckbox_minimal-red',
+                radioClass: 'iradio_minimal-red'
+            })
+            //Flat red color scheme for iCheck
+            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            })
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false
+            })
+        })
+    </script>
+    {% endcompress %}
+
+{% endblock %}

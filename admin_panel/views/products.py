@@ -20,9 +20,301 @@ UserFavorite
 from admin_panel.search_forms import ProductSearchForm
 from stores.forms import BrandAndCategorySearchForm
 from django.db.models import Q
-
+from django.db import transaction
+from sitesetting.models import SiteSetting
 
 # product
+
+
+# fastpanel
+
+class ProductFastPanelListView(AdminUserMixin, ListView):
+    """for listing and set fast changes for products"""
+
+    template_name = "admin_panel/product/fast_panel/product_list.html"
+    paginate_by = 1000
+    context_object_name = "products"
+
+    def get_queryset(self):
+        # Base queryset
+
+        queryset = Product.objects.prefetch_related("category", 'comments' ,"brand", "store", "views", 'features', 'tags', 'specs').order_by('-id')
+
+        # Process search parameters if form is valid
+        params = ProductSearchForm(self.request.GET or None)
+
+        if not params.is_valid():
+            return queryset
+
+        cleaned_data = params.cleaned_data
+
+        # Boolean filters
+        if cleaned_data.get("is_active"):
+            is_active = cleaned_data.get("is_active")
+
+            if is_active == "0":
+                queryset = queryset.filter(is_active=False)
+            elif is_active == "1":
+                queryset = queryset.filter(is_active=True)
+
+        if cleaned_data.get("admin_verify"):
+            is_active = cleaned_data.get("admin_verify")
+
+            if is_active == "0":
+                queryset = queryset.filter(admin_verified=False)
+            elif is_active == "1":
+                queryset = queryset.filter(admin_verified=True)
+
+        if cleaned_data.get("have_discount"):
+            have_discount = cleaned_data.get("have_discount")
+
+            if have_discount == "0":
+                queryset = queryset.filter(have_discount=False)
+            elif have_discount == "1":
+                queryset = queryset.filter(have_discount=True)
+
+        # Text search
+        if name := cleaned_data.get("name"):
+            queryset = queryset.filter(
+                Q(name__icontains=name)
+            )
+
+        # Numeric range filters
+        range_filters = {
+            "discount": ("discount_min", "discount_max"),
+            "count": ("count_min", "count_max"),
+            "weight": ("weight_min", "weight_max"),
+            "price": ("price_min", "price_max"),
+            "height": ("height_min", "height_max"),
+            "length": ("length_min", "length_max"),
+            "width": ("width_min", "width_max"),
+        }
+
+        for field, (min_key, max_key) in range_filters.items():
+            if min_val := cleaned_data.get(min_key):
+                queryset = queryset.filter(**{f"{field}__gte": min_val})
+            if max_val := cleaned_data.get(max_key):
+                queryset = queryset.filter(**{f"{field}__lte": max_val})
+
+        # Foreign key filters
+        if category := cleaned_data.get("category"):
+            queryset = queryset.filter(category_id=category)
+
+        if brand := cleaned_data.get("brand"):
+            queryset = queryset.filter(brand_id=brand)
+
+        # Many-to-many filters
+        if features := cleaned_data.get("feature"):
+            # Clean and split features while handling edge cases
+            features = [
+                feature.strip() for feature in features.split("-") if feature.strip()
+            ]
+
+            # Create a single query with multiple conditions
+            query = Q()
+            for item in features:
+                query |= Q(features__title__icontains=item)
+
+            # Apply the combined filter once
+            queryset = queryset.filter(query).distinct()
+
+        if tags := cleaned_data.get("tag"):
+            # Clean and split features while handling edge cases
+            tags = [tags.strip() for tag in tags.split("-") if tag.strip()]
+
+            # Create a single query with multiple conditions
+            query = Q()
+            for item in tags:
+                query |= Q(tags__name__icontains=item)
+
+            # Apply the combined filter once
+            queryset = queryset.filter(query).distinct()
+
+        if ordering := cleaned_data.get("ordering"):
+            if ordering == "11":
+                queryset = queryset.annotate(views_count=Count("views")).order_by(
+                    "-views_count"
+                )  # بیشترین بازدید
+            elif ordering == "12":
+                queryset = queryset.annotate(views_count=Count("views")).order_by(
+                    "views_count"
+                )  # کمترین بازدید
+            elif ordering == "21":
+                queryset = queryset.order_by("-price")  # بیشترین قیمت
+            elif ordering == "22":
+                queryset = queryset.order_by("price")  # کمترین قیمت
+            elif ordering == "31":
+                queryset = queryset.annotate(comments_count=Count("comments")).order_by(
+                    "-comments_count"
+                )  # بیشترین تعداد کامنت
+            elif ordering == "32":
+                queryset = queryset.annotate(comments_count=Count("comments")).order_by(
+                    "comments_count"
+                )  # کمترین  تعداد کامنت
+            elif ordering == "41":
+                queryset = queryset.order_by("-count")  # بیشترین موجودی کالا
+            elif ordering == "42":
+                queryset = queryset.order_by("count")  # کمترین موجودی کالا
+
+        return queryset.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search_form"] = ProductSearchForm(self.request.GET)
+        context["product_count"] = Product.objects.filter(store=self.request.user.store).count
+        return context
+
+
+class ProductFastPanelRowChange(AdminUserMixin, RedirectView):
+    """for change row info in fast panel page"""
+
+    def get_redirect_url(self, *args, **kwargs):
+
+        product: Product = get_object_or_404(Product, pk=kwargs.get('pk'))
+
+        price = int(self.request.GET.get('price')) or None
+        count = int(self.request.GET.get('count')) or None
+        colleague_price = int(self.request.GET.get('colleague_price')) or None
+
+        if price and count and colleague_price:
+            with transaction.atomic():
+                product.price = price
+                product.count = count
+                product.colleague_users_price = colleague_price
+                product.save()
+
+            messages.success(
+                self.request, 
+                 'تغییرات با موفقیت ثبت شد'
+            )
+
+        else:
+            messages.error(
+                self.request, 'تغییرات ذخیره نشد و مشکلی پیش اومده'
+            )
+
+        return reverse("admin_panel:product-fast-panel-list")
+
+
+class ProductFastPanelGropeChange(AdminUserMixin, RedirectView):
+    """for change grouply the product price and count """
+
+    def get_redirect_url(self, *args, **kwargs):
+        selection_type = self.request.GET.get("selection_type")
+        action_type = self.request.GET.get("action_type")
+        amount = self.request.GET.get("amount")
+        type_of_price = self.request.GET.get("type_of_price")
+        product_ids = self.request.GET.getlist("product_ids")  # استفاده از getlist برای دریافت لیست
+        all_products = self.request.GET.get("all_products") == "true"  # بررسی آیا همه محصولات انتخاب شده
+        
+        
+
+        product_list = Product.objects
+
+        try:
+            amount = float(amount)  # استفاده از float برای پشتیبانی از اعداد اعشاری
+        except (ValueError, TypeError):
+            messages.error(self.request, "مقدار وارد شده معتبر نیست. لطفا یک عدد وارد کنید.")
+            return reverse("admin_panel:product-fast-panel-list")
+
+        # تعیین اینکه کدام محصولات باید به روز شوند
+        if selection_type == "manual" and product_ids:
+            product_list = product_list.filter(id__in=product_ids)
+        elif selection_type == "all" or all_products:
+            product_list = product_list.all()
+        else:
+            messages.error(self.request, "هیچ محصولی انتخاب نشده است.")
+            return reverse("admin_panel:product-fast-panel-list")
+
+        number_or_rounding = int(SiteSetting.objects.first().number_or_rounding)
+        if number_or_rounding < 1:
+            number_or_rounding = 1
+
+
+        # اعمال تغییرات بر روی محصولات
+        if action_type == "fixed":
+            if type_of_price == 'colleague_user':
+                for item in product_list:
+                    item.colleague_users_price = int((((item.price + amount) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
+                    item.save()
+            else:
+                for item in product_list:
+                    item.price = int((((item.price + amount) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
+                    item.save()
+                    
+        elif action_type == "percent":
+            if type_of_price == 'colleague_user':
+                for item in product_list:
+                    item.colleague_users_price = int((((item.price + (item.price * (amount / 100))) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
+                    item.save()
+            else:
+                for item in product_list:
+                    item.price = int((((item.price + (item.price * (amount / 100))) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
+                    item.save()
+        else:
+            messages.error(self.request, "نوع عمل انتخاب شده معتبر نیست.")
+            return reverse("admin_panel:product-fast-panel-list")
+
+        messages.success(
+            self.request,
+            f'تغییرات بر روی {product_list.count()} محصول ثبت شد.'
+        )
+
+        return reverse("admin_panel:product-fast-panel-list")
+
+class ProductFastPanelChangePrice(AdminUserMixin, RedirectView):
+    """for change the product PRICE """
+    def get_redirect_url(self, *args, **kwargs):
+        product = get_object_or_404(Product, store=self.request.user.store, pk=self.kwargs["pk"])
+        price = self.request.POST.get("price")
+
+        try:
+            product.price = int(price)
+            product.save()
+            messages.success(self.request, "قیمت ثبت شد")
+
+        except :
+            messages.error(self.request, "قیمت وارد شده نادرست می باید ")
+
+        return reverse("admin_panel:product-fast-panel-list")
+
+class ProductFastPanelChangeCount(AdminUserMixin, RedirectView):
+    """for change the product count """
+    def get_redirect_url(self, *args, **kwargs):
+        product = get_object_or_404(Product, store=self.request.user.store, pk=self.kwargs["pk"])
+        count = self.request.POST.get("count")
+
+        try:
+            product.count = int(count)
+            product.save()
+            messages.success(self.request, "موجودی ثبت شد")
+
+        except :
+            messages.error(self.request, "عدد وارد شده نادرست می باید ")
+
+        return reverse("admin_panel:product-fast-panel-list")
+
+class ProductFastPanelChangeColleaguePrice(AdminUserMixin, RedirectView):
+    """for change the product colleague  PRICE """
+    def get_redirect_url(self, *args, **kwargs):
+        product = get_object_or_404(Product, pk=self.kwargs["pk"])
+        price = self.request.POST.get("price")
+
+        try:
+            product.colleague_users_price = int(price)
+            product.save()
+            messages.success(self.request, "قیمت همکار ثبت شد")
+
+        except :
+            messages.error(self.request, "قیمت وارد شده نادرست می باید ")
+
+        return reverse("admin_panel:product-fast-panel-list")
+
+
+
+
+############################################################
+
 
 class ProductSetSortNumber(AdminUserMixin, RedirectView):
     """for set sort number"""

@@ -9,6 +9,7 @@ from django.views.generic import (
 DetailView
 )
 from django.db.models import Q
+from django.db import transaction
 from django.db.models.aggregates import Count
 from django.shortcuts import (
     get_object_or_404,
@@ -20,7 +21,6 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.core.files.uploadedfile import UploadedFile
 from sitesetting.models import SiteSetting
-
 from stores.models import Store
 
 from stores.forms import (
@@ -820,6 +820,7 @@ class ProductChildrenListView(UserStoreStaffMixin, ListView):
     def get_queryset(self):
         return super().get_queryset().filter(parent_id=self.kwargs["pk"], store=self.request.user.store).order_by('-id')
 
+# fastpanel
 
 class ProductFastPanelListView(UserStoreStaffMixin, ListView):
     """for listing and set fast changes for products"""
@@ -959,6 +960,38 @@ class ProductFastPanelListView(UserStoreStaffMixin, ListView):
         context["product_count"] = Product.objects.filter(store=self.request.user.store).count
         return context
 
+
+class ProductFastPanelRowChange(UserStoreStaffMixin, RedirectView):
+    """for change row info in fast panel page"""
+
+    def get_redirect_url(self, *args, **kwargs):
+
+        product: Product = get_object_or_404(Product, store=self.request.user.store, pk=kwargs.get('pk'))
+
+        price = int(self.request.GET.get('price')) or None
+        count = int(self.request.GET.get('count')) or None
+        colleague_price = int(self.request.GET.get('colleague_price')) or None
+
+        if price and count and colleague_price:
+            with transaction.atomic():
+                product.price = price
+                product.count = count
+                product.colleague_users_price = colleague_price
+                product.save()
+
+            messages.success(
+                self.request, 
+                 'تغییرات با موفقیت ثبت شد'
+            )
+
+        else:
+            messages.error(
+                self.request, 'تغییرات ذخیره نشد و مشکلی پیش اومده'
+            )
+
+        return reverse("store:product-fast-panel-list")
+
+
 class ProductFastPanelGropeChange(UserStoreStaffMixin, RedirectView):
     """for change grouply the product price and count """
 
@@ -968,7 +1001,8 @@ class ProductFastPanelGropeChange(UserStoreStaffMixin, RedirectView):
         amount = self.request.GET.get("amount")
         product_ids = self.request.GET.getlist("product_ids")  # استفاده از getlist برای دریافت لیست
         all_products = self.request.GET.get("all_products") == "true"  # بررسی آیا همه محصولات انتخاب شده
-
+        type_of_price = self.request.GET.get("type_of_price")
+        
         product_list = Product.objects.filter(store=self.request.user.store)
 
         try:
@@ -990,16 +1024,27 @@ class ProductFastPanelGropeChange(UserStoreStaffMixin, RedirectView):
         if number_or_rounding < 1:
             number_or_rounding = 1
 
-
         # اعمال تغییرات بر روی محصولات
         if action_type == "fixed":
-            for item in product_list:
-                item.price = int((((item.price + amount) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
-                item.save()
+            if type_of_price == 'colleague_user':
+                for item in product_list:
+                    item.colleague_users_price = int((((item.price + amount) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
+                    item.save()
+            else:
+                for item in product_list:
+                    item.price = int((((item.price + amount) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
+                    item.save()
+                    
         elif action_type == "percent":
-            for item in product_list:
-                item.price = int((((item.price + (item.price * (amount / 100))) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
-                item.save()
+            if type_of_price == 'colleague_user':
+                for item in product_list:
+                    item.colleague_users_price = int((((item.price + (item.price * (amount / 100))) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
+                    item.save()
+            else:
+                for item in product_list:
+                    item.price = int((((item.price + (item.price * (amount / 100))) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
+                    item.save()
+
         else:
             messages.error(self.request, "نوع عمل انتخاب شده معتبر نیست.")
             return reverse("store:product-fast-panel-list")
@@ -1043,67 +1088,6 @@ class ProductFastPanelChangeCount(UserStoreStaffMixin, RedirectView):
 
         return reverse("store:product-fast-panel-list")
 
-# colleague price fast panel
-
-class ProductColleagueFastPanelListView(ProductFastPanelListView):
-    """for listing and set fast changes for products"""
-
-    template_name = "store/product/fast_panel/product_list_colleague.html"
-
-
-class ProductFastPanelGropeChangeColleaguePrice(UserStoreStaffMixin, RedirectView):
-    """for change grouply the product colleague price """
-
-    def get_redirect_url(self, *args, **kwargs):
-        selection_type = self.request.GET.get("selection_type")
-        action_type = self.request.GET.get("action_type")
-        amount = self.request.GET.get("amount")
-        product_ids = self.request.GET.getlist("product_ids")
-        all_products = self.request.GET.get("all_products") == "true"
-
-        product_list = Product.objects.filter(store=self.request.user.store)
-
-        try:
-            amount = float(amount)  # استفاده از float برای پشتیبانی از اعداد اعشاری
-        except (ValueError, TypeError):
-            messages.error(self.request, "مقدار وارد شده معتبر نیست. لطفا یک عدد وارد کنید.")
-            return reverse("store:product-fast-panel-list")
-
-        # تعیین اینکه کدام محصولات باید به روز شوند
-        if selection_type == "manual" and product_ids:
-            product_list = product_list.filter(id__in=product_ids)
-        elif selection_type == "all" or all_products:
-            product_list = product_list.all()
-        else:
-            messages.error(self.request, "هیچ محصولی انتخاب نشده است.")
-            return reverse("store:product-fast-panel-list")
-
-        number_or_rounding = int(SiteSetting.objects.first().number_or_rounding)
-        if number_or_rounding < 1:
-            number_or_rounding = 1
-
-
-        # اعمال تغییرات بر روی محصولات
-        if action_type == "fixed":
-            for item in product_list:
-                item.colleague_users_price = int((((item.colleague_users_price + amount) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
-                item.save()
-        elif action_type == "percent":
-            for item in product_list:
-                item.colleague_users_price = int((((item.colleague_users_price + (item.colleague_users_price * (amount / 100))) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
-                item.save()
-        else:
-            messages.error(self.request, "نوع عمل انتخاب شده معتبر نیست.")
-            return reverse("store:product-fast-panel-list")
-
-        messages.success(
-            self.request,
-            f'تغییرات بر روی {product_list.count()} محصول ثبت شد.'
-        )
-
-        return reverse("store:product-fast-panel-list-colleague")
-
-
 class ProductFastPanelChangeColleaguePrice(UserStoreStaffMixin, RedirectView):
     """for change the product colleague  PRICE """
     def get_redirect_url(self, *args, **kwargs):
@@ -1111,11 +1095,11 @@ class ProductFastPanelChangeColleaguePrice(UserStoreStaffMixin, RedirectView):
         price = self.request.POST.get("price")
 
         try:
-            product.price = int(price)
+            product.colleague_users_price = int(price)
             product.save()
-            messages.success(self.request, "قیمت ثبت شد")
+            messages.success(self.request, "قیمت همکار ثبت شد")
 
         except :
             messages.error(self.request, "قیمت وارد شده نادرست می باید ")
 
-        return reverse("store:product-fast-panel-list-colleague")
+        return reverse("store:product-fast-panel-list")

@@ -7,6 +7,17 @@ urlpatterns = [
     path("", views.HomePageView.as_view(), name="main"),
     # path("stats-api/", views.StatsApi.as_view(), name="stats-api"),
 
+    # product fast panel colleague price
+    path('product/fast-panel/colleague/change/price-amount/<int:pk>/', views.ProductFastPanelChangeColleaguePrice.as_view(),name='product-fast-panel-change-price-colleague'),
+
+    # product fast panel
+    path('product/fast-panel/list/', views.ProductFastPanelListView.as_view(), name='product-fast-panel-list'),
+    path('product/fast-panel/change-group/', views.ProductFastPanelGropeChange.as_view(), name='product-fast-panel-group-change'),
+    path('product/fast-panel/change/price-amount/<int:pk>/', views.ProductFastPanelChangePrice.as_view(), name='product-fast-panel-change-price'),
+    path('product/fast-panel/change/count-amount/<int:pk>/', views.ProductFastPanelChangeCount.as_view(), name='product-fast-panel-change-count'),
+    path('product/fast-panel/change/row/<int:pk>/', views.ProductFastPanelRowChange.as_view(), name='product-fast-panel-change-row'),
+
+
 
     # return orders
     path("return-order/", views.ReturnOrderList.as_view(), name="return-order-list"),

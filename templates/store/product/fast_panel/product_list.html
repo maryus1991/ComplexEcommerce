@@ -12,10 +12,7 @@
     <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
     <link rel="stylesheet" href="/static/dist/css/rtl.css">
     <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
     <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
     <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
     <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
     <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
@@ -362,7 +359,7 @@
             <div class="box-body">
                 <form id="bulkActionForm" method="GET" action="{% url 'store:product-fast-panel-group-change' %}">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label>انتخاب محصولات:</label>
                                 <select class="form-control" name="selection_type" id="selectionType">
@@ -370,18 +367,28 @@
                                     <option value="manual">انتخاب دستی محصولات</option>
                                 </select>
 
-                                <div id="manualSelection" style="display: none; margin-top: 10px;">
+                                 <div id="manualSelection" class="hidden" style="display: none; margin-top: 10px;">
                                     <select multiple="multiple" class="form-control" name="product_ids" style="width: 100%; height: 120px;">
                                         {% for product in products %}
                                             <option value="{{ product.id }}">{{ product.name }} (کد: {{ product.id }})</option>
                                         {% endfor %}
                                     </select>
                                     <small class="text-muted">برای انتخاب چندگانه، کلید Ctrl را نگه دارید</small>
-                                </div>
+                                </div>  
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>همکار یا مصرف کننده :</label>
+                                <select class="form-control" name="type_of_price">
+                                    <option value="regulare_user">قیمت مصرف کننده</option>
+                                    <option value="colleague_user">قیمت همکار</option>
+                                </select>
+ 
                             </div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label>نوع تغییر قیمت:</label>
                                 <select class="form-control" name="action_type" id="actionType">
@@ -423,11 +430,27 @@
                             </th>
                             <th class="text-center">کد محصول</th>
                             <th class="text-center">نام محصول</th>
-                            <th class="text-center">قیمت</th>
+                            <th class="text-center">قیمت همکار</th>
+                            <th class="text-center"> قیمت مصرف کننده</th>
                             <th class="text-center">تعداد</th>
+                            <th class="text-center">ثبت همگانی</th>
                         </tr>
                         </thead>
                         <tbody>
+                                                <script>
+                        function setAllChanges(path,id){
+                            let count = document.getElementById("count"+id).value;
+                            let price = document.getElementById("price"+id).value;
+                            let colleague_price = document.getElementById("colleague_users_price"+id).value;
+                            
+                            const url = new URL(path, window.location.origin);
+                            url.searchParams.set("price", price);
+                            url.searchParams.set("count", count);
+                            url.searchParams.set("colleague_price", colleague_price);
+
+                            window.location.href = url.toString();
+                        }
+                    </script>
                         {% for product in products %}
                             <tr>
                                 <td>
@@ -437,10 +460,24 @@
                                 <td class="text-center"><a href="{% url 'product:detail' product.id %}">{{ product.name }}</a></td>
 
                                 <td class="text-center" style="min-width: 200px;">
+                                    <form action="{% url "store:product-fast-panel-change-price-colleague" product.id %}" method="POST" class="form-inline">
+                                        {% csrf_token %}
+                                        <div class="input-group input-group-sm">
+                                            <input type="text" value="{{ product.colleague_users_price }}" id="colleague_users_price{{product.id}}" class="form-control input-sm" name="price" style="width: 120px; display: inline-block;">
+                                            <div class="input-group-btn">
+                                                <button type="submit" class="btn btn-success btn-sm sort-down">
+                                                    <i class="fa fa-hand-pointer-o"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </td>
+
+                                <td class="text-center" style="min-width: 200px;">
                                     <form action="{% url "store:product-fast-panel-change-price" product.id %}" method="POST" class="form-inline">
                                         {% csrf_token %}
                                         <div class="input-group input-group-sm">
-                                            <input type="text" value="{{ product.price }}" class="form-control input-sm" name="price" style="width: 120px; display: inline-block;">
+                                            <input type="text" value="{{ product.price }}" id="price{{product.id}}" class="form-control input-sm" name="price" style="width: 120px; display: inline-block;">
                                             <div class="input-group-btn">
                                                 <button type="submit" class="btn btn-success btn-sm sort-down">
                                                     <i class="fa fa-hand-pointer-o"></i>
@@ -454,7 +491,7 @@
                                     <form action="{% url "store:product-fast-panel-change-count" product.id %}" method="POST" class="form-inline">
                                         {% csrf_token %}
                                         <div class="input-group input-group-sm">
-                                            <input type="text" value="{{ product.count }}" name="count" class="form-control input-sm" style="width: 120px; display: inline-block;">
+                                            <input type="text" value="{{ product.count }}" id="count{{product.id}}" name="count" class="form-control input-sm" style="width: 120px; display: inline-block;">
                                             <div class="input-group-btn">
                                                 <button type="submit" class="btn btn-success btn-sm sort-down">
                                                     <i class="fa fa-hand-pointer-o"></i>
@@ -463,8 +500,14 @@
                                         </div>
                                     </form>
                                 </td>
+                                <td class="text-center"> 
+                     
+                                    <a   title="اول قیمت های مصرف کننده و همکار رو وارد کنید همراه با تعداد و بعد ثبت را بزنید تا همگی ثبت بشوند" onclick="setAllChanges('{% url "store:product-fast-panel-change-row" product.id %}' , {{product.id}})" class="btn btn-success btn-sm sort-down">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                </td>
                             </tr>
-                        {% endfor %}
+                        {% endfor %} 
                         </tbody>
                     </table>
                 </div>
@@ -520,7 +563,7 @@
 
         // نمایش/پنهان کردن انتخاب دستی بر اساس نوع انتخاب
         if (selectionType && manualSelection) {
-            selectionType.addEventListener('change', function() {
+           selectionType.addEventListener('change', function() {
                 manualSelection.style.display = this.value === 'manual' ? 'block' : 'none';
             });
 

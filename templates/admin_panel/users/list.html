@@ -339,7 +339,8 @@
                             <th class="text-center" width="5%">حقیقی / حقوقی</th>
                             <th class="text-center" width="5%">درخواست همکاری</th>
                             <th class="text-center" width="5%">مدیریت فروشگاه</th>
-                            <th class="text-center" width="20%">کاربر فروشگاه</th>
+                            <th class="text-center" width="10%">کاربر فروشگاه</th>
+                            <th class="text-center" width="10%">زمان ثبت نام</th>
                             <th class="text-center" width="5%">مدیر سایت</th>
                             <th colspan="7" class="text-center" width="20%">عملیات</th>
                         </tr>
@@ -410,7 +411,7 @@
                                         {% elif item.colleague_request %}
                                                                                     <span class="btn btn-sm btn-warning">
                                                                                         <a class="" href="{% url 'admin_panel:user-colleague-requests' item.id %}">
-                                    درخواست همکاری
+                                    تایید درخواست همکاری دارد 
                                                                                         </a>
                                     </span>
                                         {% else %}
@@ -436,7 +437,10 @@
                                     </strong>
                                 </td>
                                 <td class="text-center">
-                                    <strong>{{ item.store.name|default:'-' }}</strong>
+                                    <strong>{{ item.store.name|default:'-'  }}</strong>
+                                </td>
+                                <td class="text-center">
+                                    <strong>{{ item.date_joined|to_jalali:'%H:%M - %Y/%m/%d'  }}</strong>
                                 </td>
 
                                 <td class="text-center">

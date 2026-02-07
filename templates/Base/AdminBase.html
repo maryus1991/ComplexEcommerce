@@ -377,10 +377,7 @@ desired effect
                                         class="fa fa-link"></i>
                                     <span> پنل سریع</span></a>
                                 </li>
-                                <li class="link-activator"><a href="{% url 'store:product-fast-panel-list-colleague' %}"><i
-                                        class="fa fa-link"></i>
-                                    <span>  پنل سریع قیمت همکار</span></a>
-                                </li>
+
                                 {% if user.store.can_stores_add_product %}
 
                                     <li class="link-activator"><a href="{% url 'store:add-product' %}"><i
@@ -594,6 +591,9 @@ desired effect
                                     <span>محصولات</span>
                                 </a>
                             </li>
+                            <li class="link-activator"><a href="{% url 'admin_panel:product-fast-panel-list' %}"><i
+                                    class="fa fa-link"></i>
+                                <span>پنل سریع</span></a></li>
                             <li class="link-activator"><a href="{% url 'admin_panel:product-create' %}"><i
                                     class="fa fa-link"></i>
                                 <span>اضافه کردن محصول</span></a></li>

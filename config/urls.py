@@ -18,12 +18,10 @@ urlpatterns = [
     path("order/", include("orders.urls")),
     path("blog/", include("blog.urls")),
     path("store/", include("stores.main_template_urls")),
-    path(f"panel-store/{get_random_string(100)}/", include("stores.urls")),
-    # path("store-panel/", include("stores.urls")),
-    path(f"admin-panel/{get_random_string(1000)}/", include("admin_panel.urls")),
-    # path("admin-panel/", include("admin_panel.urls")),
-    # path("admin/", admin.site.urls),
-    path(f"admin/{get_random_string(1000)}/", admin.site.urls),
+    # path(f"panel-store/{get_random_string(100)}/", include("stores.urls")),
+    # path(f"admin-panel/{get_random_string(1000)}/", include("admin_panel.urls")),
+
+    # path(f"admin/{get_random_string(1000)}/", admin.site.urls),
     path("ckeditor/", include("ckeditor_uploader.urls")),
     path("", include("sitesetting.urls")),
 ]
@@ -34,6 +32,19 @@ if settings.DEBUG:
     urlpatterns = urlpatterns + static.static(
         settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
     )
+    urlpatterns += [
+        path("store-panel/", include("stores.urls")),
+        path("admin-panel/", include("admin_panel.urls")),
+        path("admin/", admin.site.urls),
+    ]
+else:
+    token = get_random_string(1000)
+    urlpatterns += [
+        path(f"panel-store/{get_random_string(1000)}/", include("stores.urls")),
+        path(f"admin-panel/{token}/", include("admin_panel.urls")),
+
+        path(f"admin/{token}/", admin.site.urls),
+    ]
 
 
 # site map and robots.txt
