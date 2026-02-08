@@ -598,7 +598,7 @@ function resetZoom(container) {
                                 {{ product.short_name }}
                             </h3>
                             <div class="mt-auto flex items-center gap-1">
-                                {% if request.user.is_authenticated and user.colleague_user and user.colleague_with_store == product.store and and product.colleague_users_price > 0 %}
+                                {% if request.user.is_authenticated and user.colleague_user and user.colleague_with_store == product.store and product.colleague_users_price > 0 %}
                                     <div class="flex flex-wrap items-baseline gap-1">
                             <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                 {{ product|colleague:request }}
