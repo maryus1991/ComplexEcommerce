@@ -261,7 +261,7 @@ class AddOrder(LoginRequiredMixin, RedirectView):
         order_detail, created = OrderDetail.objects.get_or_create(
             order=order, product=product
         )
-
+        
         current_count = order_detail.count if not created else 0
         new_count = num
         difference = new_count - current_count

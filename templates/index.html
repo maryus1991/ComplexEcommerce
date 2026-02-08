@@ -447,7 +447,16 @@
                             {{ product.name }}
                         </a>
                         <div class="flex items-center gap-x-1 lg:gap-x-3">
-                            {% if product.have_discount %}
+                            {% if user.colleague_user and user.colleague_with_store == product.store and product.colleague_users_price > 0 %}
+                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
+                                {{ product.colleague_users_price }}
+                                <span class="font-Dana text-sm">تومان</span>
+                            </p>
+                            <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                                {{ product.price|tdc }}
+                                <span class="">تومان</span>
+                            </del>
+                            {% elif product.have_discount %}
                             <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
                                 {{ product.calc_discount|tdc }}
                                 <span class="font-Dana text-sm">تومان</span>
@@ -532,7 +541,16 @@
                             {{ product.name }}
                         </a>
                         <div class="flex items-center gap-x-1 lg:gap-x-3">
-                            {% if product.have_discount %}
+                                                        {% if user.colleague_user and user.colleague_with_store == product.store and product.colleague_users_price > 0 %}
+                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
+                                {{ product.colleague_users_price }}
+                                <span class="font-Dana text-sm">تومان</span>
+                            </p>
+                            <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                                {{ product.price|tdc }}
+                                <span class="">تومان</span>
+                            </del>
+                            {% elif product.have_discount %}
                             <p class="font-DanaDemiBold text-green-600 dark:text-green-300"> {{ product.calc_discount|tdc }}
                                 <span class="font-Dana text-sm">تومان</span>
                             </p>
@@ -645,7 +663,16 @@
                                 {{ product.name }}
                             </a>
                             <div class="flex items-center gap-x-1 lg:gap-x-3">
-                                {% if product.have_discount %}
+                                                            {% if user.colleague_user and user.colleague_with_store == productf.store and product.colleague_users_price > 0 %}
+                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
+                                {{ product.colleague_users_price }}
+                                <span class="font-Dana text-sm">تومان</span>
+                            </p>
+                            <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                                {{ product.price|tdc }}
+                                <span class="">تومان</span>
+                            </del>
+                                {% elif product.have_discount %}
                                 <p class="font-DanaDemiBold text-green-600 dark:text-green-300"> {{ product.calc_discount|tdc }}
                                     <span class="font-Dana text-sm">تومان</span>
                                 </p>
