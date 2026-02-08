@@ -42,7 +42,7 @@
 
         <div class="flex flex-col lg:flex-row items-start gap-x-8">
             <div class="w-full">
-                <form class="w-full grid grid-cols-12 gap-4" method="post" action="" enctype="multipart/form-data">
+                <form class="w-full grid grid-cols-12 gap-4" method="post" action="?_={{ ts }}" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.first_name }}
                     {{ form.last_name }}
@@ -116,6 +116,7 @@
                     {{ form.email }}
                     {{ form.password }}
                     {{ form.conform_password }}
+                    {{ form.colleague_with_store }}
 
                     <!-- Password Field with Instructions -->
 
@@ -349,6 +350,9 @@
                     </div>
                     <div class="md:col-span-1 lg:col-span-6">
                         {{ form.conform_password }}
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-6">
+                        {{ form.colleague_with_store }}
                     </div>
 
                     <!-- Submit Button - Full width on all devices -->

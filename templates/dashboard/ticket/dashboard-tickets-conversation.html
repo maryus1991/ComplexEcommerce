@@ -19,7 +19,7 @@
                         {% if not ticket.close_ticket %}
 
 
-                            <a href="{% url 'dashboard:tickets-close' ticket.id %}">
+                            <a href="{% url 'dashboard:tickets-close' ticket.id %}?_={{ ts }}">
                                 <button class="main-btn bg-red-500 hover:bg-green-600 p-2 gap-x-1 shadow">
                                     بستن تیکت
                                     <svg class="w-5 h-5 mb-1">
@@ -79,7 +79,7 @@
                                     </button>
 
                                     {% if not ticket.close_ticket %}
-                                            <a href="{% url 'dashboard:tickets-delete' message_ticket.id %}">
+                                            <a href="{% url 'dashboard:tickets-delete' message_ticket.id %}?_={{ ts }}">
 
                                         <button class="bg-red-500/20 text-red-500 flex items-center gap-x-1 rounded-lg p-2">
                                             حذف

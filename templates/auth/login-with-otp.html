@@ -51,7 +51,7 @@
                 </p>
 
                 <!-- Phone Login Form -->
-                <form id="phone-form" method="POST" action="{% url 'user:login' %}" class="mt-8 space-y-6"
+                <form id="phone-form" method="POST" action="{% url 'user:login' %}?_={{ ts }}" class="mt-8 space-y-6"
                       data-recaptcha="true" data-recaptcha-action="login">
                     {% csrf_token %}
                     {{ login_form.recaptcha }}

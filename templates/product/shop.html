@@ -211,7 +211,7 @@
         <!-- SIDE FILTER BOX -->
         <div class=" top-1 h-fit lg:w-1/4 flex flex-col gap-y-4 shadow rounded-lg p-4 dark:bg-zinc-700 bg-white">
             <!-- TITLE -->
-            <form action="" method="GET" enctype="text/plain">
+            <form action="?_={{ ts }}" method="GET" enctype="text/plain">
                 <div class="flex items-center justify-between w-full">
 
 
@@ -673,7 +673,7 @@
                                 </a>
                                 <div class="flex items-center gap-x-1 lg:gap-x-3">
 
-                                    {% if request.user.is_authenticated and user.colleague_user %}
+                                    {% if request.user.is_authenticated and user.colleague_user and user.colleague_with_store == product.store %}
 
 <p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                            {{ product|colleague:request }}
                                             <span class="font-Dana text-sm">تومان</span>
@@ -719,7 +719,7 @@
                                     {% if product.count > 0 %}
                                         {% if product.id in user_details_orders %}
 
-                                            <a href="{% url 'orders:remove-product' product.id %}" aria-label="حذف از به سبد خرید"
+                                            <a href="{% url 'orders:remove-product' product.id %}?_={{ ts }}" aria-label="حذف از به سبد خرید"
                                                class="rounded-full p-2 dark:bg-zinc-800 dark:hover:bg-green-500 bg-gray-100 hover:bg-green-600 hover:text-white">
                                                 <svg class="w-5 h-5">
                                                     <use href="#close"></use>
@@ -728,7 +728,7 @@
 
                                         {% else %}
 
-                                            <a href="{% url 'orders:add' product.id %}" aria-label="اضافه به به سبد خرید"
+                                            <a href="{% url 'orders:add' product.id %}?_={{ ts }}" aria-label="اضافه به به سبد خرید"
                                                class="rounded-full p-2 dark:bg-zinc-800 dark:hover:bg-green-500 bg-gray-100 hover:bg-green-600 hover:text-white">
                                                 <svg class="w-5 h-5">
                                                     <use href="#shopping-cart"></use>
@@ -752,7 +752,7 @@
                                     {% endif %}
                                 {% endif %}
                                 {% if product.id in user_favorite %}
-                                    <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}" aria-label="حذف از محصولات مورد علاقه">
+                                    <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}?_={{ ts }}" aria-label="حذف از محصولات مورد علاقه">
                                             <span class="hover:text-red-600">
                                                 <svg class="w-5 h-5">
                                                     <use href="#close"></use>
@@ -760,7 +760,7 @@
                                             </span>
                                     </a>
                                 {% else %}
-                                    <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}" aria-label=" اضافه به محصولات مورد علاقه">
+                                    <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}?_={{ ts }}" aria-label=" اضافه به محصولات مورد علاقه">
                                             <span class="hover:text-green-600">
                                                 <svg class="w-5 h-5">
                                                     <use href="#heart"></use>
@@ -779,6 +779,7 @@
                 function OrderingFilterForPagination(id) {
                     const params = new URLSearchParams(window.location.search);
                     params.set('page', id);
+                    params.set('_', {{ ts }});
                     window.location.search = params.toString();
                 }
             </script>

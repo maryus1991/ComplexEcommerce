@@ -1,5 +1,6 @@
 from django.views.generic import (
     ListView,
+    DetailView,
     FormView,
     UpdateView,
     RedirectView,
@@ -14,7 +15,6 @@ from django.shortcuts import (
 from django.urls import reverse_lazy
 from django.contrib.auth import get_user_model
 from django.contrib import messages
-from phonenumbers.phonenumber import PhoneNumber
 from stores.models import Store
 from django.utils.dateparse import parse_date
 from stores.forms import (
@@ -22,11 +22,72 @@ from stores.forms import (
     StoreUsersStaffFilteringForm,
 )
 from auditlog.models import LogEntry
-from user.mixins.logins import StoreAdminUserStaff
+from user.mixins.logins import StoreAdminUserStaff, UserStoreStaffMixin
 import jdatetime
-
+from django.http import Http404
 
 User = get_user_model()
+
+
+class StoreColleagueUserList(UserStoreStaffMixin, ListView):
+    """for manage colleague users"""
+    
+    template_name = "store/users/colleague-users.html"
+    context_object_name = "items"
+    
+    
+    def get_queryset(self):
+        try :
+            return Store.objects.get(pk=self.request.user.store.id).colleague_users.order_by("-colleague_request").all()
+        except Exception as E:
+            print(self.__class__.__name__ , E)
+            return Http404()
+
+
+class StoreColleagueUserDetail(UserStoreStaffMixin, DetailView):
+    """for manage colleague users"""
+    
+    template_name = "store/users/colleague-users-detail.html"
+    context_object_name = "item"
+
+
+    def get_object(self):
+        try :
+            return Store.objects.get(pk=self.request.user.store.id).colleague_users.get(id=self.kwargs.get('pk'))
+        except Exception as E:
+            print(self.__class__.__name__ , E)
+            return Http404()
+
+    
+
+class StoreColleagueUserConformRequest(UserStoreStaffMixin, RedirectView):
+    """for conform the request of Colleague Users"""
+
+    def get_redirect_url(self, *args, **kwargs):
+        try :
+            user = Store.objects.get(pk=self.request.user.store.id).colleague_users.get(id=self.kwargs.get('pk'))
+        except Exception as E:
+            print(self.__class__.__name__ , E)
+            return Http404()
+
+        if user.colleague_request :
+            user.colleague_user = True
+            user.colleague_request = False
+            user.save()
+            messages.success(
+                self.request, 
+                f' تایید همکاری با {str(user.PhoneNumber).replace(" ", "")}'
+            )
+        else :
+            user.colleague_user = False
+            user.colleague_request = True
+            user.save()
+            messages.error(
+                self.request,   
+                f'همکاری با {str(user.PhoneNumber).replace(" ", "")} باطل شد '
+            )
+
+        return reverse_lazy("store:colleague-users-list")
 
 
 # store users list

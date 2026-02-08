@@ -95,7 +95,7 @@ class Product(models.Model):
         if request and request.user.is_authenticated and user is None:
             user = request.user
 
-        if user.colleague_user :
+        if user.colleague_user and user.colleague_with_store == self.store :
             return self.colleague_users_price
 
         else :

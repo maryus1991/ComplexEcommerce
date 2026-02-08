@@ -106,6 +106,20 @@ class RegistrationForm(forms.Form):
 
 
 class RegistrationColleagueForm(forms.Form):
+    colleague_with_store = forms.ModelChoiceField(
+        queryset=Store.objects.filter(can_stores_add_colleague_user=True, is_active=True, is_verified=True).all(),  
+        help_text="فروشگاهی که با آن همکاری دارید را انتخاب کنید",
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": (
+                    "tailwind-input col-span-6 w-full px-3 py-2  rounded "
+                ),
+            }
+        ),
+        empty_label="انتخاب فروشگاه ...",
+    )
+
 
     first_name = forms.CharField(
         required=True,

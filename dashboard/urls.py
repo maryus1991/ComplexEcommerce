@@ -4,10 +4,17 @@ from . import views
 app_name = "dashboard"
 
 urlpatterns = [
+
+
     path("", views.Dashboard.as_view(), name="dashboard"),
     path("account/", views.UserSettingDashboard.as_view(), name="account"),
-    path("return-order/<int:pk>", views.ReturnOrderView.as_view(), name="return-order"),
+
+    # colleague
+    path("colleague-panel/", views.UserColleague.as_view(), name="user-colleague"),
+    path("colleague-panel/canceling/", views.UserCancelColleague.as_view(), name="user-colleague-canceling"),
+
     # orders
+    path("return-order/<int:pk>", views.ReturnOrderView.as_view(), name="return-order"),
     path("orders/", views.OrdersHistoryDashboard.as_view(), name="orders"),
     path("orders/returns/", views.ReturnsOrderListView.as_view(), name="orders-returns-list"),
     path("orders/returns/delete/<int:pk>", views.ReturnsOrderDelete.as_view(), name="orders-returns-delete"),

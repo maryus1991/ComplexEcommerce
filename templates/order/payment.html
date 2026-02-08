@@ -307,7 +307,7 @@
                                             <p class="mt-1"> تضمین کیفیت</p>
                                         </li>
                                     </ul>
-                               {% if user.colleague_user %}
+                               {% if user.colleague_user and user.colleague_with_store == product.product.store %}
                                     <p class="text-2xl font-DanaDemiBold">{{ product.product.colleague_users_price|multiply:product.count }}</p>
                                     <p class="">تومان</p>
                                     <br>

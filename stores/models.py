@@ -73,6 +73,7 @@ class Store(models.Model):
 
     # store permissions
     can_stores_add_product = models.BooleanField(default=True)
+    can_stores_add_colleague_user = models.BooleanField(default=True)
     can_stores_add_product_brand = models.BooleanField(default=False)
     can_stores_add_product_category = models.BooleanField(default=False)
     can_store_add_blog_post = models.BooleanField(default=False)

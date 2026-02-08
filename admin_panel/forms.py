@@ -44,6 +44,7 @@ class StorePermissions(forms.ModelForm):
             'allowed_to_activate_product_categories_with_out_admin_per',
             'allowed_to_activate_product_brand_with_out_admin_per',
             'allowed_to_activate_post_categories_with_out_admin_per',
+            'can_stores_add_colleague_user',
         )
         widgets = {
             'can_stores_add_product_category': forms.CheckboxInput(),
@@ -59,6 +60,7 @@ class StorePermissions(forms.ModelForm):
             'allowed_to_activate_product_categories_with_out_admin_per': forms.CheckboxInput(),
             'allowed_to_activate_product_brand_with_out_admin_per': forms.CheckboxInput(),
             'allowed_to_activate_post_categories_with_out_admin_per': forms.CheckboxInput(),
+            'can_stores_add_colleague_user': forms.CheckboxInput(),
         }
 
 class AdminUsersFilteringForm(forms.Form):
@@ -1126,6 +1128,35 @@ class AddUserModelForm(forms.ModelForm):
         ),
         empty_label="فروشگاه را انتخاب کنید (می تواند خالی باشد و انتخاب نشود)",
     )
+    colleague_with_store = forms.ModelChoiceField(
+        required=False,
+        queryset=Store.objects.all(),
+        widget=forms.Select(
+            attrs={
+                "class": 'form-control select2 select2-hidden-accessible"',
+                "style": "width: 100%;",
+                "tabindex ": "-1",
+                "aria - hidden ": "true",
+                "dir": "rtl",
+            }
+        ),
+        empty_label="فروشگاه را انتخاب کنید  ",
+    )
+
+
+ 
+    store_image = forms.ImageField(
+        required=False,
+        widget=forms.FileInput(
+            attrs={"class": "form-control"}
+        ),
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
+    )
+
 
     conform_password = forms.CharField(
         required=False,
@@ -1138,6 +1169,22 @@ class AddUserModelForm(forms.ModelForm):
     password = forms.CharField(
         required=False,
         widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+            }
+        ),
+    )
+    store_address = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        ),
+    )
+    colleague_id = forms.CharField(
+        required=False,
+        widget=forms.NumberInput(
             attrs={
                 "class": "form-control",
             }
@@ -1161,6 +1208,12 @@ class AddUserModelForm(forms.ModelForm):
             "is_store_admin",
             "is_staff",
             "message_verified",
+            'colleague_user',
+            'colleague_request',
+            'colleague_id',
+            'store_address',
+            'store_image',
+            'colleague_with_store',
         ]
 
         widgets = {
@@ -1181,6 +1234,9 @@ class AddUserModelForm(forms.ModelForm):
             "is_staff": forms.CheckboxInput(),
             "legal_person": forms.CheckboxInput(),
             "message_verified": forms.CheckboxInput(),
+            "colleague_user": forms.CheckboxInput(),
+            "colleague_request": forms.CheckboxInput(),
+            
         }
 
 class SiteSettingModelForm(forms.ModelForm):

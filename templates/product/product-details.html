@@ -309,7 +309,7 @@
 
                         {% if is_favorite_product %}
                             <div class="tooltip">
-                                <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}">
+                                <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}?_={{ ts }}">
                                     <button class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
                                         <svg class="w-5 h-5">
                                             <use href="#close"></use>
@@ -322,7 +322,7 @@
                             </div>
                         {% else %}
                             <div class="tooltip">
-                                <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}" aria-label=' افزودن به علاقمندی'>
+                                <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}?_={{ ts }}" aria-label=' افزودن به علاقمندی'>
                                     <button aria-label=' افزودن به علاقمندی' class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
                                         <svg class="w-5 h-5">
                                             <use href="#heart"></use>
@@ -598,7 +598,7 @@ function resetZoom(container) {
                                 {{ product.short_name }}
                             </h3>
                             <div class="mt-auto flex items-center gap-1">
-                                {% if request.user.is_authenticated and user.colleague_user %}
+                                {% if request.user.is_authenticated and user.colleague_user and user.colleague_with_store == product.store %}
                                     <div class="flex flex-wrap items-baseline gap-1">
                             <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                 {{ product|colleague:request }}
@@ -651,7 +651,7 @@ function resetZoom(container) {
                                     </h3>
                                     <div class="mt-auto flex items-center gap-1">
 
-                                        {% if request.user.is_authenticated and user.colleague_user %}
+                                        {% if request.user.is_authenticated and user.colleague_user and user.colleague_with_store == child.store %}
                                             <div class="flex flex-wrap items-baseline gap-1">
                             <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                 {{ child|colleague:request }}
@@ -709,7 +709,7 @@ function resetZoom(container) {
                                 </h3>
                                 <div class="mt-auto flex items-center gap-1">
 
-                                    {% if request.user.is_authenticated and user.colleague_user %}
+                                    {% if request.user.is_authenticated and user.colleague_user  and user.colleague_with_store == product.store %}
                                         <div class="flex flex-wrap items-baseline gap-1">
                                     <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                         {{ product.parent|colleague:request }}
@@ -765,7 +765,7 @@ function resetZoom(container) {
                                     <div class="mt-auto flex items-center gap-1">
 
 
-                                        {% if request.user.is_authenticated and user.colleague_user %}
+                                        {% if request.user.is_authenticated and user.colleague_user and user.colleague_with_store == child.store %}
                                             <div class="flex flex-wrap items-baseline gap-1">
                                     <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                         {{ child|colleague:request }}
@@ -905,7 +905,7 @@ function resetZoom(container) {
 
             <div class="flex items-center gap-x-1">
 
-                {% if request.user.is_authenticated and user.colleague_user %}
+                {% if request.user.is_authenticated and user.colleague_user and user.colleague_with_store == product.store %}
                     <p class="text-2xl font-DanaDemiBold">{{ product|colleague:request }}</p>
                     <p class="">تومان</p>
                     <br>
@@ -957,7 +957,7 @@ function resetZoom(container) {
 
                 {% if product.count > 0 or user_order_detail.count > 0 %}
 
-                    <form action="{% url 'orders:add' product.id %}" class="flex flex-col gap-y-5">
+                    <form action="{% url 'orders:add' product.id %}?_={{ ts }}" class="flex flex-col gap-y-5">
 <div class="flex items-center justify-between rounded-lg border border-gray-200 dark:border-white/20 py-2 px-3">
   <svg onclick="handle_input('+')" class="w-6 h-6 shrink-0 text-green-600 cursor-pointer" role="button" aria-label="افزایش تعداد" tabindex="0">
     <use href="#plus"></use>
@@ -1065,7 +1065,7 @@ function resetZoom(container) {
         <div class="flex flex-col lg:flex-row items-start gap-10">
             <!-- SUBMIT COMMENT -->
             <div class="lg:w-1/4 flex flex-col w-full ">
-                <form action="{% url 'product:add_comment' pk=product.id %}" method="POST"
+                <form action="{% url 'product:add_comment' pk=product.id %}?_={{ ts }}" method="POST"
                       enctype="multipart/form-data" style="outline: none !important;">
                     {% csrf_token %}
                     <p class="font-DanaMedium text-lg mb-2">ثبت دیدگاه</p>
@@ -1161,7 +1161,7 @@ function resetZoom(container) {
                                 <div class="flex items-center gap-x-2 child:flex child:items-center child:gap-x-1 child:rounded-lg child:p-2 child:font-DanaMedium child:duration-300
                                 child:transition-all child:text-sm">
 
-                                    <a href="{% url 'product:like_comment' pk=product.id comment_id=comment.id %}"
+                                    <a href="{% url 'product:like_comment' pk=product.id comment_id=comment.id %}?_={{ ts }}"
                                        class="text-green-600 ring-transparent ring-1 focus:ring-green-600  dark:focus:ring-green-600">
                                         {{ comment.like_count }}
                                         <svg class="w-4 h-4">
@@ -1169,7 +1169,7 @@ function resetZoom(container) {
                                         </svg>
                                     </a>
 
-                                    <a href="{% url 'product:dislike_comment' pk=product.id comment_id=comment.id %}"
+                                    <a href="{% url 'product:dislike_comment' pk=product.id comment_id=comment.id %}?_={{ ts }}"
                                        class="text-red-500 ring-transparent ring-1 focus:ring-[#EF4343]  dark:focus:ring-[#EF4343]">
                                         {{ comment.dislike_count }}
                                         <svg class="w-4 h-4">
@@ -1243,7 +1243,7 @@ function resetZoom(container) {
                             </a>
                             <div class="flex items-center gap-x-1 lg:gap-x-3">
 
-                                {% if request.user.is_authenticated and user.colleague_user %}
+                                {% if request.user.is_authenticated and user.colleague_user and user.colleague_with_store == product.store %}
 
 <p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                        {{ product|colleague:request }}
                                         <span class="font-Dana text-sm">تومان</span>
@@ -1276,7 +1276,7 @@ function resetZoom(container) {
                         <div class="flex items-center justify-between px-2 lg:px-4 mb-3">
                             <div class="flex items-center gap-x-2 child:transition-all child:duration-300">
                                 {% if product.id in user_favorite %}
-                                    <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}" aria-label=" حذف از محصولات مورد علاقه">
+                                    <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}?_={{ ts }}" aria-label=" حذف از محصولات مورد علاقه">
                                     <span class="hover:text-red-600">
                                         <svg class="w-4 h-4">
                                             <use href="#close"></use>
@@ -1284,7 +1284,7 @@ function resetZoom(container) {
                                     </span>
                                     </a>
                                 {% else %}
-                                    <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}" aria-label=" اضافه به محصولات مورد علاقه">
+                                    <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}?_={{ ts }}" aria-label=" اضافه به محصولات مورد علاقه">
                                     <span class="hover:text-green-600">
                                         <svg class="w-4 h-4">
                                             <use href="#heart"></use>

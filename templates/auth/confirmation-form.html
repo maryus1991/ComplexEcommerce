@@ -32,7 +32,7 @@
                     <p class="mt-2 lg:mt-4 text-center text-gray-400">
                         لطفا کد ارسال شده به شماره <span dir='ltr'>{{ user.PhoneNumber }}</span> را وارد نمایید
                     </p>
-                    <form method="POST" action="" class="mt-8 space-y-6">
+                    <form method="POST" action="?_={{ ts }}" class="mt-8 space-y-6">
 
                         {% csrf_token %}
                         <div class="grid grid-cols-12 child:col-span-3 gap-x-2 xs:gap-x-8  child:text-lg w-full child:bg-gray-100 child:dark:bg-zinc-500/30 child:rounded-lg child:pr-10 child:h-16">

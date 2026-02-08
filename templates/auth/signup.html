@@ -30,7 +30,7 @@
                     </h2>
                     <p class="mt2 lg:mt-4 text-center text-gray-400">ایجاد حساب کاربری</p>
 
-                    <form method="POST" action="" class="mt-8 space-y-6" data-recaptcha="true" data-recaptcha-action="signup" >
+                    <form method="POST" action="?_={{ ts }}" class="mt-8 space-y-6" data-recaptcha="true" data-recaptcha-action="signup" >
                         {% csrf_token %}
                         {{ form.recaptcha }}
                         <div class="flex w-full items-center bg-gray-100 dark:bg-zinc-500/30 rounded-lg  px-3">

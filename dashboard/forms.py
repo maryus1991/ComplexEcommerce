@@ -3,8 +3,62 @@ from phonenumber_field.formfields import PhoneNumberField
 from phonenumber_field.validators import validate_phonenumber
 from ckeditor.widgets import CKEditorWidget
 from ckeditor_uploader.fields import RichTextUploadingFormField
-
+from django.core.validators import FileExtensionValidator
 from .models import UserAddress, Store
+
+
+class UserColleagueForm(forms.Form):
+    colleague_with_store = forms.ModelChoiceField(
+        queryset=Store.objects.filter(can_stores_add_colleague_user=True, is_active=True, is_verified=True).all(),  
+        help_text="فروشگاهی که با آن همکاری دارید را انتخاب کنید",
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": (
+                    "tailwind-input lg:col-span-6 col-span-12  w-full px-3 py-2 rounded "
+                ),
+            }
+        ),
+        empty_label="انتخاب فروشگاه ...",
+    )
+
+
+    store_address = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input lg:col-span-6 col-span-12 ",
+                "placeholder": "ادرس فروشگاه ",
+                "autocomplete": "password",
+            }
+        ),
+    )
+
+    store_image = forms.ImageField(
+        required=True,
+        label='عکس ( فروشگاه یا کارت ویزیت )',
+        widget=forms.FileInput(
+            attrs={"class": "hidden", "placeholder": "لوگو"}
+        ),
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
+    )
+    
+    colleague_id = forms.CharField(
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "tailwind-input lg:col-span-6 col-span-12 ",
+                "placeholder": " کد ملی",
+                "autocomplete": "password",
+            }
+        ),
+    )
+
+
 
 
 class CreateRequestReturnOrder(forms.Form):

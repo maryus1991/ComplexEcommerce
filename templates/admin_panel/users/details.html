@@ -159,6 +159,46 @@
                             <td><strong>شماره ثبت:</strong> {{ item.legal_person_registration_number|default:'-' }}</td>
                             <td><strong>شماره یا نامبر:</strong> {{ item.legal_person_phone|default:'-' }}</td>
                         </tr>
+                                       <tr>
+                                <td>
+                                     
+                                    {% if item.colleague_user %}
+                                        <span class="label label-success">همکار می باشد</span>
+                                    {% else %}
+                                        <span class="label label-default">همکار نمی باشد</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                     {% if item.colleague_request %}
+                                        <span class="label label-success">درخواست همکاری دارد</span>
+                                    {% else %}
+                                        <span class="label label-default">درخواست همکاری دارد</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <strong > کد ملی :</strong>
+                                    {{    item.colleague_id   }}
+                                </td>
+ 
+                                <td>
+                                    <strong>فروشگاه دریافت کننده درخواست :</strong>
+                                    {{    item.colleague_with_store.name   }}
+                                </td>
+ 
+                            </tr>
+                            <tr>
+           
+                                                                <td colspan='3'>
+                                                                   <strong>ادرس :</strong>
+                                    {{    item.store_address   }}
+                                </td>
+                                {% if item.store_image %}
+                                                                                 <td colspan='1'>
+                                    <img   src='{{ item.store_image.url }}' width='200' height="200" />
+                                </td>
+                                {% endif %}
+                            </tr>
+ 
                         </tbody>
                     </table>
                 </div>

@@ -11,7 +11,7 @@
                 {% if '/user/' not in request.path and 'contact' not in request.path %}
                 <h2 class="font-DanaDemiBold">از جدیدترین تخفیف ها با خبر شوید</h2>
 
-                <form action="{% url 'site:add-to-news-letters' %}" method="post"
+                <form action="{% url 'site:add-to-news-letters' %}?_={{ ts }}" method="post"
                       class="group  flex justify-end items-center w-full bg-zinc-600 rounded-full  group-hover:opacity-100 group-hover:visible group-hover:top-10 transition-all delay-100  border-0 shadow ">
                     {% csrf_token %}
 

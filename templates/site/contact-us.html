@@ -44,7 +44,7 @@
 
             <div class="flex flex-col lg:flex-row items-start gap-x-8">
                 <div class="w-full lg:w-3/4">
-                    <form class="w-full grid grid-cols-12 gap-4" method="post" action="{% url 'site:contact-us' %}">
+                    <form class="w-full grid grid-cols-12 gap-4" method="post" action="{% url 'site:contact-us' %}?_={{ ts }}">
                         {% csrf_token %}
                         {{ form.email }}
                         {{ form.phone }}

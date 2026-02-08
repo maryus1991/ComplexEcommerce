@@ -40,7 +40,7 @@ class ConformTheColleagueRequests(AdminUserMixin, RedirectView):
 
         else:
             messages.error(request, "کاربر پیدا نشد")
-
+            
         return reverse('admin_panel:user-list')
 
 class RemoveTheColleagueRequests(AdminUserMixin, RedirectView):
@@ -561,6 +561,12 @@ class UserUpdateView(AdminUserMixin, UpdateView):
         is_verified = form.cleaned_data.get("is_verified")
         is_store_admin = form.cleaned_data.get("is_store_admin")
         is_staff = form.cleaned_data.get("is_staff")
+        colleague_user = form.cleaned_data.get("colleague_user")
+        colleague_request = form.cleaned_data.get("colleague_request")
+        colleague_id = form.cleaned_data.get("colleague_id")
+        store_address = form.cleaned_data.get("store_address")
+        store_image = form.cleaned_data.get("store_image")
+        colleague_with_store = form.cleaned_data.get("colleague_with_store")
 
         if conform_password != password:
             messages.error(self.request, "رمز های وارد با هم متفاوت هستند")
@@ -612,6 +618,12 @@ class UserUpdateView(AdminUserMixin, UpdateView):
         user_object.is_verified = is_verified
         user_object.is_store_admin = is_store_admin
         user_object.is_staff = is_staff
+        user_object.colleague_user = colleague_user
+        user_object.colleague_request = colleague_request
+        user_object.colleague_id = colleague_id
+        user_object.store_address = store_address
+        user_object.store_image = store_image
+        user_object.colleague_with_store = colleague_with_store
         user_object.save()
 
         messages.success(self.request, "تغییرات اعمال شد")

@@ -1,0 +1,195 @@
+{% extends 'dashboard/Base/dashboard-base.html' %}
+
+
+{% block title %}
+ثبت درخواست همکاری
+{% endblock %}
+
+ 
+
+{% block dashboard %}
+
+
+<main class="container child:mt-8">
+    <!-- Breadcrumbs -->
+
+    <!-- CONTACT US -->
+    <section class="w-full p-5 rounded-lg shadow bg-white dark:bg-zinc-700">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <h2 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1">ثبت درخواست همکاری با
+            فروشگاه</h2>
+            {% if user.colleague_request or user.colleague_user %}
+        <a class="main-btn bg-green-500 hover:bg-green-600 p-1.5 sm:p-2 gap-x-1 shadow w-full sm:w-auto" href={% url "dashboard:user-colleague-canceling" %}>
+            کنسل کردن همکاری با {{user.colleague_with_store}}
+        </a>
+        {% endif %}
+</div> 
+        <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-4 mb-1 text-sm lg:text-base">
+            شما با ثبت درخواست همکاری با فروشگاه می توانید از تخفیف های ویژه برای همکاران فروشگاه برخوردار شوید
+
+        </p>
+        <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-1 mb-8 text-sm lg:text-base">شما با افتتاح حساب در
+            سایت تمامی <a href="{% url 'site:site-law' %}" class="text-blue-400"> قوانین و مقررات </a> مورد پذیرش شما
+            تلقی می شود </p>
+
+
+        <div class="flex flex-col lg:flex-row items-start gap-x-8">
+            <div class="w-full">
+                <form class="w-full grid grid-cols-12 gap-4" method="post" action="?_={{ ts }}" enctype="multipart/form-data">
+                    {% csrf_token %}
+ 
+
+                    <!-- Upload Image Section -->
+                    <div class="lg:col-span-6 col-span-12 ">
+                        <div class="relative">
+                            {{ form.store_image }}
+
+                            <div id="about-image-upload"
+                                 class="w-full px-4 py-2 bg-gray-50 dark:bg-zinc-600 border border-gray-300 dark:border-zinc-500 rounded-lg text-gray-500 dark:text-gray-400 border-dashed hover:border-green-500 hover:bg-green-50 dark:hover:bg-zinc-600 transition-all cursor-pointer">
+                                <div class="flex items-center justify-center space-x-2" id="upload-content">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                    <span> عکس ( فروشگاه یا کارت ویزیت ) </span>
+                                </div>
+                                <!-- Preview Area -->
+                                <div id="image-preview" class="hidden mt-2">
+                                    <div class="flex items-center justify-between bg-green-50 dark:bg-green-900/20 p-2 rounded">
+                                        <div class="flex items-center space-x-2 rtl:space-x-reverse">
+                                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                      clip-rule="evenodd"/>
+                                            </svg>
+                                            <span class="text-sm text-green-700 dark:text-green-300">فایل انتخاب شد</span>
+                                        </div>
+                                        <button type="button" id="remove-image" class="text-red-500 hover:text-red-700">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                      clip-rule="evenodd"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{ form.store_address }}
+                    {{ form.colleague_id }}
+
+ 
+
+ 
+                    {{ form.colleague_with_store }}
+ 
+ 
+
+
+                    <button type="submit"
+                            class="mx-auto rounded-lg col-span-12 w-32 p-2 bg-green-500 hover:bg-green-600 text-white transition-all">
+                        ارسال
+                    </button>
+
+                </form>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const uploadArea = document.getElementById('about-image-upload');
+                const fileInput = document.querySelector('input[name="store_image"]');
+                const uploadContent = document.getElementById('upload-content');
+                const imagePreview = document.getElementById('image-preview');
+                const removeImageBtn = document.getElementById('remove-image');
+                const passwordField = document.querySelector('input[name="password"]');
+                const passwordStrength = document.getElementById('password-strength');
+                const strengthBar = document.getElementById('strength-bar');
+                const strengthText = document.getElementById('strength-text');
+
+                // Image Upload Handling
+                if (uploadArea && fileInput) {
+                    uploadArea.addEventListener('click', function(e) {
+                        if (!e.target.closest('#remove-image')) {
+                            fileInput.click();
+                        }
+                    });
+
+                    fileInput.addEventListener('change', function() {
+                        if (this.files && this.files[0]) {
+                            uploadContent.classList.add('hidden');
+                            imagePreview.classList.remove('hidden');
+                        }
+                    });
+
+                    removeImageBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        fileInput.value = '';
+                        uploadContent.classList.remove('hidden');
+                        imagePreview.classList.add('hidden');
+                    });
+                }
+
+                // Password Strength Checker
+                if (passwordField) {
+                    passwordField.addEventListener('input', function() {
+                        const password = this.value;
+                        let strength = 0;
+                        let message = '';
+                        let color = '';
+
+                        // Check password strength
+                        if (password.length >= 8) strength++;
+                        if (/[A-Z]/.test(password)) strength++;
+                        if (/[a-z]/.test(password)) strength++;
+                        if (/[0-9]/.test(password)) strength++;
+                        if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+                        switch(strength) {
+                            case 0:
+                            case 1:
+                                message = 'ضعیف';
+                                color = 'bg-red-500';
+                                break;
+                            case 2:
+                                message = 'متوسط';
+                                color = 'bg-yellow-500';
+                                break;
+                            case 3:
+                                message = 'قابل قبول';
+                                color = 'bg-blue-500';
+                                break;
+                            case 4:
+                                message = 'قوی';
+                                color = 'bg-green-500';
+                                break;
+                            case 5:
+                                message = 'بسیار قوی';
+                                color = 'bg-green-600';
+                                break;
+                        }
+
+                        if (password.length > 0) {
+                            passwordStrength.classList.remove('hidden');
+                            strengthBar.className = `${color} h-2 rounded-full transition-all duration-300`;
+                            strengthBar.style.width = `${(strength / 5) * 100}%`;
+                            strengthText.textContent = message;
+                            strengthText.className = `text-xs font-medium ${
+                                strength <= 2 ? 'text-red-600 dark:text-red-400' :
+                                strength === 3 ? 'text-blue-600 dark:text-blue-400' :
+                                'text-green-600 dark:text-green-400'
+                            }`;
+                        } else {
+                            passwordStrength.classList.add('hidden');
+                        }
+                    });
+                }
+            });
+        </script>
+
+    </section>
+</main>
+
+{% endblock %}

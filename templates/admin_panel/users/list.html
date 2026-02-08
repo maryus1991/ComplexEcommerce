@@ -339,12 +339,12 @@
                             <th class="text-center" width="5%">حقیقی / حقوقی</th>
                             <th class="text-center" width="5%">درخواست همکاری</th>
                             <th class="text-center" width="5%">مدیریت فروشگاه</th>
-                            <th class="text-center" width="10%">کاربر فروشگاه</th>
+                            <th class="text-center" width="10%">همکار یا کارمند  فروشگاه</th>
                             <th class="text-center" width="10%">زمان ثبت نام</th>
                             <th class="text-center" width="5%">مدیر سایت</th>
                             <th colspan="7" class="text-center" width="20%">عملیات</th>
                         </tr>
-                        </thead>
+                        </thead>    
                         <tbody>
                         {% for item in items %}
                             <tr>
@@ -437,7 +437,13 @@
                                     </strong>
                                 </td>
                                 <td class="text-center">
-                                    <strong>{{ item.store.name|default:'-'  }}</strong>
+                                    {% if item.colleague_with_store %}
+                                        <strong> همکار : {{ item.colleague_with_store.name }} </strong>
+                                    {% elif item.store %}
+                                        <strong> کارمند: {{ item.store.name|default:'-'  }}   </strong>
+                                    {% else %}
+                                        <strong>-</strong>
+                                    {% endif %}
                                 </td>
                                 <td class="text-center">
                                     <strong>{{ item.date_joined|to_jalali:'%H:%M - %Y/%m/%d'  }}</strong>

@@ -31,7 +31,7 @@
                     فعال کردن حساب کاربری
                 </h5>
 
-                <form method="POST" action="" class="space-y-6" data-recaptcha="true" data-recaptcha-action="login"> <!-- استفاده از space-y برای فاصله‌گذاری بهتر -->
+                <form method="POST" action="?_={{ ts }}" class="space-y-6" data-recaptcha="true" data-recaptcha-action="login"> <!-- استفاده از space-y برای فاصله‌گذاری بهتر -->
                     {% csrf_token %}
                     {{ login_form.recaptcha }}
                     {{ login_form.media }}

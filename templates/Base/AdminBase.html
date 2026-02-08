@@ -447,7 +447,7 @@ desired effect
                         </li>
                     {% endif %}
 
-                    {% if user.is_store_admin and user.store.can_store_add_users %}
+                    {% if   user.store.can_store_add_users %}
                         <li class="treeview">
                             <a><i class="fa fa-link"></i>
                                 <span>کاربران فروشگاه</span>
@@ -456,6 +456,11 @@ desired effect
                         </span>
                             </a>
                             <ul class="treeview-menu">
+                               <li class="link-activator"><a href="{% url 'store:colleague-users-list' %}"><i
+                                        class="fa fa-link"></i>
+                                    <span>لیست همکاران </span></a>
+                                </li>
+                                {% if user.is_store_admin %}
                                 <li class="link-activator"><a href="{% url 'store:user-list' %}"><i
                                         class="fa fa-link"></i>
                                     <span>لیست کاربران فروشگاه</span></a>
@@ -464,7 +469,7 @@ desired effect
                                         class="fa fa-link"></i>
                                     <span>اضافه کردن کاربر فروشگاهی</span></a>
                                 </li>
-
+{% endif %}
                             </ul>
                         </li>
 

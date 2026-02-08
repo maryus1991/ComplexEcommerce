@@ -117,8 +117,15 @@
                     </div>
                 </div>
 
-
                 <div class="col-md-5">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-success btn-flat">فروشگاه   :</button>
+                    </span>
+                        {{ form.store }}
+                    </div>
+                </div>
+                {% comment %} <div class="col-md-5">
                     <div class=" input-group-sm">
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-info btn-flat">فروشگاه</button>
@@ -127,7 +134,7 @@
                     {{ form.store }}
                         </span>
                     </div>
-                </div>
+                </div> {% endcomment %}
             </div>
             <div class="box-body form-group flex col-md-12">
 
@@ -249,6 +256,64 @@
                         <button type="button" class="btn btn-success btn-flat">نامبر یا شماره افراد حقوقی</button>
                     </span>
                         {{ form.legal_person_phone }}
+                    </div>
+                </div>
+
+            </div>
+            <div class="box-body form-group flex col-md-12">
+
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm col-md-12">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn col-md-12 btn-warning btn-flat">کاربر همکار : {{ form.colleague_user }}</button>
+                    </span>
+                        
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        
+                        <button type="button" class="btn col-md-12 btn-warning btn-flat"> درخواست همکاری (بعد از تایید همکاری این گزینه غیر فعال میشه) : {{ form.colleague_request }}</button>
+                    </span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-success btn-flat">کد ملی :</button>
+                    </span>
+                        {{ form.colleague_id }}
+                    </div>
+                </div>
+
+            </div>
+            <div class="box-body form-group flex col-md-12">
+
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-success btn-flat"> ادرس فروشگاه :</button>
+                    </span>
+                        {{ form.store_address }}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-success btn-flat">عکس ( فروشگاه یا کارت ویزیت )</button>
+                    </span>
+                        {{ form.store_image }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-success btn-flat">فروشگاه درخواستی جهت همکاری :</button>
+                    </span>
+                        {{ form.colleague_with_store }}
                     </div>
                 </div>
 

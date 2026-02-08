@@ -33,7 +33,6 @@ class User(AbstractUser):
     is_verified = models.BooleanField(default=False)
     is_store_admin = models.BooleanField(default=False)
     message_verified = models.BooleanField(default=True)
-    store_image=ThumbnailerImageField(upload_to='colleague/images/store/', null=True, blank=True)
 
     private_code = models.CharField(
         max_length=100,
@@ -50,6 +49,15 @@ class User(AbstractUser):
     colleague_request = models.BooleanField(default=False)
     colleague_id = models.PositiveBigIntegerField(default=0)
     store_address = models.TextField(blank=True, null=True)
+    store_image=ThumbnailerImageField(upload_to='colleague/images/store/', null=True, blank=True)
+    colleague_with_store = models.ForeignKey(
+        Store,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        db_index=True,
+        related_name="colleague_users",
+    )
 
 
     # legal person infos

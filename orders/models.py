@@ -327,11 +327,10 @@ class Order(models.Model):
 
             # store
 
-            if (
-                    self.official_invoice and
+            if (    self.official_invoice and
                     self.store.have_official_invoice and
-                    site.active_receive_official_invoice
-            ):
+                    site.active_receive_official_invoice ):
+                
                 total_payment_price += total_payment_price * (
                         self.store.official_invoice_price / 100
                 )

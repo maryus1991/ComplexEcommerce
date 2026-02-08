@@ -6,10 +6,13 @@ app_name = "store"
 urlpatterns = [
     path("", views.StoreMainPage.as_view(), name="home"),
 
-    # product fast panel colleague price
-    path('product/fast-panel/colleague/change/price-amount/<int:pk>/', views.ProductFastPanelChangeColleaguePrice.as_view(),name='product-fast-panel-change-price-colleague'),
+    # colleague users
+    path('users/colleague/list', views.users.StoreColleagueUserList.as_view(), name='colleague-users-list'),
+    path('users/colleague/details/<int:pk>', views.users.StoreColleagueUserDetail.as_view(), name='colleague-users-detail'),
+    path('users/colleague/conform&remove/<int:pk>', views.users.StoreColleagueUserConformRequest.as_view(), name="colleague-users-conform-remove"),
 
     # product fast panel
+    path('product/fast-panel/colleague/change/price-amount/<int:pk>/', views.ProductFastPanelChangeColleaguePrice.as_view(),name='product-fast-panel-change-price-colleague'),
     path('product/fast-panel/list/', views.ProductFastPanelListView.as_view(), name='product-fast-panel-list'),
     path('product/fast-panel/change-group/', views.ProductFastPanelGropeChange.as_view(), name='product-fast-panel-group-change'),
     path('product/fast-panel/change/price-amount/<int:pk>/', views.ProductFastPanelChangePrice.as_view(), name='product-fast-panel-change-price'),

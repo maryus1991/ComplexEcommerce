@@ -36,25 +36,7 @@
                                            class="line-clamp-2 font-DanaMedium mb-2 text-sm lg:text-base">
                                             {{ item.product.name }}
                                         </a>
-                                        <div class="flex items-center gap-x-1 lg:gap-x-3">
-                                            {% if item.product.have_discount %}
-                                                <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
-                                                    {{ item.product.price|clac_discount:item.product.discount }}
-                                                    <span class="font-Dana text-sm">تومان</span>
-                                                </p>
-                                                <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
-                                                    {{ item.product.price|tdc }}
-                                                    <span class="font-Dana text-sm">تومان</span>
-                                                </del>
-
-                                            {% else %}
-                                                <p class="font-DanaDemiBold text-green-600 dark:text-green-500">
-                                                    {{ item.product.price|tdc }}
-                                                    <span class="font-Dana text-sm">تومان</span>
-                                                </p>
-                                            {% endif %}
-
-                                        </div>
+   
                                     </div>
                                 </a>
                                 <!-- PRODUCT FOOTER -->

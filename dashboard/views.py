@@ -26,7 +26,8 @@ from .forms import (
     TicketConversationForm,
     UserTicketsClientFormMobile,
     TicketConversationMobileForm,
-    CreateRequestReturnOrder
+    CreateRequestReturnOrder,
+    UserColleagueForm
 )
 from user.forms import LegalPersonForm
 from .models import UserAddress, Ticket, TicketConversation
@@ -41,6 +42,81 @@ User = get_user_model()
 
 
 # Create your views here.
+
+@method_decorator(never_cache, name='dispatch')
+class UserColleague(LoginRequiredMixin, TemplateView):
+    """for manage Colleague requests of users"""
+
+    def get(self, request):
+        return render(request, 'dashboard/colleague.html', {
+            'form': UserColleagueForm(initial={
+                'colleague_id': request.user.colleague_id or request.POST.get('colleague_id'),
+                'store_address': request.user.store_address or request.POST.get('store_address'),
+                'colleague_with_store': request.user.colleague_with_store or request.POST.get('colleague_with_store'),
+            })
+        })
+    
+    
+    def post(self, request):
+        form = UserColleagueForm(request.POST, request.FILES)
+        if form.is_valid():
+            
+            user = request.user
+
+            user.colleague_id = form.cleaned_data.get('colleague_id')
+            user.store_address = form.cleaned_data.get('store_address')
+            user.store_image = form.cleaned_data.get('store_image')
+            user.colleague_with_store = form.cleaned_data.get('colleague_with_store')
+            user.colleague_request = True
+            user.colleague_user = False
+            
+            user.save()
+
+            messages.success(
+                request,
+                f"درخواست شما جهت همکاری با {user.colleague_with_store} ارسال شد "
+            )
+
+        else:
+            messages.error(
+                request,
+                form.errors.as_text
+            )
+        
+        return render(request, 'dashboard/colleague.html', {
+            'form': UserColleagueForm(initial={
+                'colleague_id':  request.POST.get('colleague_id'),
+                'store_address':   request.POST.get('store_address'),
+                'colleague_with_store':   request.POST.get('colleague_with_store'),
+            })
+        })
+    
+
+
+@method_decorator(never_cache, name='dispatch')
+class UserCancelColleague(LoginRequiredMixin, RedirectView):
+    """for canceling the Colleague"""
+
+    def get_redirect_url(self, *args, **kwargs):
+
+
+        self.request.user.colleague_user = False
+        self.request.user.colleague_request = False
+        self.request.user.colleague_with_store = None
+        self.request.user.save()
+        
+        messages.info(
+            self.request,
+            'حساب کاربری شما از همکار به کاربر عادی تغییر یافت'
+        )
+        messages.info(
+            self.request,
+            'درخواست همکاری شما کنسل شد'
+        )
+
+        return reverse_lazy('dashboard:user-colleague')
+
+
 
 @method_decorator(never_cache, name='dispatch')
 class UserSettingDashboard(LoginRequiredMixin, TemplateView):

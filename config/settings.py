@@ -168,6 +168,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "utils.context_processors.ckeditor_config",
+                "utils.context_processors.timestamp",
             ],
         },
     },
