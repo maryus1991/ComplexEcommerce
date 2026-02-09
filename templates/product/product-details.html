@@ -447,7 +447,7 @@ function resetZoom(container) {
 }
 </script>
                         <div class="flex justify-between mt-2 w-full">
-                            <button onclick="document.getElementById('slider').scrollBy({left: 384, behavior: 'smooth'})"
+                            <button onclick="document.getElementById('slider').scrollBy({left: 384, behavior: 'smooth'})" aria-label='عکس بعدی'
                                     class="relative  flex m-1 items-center justify-center w-10 h-10 rounded-full bg-gray-800 dark:text-white  shadow-md hover:bg-gray-700 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                                      stroke="currentColor">
@@ -480,7 +480,7 @@ function resetZoom(container) {
                                 </a>
                             {% endif %}
 
-                            <button onclick="document.getElementById('slider').scrollBy({left: -384, behavior: 'smooth'})"
+                            <button onclick="document.getElementById('slider').scrollBy({left: -384, behavior: 'smooth'})" aria-label='عکس قبلی'
                                     class="relative flex m-1 items-center justify-center w-10 h-10 rounded-full bg-gray-800 dark:text-white shadow-md hover:bg-gray-700 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                                      stroke="currentColor">
@@ -1196,12 +1196,12 @@ function resetZoom(container) {
                 </h2>
             </div>
             <div class="flex items-center gap-x-2 child:p-2 child:bg-white child:dark:bg-zinc-700 child:shadow child:rounded-full">
-                <button class="related-products-prev">
+                <button class="related-products-prev" aria-label='محصول بعدی' >
                     <svg class="w-4 h-4">
                         <use href="#chevron-right"></use>
                     </svg>
                 </button>
-                <button class="related-products-next">
+                <button class="related-products-next" aria-label='محصول قبلی'>
                     <svg class="w-4 h-4">
                         <use href="#chevron-left"></use>
                     </svg>

@@ -33,11 +33,11 @@ def send_email_task(self, recipient_email, link):
         # ارسال ایمیل
         msg.send(fail_silently=False)
 
-        logger.info(f"Email sent to {recipient_email} at {datetime.now()}")
+        print(f"Email sent to {recipient_email} at {datetime.now()}")
         return f"Email sent to {recipient_email} at {datetime.now()}"
 
     except Exception as e:
         logger.error(f"Email sending failed to {recipient_email}: {str(e)}")
-        # Retry خودکار با Celery
+ 
         raise self.retry(exc=e)
 
