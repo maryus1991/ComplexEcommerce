@@ -52,6 +52,20 @@
 {% endblock %}
 
 {% block content %}
+{% if site.message_from_admin %}
+    <div class="flex flex-col items-center gap-y-2 gap-x-2 col-span-12 lg:text-base">
+    
+
+
+            <p class="col-span-12 gap-y-2 w-full p-3 rounded"
+    
+                style="color: {{ site.color_message_of_admin }} ; background-color: {{ site.background_color_message_of_admin }}"
+    
+            >{{ site.message_from_admin }}</p>
+    
+    </div>
+{% endif %}
+
 <!-- ALL ICONS  -->
 <svg class="hidden">
     <symbol id="arrow-down-circle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -288,7 +302,7 @@
             {% for category in categories %}
 
 
-            <a href="{% url 'product:list' %}?category={{ category.id }}" class="rounded-full">
+            <a href="{% url 'product:list' %}?category={{ category.id }}{% for child in category.child|active_category %}&category={{ child.id }}{% endfor %} " class="rounded-full">
 
                 <picture>
                     <source srcset="{% thumbnail category.image '200x200' %}"
@@ -367,7 +381,7 @@
         <div
                 class="flex items-center justify-evenly lg:justify-between flex-wrap mt-10 child:mb-8 gap-x-8 child:flex child:items-center child:flex-col child-hover:-translate-y-5 child:duration-300 child:cursor-pointer child:gap-y-2.5">
             {% for category in categories_blog %}
-            <a href="{% url 'blog:list' %}?category={{ category.id }}" class="rounded-full">
+            <a href="{% url 'blog:list' %}?category={{ category.id }}{% for child in category.children|active_category %}&category={{ child.id }}{% endfor %}" class="rounded-full">
 
                 <picture>
                     <source srcset="{% thumbnail category.image '200x200' %}"
@@ -421,7 +435,7 @@
                 {% for product in products_newst %}
 
 
-                <div class="swiper-slide group">
+                <div class="swiper-slide group" onclick="window.location=this.querySelector('a').href">
                     <!-- PRODUCT IMGAE -->
                     <a href="{% url 'product:detail' product.id %}">
 
@@ -438,7 +452,6 @@
                             {% endif %}
                         </picture>
 
-                    </a>
 
                     <!-- PRODUCT MAIN -->
                     <div class="px-2 lg:px-4 mb-3">
@@ -449,7 +462,7 @@
                         <div class="flex items-center gap-x-1 lg:gap-x-3">
                             {% if user.colleague_user and user.colleague_with_store == product.store and product.colleague_users_price > 0 %}
                             <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
-                                {{ product.colleague_users_price }}
+                                {{ product.colleague_users_price|tdc }}
                                 <span class="font-Dana text-sm">تومان</span>
                             </p>
                             <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
@@ -475,6 +488,7 @@
                         </div>
                     </div>
                     <!-- PRODUCT FOOTER -->
+                        </a>
 
                 </div>
                 {% endfor %}
@@ -511,7 +525,7 @@
 
         </div>
         <!-- SLIDER  -->
-        <div class="swiper BestSelling rounded-lg" dir="rtl">
+        <div class="swiper BestSelling rounded-lg" dir="rtl" onclick="window.location=this.querySelector('a').href">
             <div
                     class="swiper-wrapper rounded-lg mb-2 child:cursor-pointer child:overflow-hidden child:rounded-lg child:bg-white child:dark:bg-zinc-700 child:shadow child:w-64 child:relative">
                 {% for product in products_most_selled %}
@@ -543,7 +557,7 @@
                         <div class="flex items-center gap-x-1 lg:gap-x-3">
                                                         {% if user.colleague_user and user.colleague_with_store == product.store and product.colleague_users_price > 0 %}
                             <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
-                                {{ product.colleague_users_price }}
+                                {{ product.colleague_users_price|tdc }}
                                 <span class="font-Dana text-sm">تومان</span>
                             </p>
                             <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
@@ -639,7 +653,7 @@
                     {% for product in products_most_discount %}
 
 
-                    <div class="swiper-slide group">
+                    <div class="swiper-slide group" onclick="window.location=this.querySelector('a').href">
                         <!-- PRODUCT IMGAE -->
                         <a href="{% url 'product:detail' product.id %}">
 
@@ -665,7 +679,7 @@
                             <div class="flex items-center gap-x-1 lg:gap-x-3">
                                                             {% if user.colleague_user and user.colleague_with_store == productf.store and product.colleague_users_price > 0 %}
                             <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
-                                {{ product.colleague_users_price }}
+                                {{ product.colleague_users_price|tdc }}
                                 <span class="font-Dana text-sm">تومان</span>
                             </p>
                             <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">

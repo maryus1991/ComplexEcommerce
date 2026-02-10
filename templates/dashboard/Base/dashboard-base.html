@@ -176,22 +176,24 @@
                 </div>
                 <div>
                     <a href="{% url 'dashboard:account' %}">
-                    <span>
-                        <svg class="w-6 h-6 cursor-pointer ">
-                            <use href="#edit"></use>
-                        </svg>
-                    </span></a></div>
+                        <span>
+                            <svg class="w-6 h-6 cursor-pointer ">
+                                <use href="#edit"></use>
+                            </svg>
+                        </span>
+                    </a>
+            </div>
             </div>
             <!-- MENU -->
             <ul
                     class="relative mt-4 space-y-2 child:duration-300 child:transition-all child:py-2 child:px-2 child:flex child:gap-x-1 text-base child:cursor-pointer child:rounded-lg ">
-                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600  ">
+                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600 " onclick="window.location=this.querySelector('a').href">
                     <svg class="w-6 h-6 ">
                         <use href="#squares"></use>
                     </svg>
                     <a href="{% url 'dashboard:dashboard' %}">داشبورد</a>
                 </li>
-                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600 text-sm">
+                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600 text-sm" onclick="window.location=this.querySelector('a').href">
                     <svg class="w-6 h-6 ">
                         <use href="#shopping-bag"></use>
                     </svg>
@@ -200,56 +202,56 @@
                     </a>
                 </li>
 
-                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600  ">
+                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600  " onclick="window.location=this.querySelector('a').href">
                     <svg class="w-6 h-6 ">
                         <use href="#squares"></use>
                     </svg>
                     <a href="{% url 'orders:specifics-orders' %}">فاکتور موارد خاص</a>
                 </li>
-                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600  ">
+                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600  " onclick="window.location=this.querySelector('a').href">
                     <svg class="w-6 h-6 ">
                         <use href="#squares"></use>
                     </svg>
                     <a href="{% url 'dashboard:orders-returns-list' %}">مرجوعی ها</a>
                 </li>
-                <li class=" hover:bg-zinc-100 dark:hover:bg-zinc-600 ">
+                <li class=" hover:bg-zinc-100 dark:hover:bg-zinc-600 " onclick="window.location=this.querySelector('a').href">
                     <svg class="w-6 h-6 ">
                         <use href="#heart"></use>
                     </svg>
                     <a href="{% url 'dashboard:favorite' %}">علاقه‌مندی ها</a>
                 </li>
-                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600">
+                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600" onclick="window.location=this.querySelector('a').href">
                     <svg class="w-6 h-6 ">
                         <use href="#map"></use>
                     </svg>
                     <a href="{% url 'dashboard:address' %}">آدرس ها</a>
                 </li>
-                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600">
+                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600" onclick="window.location=this.querySelector('a').href">
                     <svg class="w-6 h-6 ">
                         <use href="#bell"></use>
                     </svg>
                     <a href="{% url 'dashboard:tickets' %}">تیکت ها</a>
                 </li>
-                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600">
+                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600" onclick="window.location=this.querySelector('a').href">
                     <svg class="w-6 h-6 ">
                         <use href="#cog"></use>
                     </svg>
                     <a href="{% url 'dashboard:account' %}">اطلاعات حساب </a>
                 </li>
-                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600">
+                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600" onclick="window.location=this.querySelector('a').href">
                     <svg class="w-6 h-6 ">
                         <use href="#cog"></use>
                     </svg>
                     <a href="{% url 'dashboard:user-colleague' %}">  پنل همکار </a>
                 </li>
-                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600">
+                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600" onclick="window.location=this.querySelector('a').href">
                     <svg class="w-6 h-6 ">
                         <use href="#arrow-left-start-on-rectangle"></use>
                     </svg>
                     <a href="/">صفحه اصلی</a>
                 </li>
                 {% if user.is_superuser %}
-                    <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600">
+                    <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600" onclick="window.location=this.querySelector('a').href">
                         <svg class="w-6 h-6 ">
                             <use href="#arrow-left-start-on-rectangle"></use>
                         </svg>
@@ -257,14 +259,14 @@
                     </li>
                 {% endif %}
                 {% if user.is_staff and user.store is not None %}
-                    <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600">
+                    <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600" onclick="window.location=this.querySelector('a').href">
                         <svg class="w-6 h-6 ">
                             <use href="#arrow-left-start-on-rectangle"></use>
                         </svg>
                         <a href="{% url 'store:home' %}">صفحه مدیریت فروشگاه</a>
                     </li>
                 {% endif %}
-                <li class="text-red-500 hover:bg-red-500/20">
+                <li class="text-red-500 hover:bg-red-500/20" onclick="window.location=this.querySelector('a').href">
                     <svg class="w-6 h-6 ">
                         <use href="#arrow-left-start-on-rectangle"></use>
                     </svg>

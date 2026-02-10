@@ -130,7 +130,7 @@ class UserSettingDashboard(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         context["active_number_form"] = ChangeNumberForm(
-            initial={"phone_number": self.request.user.PhoneNumber}
+            initial={"phone_number": str(self.request.user.PhoneNumber).replace(" ", '')}
         )
         context["change_password_form"] = ChangePasswordForm()
         context["edit_user_information_form"] = EditUserInformationForm(

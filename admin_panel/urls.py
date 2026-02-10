@@ -17,8 +17,6 @@ urlpatterns = [
     path('product/fast-panel/change/count-amount/<int:pk>/', views.ProductFastPanelChangeCount.as_view(), name='product-fast-panel-change-count'),
     path('product/fast-panel/change/row/<int:pk>/', views.ProductFastPanelRowChange.as_view(), name='product-fast-panel-change-row'),
 
-
-
     # return orders
     path("return-order/", views.ReturnOrderList.as_view(), name="return-order-list"),
     path("return-order/details/<int:pk>", views.ReturnOrderDetail.as_view(), name="return-order-details"),

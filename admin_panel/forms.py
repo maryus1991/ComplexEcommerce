@@ -1288,9 +1288,20 @@ class SiteSettingModelForm(forms.ModelForm):
         )
     )
 
+    message_from_admin = forms.CharField(
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        ),
+        label=' (ممکن به دلیل سیاست کش از ۱۰ دقیقه الی یک ساعت دیگر نمایش داده شود   ) پیام ادمین در صفحه اصلی'
+    )
+
     class Meta:
         model = SiteSetting
         fields = "__all__"
+        
         widgets = {
             "title": forms.TextInput(
                 attrs={
@@ -1340,6 +1351,22 @@ class SiteSettingModelForm(forms.ModelForm):
             ),
             "telegram_link": forms.URLInput(attrs={"class": "form-control"}),
             "telegram_ID": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                }
+            ),
+
+            "minute_for_clean_order_submitted_detail_product": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                }
+            ),
+            "background_color_message_of_admin": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                }
+            ),
+            "color_message_of_admin": forms.TextInput(
                 attrs={
                     "class": "form-control",
                 }

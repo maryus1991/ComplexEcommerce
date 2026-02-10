@@ -563,7 +563,7 @@ class StoreEditProductRemoveImg(UserStoreStaffMixin, RedirectView):
         img = get_object_or_404(ProductGallery, id=img_id, product=product)
         img.delete()
         messages.success(self.request, "عکس مورد نظر حذف شد")
-        return self.request.META.get("HTTP_REFERER", "/")
+        return reverse_lazy('store:edit-product', kwargs={'pk':product_id})
 
 
 class StoreEditActiveOrDeactivateProduct(UserStoreStaffMixin, RedirectView):

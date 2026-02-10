@@ -5,7 +5,6 @@ from orders.models import Order, OrderDetail
 from product.models import Product
 
 
-
 class ProductCookieMiddleware:
     """مدیریت کوکی محصولات قبل از لاگین"""
 

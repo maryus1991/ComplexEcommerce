@@ -16,6 +16,7 @@ class SiteSetting(models.Model):
     min_payment = models.PositiveBigIntegerField(default=1000, verbose_name="حداقل مبلغ سبد خرید")
     number_or_rounding = models.PositiveBigIntegerField(default=1000 , verbose_name="عدد تقسیم برای معادله روند کردن (۱ برای غیر فعال سازی روند کردن)")
     minute_for_clean_order_detail_product = models.PositiveBigIntegerField(default=15, verbose_name="(دقیقه)برای پاک کردن محصول از سبد خرید")
+    minute_for_clean_order_submitted_detail_product = models.PositiveBigIntegerField(default=120, verbose_name="حداکثر زمان برای حذف از محصول از سبد خرید (دقیقه)")
     copy_right_text = models.CharField(
         max_length=250, default="0", verbose_name="متن کپی رایت سایت"
     )
@@ -23,6 +24,14 @@ class SiteSetting(models.Model):
     phone = PhoneNumberField(default="0111111111", verbose_name="شماره اول")
     phone2 = PhoneNumberField(default="0111111111", verbose_name="شماره دوم")
     email = models.EmailField(default="test@test.test", verbose_name="ایمیل")
+    
+
+
+    message_from_admin = models.TextField(null=True, blank=True, verbose_name=' (ممکن به دلیل سیاست کش از ۱۰ دقیقه الی یک ساعت دیگر نمایش داده شود   ) پیام ادمین در صفحه اصلی')
+    background_color_message_of_admin = models.CharField(max_length=255, default='rgba(1,174,0,0.45)', verbose_name=' (به انگلیسی یا RGB ان رنگ نوشته شود) رنگ پس زمینه پیام ادمین')
+    color_message_of_admin = models.CharField(max_length=255, default='white', verbose_name=' (به انگلیسی یا RGB ان رنگ نوشته شود) رنگ متن پیام ادمین')
+
+
 
     telegram_link = models.URLField(default="0", verbose_name="لینک تلگرام")
     telegram_ID = models.CharField(

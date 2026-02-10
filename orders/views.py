@@ -847,7 +847,7 @@ class ConformPayment(LoginRequiredMixin, View):
                 is_active=True,
                 canceled=False,
             )
-
+          
             if not self.site.active_zarinpal_payment or self.site.zero_the_count_of_all_product:
                 messages.warning(request, "درگاه پرداخت از طرف ادمین سایت غیر فعال شده است")
                 return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
@@ -856,36 +856,42 @@ class ConformPayment(LoginRequiredMixin, View):
                 messages.warning(request,
                                  f'فروش فروشگاه {self.order.store.name} بسته شده است و تمام موجودی محصولات ان صفر شد لطفا با فروشگاه در ارتباط باشید ')
                 return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
+            
 
             self.result = self.order.get_payment_price()
 
             self.site = SiteSetting.objects.first()
+            
 
             if self.order.is_paid:
                 messages.warning(request, "این سفارش پرداخت شده است")
                 return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
-
+            
             elif self.order.canceled:
                 messages.warning(request, "این سفارش کنسل شده است")
                 return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
+           
 
             if self.order.address is None:
                 messages.warning(request, "لطفا ادرس خود را ثبت کنید")
                 return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
+            
 
             if not self.order.details.exists():
                 messages.warning(request, "سبد شما خالی می‌باشد")
                 return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
-
+             
             if not self.order.check_count_of_products():
                 messages.error(
                     request,
                     "تعداد درخواستی یکی از محصولات از موجودی آن بیشتر است.",
                 )
                 return redirect(reverse("dashboard:order_detail", kwargs={"pk": self.pk}))
-
+          
             return super().dispatch(request, *args, **kwargs)
-        except Exception:
+        
+        except Exception as e:
+            print(self.__class__.__name__, e)
             messages.error(
                 request,
                 'در ثبت سفارش شما به مشکل برخردیم در صورت تکرار با پشتیبانی سایت تماس بگیرید یا سفارش فعلی خود را کنسل و دوباره سفارش دهید'

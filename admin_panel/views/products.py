@@ -311,8 +311,6 @@ class ProductFastPanelChangeColleaguePrice(AdminUserMixin, RedirectView):
         return reverse("admin_panel:product-fast-panel-list")
 
 
-
-
 ############################################################
 
 
@@ -890,8 +888,7 @@ class StoreEditProductRemoveImg(AdminUserMixin, RedirectView):
         img = get_object_or_404(ProductGallery, id=img_id, product=product)
         img.delete()
         messages.success(self.request, "عکس مورد نظر حذف شد")
-        return self.request.META.get("HTTP_REFERER", "/")
-
+        return reverse_lazy('admin_panel:product-update', kwargs={'pk': product.id})
 
 # category
 

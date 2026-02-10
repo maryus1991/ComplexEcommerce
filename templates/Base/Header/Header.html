@@ -220,19 +220,46 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 {% endif %}
             </button>
             <!-- SEARCH BTN -->
-            <form action="{% url 'product:list' %}">
-                <button class="group relative flex justify-end" aria-label="Submit Search">
-                    <svg class="w-6 h-6">
-                        <use href="#search"/>
-                    </svg>
-                    <div class="absolute top-20 flex items-center w-[350px] bg-white dark:bg-zinc-600 rounded-full opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:top-10 transition-all delay-100 child:rounded-full px-2 border dark:border-none border-gray-100 shadow py-1">
-                        <input type="text" name="search" placeholder="نام محصول یا فروشگاه..."
-                               class="bg-transparent w-full p-2"/>
-                        <input placeholder="جستجو" value="جستجو" type="submit"
-                               class="bg-green-500 rounded-circle  text-white text-sm py-2 px-3">
-                    </div>
-                </button>
-            </form>
+
+
+<form action="{% url 'product:list' %}">
+    <button type="button" 
+            class="group relative flex justify-end cursor-pointer"
+            aria-label="Open Search">
+
+        <svg class="w-6 h-6"  id="searchToggle">
+            <use href="#search"/>
+        </svg>
+
+        <div id="searchBox" style="width: 700px;"
+             class="  absolute top-20 flex items-center  bg-white dark:bg-zinc-600 rounded-full opacity-0 invisible transition-all delay-100 child:rounded-full px-2 border dark:border-none border-gray-100 shadow py-1">
+
+            <input type="text" name="search" placeholder="نام محصول یا فروشگاه..."
+                   class="bg-transparent w-full p-2" id="search-bar-VALUE" />
+
+            <input value="جستجو" type="submit"
+                   class="bg-green-500 text-white text-sm py-2 px-3">
+        </div>
+    </button>
+</form>
+
+<script>
+const toggle = document.getElementById('searchToggle');
+const box = document.getElementById('searchBox');
+
+toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    box.classList.toggle('opacity-0');
+    box.classList.toggle('invisible');
+    box.classList.toggle('top-20');
+    box.classList.toggle('top-20');
+});
+const params = new URLSearchParams(window.location.search);
+document.getElementById('search-bar-VALUE').value = params.get('search');
+
+ 
+</script>
+
             <!-- USER ACCOUNE BOX  -->
             <button
                     class="group relative px-2 lg:px-3 py-2 flex items-center justify-end gap-x-1 text-white transition-colors bg-green-500 hover:bg-green-600 rounded-lg">
@@ -427,7 +454,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 
             </div>
-        </a>
+        </a>    
 
         <!-- Delete Form -->
         <form action="{% url 'orders:remove' order.id %}" method="POST" class="flex-shrink-0">
@@ -435,8 +462,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <button type="submit"
                     class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300
                            transition-colors p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
-                    aria-label="حذف محصول از سبد خرید"
-                    onclick="return confirm('آیا از حذف «{{ order.product.name }}» از سبد خرید مطمئنید؟')">
+                    aria-label="حذف محصول از سبد خرید">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                      stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
