@@ -21,6 +21,7 @@ def clean_expired_details(self):
     for order_detail in expired_orders:
         order = order_detail.order
         should_keep_for_1_day = any([
+            
             order.vip_post,
             order.tipax_post_delivery,
             order.in_city_delivery,

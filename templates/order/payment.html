@@ -10,13 +10,13 @@
 {% block breadcrumb %}
 
     <li class="flex items-center gap-x-2">
-        <a>پنل کاربری</a>
+        <a href="{% url "dashboard:dashboard" %}">پنل کاربری</a>
         <svg class="w-4 h-4">
             <use href="#chevron-left"></use>
         </svg>
     </li>
     <li class="flex items-center gap-x-2">
-        <a>سفارشات</a>
+        <a href="{% url "dashboard:orders" %}">سفارشات</a>
         <svg class="w-4 h-4">
             <use href="#chevron-left"></use>
         </svg>

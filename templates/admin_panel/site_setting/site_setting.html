@@ -361,6 +361,43 @@
                             </div>
                             <div class="col-md-12 form-group">
                                 <div class="">
+
+                                    <div class="col-md-8">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-flat" style="background-color: #ff7700; color: white;">
+
+                                            {{ form.link_of_message.label }}
+
+                                          </span>
+                                        </span>
+                                            {{ form.link_of_message   }}
+
+                                        </div>
+                                    </div>
+ 
+                                                                        <div class="col-md-4 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                        >
+                                          <span>
+
+                                            {{ form.the_message_for_all_or_just_not_auth_users.label }}:
+
+                                            {{ form.the_message_for_all_or_just_not_auth_users }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="">
                                     <div class="col-md-12">
                                         <div class="input-group input-group" dir="rtl">
                                         <span class="input-group-btn">

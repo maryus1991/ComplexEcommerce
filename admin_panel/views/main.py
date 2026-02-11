@@ -12,8 +12,7 @@ from user.mixins.logins import AdminUserMixin
 from admin_panel.forms import FastLinksModelForm, QuestionAndAnswerModelForm
 from sitesetting.models import FastLinks, QuestionAndAnswer
 from django.contrib import messages
-# import psutil
-# from django.http.response import JsonResponse
+ 
 from product.models import Product, ProductViews
 from orders.models import Order, StoreSoldOrders
 from django.db.models import Count, Sum, Case, When, IntegerField
@@ -22,19 +21,7 @@ from django.db.models.functions import TruncDate, Coalesce
 from admin_panel.models import DailyViewCount
 
 
-# class StatsApi(AdminUserMixin, View):
-#     """for get the server data """
-#     def get(self, request):
-#         stats = {
-#             'cpu': psutil.cpu_percent(),
-#             'ram': psutil.virtual_memory().percent,
-#             'disk': psutil.disk_usage('/').percent,
-#             'upload': psutil.net_io_counters().bytes_sent,
-#             'download': psutil.net_io_counters().bytes_recv
-#         }
-#
-#         return JsonResponse(stats)
-
+ 
 
 class HomePageView(AdminUserMixin, TemplateView):
     template_name = "admin_panel/index2.html"
@@ -71,12 +58,12 @@ class HomePageView(AdminUserMixin, TemplateView):
         yesterday_view = DailyViewCount.objects.filter(date=yesterday).first()
         yesterday_count = yesterday_view.count if yesterday_view else 0
 
-        if yesterday_count > 0:
-            percentage_change = ((total_view - yesterday_count) / yesterday_count) * 100
-        else:
-            percentage_change = 100 if total_view > 0 else 0
+        # if yesterday_count > 0:
+        #     percentage_change = ((total_view - yesterday_count) / yesterday_count) * 100
+        # else:
+        #     percentage_change = 100 if total_view > 0 else 0
 
-        context['view_percentage_change'] = round(percentage_change, 2)
+        # context['view_percentage_change'] = round(percentage_change, 2)
 
         start_date = today - timedelta(days=29)
         existing_dates = set(

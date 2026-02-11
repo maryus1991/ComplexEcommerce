@@ -644,7 +644,7 @@
                 <!-- PRODUCT ITEM -->
 
                 {% for product in products %}
-                    <div class="group">
+                    <div class="group" onclick="window.location=this.querySelector('a').href">
                         <!-- PRODUCT IMGAE -->
                         <a href="{% url 'product:detail' product.id %}" aria-label=' {{ product.name }}'> {% if product.have_discount %}
 

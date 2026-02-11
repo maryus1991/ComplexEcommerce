@@ -1287,6 +1287,15 @@ class SiteSettingModelForm(forms.ModelForm):
             }
         )
     )
+    link_of_message = forms.URLField(
+        required=False,
+        widget=forms.URLInput(
+            attrs={
+                "class": "form-control",
+            }
+        ),
+        label='لینک پیام ادمین (اختیاری)'
+    )
 
     message_from_admin = forms.CharField(
         required=False,
@@ -1302,6 +1311,8 @@ class SiteSettingModelForm(forms.ModelForm):
         model = SiteSetting
         fields = "__all__"
         
+        
+
         widgets = {
             "title": forms.TextInput(
                 attrs={
@@ -1382,6 +1393,7 @@ class SiteSettingModelForm(forms.ModelForm):
                     "class": "form-control",
                 }
             ),
+ 
             "is_active": forms.CheckboxInput(),
             "active_post_delivery": forms.CheckboxInput(),
             "active_tipax_delivery": forms.CheckboxInput(),
@@ -1414,6 +1426,7 @@ class SiteSettingModelForm(forms.ModelForm):
             'product_sort_by_highest_price': forms.CheckboxInput(),
             'product_sort_by_lowest_price': forms.CheckboxInput(),
             'product_sort_by_sort_number': forms.CheckboxInput(),
+            'the_message_for_all_or_just_not_auth_users': forms.CheckboxInput(),
             'product_sort_by_category_sort_number': forms.CheckboxInput(),
             'product_sort_by_brand_sort_number': forms.CheckboxInput(),
             'product_sort_by_existing_count': forms.CheckboxInput(),
