@@ -416,10 +416,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
                             <span class="text-sm text-gray-600 dark:text-gray-300">تومان</span>
                         </div>
 
-                        <!-- Original Price -->
-                        <del class="text-xs lg:text-sm text-rose-500 dark:text-rose-400 hidden lg:inline">
-                            {{ order.get_item_price|tdc }}
-                        </del>
+                        
 
                     {% else %}
                         {% if order.product.have_discount %}
