@@ -59,7 +59,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                               d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                                     </svg>
-                                    <span> عکس ( فروشگاه یا کارت ویزیت ) </span>
+                                    <span id="about-image-upload-text"> عکس ( فروشگاه یا کارت ویزیت ) </span>
                                 </div>
                                 <!-- Preview Area -->
                                 <div id="image-preview" class="hidden mt-2">
@@ -140,7 +140,7 @@
                     {{form.media}}
 
 
-                    <button type="submit"
+                    <button type="submit" id='submieted-btn-for-coligue-reqistrations'
                             class="mx-auto rounded-lg col-span-12 w-32 p-2 bg-green-500 hover:bg-green-600 text-white transition-all">
                         ارسال
                     </button>
@@ -160,6 +160,13 @@
                 const passwordStrength = document.getElementById('password-strength');
                 const strengthBar = document.getElementById('strength-bar');
                 const strengthText = document.getElementById('strength-text');
+                document.getElementById('submieted-btn-for-coligue-reqistrations').addEventListener("click", function(){
+                    if(fileInput.value == ""){
+                        document.getElementById("about-image-upload-text").classList.add('text-red-400');
+                        document.getElementById("about-image-upload-text").innerText = 'عکس ( فروشگاه یا کارت ویزیت ) را اپلود کنید';
+                        alert('عکس ( فروشگاه یا کارت ویزیت ) را اپلود کنید');
+                    };
+                });
 
                 // Image Upload Handling
                 if (uploadArea && fileInput) {
@@ -288,7 +295,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                               d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                                     </svg>
-                                    <span> عکس ( فروشگاه یا کارت ویزیت ) </span>
+                                    <span id="about-image-upload-text"> عکس ( فروشگاه یا کارت ویزیت ) </span>
                                 </div>
                                 <!-- Preview Area -->
                                 <div id="image-preview" class="hidden mt-2">
@@ -514,7 +521,7 @@
 
                     <!-- Submit Button - Full width on all devices -->
                     <div class="col-span-full text-center mt-4">
-                        <button class="rounded-lg w-full md:w-32 p-2 bg-green-500 hover:bg-green-600 text-white transition-all">
+                        <button class="rounded-lg w-full md:w-32 p-2 bg-green-500 hover:bg-green-600 text-white transition-all" id="submieted-btn-for-coligue-reqistrations">
                             ارسال
                         </button>
                     </div>
@@ -534,6 +541,15 @@
                 const passwordStrength = document.getElementById('password-strength');
                 const strengthBar = document.getElementById('strength-bar');
                 const strengthText = document.getElementById('strength-text');
+
+
+                                document.getElementById('submieted-btn-for-coligue-reqistrations').addEventListener("click", function(){
+                    if(fileInput.value == ""){
+                        document.getElementById("about-image-upload-text").classList.add('text-red-400');
+                        document.getElementById("about-image-upload-text").innerText = 'عکس ( فروشگاه یا کارت ویزیت ) را اپلود کنید';
+                        alert('عکس ( فروشگاه یا کارت ویزیت ) را اپلود کنید');
+                    };
+                });
 
                 // Image Upload Handling
                 if (uploadArea && fileInput) {

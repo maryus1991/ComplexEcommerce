@@ -59,7 +59,7 @@ class RegisterAsColleagueUser(View):
             store = form.cleaned_data.get("colleague_with_store")
 
 
-            user = User.objects.filter(Q(email=email) | Q(PhoneNumber=phone_number)|Q(colleague_id=personal_id))
+            user = User.objects.filter(Q(email=email) | Q(PhoneNumber=phone_number)| Q(colleague_id=personal_id))
 
             if user.exists():
                 messages.error(
