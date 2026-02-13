@@ -181,8 +181,16 @@
                                 </td>
  
                                 <td>
-                                    <strong>فروشگاه دریافت کننده درخواست :</strong>
-                                    {{    item.colleague_with_store.name   }}
+                                    <strong>فروشگاهای دریافت کننده درخواست :</strong>
+                                    {% for store in item.colleague_with_store.all %}
+                                    
+                                    <span class='label label-default'>
+                                        {{store.name}},
+                                    </span >
+                                    
+                                    
+                                    {% endfor %}
+                                    
                                 </td>
  
                             </tr>
@@ -194,7 +202,9 @@
                                 </td>
                                 {% if item.store_image %}
                                                                                  <td colspan='1'>
+                                                                                    <a href='{{ item.store_image.url }}'>
                                     <img   src='{{ item.store_image.url }}' width='200' height="200" />
+                                                                                    </a>
                                 </td>
                                 {% endif %}
                             </tr>

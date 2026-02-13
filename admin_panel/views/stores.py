@@ -82,6 +82,17 @@ class StoreListView(AdminUserMixin, ListView):
     template_name = "admin_panel/store/list.html"
 
 
+class StoreColleaguesListView(AdminUserMixin, ListView):
+    """
+    for listing colleague_with_store
+    """
+
+    context_object_name = "items"
+    template_name = "admin_panel/users/list.html"
+
+    def get_queryset(self):
+        return Store.objects.filter(pk=self.kwargs.get('pk')).first().colleague_users.all()
+
 class StoreCreateView(AdminUserMixin, CreateView):
     """
     for creating a new store

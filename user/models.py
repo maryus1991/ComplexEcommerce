@@ -19,14 +19,7 @@ class User(AbstractUser):
     username = None
     PhoneNumber = PhoneNumberField(unique=True, db_index=True)
     email = models.EmailField(unique=True, blank=True, null=True, db_index=True)
-    store = models.ForeignKey(
-        Store,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        db_index=True,
-        related_name="users",
-    )
+
 
     otp = models.CharField(max_length=4, blank=True)
     otp_expiry_date = models.DateTimeField(null=True, blank=True)
@@ -45,18 +38,29 @@ class User(AbstractUser):
 
     # colleague users 
 
+
     colleague_user = models.BooleanField(default=False)
     colleague_request = models.BooleanField(default=False)
     colleague_id = models.PositiveBigIntegerField(default=0)
     store_address = models.TextField(blank=True, null=True)
+
     store_image=ThumbnailerImageField(upload_to='colleague/images/store/', null=True, blank=True)
-    colleague_with_store = models.ForeignKey(
+    
+    colleague_with_store = models.ManyToManyField(
+        Store,
+        blank=True,
+        null=True,
+        db_index=True,
+        related_name="colleague_users",
+    )
+    
+    store = models.ForeignKey(
         Store,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
         db_index=True,
-        related_name="colleague_users",
+        related_name="users",
     )
 
 

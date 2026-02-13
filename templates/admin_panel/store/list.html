@@ -121,11 +121,8 @@
     <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
     <link rel="stylesheet" href="/static/dist/css/rtl.css">
     <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
-    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
-    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+      <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+     <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
     <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
     <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
     <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
@@ -153,7 +150,7 @@
                     <th class="text-center" width="10%">وضعیت</th>
                     <th class="text-center" width="10%">وضعیت اطلاعات</th>
                     <th class="text-center" width="10%">ترتیب</th>
-                    <th colspan="6" class="text-center" width="15%">عملیات</th>
+                    <th colspan="7" class="text-center" width="15%">عملیات</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -227,6 +224,12 @@
                         <td class="text-center">
                             <a href="{% url 'admin_panel:store-detail' item.id %}" class="btn btn-sm btn-success"
                                data-toggle="tooltip" title="مشاهده">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'admin_panel:store-list-colleague-users' item.id %}" class="btn btn-sm btn-warning"
+                               data-toggle="tooltip" title=" مشاهده همکاران">
                                 <i class="fa fa-eye"></i>
                             </a>
                         </td>

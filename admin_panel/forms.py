@@ -1119,29 +1119,32 @@ class AddUserModelForm(forms.ModelForm):
         queryset=Store.objects.all(),
         widget=forms.Select(
             attrs={
-                "class": 'form-control select2 select2-hidden-accessible"',
+                "class": 'form-control select2 ',
                 "style": "width: 100%;",
                 "tabindex ": "-1",
                 "aria - hidden ": "true",
                 "dir": "rtl",
             }
         ),
-        empty_label="فروشگاه را انتخاب کنید (می تواند خالی باشد و انتخاب نشود)",
+        empty_label="فروشگاه کارمندی را انتخاب کنید (می تواند خالی باشد و انتخاب نشود)",
     )
-    colleague_with_store = forms.ModelChoiceField(
+    
+    colleague_with_store = forms.ModelMultipleChoiceField(
+        queryset=Store.objects.filter(can_stores_add_colleague_user=True, is_active=True, is_verified=True).all(),  
+        help_text="فروشگاهی که با آن همکاری دارید را انتخاب کنید",
         required=False,
-        queryset=Store.objects.all(),
-        widget=forms.Select(
+        widget=forms.SelectMultiple(
             attrs={
-                "class": 'form-control select2 select2-hidden-accessible"',
-                "style": "width: 100%;",
+                "class": 'form-control select2 ',
+                "style": "width: 100%; height:100px",
                 "tabindex ": "-1",
                 "aria - hidden ": "true",
                 "dir": "rtl",
+                
             }
         ),
-        empty_label="فروشگاه را انتخاب کنید  ",
     )
+
 
 
  

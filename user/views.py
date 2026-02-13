@@ -58,6 +58,7 @@ class RegisterAsColleagueUser(View):
             password = form.cleaned_data.get('password')
             store = form.cleaned_data.get("colleague_with_store")
 
+
             user = User.objects.filter(Q(email=email) | Q(PhoneNumber=phone_number)|Q(colleague_id=personal_id))
 
             if user.exists():
@@ -77,8 +78,9 @@ class RegisterAsColleagueUser(View):
                 store_image=store_image,
                 colleague_request=True,
                 is_active=True,
-                colleague_with_store=store
             )
+            user.colleague_with_store.set(store)
+            
             user.verify_email(request)
             site = SiteSetting.objects.first()
 

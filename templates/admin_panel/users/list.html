@@ -339,7 +339,7 @@
                             <th class="text-center" width="5%">حقیقی / حقوقی</th>
                             <th class="text-center" width="5%">درخواست همکاری</th>
                             <th class="text-center" width="5%">مدیریت فروشگاه</th>
-                            <th class="text-center" width="10%">همکار یا کارمند  فروشگاه</th>
+                            <th class="text-center" width="10%">  کارمند  فروشگاه</th>
                             <th class="text-center" width="10%">زمان ثبت نام</th>
                             <th class="text-center" width="5%">مدیر سایت</th>
                             <th colspan="7" class="text-center" width="20%">عملیات</th>
@@ -403,23 +403,18 @@
                                 <td class="text-center">
                                     <strong>
                                         {% if item.colleague_user %}
-                                            <span class="btn btn-sm btn-warning">
-                                                <a href="{% url 'admin_panel:user-colleague-requests-remove' item.id %}">
-همکار
-                                                </a>
-                                    </span>
+                                            <span class="btn btn-sm btn-info">
+ همکار
+                                     </span>
                                         {% elif item.colleague_request %}
                                                                                     <span class="btn btn-sm btn-warning">
-                                                                                        <a class="" href="{% url 'admin_panel:user-colleague-requests' item.id %}">
-                                    تایید درخواست همکاری دارد 
-                                                                                        </a>
+                                     تایید درخواست همکاری دارد 
+                                                                                      
                                     </span>
                                         {% else %}
                                             <span class="btn btn-sm ">
-                                                                                                                                        <a class="" href="{% url 'admin_panel:user-colleague-requests' item.id %}">
-                                    همکار نمی باشد
-                                                                                        </a>
-                                    </span>
+                                     همکار نمی باشد
+                                     </span>
                                         {% endif %}
                                     </strong>
                                 </td>
@@ -437,9 +432,8 @@
                                     </strong>
                                 </td>
                                 <td class="text-center">
-                                    {% if item.colleague_with_store %}
-                                        <strong> همکار : {{ item.colleague_with_store.name }} </strong>
-                                    {% elif item.store %}
+
+                                    {% if item.store %}
                                         <strong> کارمند: {{ item.store.name|default:'-'  }}   </strong>
                                     {% else %}
                                         <strong>-</strong>

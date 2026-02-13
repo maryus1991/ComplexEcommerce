@@ -262,6 +262,7 @@ urlpatterns = [
     ),
     # store
     path("stores/", views.StoreListView.as_view(), name="store-list"),
+    path("stores/Colleagues-List/<int:pk>", views.StoreColleaguesListView.as_view(), name="store-list-colleague-users"),
     path("stores/create/", views.StoreCreateView.as_view(), name="store-create"),
     path(
         "store/set-sort-number/<int:pk>",
@@ -299,12 +300,12 @@ urlpatterns = [
     path("users/detail/<int:pk>", views.UserDetailsView.as_view(), name="user-detail"),
     path("users/admin-login/<int:pk>", views.AdminLoginToOtherUsersAccounts.as_view(), name="user-admin-login"),
     path("users/verify/<int:pk>", views.UserVerifyView.as_view(), name="user-verify"),
-    path(
-        "users/colleague/conform/<int:user_id>",
-        views.ConformTheColleagueRequests.as_view(), name="user-colleague-requests",),
-    path(
-        "users/colleague/remove/<int:user_id>",
-        views.RemoveTheColleagueRequests.as_view(), name="user-colleague-requests-remove",),
+    # path(
+    #     "users/colleague/conform/<int:user_id>",
+    #     views.ConformTheColleagueRequests.as_view(), name="user-colleague-requests",),
+    # path(
+    #     "users/colleague/remove/<int:user_id>",
+    #     views.RemoveTheColleagueRequests.as_view(), name="user-colleague-requests-remove",),
 
     path(
         "users/active-deactivate/<int:pk>",

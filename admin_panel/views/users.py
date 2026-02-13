@@ -21,49 +21,51 @@ from django.db.models import Q
 
 User = get_user_model()
 
-class ConformTheColleagueRequests(AdminUserMixin, RedirectView):
-    """
-    Conforms the Colleague Requests page
-    """
-    def get_redirect_url(self, *args, **kwargs):
+# class ConformTheColleagueRequests(AdminUserMixin, RedirectView):
+#     """
+#     Conforms the Colleague Requests page
+#     """
+#     def get_redirect_url(self, *args, **kwargs):
 
-        request = self.request
-        user_id = self.kwargs['user_id']
-        user = User.objects.filter(id=user_id)
+#         request = self.request
+#         user_id = self.kwargs['user_id']
+#         user = User.objects.filter(id=user_id)
 
-        if user.exists() and user.count() == 1:
-            user = user.first()
-            user.colleague_user = True
-            user.colleague_request = False
-            user.save()
-            messages.success(self.request, "هکاری با {} تایید شد".format(str(user.PhoneNumber).replace(" ","")))
+#         if user.exists() and user.count() == 1:
+#             user = user.first()
+#             user.colleague_user = True
+#             user.colleague_request = False
+#             user.save()
+#             messages.success(self.request, "هکاری با {} تایید شد".format(str(user.PhoneNumber).replace(" ","")))
 
-        else:
-            messages.error(request, "کاربر پیدا نشد")
+#         else:
+#             messages.error(request, "کاربر پیدا نشد")
             
-        return reverse('admin_panel:user-list')
+#         return reverse('admin_panel:user-list')
 
-class RemoveTheColleagueRequests(AdminUserMixin, RedirectView):
-    """
-    remove the Colleague Requests page
-    """
-    def get_redirect_url(self, *args, **kwargs):
 
-        request = self.request
-        user_id = self.kwargs['user_id']
-        user = User.objects.filter(id=user_id)
+# class RemoveTheColleagueRequests(AdminUserMixin, RedirectView):
+#     """
+#     remove the Colleague Requests page
+#     """
+#     def get_redirect_url(self, *args, **kwargs):
 
-        if user.exists() and user.count() == 1:
-            user = user.first()
-            user.colleague_user = False
-            user.colleague_request = False
-            user.save()
-            messages.success(self.request, "هکاری با {} باطل شد".format(str(user.PhoneNumber).replace(" ","")))
+#         request = self.request
+#         user_id = self.kwargs['user_id']
+#         user = User.objects.filter(id=user_id)
 
-        else:
-            messages.error(request, "کاربر پیدا نشد")
+#         if user.exists() and user.count() == 1:
+#             user = user.first()
+#             user.colleague_user = False
+#             user.colleague_request = False
+#             user.save()
+#             messages.success(self.request, "هکاری با {} باطل شد".format(str(user.PhoneNumber).replace(" ","")))
 
-        return reverse('admin_panel:user-list')
+#         else:
+#             messages.error(request, "کاربر پیدا نشد")
+
+#         return reverse('admin_panel:user-list')
+
 
 class NumberNewsLetterDelete(AdminUserMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
@@ -281,8 +283,7 @@ class UserListView(AdminUserMixin, ListView):
     paginate_by = 100
 
     def get_queryset(self):
-        query = super().get_queryset().prefetch_related('store', 'address')
-
+        query = super().get_queryset().prefetch_related('store', 'address', 'colleague_with_store')
         form = AdminUsersFilteringForm(self.request.GET or None)
 
         if form.is_valid():
@@ -407,6 +408,8 @@ class UserListView(AdminUserMixin, ListView):
                                      Q(address__city=str(address)), Q(address__address=str(address)),
                                      Q(address__phone=str(address)), Q(address__zipcode=str(address)),
                                      Q(address__additional_decryption=str(address)))
+        else:
+            query = query.filter(is_verified=True)
 
         return query
 
@@ -479,7 +482,7 @@ class UserCreateView(AdminUserMixin, CreateView):
                 return redirect(self.request.META.get("HTTP_REFERER"))
 
         if is_superuser:
-            User.objects.create_superuser(
+            user = User.objects.create_superuser(
                 password=password,
                 first_name=first_name,
                 last_name=last_name,
@@ -494,7 +497,7 @@ class UserCreateView(AdminUserMixin, CreateView):
                 is_store_admin=is_store_admin,
             )
         elif is_staff:
-            User.objects.create_staff_user(
+            user = User.objects.create_staff_user(
                 password=password,
                 first_name=first_name,
                 last_name=last_name,
@@ -509,7 +512,7 @@ class UserCreateView(AdminUserMixin, CreateView):
                 is_store_admin=is_store_admin,
             )
         else:
-            User.objects.create_user(
+            user = User.objects.create_user(
                 password=password,
                 first_name=first_name,
                 last_name=last_name,
@@ -523,6 +526,9 @@ class UserCreateView(AdminUserMixin, CreateView):
                 is_verified=is_verified,
                 is_store_admin=is_store_admin,
             )
+
+        user.colleague_with_store.set(form.cleaned_data.get("colleague_with_store"))
+        user.save()
 
         messages.success(self.request, "کابر ساخته شد")
         return redirect(reverse("admin_panel:user-list"))
@@ -623,7 +629,7 @@ class UserUpdateView(AdminUserMixin, UpdateView):
         user_object.colleague_id = colleague_id
         user_object.store_address = store_address
         user_object.store_image = store_image
-        user_object.colleague_with_store = colleague_with_store
+        user_object.colleague_with_store.set(colleague_with_store)
         user_object.save()
 
         messages.success(self.request, "تغییرات اعمال شد")
@@ -647,12 +653,12 @@ class UserDetailsView(AdminUserMixin, DetailView):
 
     def get_object(self, queryset=None):
         user = User.objects.filter(id=self.kwargs["pk"]).prefetch_related(
-            "address", "store", "blogs", "orders"
+            "address", "store", "blogs", "orders", 'colleague_with_store'
         )
         if user.count() != 1:
             raise Http404()
         return user.first()
-
+    
 
 class UserVerifyView(AdminUserMixin, RedirectView):
     """for VerifyView users"""

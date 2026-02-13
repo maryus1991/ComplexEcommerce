@@ -106,18 +106,17 @@ class RegistrationForm(forms.Form):
 
 
 class RegistrationColleagueForm(forms.Form):
-    colleague_with_store = forms.ModelChoiceField(
+    colleague_with_store = forms.ModelMultipleChoiceField(
         queryset=Store.objects.filter(can_stores_add_colleague_user=True, is_active=True, is_verified=True).all(),  
         help_text="فروشگاهی که با آن همکاری دارید را انتخاب کنید",
-        required=False,
-        widget=forms.Select(
+        required=True,
+        widget=forms.SelectMultiple(
             attrs={
                 "class": (
-                    "tailwind-input col-span-6 w-full px-3 py-2  rounded "
+                    "tailwind-input col-span-6 py-2 rounded "
                 ),
             }
         ),
-        empty_label="انتخاب فروشگاه ...",
     )
 
 
@@ -212,25 +211,9 @@ class RegistrationColleagueForm(forms.Form):
         ),
     )
 
-    conform_password = forms.CharField(
-        required=True,
-        widget=forms.PasswordInput(
-            attrs={
-                "class": "tailwind-input col-span-6",
-                "placeholder": "تایید رمز عبور",
-            }
-        ),
-    )
+  
 
-    def clean_conform_password(self):
-        conform_password = self.cleaned_data["conform_password"]
-        password = self.cleaned_data.get("password")
-
-        if password and password != conform_password:
-
-            raise forms.ValidationError("رمز عبور شما به صورت یکسان وارد نشده است")
-        else:
-            return conform_password
+ 
 
     def clean_password(self):
         password = self.cleaned_data["password"]

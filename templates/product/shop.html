@@ -673,7 +673,7 @@
                                 </a>
                                 <div class="flex items-center gap-x-1 lg:gap-x-3">
 
-                                    {% if request.user.is_authenticated and user.colleague_user and user.colleague_with_store == product.store and product.colleague_users_price > 0 %}
+                                    {% if request.user.is_authenticated and user.colleague_user and  product.store in user.colleague_with_store.all and product.colleague_users_price > 0 %}
 
 <p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                            {{ product|colleague:request }}
                                             <span class="font-Dana text-sm">تومان</span>

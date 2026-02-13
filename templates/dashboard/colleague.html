@@ -18,19 +18,20 @@
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <h2 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1">ثبت درخواست همکاری با
             فروشگاه</h2>
-            {% if user.colleague_request or user.colleague_user %}
-        <a class="main-btn bg-green-500 hover:bg-green-600 p-1.5 sm:p-2 gap-x-1 shadow w-full sm:w-auto" href={% url "dashboard:user-colleague-canceling" %}>
-            کنسل کردن همکاری با {{user.colleague_with_store}}
-        </a>
-        {% endif %}
+ 
 </div> 
+                <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-4 mb-1 text-sm lg:text-base">  
+         جهت کنسل کردن همکاری با هر فروشگاهی  روی نام ان کلیک کنید
+توجه داشته باشید که با حذف درخواست شما یک درخواست جدیدی می دهید که باید منتظر تایید از فروشگاه باشید</p>
         <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-4 mb-1 text-sm lg:text-base">
             شما با ثبت درخواست همکاری با فروشگاه می توانید از تخفیف های ویژه برای همکاران فروشگاه برخوردار شوید
 
         </p>
+
         <p class="text-gray-500 dark:text-gray-200 font-DanaMedium mt-1 mb-8 text-sm lg:text-base">شما با افتتاح حساب در
             سایت تمامی <a href="{% url 'site:site-law' %}" class="text-blue-400"> قوانین و مقررات </a> مورد پذیرش شما
             تلقی می شود </p>
+
 
 
         <div class="flex flex-col lg:flex-row items-start gap-x-8">
@@ -81,10 +82,148 @@
                     {{ form.colleague_id }}
 
  
+<style>
+  /* ===== استایل‌های جایگزین تیلویند ===== */
+  /* حفظ کامل ظاهر قبلی – بدون هیچ کلاس تیلویند در HTML */
 
+  /* کانتینر اصلی – اکنون با قابلیت wrapping */
+  .store-checkbox-container {
+    display: flex;
+    flex-wrap: wrap;        /* اجازه می‌دهد آیتم‌ها در ردیف‌های بعدی قرار گیرند */
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    grid-column: span 12;    /* برای سیستم گرید (بدون وابستگی به تیلویند) */
+  }
+
+  /* عنوان */
+  .store-checkbox-title {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.75rem;
+    padding-top: 0.5rem;    /* py-2 */
+    padding-bottom: 0.5rem;
+    grid-column: span 6;
+    width: 100%;           /* عنوان تمام عرض را بگیرد */
+  }
+
+  /* حالت تاریک برای عنوان */
+  @media (prefers-color-scheme: dark) {
+    .store-checkbox-title {
+      color: #d1d5db;
+    }
+  }
+
+  /* برچسب هر گزینه */
+  .store-checkbox-label {
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .store-checkbox-label:hover {
+    transform: translateY(-0.125rem);
+  }
+
+  /* چک‌باکس مخفی */
+  .store-checkbox-input {
+    display: none;
+  }
+
+  /* المان بصری (جعبه دور دکمه) */
+  .store-checkbox-visual {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    border-radius: 0.75rem;
+    border: 2px solid #e5e7eb;
+    font-size: 0.875rem;
+    background-color: transparent;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  /* دایره وضعیت */
+  .store-checkbox-indicator {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 9999px;
+    border: 2px solid #9ca3af;
+    background-color: transparent;
+    transition: background-color 0.15s, border-color 0.15s;
+    margin-left: 0.375rem;  /* px-1.5 معادل 0.375rem */
+    margin-right: 0.375rem;
+  }
+
+  /* --- حالت انتخاب شده (checked) --- */
+  .store-checkbox-input:checked + .store-checkbox-visual {
+    border-color: #3bf64b; /* رنگ سبز/آبی شما */
+  }
+
+  .store-checkbox-input:checked + .store-checkbox-visual .store-checkbox-indicator {
+    background-color: #3bf64b;
+    border-color: #3bf64b;
+  }
+
+  /* --- واکنش‌گرایی (md) --- */
+  @media (min-width: 768px) {
+    .store-checkbox-container {
+      gap: 0.75rem;
+    }
+    .store-checkbox-visual {
+      padding: 0.625rem 1.25rem;
+    }
+  }
+
+  /* --- پشتیبانی از حالت تاریک برای المان بصری --- */
+  @media (prefers-color-scheme: dark) {
+    .store-checkbox-visual {
+      border-color: #4b5563;
+    }
+    .store-checkbox-indicator {
+      border-color: #6b7280;
+    }
+    .store-checkbox-input:checked + .store-checkbox-visual {
+      border-color: #3bf64b;
+    }
+    .store-checkbox-input:checked + .store-checkbox-visual .store-checkbox-indicator {
+      background-color: #3bf64b;
+      border-color: #3bf64b;
+    }
+  }
+</style>
+
+<div class="store-checkbox-container col-span-12">
+  <!-- عنوان با کلاس اختصاصی – بدون تیلویند -->
+  <p class="store-checkbox-title">
+    فروشگاهای مورد همکاری را انتخاب کنید:
+  </p>
+
+  <!-- حلقه اصلی – فقط یک بار اجرا می‌شود (حذف حلقه تستی اضافی) -->
  
-                    {{ form.colleague_with_store }}
+  {% for checkbox in form.colleague_with_store %}
+    <label class="store-checkbox-label">
+      <!-- چک‌باکس مخفی -->
+      <input type="checkbox"
+             name="{{ checkbox.data.name }}"
+             id="{{ checkbox.data.name }}"
+             value="{{ checkbox.data.value }}"
+             class="store-checkbox-input"
+             {% if checkbox.data.selected %}checked{% endif %}>
+             <!-- المان بصری -->
+             <div class="store-checkbox-visual" {% if checkbox.data.selected %}checked{% endif %}>
+                 <span class="store-checkbox-indicator" {% if checkbox.data.selected %}checked{% endif %}></span>
+                 {{ checkbox.choice_label }}
+                </div>
+            </label>
+             
+  {% endfor %}
  
+</div>
+ 
+            
  
 
 

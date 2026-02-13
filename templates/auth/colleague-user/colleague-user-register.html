@@ -115,8 +115,25 @@
 
                     {{ form.email }}
                     {{ form.password }}
-                    {{ form.conform_password }}
-                    {{ form.colleague_with_store }}
+ 
+                    
+<!-- عنوان -->
+
+
+<!-- لیست گزینه‌ها - همیشه افقی با اسکرول در صورت نیاز -->
+
+ 
+<div class="col-span-6">
+ <p class="  py-2">
+  فروشگاهای مورد همکاری را انتخاب کنید:
+</p>
+ <p class="  py-2 text-xs">
+  با فشردن دکمه ctrl چندین گزینه انتخاب کنید
+</p>
+</div>
+
+{{ form.colleague_with_store }}
+ 
 
                     <!-- Password Field with Instructions -->
 
@@ -352,7 +369,147 @@
                         {{ form.conform_password }}
                     </div>
                     <div class="md:col-span-1 lg:col-span-6">
-                        {{ form.colleague_with_store }}
+<style>
+  /* ===== استایل‌های جایگزین تیلویند ===== */
+  /* حفظ کامل ظاهر قبلی – بدون هیچ کلاس تیلویند در HTML */
+
+  /* کانتینر اصلی – اکنون با قابلیت wrapping */
+  .store-checkbox-container {
+    display: flex;
+    flex-wrap: wrap;        /* اجازه می‌دهد آیتم‌ها در ردیف‌های بعدی قرار گیرند */
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    grid-column: span 12;    /* برای سیستم گرید (بدون وابستگی به تیلویند) */
+  }
+
+  /* عنوان */
+  .store-checkbox-title {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.75rem;
+    padding-top: 0.5rem;    /* py-2 */
+    padding-bottom: 0.5rem;
+    grid-column: span 6;
+    width: 100%;           /* عنوان تمام عرض را بگیرد */
+  }
+
+  /* حالت تاریک برای عنوان */
+  @media (prefers-color-scheme: dark) {
+    .store-checkbox-title {
+      color: #d1d5db;
+    }
+  }
+
+  /* برچسب هر گزینه */
+  .store-checkbox-label {
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .store-checkbox-label:hover {
+    transform: translateY(-0.125rem);
+  }
+
+  /* چک‌باکس مخفی */
+  .store-checkbox-input {
+    display: none;
+  }
+
+  /* المان بصری (جعبه دور دکمه) */
+  .store-checkbox-visual {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    border-radius: 0.75rem;
+    border: 2px solid #e5e7eb;
+    font-size: 0.875rem;
+    background-color: transparent;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  /* دایره وضعیت */
+  .store-checkbox-indicator {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 9999px;
+    border: 2px solid #9ca3af;
+    background-color: transparent;
+    transition: background-color 0.15s, border-color 0.15s;
+    margin-left: 0.375rem;  /* px-1.5 معادل 0.375rem */
+    margin-right: 0.375rem;
+  }
+
+  /* --- حالت انتخاب شده (checked) --- */
+  .store-checkbox-input:checked + .store-checkbox-visual {
+    border-color: #3bf64b; /* رنگ سبز/آبی شما */
+  }
+
+  .store-checkbox-input:checked + .store-checkbox-visual .store-checkbox-indicator {
+    background-color: #3bf64b;
+    border-color: #3bf64b;
+  }
+
+  /* --- واکنش‌گرایی (md) --- */
+  @media (min-width: 768px) {
+    .store-checkbox-container {
+      gap: 0.75rem;
+    }
+    .store-checkbox-visual {
+      padding: 0.625rem 1.25rem;
+    }
+  }
+
+  /* --- پشتیبانی از حالت تاریک برای المان بصری --- */
+  @media (prefers-color-scheme: dark) {
+    .store-checkbox-visual {
+      border-color: #4b5563;
+    }
+    .store-checkbox-indicator {
+      border-color: #6b7280;
+    }
+    .store-checkbox-input:checked + .store-checkbox-visual {
+      border-color: #3bf64b;
+    }
+    .store-checkbox-input:checked + .store-checkbox-visual .store-checkbox-indicator {
+      background-color: #3bf64b;
+      border-color: #3bf64b;
+    }
+  }
+</style>
+
+<div class="store-checkbox-container col-span-12">
+  <!-- عنوان با کلاس اختصاصی – بدون تیلویند -->
+  <p class="store-checkbox-title">
+    فروشگاهای مورد همکاری را انتخاب کنید:
+  </p>
+
+  <!-- حلقه اصلی – فقط یک بار اجرا می‌شود (حذف حلقه تستی اضافی) -->
+
+  {% for checkbox in form.colleague_with_store %}
+    <label class="store-checkbox-label">
+      <!-- چک‌باکس مخفی -->
+      <input type="checkbox"
+             name="{{ checkbox.data.name }}"
+             id="{{ checkbox.data.name }}"
+             value="{{ checkbox.data.value }}"
+             class="store-checkbox-input"
+             {% if checkbox.data.selected %}checked{% endif %}>
+      <!-- المان بصری -->
+      <div class="store-checkbox-visual">
+        <span class="store-checkbox-indicator"></span>
+        {{ checkbox.choice_label }}
+      </div>
+    </label>
+  {% endfor %}
+  
+ 
+</div>
+ 
                     </div>
 
                     <!-- Submit Button - Full width on all devices -->

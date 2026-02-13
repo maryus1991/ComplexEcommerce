@@ -65,31 +65,7 @@
                             <i class="fa fa-trash"></i>
                         </a>
                     </td>
-                    <td class="text-center">
-                        <strong>
-                            {% if item.colleague_user %}
-                                <span class="btn btn-sm btn-warning">
-                                                <a href="{% url 'admin_panel:user-colleague-requests-remove' item.id %}">
-همکار
-                                                </a>
-                                    </span>
-                            {% elif item.colleague_request %}
-                                <span class="btn btn-sm btn-warning">
-                                                                                        <a class=""
-                                                                                           href="{% url 'admin_panel:user-colleague-requests' item.id %}">
-                                    درخواست همکاری
-                                                                                        </a>
-                                    </span>
-                            {% else %}
-                                <span class="btn btn-sm btn-warning">
-                                                                                                                                        <a class=""
-                                                                                                                                           href="{% url 'admin_panel:user-colleague-requests' item.id %}">
-                                    همکار نمی باشد
-                                                                                        </a>
-                                    </span>
-                            {% endif %}
-                        </strong>
-                    </td>
+                    
                 </tabel>
             {% endif %}
 
@@ -125,16 +101,7 @@
                         {{ form.store }}
                     </div>
                 </div>
-                {% comment %} <div class="col-md-5">
-                    <div class=" input-group-sm">
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-info btn-flat">فروشگاه</button>
-                    </span>
-                        <span {% if not request.user_agent.is_mobile %} class="input-group" {% endif %}>
-                    {{ form.store }}
-                        </span>
-                    </div>
-                </div> {% endcomment %}
+
             </div>
             <div class="box-body form-group flex col-md-12">
 
@@ -309,12 +276,19 @@
                     </div>
                 </div>
                 <div class="col-md-4">
+                               
                     <div class="input-group input-group-sm">
+                        
                     <span class="input-group-btn">
+                        
                         <button type="button" class="btn btn-success btn-flat">فروشگاه درخواستی جهت همکاری :</button>
+   
                     </span>
                         {{ form.colleague_with_store }}
                     </div>
+                              <span class='btn btn-sm '>
+                            با نگه داشتن کلید ctrl چندین گزینه را انتخاب کنید
+                        </span>
                 </div>
 
             </div>
@@ -343,12 +317,12 @@
                                 <div class="thumbnail">
 
 
-
+                                    <a href='{% if item.store_image %}  {{ item.store_image.url }} {% endif %}'>
                                     <img src="{% if item.store_image %} {% thumbnail item.store_image '200x200' %} {% endif %}"
                                          class="img-responsive img-rounded"
                                          alt=" عکس ( فروشگاه یا کارت ویزیت ) خالی می باشد "
                                          style="max-height: 200px; margin: 0 auto;" loading="lazy">
-
+                                    </a>
 
                                     <div class="caption">
                                         <small> عکس ( فروشگاه یا کارت ویزیت ) </small>

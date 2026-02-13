@@ -129,8 +129,14 @@
                                 </td>
  
                                 <td>
-                                    <strong>فروشگاه دریافت کننده درخواست :</strong>
-                                    {{    item.colleague_with_store.name   }}
+                                    <strong>فروشگاههای دریافت کننده درخواست :</strong>
+                                    {% for store  in item.colleague_with_store.all  %}
+                                    <strong class='btn btn-sm btn-default'>
+                                        {{store.name}}
+                                    </strong>
+                                
+                                    {% endfor %}
+                                    
                                 </td>
  
                             </tr>
@@ -141,8 +147,11 @@
                                     {{    item.store_address   }}
                                 </td>
                             {% if item.store_image %}
+
                                                                                  <td colspan='1'>
-                                    <img   src='{{ item.store_image.url }}' width='200' height="200" />
+                                    <a href='{{ item.store_image.url }}'>
+                                                                                    <img   src='{{ item.store_image.url }}' width='200' height="200" />
+                                    </a>
                                 </td>
                                 {% endif %}
                             </tr>
