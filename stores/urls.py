@@ -71,9 +71,9 @@ urlpatterns = [
     path("update/", views.StoreUpdateInformationView.as_view(), name="update"),
     # tickets
     path("tickets/send/", views.StoreSendTicketView.as_view(), name="send-ticket"),
-    path("tickets/messages/delete/<int:pk>", views.StoreDeleteMessage.as_view(), name="send-messages-delete"),
+    path("tickets/messages/delete/<int:pk>/", views.StoreDeleteMessage.as_view(), name="send-messages-delete"),
     path(
-        "tickets/close/sender-side<int:pk>/",
+        "tickets/close/sender-side/<int:pk>/",
         views.StoreCloseTicketViewSenderSide.as_view(),
         name="close-ticket-sender-side",
     ),

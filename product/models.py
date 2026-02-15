@@ -189,3 +189,7 @@ class UserFavorite(models.Model):
 
     def __str__(self):
         return f"{self.user.get_full_name()}<->{self.product.name}"
+
+
+class ProductGuarantee(models.Model):
+    pass

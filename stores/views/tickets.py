@@ -37,7 +37,7 @@ class StoreCloseTicketViewSenderSide(UserStoreStaffMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         pk = self.kwargs.get("pk")
-        obj = get_object_or_404(Ticket, pk=pk, store=self.request.user.store)
+        obj = get_object_or_404(Ticket, pk=pk, user=self.request.user)
 
         obj.close_ticket = True
         obj.close_at = now()
@@ -53,7 +53,7 @@ class StoreCloseTicketViewReceiverSide(UserStoreStaffMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         pk = self.kwargs.get("pk")
-        obj = get_object_or_404(Ticket, pk=pk)
+        obj = get_object_or_404(Ticket, pk=pk, store=self.request.user.store)
 
         if obj.store is None and self.request.user.is_superuser:
             obj.close_ticket = True
@@ -144,7 +144,7 @@ class StoreSendTicketsListView(UserStoreStaffMixin, ListView):
 
     def get_queryset(self):
         query = (
-            super().get_queryset().filter(user=self.request.user).order_by("-id").order_by("close_ticket")
+            super().get_queryset().filter(user=self.request.user).order_by("-id", 'close_ticket')
         )
 
         form = TicketFilterForm(self.request.GET)
@@ -312,7 +312,7 @@ class StoreReceiveTicketListView(UserStoreStaffMixin, ListView):
             .get_queryset()
             .filter(
                 store=self.request.user.store,
-            ).order_by("-id").order_by("close_ticket")
+            ).order_by("-id", 'close_ticket')
         )
 
         form = TicketFilterForm(self.request.GET)

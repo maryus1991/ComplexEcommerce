@@ -331,7 +331,7 @@ POSTEX_API_KEY = os.getenv("POSTEX_API_KEY")
 
 # session
 SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
-SESSION_COOKIE_AGE = 60 * 60 * 24 * 3
+SESSION_COOKIE_AGE = 60 * 60 * 24 
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'

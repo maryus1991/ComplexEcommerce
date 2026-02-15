@@ -1203,9 +1203,9 @@ class StoreSendTicketForm(forms.ModelForm):
         queryset=Store.objects.filter(is_active=True, is_verified=True).all(),
         widget=forms.Select(
             attrs={
-                "class": "form-control select2 select2-hidden-accessible",
+                "class": "form-control select2 ",
                 "style": "width: 100%",
-                "aria - hidden": "true",
+                "aria-hidden": "true",
                 "tabindex": "-1",
                 "dir": "rtl",
             }

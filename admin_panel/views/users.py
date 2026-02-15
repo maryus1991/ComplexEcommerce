@@ -6,6 +6,7 @@ from django.views.generic import (
     View,
     DetailView,
 )
+from django.utils.dateparse import parse_date
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, redirect, reverse, render, Http404
@@ -13,11 +14,12 @@ from django.urls import reverse_lazy
 from user.mixins.logins import AdminUserMixin
 from admin_panel.forms import AddUserModelForm, MessagingUserForm, ExcludeUserFromMessagingForm, AdminUsersFilteringForm
 from auditlog.models import LogEntry
-from django.contrib.contenttypes.models import ContentType
 from utils.send_otp import send_many_message
 from django.contrib.auth import login
 from sitesetting.models import Newsletter, SendMessageHistory
 from django.db.models import Q
+import jdatetime
+
 
 User = get_user_model()
 

@@ -296,7 +296,7 @@
 
                     }
                 </script>
-                <div class="relative mt-4 overflow-x-auto shadow rounded-lg">
+                <div class="relative mt-4 overflow-x-auto shadow rounded-lg w-full">
                     <div class="overflow-x-auto rounded-lg shadow-sm">
                         <table class="min-w-full w-full  dark:divide-zinc-600">
                             <thead class="bg-gray-50 dark:bg-zinc-700">
@@ -612,12 +612,12 @@
                     <br>
                     {% if details.exists and not details.first.order.canceled and not details.first.order.is_paid %}
 
-                        <form method="post" class="w-full"
+                        <form method="post" class="w-full col-span-12"
                               action="{% url 'orders:add-address' pk=details.first.order.id store_id=details.first.order.store.id %}">
                             <!-- Adjust action URL as needed -->
                             {% csrf_token %}
 
-                            <div class="dark:bg-zinc-800 bg-white rounded-xl  shadow-md p-4 sm:p-6 w-full max-w-2xl mx-auto">
+                            <div class="dark:bg-zinc-800 bg-white rounded-xl  shadow-md p-4 sm:p-6 w-full  mx-auto">
                                 <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                                     <!-- عنوان بخش -->
                                     <h3 class="text-lg sm:text-xl font-bold text-gray-800 dark:text-white">
@@ -655,7 +655,8 @@
                                                         {% if details.first.order.address.id == address.id %}selected="selected"{% endif %}
                                                         class="py-2">
                                                     {{ address.province }} - {{ address.city }} |
-                                                    کدپستی: {{ address.zipcode }}
+                                                    کدپستی: {{ address.zipcode }} | 
+                                                    {{ address.address }}
                                                 </option>
                                             {% empty %}
                                                 <option value="" disabled selected>هیچ آدرسی ثبت نشده است</option>

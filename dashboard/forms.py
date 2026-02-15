@@ -55,8 +55,6 @@ class UserColleagueForm(forms.Form):
     )
 
 
-
-
 class CreateRequestReturnOrder(forms.Form):
     cart_name = forms.CharField(widget=forms.TextInput(
         attrs={"class": "tailwind-input col-span-6 ", "placeholder": "نام صاحب کارت"}

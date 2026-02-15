@@ -204,15 +204,12 @@ class RegistrationColleagueForm(forms.Form):
         required=True,
         widget=forms.PasswordInput(
             attrs={
-                "class": "tailwind-input col-span-6",
+                "class": "tailwind-input col-span-6 w-full pr-10",
                 "placeholder": "رمز عبور",
                 "autocomplete": "password",
             }
         ),
     )
-
-  
-
  
 
     def clean_password(self):
@@ -331,7 +328,6 @@ class ForgotPasswordForm(forms.Form):
             raise forms.ValidationError(
                 "رمز شما باید شامل حروف بزرگ و کوچک و اعداد انگلیسی باشد"
             )
-
         return password
 
 
@@ -539,7 +535,7 @@ class ActiveAccountForm(forms.Form):
         phone_number = self.cleaned_data["phone_number"]
         validate_phonenumber(phone_number)
         return phone_number
-
+        
 
 class ActiveAccountFormWITHRecaptchaWithoutEmail(forms.Form):
     """
@@ -754,11 +750,11 @@ class LoginFormWithEmail(forms.Form):
 
 class EditUserInformationForm(forms.Form):
     email = forms.EmailField(
-        required=True,
+        required=False,
         widget=forms.EmailInput(
             attrs={
                 "class": "tailwind-input",
-                "placeholder": "  ایمیل ...",
+                "placeholder": " ایمیل (اختیاری) ...",
             }
         ),
     )
@@ -784,10 +780,13 @@ class EditUserInformationForm(forms.Form):
     )
 
     def clean_email(self):
-        email = self.cleaned_data["email"]
-        validate_email(email)
-        return email
 
+        email = self.cleaned_data["email"]
+        if email:
+            validate_email(email)
+            return email
+        else:
+            return email
 
 class ChangePasswordForm(forms.Form):
     current_password = forms.CharField(

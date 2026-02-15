@@ -731,8 +731,17 @@ class EditUserInformation(CustomLoginRequiredMixin, View):
             last_name = form.cleaned_data.get("last_name")
 
             user = request.user
+ 
+            if  first_name and last_name :
+                user.first_name = first_name
+                user.last_name = last_name
+                user.save()
+                messages.success(request, "نام و نام خانوادگی شما با موفقیت ثبت شد")
+            
+            if email and User.objects.filter(email=email).exists():
+                messages.error(request, "این ایمیل قبلا استفاده شده است")
 
-            if not User.objects.filter(email=email).exists():
+            if email is not None and not User.objects.filter(email=email).exists():
                 if email != user.email:
                     user.email_verified = False
                     user.email = email
@@ -740,13 +749,11 @@ class EditUserInformation(CustomLoginRequiredMixin, View):
                     user.verify_email(request)
                     messages.success(
                         request,
-                        'ایمیل فعال سازی برای شما ارسال شد'
+                        'ایمیل شما ثبت شد و ایمیل فعال سازی برای شما ارسال شد '
                     )
 
-                user.first_name = first_name
-                user.last_name = last_name
                 user.save()
-                messages.success(request, "اطلاعات شما با موفقبت تغییر یافت")
+                
 
                 if user.email is None or user.first_name is None or user.last_name is None:
                     messages.warning(
@@ -763,8 +770,8 @@ class EditUserInformation(CustomLoginRequiredMixin, View):
                 else:
                     return redirect("dashboard:orders")
 
-            else:
-                messages.error(request, "این ایمیل قبلا استفاده شده است")
+    
+               
 
         else:
             messages.error(request, "لطفا در وارد کردن اطلاعات دقت فرمایید")

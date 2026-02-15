@@ -1,4 +1,1 @@
-fix  Accessibility on google consol
-add many to many relation for coiligue user with stores  
-splite coiligue and worker users
- 
+add read and not read the ticket for store and admin 
