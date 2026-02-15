@@ -1085,6 +1085,8 @@ class VerifyPayment(LoginRequiredMixin, View):
             error_message = get_zarinpal_error_code_return_perian_message(
                 str(error_code)
             )
+            self.order.Authority = None
+            self.order.save()
             return render(
                 request,
                 "order/payment-failed.html",

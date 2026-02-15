@@ -21,12 +21,11 @@ def clean_expired_details(self):
     for order_detail in expired_orders:
         order = order_detail.order
 
-
-        if (
-            ( order.freight_delivery or order.vip_post or order.tipax_post_delivery or order.in_city_delivery or order.physical_delivery) 
-            and order_detail.added_date > now() - timedelta(minutes=setting.minute_for_clean_order_submitted_detail_product)
-        ):
-            continue  # هنوز نباید پاک بشه
+        print(0)
+        if ( order.freight_delivery or order.vip_post or order.tipax_post_delivery or order.in_city_delivery or order.physical_delivery) :
+  
+            if order_detail.added_date >= now() - timedelta(minutes=setting.minute_for_clean_order_submitted_detail_product):
+                 continue  
 
         # برگرداندن موجودی محصول
         product = order_detail.product
