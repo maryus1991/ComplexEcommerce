@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     "stores",
     "orders",
     "blog",
+    "guarantee",
     "admin_panel",
 
     # third party apps

@@ -80,6 +80,7 @@ class Store(models.Model):
     can_store_add_blog_category = models.BooleanField(default=False)
     can_store_add_users = models.BooleanField(default=True)
     can_store_add_apps = models.BooleanField(default=False)
+    can_store_add_product_guarantee = models.BooleanField(default=True)
     allowed_to_add_and_edit_products_with_out_admin_per = models.BooleanField(default=False)
     allowed_to_add_and_edit_apps_with_out_admin_per = models.BooleanField(default=False)
     allowed_to_add_and_edit_posts_with_out_admin_per = models.BooleanField(default=False)

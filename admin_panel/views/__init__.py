@@ -12,3 +12,4 @@ from .users import *
 from .discount import *
 from .orders import *
 from .backup import *
+from .guaratee import *

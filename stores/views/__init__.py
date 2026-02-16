@@ -6,3 +6,4 @@ from .products import *
 from .store import *
 from .tickets import *
 from .users import *
+from .guaratee import *

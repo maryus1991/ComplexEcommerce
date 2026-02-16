@@ -18,6 +18,7 @@ urlpatterns = [
     path("order/", include("orders.urls")),
     path("blog/", include("blog.urls")),
     path("store/", include("stores.main_template_urls")),
+    path("guarantee/", include("guarantee.urls")),
     # path(f"panel-store/{get_random_string(100)}/", include("stores.urls")),
     # path(f"admin-panel/{get_random_string(1000)}/", include("admin_panel.urls")),
 

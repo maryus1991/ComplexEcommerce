@@ -5,14 +5,12 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from phonenumber_field.formfields import PhoneNumberField
 from phonenumber_field.validators import validate_phonenumber
 
-from django.core.validators import EmailValidator, ValidationError
 from sitesetting.models import (
     SiteSetting,
     Banners,
     Slider,
     FastLinks,
     QuestionAndAnswer,
-    ContactUs,
     SiteLaw
 )
 from stores.forms import MultiImageField, MultiUploadMetaInput
@@ -20,12 +18,98 @@ from stores.models import StoreApps, Store
 from blog.models import Blog, BlogCategory
 from django.contrib.auth import get_user_model
 from product.models import ProductBrand, ProductCategory, Product
-from orders.models import Discount, SpecificsOrders
+from orders.models import Discount, SpecificsOrders, OrderDetail
+from guarantee.models import ProductGuarantee, ActiveProductGuarantee
 
 from jalali_date.fields import JalaliDateField
 from jalali_date.widgets import AdminJalaliDateWidget
 
 User = get_user_model()
+
+class GuaranteeModelForm(forms.ModelForm):
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.all(),
+        required=True,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control select2",
+                "style": "width: 100%;",
+                "tabindex": "-1",
+                "aria-hidden": "true",
+                "dir": "rtl",
+            }
+        ),
+        label='محصول'
+    )
+    class Meta:
+        model = ProductGuarantee
+        fields = '__all__'
+        widgets = {
+            'serial_number':forms.TextInput(attrs={'class':'form-control'}),
+            'months_of_expire':forms.NumberInput(attrs={'class':'form-control'}),
+            'name_of_garantee_company':forms.TextInput(attrs={'class':'form-control'}),
+            'is_active':forms.CheckboxInput(),
+        }
+
+
+class ActiveGuaranteeModelForm(forms.ModelForm):
+    guarantee = forms.ModelChoiceField(
+        queryset=ProductGuarantee.objects.filter(is_active=True).all(),
+        required=True,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control select2",
+                "style": "width: 100%;",
+                "tabindex": "-1",
+                "aria-hidden": "true",
+                "dir": "rtl",
+            }
+        ),
+        label='گارانتی'
+    )
+    order = forms.ModelChoiceField(
+        queryset=OrderDetail.objects.all(),
+        required=True,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control select2",
+                "style": "width: 100%;",
+                "tabindex": "-1",
+                "aria-hidden": "true",
+                "dir": "rtl",
+            }
+        ),
+        label='سفارش '
+    )
+    date_of_started = JalaliDateField(
+        required=False,
+        label="تاریخ شروع",
+        widget=AdminJalaliDateWidget(
+            attrs={
+                "class": "form-control",
+                "dir": "rtl",
+            }
+        ),
+    )
+    date_of_expire = JalaliDateField(
+        required=False,
+        label="تاریخ انقضا",
+        widget=AdminJalaliDateWidget(
+            attrs={
+                "class": "form-control",
+                "dir": "rtl",
+            }
+        ),
+    )
+    class Meta:
+        model = ActiveProductGuarantee
+        fields = '__all__'
+
+        widgets = {
+            'is_active':forms.CheckboxInput(),
+        }
+        
+    
 
 class StorePermissions(forms.ModelForm):
     class Meta:
@@ -45,6 +129,7 @@ class StorePermissions(forms.ModelForm):
             'allowed_to_activate_product_brand_with_out_admin_per',
             'allowed_to_activate_post_categories_with_out_admin_per',
             'can_stores_add_colleague_user',
+            'can_store_add_product_guarantee',
         )
         widgets = {
             'can_stores_add_product_category': forms.CheckboxInput(),
@@ -61,6 +146,7 @@ class StorePermissions(forms.ModelForm):
             'allowed_to_activate_product_brand_with_out_admin_per': forms.CheckboxInput(),
             'allowed_to_activate_post_categories_with_out_admin_per': forms.CheckboxInput(),
             'can_stores_add_colleague_user': forms.CheckboxInput(),
+            'can_store_add_product_guarantee': forms.CheckboxInput(),
         }
 
 class AdminUsersFilteringForm(forms.Form):
