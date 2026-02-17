@@ -212,6 +212,12 @@
                     <svg class="w-6 h-6 ">
                         <use href="#squares"></use>
                     </svg>
+                    <a href="{% url 'dashboard:guarantee-list' %}">گارانتی ها</a>
+                </li>
+                <li class="hover:bg-zinc-100 dark:hover:bg-zinc-600  " onclick="window.location=this.querySelector('a').href">
+                    <svg class="w-6 h-6 ">
+                        <use href="#squares"></use>
+                    </svg>
                     <a href="{% url 'dashboard:orders-returns-list' %}">مرجوعی ها</a>
                 </li>
                 <li class=" hover:bg-zinc-100 dark:hover:bg-zinc-600 " onclick="window.location=this.querySelector('a').href">

@@ -9,6 +9,7 @@ urlpatterns = [
     # guarantee
     path("product/guarantee/<int:pk>/",views.GuaranteeListView.as_view(),name="product-guarantee-list",),
     path("product/guarantee/active/<int:pk>/",views.ActiveGuaranteeListView.as_view(),name="product-guarantee-active-list",),
+    path("product/guarantee/create/<int:pk>/",views.GuaranteeCreateView.as_view(),name="product-guarantee-create-pk",),
     path("product/guarantee/create/",views.GuaranteeCreateView.as_view(),name="product-guarantee-create",),
     path("product/guarantee/update/<int:pk>",views.GuaranteeUpdateView.as_view(),name="product-guarantee-update",),
     path("product/guarantee/active-deactivate/<int:pk>",views.GuaranteeActiveAndDeactivateView.as_view(),name="product-guarantee-active-deactivate",),

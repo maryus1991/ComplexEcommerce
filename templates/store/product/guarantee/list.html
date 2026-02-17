@@ -181,21 +181,21 @@
 
  
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:product-guarantee-active-list' item.id %}"
+                            <a href="{% url 'store:product-guarantee-active-list' item.id %}"
                                class="btn btn-sm btn-success"
                                data-toggle="tooltip" title="مشاهده گارانتی های فعال شده">
-                                <i class="fa fa-eye"></i>
+                                {{ item.actives_guarantee.count }}
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:product-guarantee-update' item.id %}"
+                            <a href="{% url 'store:product-guarantee-update' item.id %}"
                                class="btn btn-sm btn-info"
                                data-toggle="tooltip" title="ویرایش">
                                 <i class="fa fa-edit"></i>
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:product-guarantee-active-deactivate' item.id %}"
+                            <a href="{% url 'store:product-guarantee-active-deactivate' item.id %}"
                                class="btn btn-sm btn-warning"
                                data-toggle="tooltip"
                                title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
@@ -203,7 +203,7 @@
                             </a>
                         </td>
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:product-guarantee-delete' item.id %}"
+                            <a href="{% url 'store:product-guarantee-delete' item.id %}"
                                class="btn btn-sm btn-danger"
                                data-toggle="tooltip" title="حذف">
                                 <i class="fa fa-trash"></i>

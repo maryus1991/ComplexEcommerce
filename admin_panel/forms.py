@@ -27,6 +27,7 @@ from jalali_date.widgets import AdminJalaliDateWidget
 User = get_user_model()
 
 class GuaranteeModelForm(forms.ModelForm):
+
     product = forms.ModelChoiceField(
         queryset=Product.objects.all(),
         required=True,

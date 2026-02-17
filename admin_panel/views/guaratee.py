@@ -19,7 +19,7 @@ class GuaranteeListView(AdminUserMixin, ListView ):
     context_object_name = "items"
 
     def get_queryset(self):
-        return self.model.objects.filter(product__id=self.kwargs.get('pk')).order_by(self.ordering).all()
+        return self.model.objects.filter(product__id=self.kwargs.get('pk')).prefetch_related('actives_guarantee').order_by(self.ordering).all()
 
 class ActiveGuaranteeListView(AdminUserMixin, ListView ):
     
@@ -43,6 +43,7 @@ class GuaranteeCreateView(AdminUserMixin, CreateView ):
 
     def get_success_url(self):
         return reverse(self.success_url, kwargs={'pk': self.object.product.id})
+    
 
     def form_valid(self, form):
         messages.success(self.request, "ایتم شما با موفقیت ساخته شد")

@@ -12,10 +12,9 @@
     <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
     <link rel="stylesheet" href="/static/dist/css/rtl.css">
     <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
+ 
     <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
+ 
     <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
     <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
     <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
@@ -376,6 +375,7 @@
                                     <th>مشاهده صفحه محصول</th>
                                     <th>بروزرسانی محصول</th>
                                     <th>فعال/غیرفعال</th>
+                                    <th> گارانتی ها</th>
                                     <th>حذف کردن محصول</th>
                                 </tr>
                                 </thead>
@@ -429,6 +429,18 @@
                                                 {% else %}
                                                     فعال کردن
                                                 {% endif %}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn  btn-sm"
+                                               style="background: burlywood; color: white"
+                                               href="{% url 'store:product-guarantee-list' product.id %}">
+                                                {{ product.guarantee.count }}
+                                            </a>
+                                            <a class="btn  btn-sm"
+                                               style="background: #0000ff; color: white"
+                                               href="{% url 'store:product-guarantee-create-pk' product.id %}">
+                                                جدید
                                             </a>
                                         </td>
                                         <td>

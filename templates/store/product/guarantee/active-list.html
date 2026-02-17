@@ -158,7 +158,7 @@
                 {% for item in items %}
                     <tr>
                         <td class="text-center">{{ item.id }}</td>
-                        <td > <a href="{% url 'admin_panel:user-detail' item.order.order.user.id %}">
+                        <td > 
                             <strong dir="ltr" >{{ item.order.order.user.PhoneNumber }}</strong>
                             {% if not item.is_active %}
                                 <span class="label label-danger pull-left"> گارانتی غیر فعال </span>
@@ -166,14 +166,14 @@
                                 <span class="label label-success pull-left">گارانتی فعال </span>
 
                             {% endif %}
-                        </a>
+                        
                         </td>
  
                         <td class="text-center"><span class="badge label-primary">{{ item.guarantee.serial_number }}</span></td>
                         <td class="text-center"><span class="badge label-primary">{{ item.guarantee.name_of_garantee_company }}</span></td>
 
                         <td class="text-center">
-                            <a href="{% url 'admin_panel:product-update' item.guarantee.product.id %}">
+                            <a href="{% url 'store:edit-product' item.guarantee.product.id %}">
                             <strong
                                 class=" "> {{ item.guarantee.product.name }} </strong></td>
                             </a>

@@ -7,8 +7,6 @@ from django.views.generic import (
     ListView,
     UpdateView,
     FormView,
-    DeleteView,
-    DetailView,
     View,
 )
 from django.shortcuts import get_object_or_404, get_list_or_404
@@ -36,9 +34,21 @@ from utils.find_city import search_city
 from django.utils.timezone import datetime
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
-
+from guarantee.models import ActiveProductGuarantee
 
 User = get_user_model()
+
+
+@method_decorator(never_cache, name='dispatch')
+class ActiveProductGuaranteeListView(LoginRequiredMixin, ListView):
+    """for return order list"""
+
+    model = ActiveProductGuarantee
+    template_name = "dashboard/guarantee.html"
+    context_object_name = "items"
+
+    def get_queryset(self):
+        return super().get_queryset().filter(order__order__user=self.request.user).prefetch_related('guarantee', 'order', 'order__order', 'guarantee__product').order_by("-id", 'is_active')
 
 
 # Create your views here.

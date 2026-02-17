@@ -9,6 +9,9 @@ urlpatterns = [
     path("", views.Dashboard.as_view(), name="dashboard"),
     path("account/", views.UserSettingDashboard.as_view(), name="account"),
 
+    # guarantee
+    path("guarantee/", views.ActiveProductGuaranteeListView.as_view(), name="guarantee-list"),
+
     # colleague
     path("colleague-panel/", views.UserColleague.as_view(), name="user-colleague"),
     path("colleague-panel/canceling/", views.UserCancelColleague.as_view(), name="user-colleague-canceling"),

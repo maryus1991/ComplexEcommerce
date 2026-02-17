@@ -384,6 +384,12 @@ desired effect
                                             class="fa fa-link"></i>
                                         <span>اضافه کردن محصول</span></a></li>
                                 {% endif %}
+                                {% if user.store.can_store_add_product_guarantee %}
+
+                                    <li class="link-activator"><a href="{% url 'store:product-guarantee-create' %}"><i
+                                            class="fa fa-link"></i>
+                                        <span>اضافه کردن گارانتی</span></a></li>
+                                {% endif %}
                                 <li class="link-activator"><a href="{% url 'store:list-brands' %}"><i
                                         class="fa fa-link"></i>
                                     <span>لیست برندها</span></a></li>

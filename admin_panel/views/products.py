@@ -361,7 +361,7 @@ class ProductListView(AdminUserMixin, ListView):
 
         queryset = Product.objects.prefetch_related(
             "category", 'comments' ,"brand", "store",
-            "views", 'features', 'tags', 'specs').order_by('-id')
+            "views", 'features', 'tags', 'specs', 'guarantee').order_by('-id')
 
         # Process search parameters if form is valid
         params = ProductSearchForm(self.request.GET or None)

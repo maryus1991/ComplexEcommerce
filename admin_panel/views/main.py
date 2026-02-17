@@ -55,15 +55,6 @@ class HomePageView(AdminUserMixin, TemplateView):
         sum_of_the_views_today = ProductViews.objects.filter(created_at__gte=today_start).count()
         DailyViewCount.objects.update_or_create(date=today,defaults={'count':sum_of_the_views_today})
 
-        yesterday_view = DailyViewCount.objects.filter(date=yesterday).first()
-        yesterday_count = yesterday_view.count if yesterday_view else 0
-
-        # if yesterday_count > 0:
-        #     percentage_change = ((total_view - yesterday_count) / yesterday_count) * 100
-        # else:
-        #     percentage_change = 100 if total_view > 0 else 0
-
-        # context['view_percentage_change'] = round(percentage_change, 2)
 
         start_date = today - timedelta(days=29)
         existing_dates = set(
@@ -75,7 +66,7 @@ class HomePageView(AdminUserMixin, TemplateView):
             DailyViewCount.objects.bulk_create([DailyViewCount(date=d, count=0) for d in missing_dates])
 
 
-        context['views_list_by_date'] = DailyViewCount.objects.order_by('date')
+        context['views_list_by_date'] = DailyViewCount.objects.filter(date__gte=now()-timedelta(days=60)).order_by('date')
 
         context['orders'] = Order.objects.order_by('-id')[:6]
 
