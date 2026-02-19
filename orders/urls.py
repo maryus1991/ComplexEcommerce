@@ -11,12 +11,21 @@ from .views import (
     ChooseTypeOfDelivery,
     OrderRemoveDiscount,
     VerifyPayment,
-    SpecificsOrdersView,SpecificsOrdersVerifyPayment
+    SpecificsOrdersView,
+    SpecificsOrdersVerifyPayment,
+    ChooseTypeOfPaymanet,
+    VerifyPaymentZipal
+
 )
 
 app_name = "orders"
 
 urlpatterns = [
+
+    # type of payment
+
+    path('type-of-payment/<int:pk>/<str:type>/', ChooseTypeOfPaymanet.as_view(), name='type-of-payment'),
+
     # specifics orders
     path('specifics-orders/', SpecificsOrdersView.as_view(), name='specifics-orders'),
     path('specifics-orders/payment/verify/<int:pk>/', SpecificsOrdersVerifyPayment.as_view(), name='specifics-payment-verify'),
@@ -46,6 +55,7 @@ urlpatterns = [
     # payment
     path("payment/conform/<int:pk>", ConformPayment.as_view(), name="payment-conform"),
     path("payment/result/<int:pk>", VerifyPayment.as_view(), name="payment-result"),
+    path("payment/result/zipal/<int:pk>", VerifyPaymentZipal.as_view(), name="payment-result-zipal"),
 
     # invoice status
     path(

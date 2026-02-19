@@ -437,5 +437,11 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS") == "True"
 
 
+# zipal
+ZIPAL_PAYMENT_REQUEST=os.getenv('ZIPAL_PAYMENT_REQUEST', default='https://gateway.zibal.ir/v1/request')
+ZIPAL_PAYMENT_REDIRECT=os.getenv('ZIPAL_PAYMENT_REDIRECT', default='https://gateway.zibal.ir/start')
+ZIPAL_PAYMENT_VERIFY=os.getenv('ZIPAL_PAYMENT_VERIFY', default='https://gateway.zibal.ir/v1/verify')
+ZIPAL_MERCHANT_CODE=os.getenv('ZIPAL_MERCHANT_CODE')
+
 # csp config 
 #CONTENT_SECURITY_POLICY = {     "default-src": ("'self'",),     "font-src": ("'self'", "fonts.gstatic.com", "cdnjs.cloudflare.com", "cdn.jsdelivr.net"),     "img-src": ("'self'",),     "media-src": ("'self'",),     "script-src": ("'self'", "cdnjs.cloudflare.com", "cdn.jsdelivr.net", "www.googletagmanager.com", "www.google-analytics.com", "'nonce-XyZ34AbC'"),     "style-src": ("'self'", "fonts.googleapis.com", "cdnjs.cloudflare.com", "cdn.jsdelivr.net", "'nonce-XyZ34AbC'"),     "connect-src": ("'self'", "www.google-analytics.com"), }

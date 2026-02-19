@@ -1,5 +1,4 @@
 import json
-
 import requests
 from django.contrib import messages
 from django.db import transaction
@@ -16,7 +15,11 @@ from config.settings import (
     ZARINPAL_SEND_DATA_URL,
     ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE,
     ZARINPAL_VERIFY_PAYMENT,
-    DEBUG
+    DEBUG,
+    ZIPAL_MERCHANT_CODE,
+    ZIPAL_PAYMENT_REDIRECT,
+    ZIPAL_PAYMENT_REQUEST,
+    ZIPAL_PAYMENT_VERIFY
 )
 from dashboard.models import UserAddress
 from product.models import Product
@@ -31,6 +34,11 @@ import urllib.parse
 def get_zarinpal_error_code_return_perian_message(code):
     import ZARINPAL_ERRORS
     return ZARINPAL_ERRORS.zarinpal_error_codes[code]
+
+
+def get_zipal_error_code_return_perian_message(code):
+    import ZIPAL_ERRORS
+    return ZIPAL_ERRORS.zipal_errors[code]
 
 
 # Create your views here.
@@ -829,6 +837,34 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
 
 
 @method_decorator(never_cache, name='dispatch')
+class ChooseTypeOfPaymanet(LoginRequiredMixin, RedirectView):
+    """
+    for choose the type of payment
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+
+        order = get_object_or_404(Order, pk=kwargs.get('pk'))
+        type_of_payment = kwargs.get('type') 
+        site = SiteSetting.objects.first()
+
+        if type_of_payment == 'ZAR' and site.active_zarinpal :
+            order.type_of_payment = 'ZAR'
+            messages.success(
+                self.request,'درخواست شما جهت پرداخت با زرین پال ثبت شد'
+            )
+        elif type_of_payment == 'ZIP' and site.active_zipal_payment :
+            order.type_of_payment = 'ZIP'
+            messages.success(
+                self.request,'درخواست شما جهت پرداخت با زیپال ثبت شد'
+            )
+
+        order.save()
+
+        return reverse('orders:payment-conform', kwargs={'pk':kwargs.get('pk')})
+
+
+@method_decorator(never_cache, name='dispatch')
 class ConformPayment(LoginRequiredMixin, View):
     """
     for conform payment and then redirect it for payment page
@@ -912,6 +948,14 @@ class ConformPayment(LoginRequiredMixin, View):
         pk = self.pk
         order = self.order
 
+        if order.type_of_payment is None:
+            
+            messages.warning(
+                request,
+                "لطفا درگاه پرداخت را انتخاب کنید",
+            )
+            return redirect("orders:payment-conform", pk=pk)
+
         if (
                 order.vip_post or
                 order.tipax_post_delivery or
@@ -927,6 +971,8 @@ class ConformPayment(LoginRequiredMixin, View):
                         "شما نمی توانید با ادرس وارد شده تحویل با پیک شهری را انتخاب کنید لطفا راه ارسال دیگری را انتخاب کنید",
                     )
                     return redirect("dashboard:order_detail", pk=pk)
+                
+
 
             if not order.details.exists():
                 messages.error(request, "سبد خرید شما خالی هست")
@@ -943,60 +989,120 @@ class ConformPayment(LoginRequiredMixin, View):
 
             base = "https://" if request.is_secure() else "http://"
 
-            callback_url = (
+
+    
+
+            # start payment with zarin pay
+
+
+            if order.type_of_payment == 'ZAR' and self.site.active_zarinpal:
+
+                callback_url = (
                     base
                     + str(request.get_host())
                     + reverse("orders:payment-result", kwargs={"pk": pk})
-            )
+                   )
+                data = {
+                    "merchant_id": MERCHANT_ID,
+                    "amount": int(result * 10),
+                    "callback_url": callback_url,
+                    "description": f"""شماره فا کتور : {self.order.id}
+                        {self.order.store.name}-{self.order.store.phone} فروشگاه و شماره ان :
+                        کاربر :{self.order.user.PhoneNumber}
+                        """,
+                    "metadata": {
+                        "mobile": str(request.user.PhoneNumber),
+                        "order_id": str(order.id),
+                    },
+                }
+                data = json.dumps(data)
+                headers = {
+                    "content-type": "application/json",
+                    "content-length": str(len(data)),
+                }
 
-            data = {
-                "merchant_id": MERCHANT_ID,
-                "amount": int(result * 10),
-                "callback_url": callback_url,
-                "description": f"""شماره فا کتور : {self.order.id}
-                    {self.order.store.name}-{self.order.store.phone} فروشگاه و شماره ان :
-                    کاربر :{self.order.user.PhoneNumber}
-                    """,
-                "metadata": {
+                try:
+                    response = requests.post(
+                        ZARINPAL_SEND_DATA_URL, data=data, headers=headers, timeout=20
+                    )
+                except Exception as e:
+                    messages.error(
+                        self.request,
+                        'مشکلی در ارتباط با سرور پیش امده است لطفا بعدا امتحان کنید'
+                    )
+                    return redirect(self.request.META.get("HTTP_REFERER", "/"))
+
+                if response.status_code == 200:
+                    authority = response.json()["data"]["authority"]
+                    order = Order.objects.get(pk=self.pk)
+                    order.Authority = authority
+                    order.save()
+                    return redirect(f"{ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE}{authority}")
+
+                else:
+                    error_code = response.json()["errors"]["code"]
+                    error_message = get_zarinpal_error_code_return_perian_message(
+                        str(error_code)
+                    )
+                    return render(
+                        request,
+                        "order/payment-failed.html",
+                        {"error": error_message, "order": self.order, "date": now()},
+                    )
+                
+            elif order.type_of_payment == 'ZIP' and self.site.active_zipal_payment:
+                callback_url = (
+                    base
+                    + str(request.get_host())
+                    + reverse("orders:payment-result-zipal", kwargs={"pk": pk})
+                   )
+                data = {
+                    "merchant": ZIPAL_MERCHANT_CODE,
+                    "amount": int(result * 10),
+                    "callbackUrl": callback_url,
+                    "description": f"""شماره فا کتور : {self.order.id}
+                        {self.order.store.name}-{self.order.store.phone} فروشگاه و شماره ان :
+                        کاربر :{self.order.user.PhoneNumber}
+                        توضیحات کاربر : {order.additional_descriptions}
+                        """,
+                     
                     "mobile": str(request.user.PhoneNumber),
-                    "order_id": str(order.id),
-                },
-            }
-            data = json.dumps(data)
-            headers = {
-                "content-type": "application/json",
-                "content-length": str(len(data)),
-            }
+                    "orderId": str(order.id),
+                     
+                }
+                data = json.dumps(data)
+                headers = {
+                    "content-type": "application/json",
+                    "content-length": str(len(data)),
+                }
+                try:
+                    response = requests.post(
+                        ZIPAL_PAYMENT_REQUEST, data=data, headers=headers, timeout=1000
+                    )
+                    
+                
+                    if response.status_code == 200 and response.json()['result'] == 100:
+                        authority = response.json()["trackId"]
+                        order = Order.objects.get(pk=self.pk)
+                        order.Authority = authority
+                        order.save()
+                        print(f"{ZIPAL_PAYMENT_REDIRECT}/{authority}")
+                        return redirect(f"{ZIPAL_PAYMENT_REDIRECT}/{authority}")
 
-            try:
-                response = requests.post(
-                    ZARINPAL_SEND_DATA_URL, data=data, headers=headers, timeout=20
-                )
-            except Exception as e:
-                messages.error(
-                    self.request,
-                    'مشکلی در ارتباط با سرور پیش امده است لطفا بعدا امتحان کنید'
-                )
-                return redirect(self.request.META.get("HTTP_REFERER", "/"))
-
-            if response.status_code == 200:
-                authority = response.json()["data"]["authority"]
-                order = Order.objects.get(pk=self.pk)
-                order.Authority = authority
-                order.save()
-                return redirect(f"{ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE}{authority}")
-
-            else:
-                error_code = response.json()["errors"]["code"]
-                error_message = get_zarinpal_error_code_return_perian_message(
-                    str(error_code)
-                )
-                return render(
-                    request,
-                    "order/payment-failed.html",
-                    {"error": error_message, "order": self.order, "date": now()},
-                )
-
+                    else:
+                        raise ConnectionRefusedError
+                  
+                except Exception as e:
+                    error_code = response.json()["result"]
+                    error_message = get_zipal_error_code_return_perian_message(
+                        str(error_code)
+                    )
+                    return render(
+                        request,
+                        "order/payment-failed.html",
+                        {"error": error_message, "order": self.order, "date": now()},
+                    )
+                
         else:
             messages.warning(request, "لطفا نحوه ارسال  را انتخاب کنید")
             return redirect("orders:payment-conform", pk=pk)
@@ -1083,6 +1189,100 @@ class VerifyPayment(LoginRequiredMixin, View):
         else:
             error_code = response.json()["errors"]["code"]
             error_message = get_zarinpal_error_code_return_perian_message(
+                str(error_code)
+            )
+            self.order.Authority = None
+            self.order.save()
+            return render(
+                request,
+                "order/payment-failed.html",
+                {"error": error_message, "date": now(), "order": self.order},
+            )
+        
+
+@method_decorator(never_cache, name='dispatch')
+class VerifyPaymentZipal(LoginRequiredMixin, View):
+
+    def dispatch(self, request, *args, **kwargs):
+        self.pk = kwargs.get("pk")
+        self.authority = request.GET.get("trackId")
+        self.status = request.GET.get("status")
+        self.order = get_object_or_404(
+            Order,
+            pk=self.pk,
+            Authority=self.authority,
+            is_paid=False,
+            is_active=True,
+            canceled=False,
+        )
+        self.result = self.order.get_payment_price()
+
+        self.site = SiteSetting.objects.first()
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+
+        data = {
+            "merchant": ZIPAL_MERCHANT_CODE,
+            "trackId": self.authority,
+        }
+
+        headers = {"content-type": "application/json", "content-length": str(len(data))}
+
+        response = requests.post(
+            ZIPAL_PAYMENT_VERIFY, data=json.dumps(data), timeout=20, headers=headers
+        )
+
+        if response.status_code == 200 and response.json()['result'] :
+            response = response.json()
+
+            try:
+                card_pan = response["cardNumber"] 
+            except:
+                card_pan = 00 
+                
+            payment_id = response["refNumber"] 
+            fee = response["result"] 
+
+            order = Order.objects.get(pk=self.pk, Authority=self.authority)
+
+            order.cart_hash = card_pan
+            order.cart = card_pan
+            order.payment_id = payment_id if payment_id is not None else 00
+            order.ZarinPal_fee = fee
+            order.is_paid = True
+            order.sending = True
+            order.second_date = now()
+            order.save()
+
+            obj = StoreSoldOrders.objects.get_or_create(
+                order=order, price=order.total_price, store=order.store
+            )
+            if not obj[1]:
+                obj.price = int(obj.price) + int(self.result)
+                obj.save()
+
+            if self.site.send_message_successful_payment:
+                send_message.delay(
+                    str(order.user.PhoneNumber).replace(" ", ""),
+                    'orderNotify',
+                    str(order.user.PhoneNumber).replace(" ", ""),
+
+                )
+
+            messages.success(request, "از خرید شما متشکریم")
+
+            return render(
+                request,
+                "order/successful-payment.html",
+                {
+                    "order": order,
+                },
+            )
+        else:
+            error_code = response.json()["result"]
+            error_message = get_zipal_error_code_return_perian_message(
                 str(error_code)
             )
             self.order.Authority = None

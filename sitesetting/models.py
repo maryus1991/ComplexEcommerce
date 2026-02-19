@@ -83,6 +83,12 @@ class SiteSetting(models.Model):
         default=False,verbose_name="اجازه به فعال سازی حساب با ایمیل"
     )
 
+    active_guarantee = models.BooleanField(
+        default=True, verbose_name="فعال کردن قسمت گارانتی سایت "
+    )
+    description_for_guarantee_page = RichTextUploadingField(
+        default=" توضیحات قسمت گارانتی سایت", verbose_name="توضیحات برای صفحه گارانتی"
+    )
 
     # main page setting
     active_slider_in_main_page = models.BooleanField(
@@ -142,7 +148,15 @@ class SiteSetting(models.Model):
 
     # payment setting
     active_zarinpal_payment = models.BooleanField(
-        default=True, verbose_name="فعال کردن درگاه پرداخت زرین پال"
+        default=True, verbose_name="فعال کردن صفحه پرداخت"
+    )
+    # zarinpal payment setting
+    active_zarinpal = models.BooleanField(
+        default=True, verbose_name="فعال کردن درگاه زرین پال"
+    )
+    # zipal payment setting
+    active_zipal_payment = models.BooleanField(
+        default=True, verbose_name="فعال کردن درگاه زیپال"
     )
 
     # send message

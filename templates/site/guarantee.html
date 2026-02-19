@@ -1,0 +1,142 @@
+{% extends 'Base/Base.html' %}
+
+{% load jalali_tags %}
+{% load compress %}
+
+{% block title %}
+    استعلام گارانتی
+{% endblock %}
+
+ 
+
+
+{% block breadcrumb %}
+    <li class="flex items-center gap-x-2">
+        <p> گارانتی</p>
+ 
+    </li>
+ 
+{% endblock %}
+
+{% block content %}
+
+    <!-- بخش اصلی: توضیحات و فرم -->
+    <section class="flex flex-col lg:flex-row items-start gap-6">
+        <!-- مقاله/توضیحات -->
+        <div class="w-full lg:w-3/4 bg-white dark:bg-zinc-700 rounded-xl shadow-md p-5">
+            <div class="flex flex-col gap-y-4">
+                <!-- هدر با آیکون -->
+                <div class="flex items-center gap-x-3 border-b border-gray-200 dark:border-zinc-600 pb-4">
+                    <i class="fas fa-shield-alt text-2xl text-blue-600 dark:text-blue-400"></i>
+                    <h2 class="font-bold text-xl lg:text-2xl text-gray-800 dark:text-white">استعلام گارانتی محصول</h2>
+                </div>
+                <!-- توضیحات متغیر -->
+                <div class="prose prose-lg max-w-none text-gray-600 dark:text-gray-300 leading-relaxed">
+                    {{ site.description_for_guarantee_page|safe }}
+                </div>
+                <!-- فرم استعلام -->
+                <form method="post" class="mt-6 space-y-5">
+                    {% csrf_token %} <!-- در صورت نیاز، در کد اصلی نبود ولی بهتر است اضافه شود -->
+                    <div class="flex flex-col sm:flex-row gap-4 items-center">
+                        <div class="flex-1">
+                            <label for="serial-input" class=" text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                                شماره سریال محصول <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.seria_number }} <!-- ورودی اصلی با کلاس‌های پیش‌فرض -->
+                            <!-- اگر بخواهیم دستی کلاس بدیم: -->
+                            <!-- <input type="text" name="seria_number" id="serial-input" class="w-full border border-gray-300 dark:border-zinc-600 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-zinc-800 dark:text-white transition" placeholder="مثال: SN-12345-ABCD"> -->
+                        </div>
+                        <button type="submit" class=" mt-2 sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-8 rounded-lg transition duration-200 flex items-center justify-center   shadow-md">
+                    
+                            <span>بررسی گارانتی</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- نوار کناری (اختیاری) - می‌توانید اطلاعات اضافه یا بنر قرار دهید -->
+        <div class="w-full lg:w-1/4 bg-white dark:bg-zinc-700 rounded-xl shadow-md  p-5">
+            <div class="flex flex-col gap-y-4">
+                <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                    <i class="fas fa-info-circle text-xl"></i>
+                    <h3 class="font-DanaMedium">راهنما</h3>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                    شماره سریال درج شده روی بدنه محصول یا کارتن گارانتی را وارد کنید. معمولاً با SN شروع می‌شود.
+                </p>
+                <hr class="border-gray-200 dark:border-zinc-600">
+                <div class="flex items-center gap-2 text-green-600 dark:text-green-400">
+                    <i class="fas fa-headset text-xl"></i>
+                    <h3 class="font-DanaMedium">پشتیبانی</h3>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-300">
+                     تلفن: <span dir="ltr">{{ site.phone }} </span>
+                    <br>
+                    ایمیل: {{ site.email }}
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- نمایش نتایج استعلام (در صورت وجود) -->
+    {% if items %}
+    <section class="bg-white dark:bg-zinc-700 rounded-xl shadow-md  p-5">
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-white border-b border-gray-200 dark:border-zinc-600 pb-3 flex items-center gap-2">
+            <i class="fas fa-clipboard-check text-green-600"></i>
+            نتیجه استعلام
+        </h3>
+      
+    
+      
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- کارت محصول -->
+            <div class="bg-gray-50 dark:bg-zinc-800 rounded-xl p-5 flex items-start gap-4">
+                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-300 text-xl">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div onclick="window.location=this.querySelector('a').href">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">نام محصول</p>
+                    <a href="{% url 'product:detail' items.product.pk %}" class="font-medium text-gray-800 dark:text-white text-lg">{{ items.product.name }}</a>
+                </div>
+            </div>
+            <!-- شماره سریال -->
+            <div class="bg-gray-50 dark:bg-zinc-800 rounded-xl p-5 flex items-start gap-4">
+                <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-600 dark:text-purple-300 text-xl">
+                    <i class="fas fa-barcode"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">شماره سریال</p>
+                    <p class="font-medium text-gray-800 dark:text-white text-lg dir-ltr text-left">{{ items.serial_number }}</p>
+                </div>
+            </div>
+            <!-- شرکت گارانتی‌کننده -->
+            <div class="bg-gray-50 dark:bg-zinc-800 rounded-xl p-5 flex items-start gap-4">
+                <div class="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center text-amber-600 dark:text-amber-300 text-xl">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">شرکت گارانتی‌کننده</p>
+                    <p class="font-medium text-gray-800 dark:text-white text-lg">{{ items.name_of_garantee_company }}</p>
+                </div>
+            </div>
+            <!-- مدت اعتبار / ماه باقیمانده -->
+            <div class="bg-gray-50 dark:bg-zinc-800 rounded-xl p-5 flex items-start gap-4">
+                <div class="w-12 h-12 {% if items.months_of_expire > 0 %}bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-300{% else %}bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300{% endif %} rounded-full flex items-center justify-center text-xl">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">اعتبار گارانتی</p>
+                    <p class="font-medium text-gray-800 dark:text-white text-lg">
+                    
+                            <span class="text-green-600 dark:text-green-400">{{ items.months_of_expire }} ماه </span>
+ 
+                    </p>
+                </div>
+            </div>
+        </div>
+ 
+    </section>
+    {% endif %}
+
+{% endblock %}

@@ -99,8 +99,14 @@ class GuaranteeCreateView(UserStoreStaffMixin, CreateView):
             )
             form.instance.product = product
 
-        messages.success(self.request, "آیتم شما با موفقیت ساخته شد")
-        return super().form_valid(form)
+        if  form.instance.product.guarantee.count() == 0 : 
+
+            messages.success(self.request, "ایتم شما با موفقیت ساخته شد")
+            return super().form_valid(form)
+
+        else:
+            messages.error(self.request, "شما نمی توانید بیشتر از یک گارانتی برای هر محصول بسازید")
+            return self.form_invalid(form)
 
     def get_success_url(self):
         pk = self.kwargs.get("pk")
@@ -142,9 +148,18 @@ class GuaranteeUpdateView(UserStoreStaffMixin, UpdateView ):
     
     def form_valid(self, form):
         form.cleaned_data['product'] = get_object_or_404(Product, id=self.get_object().product.id, store=self.request.user.store)
-        form.save()
-        messages.success(self.request, "ایتم شما با موفقیت بروزرسانی شد")
-        return super().form_valid(form)
+
+
+        if  form.instance.product.guarantee.count() == 1 and self.get_object().product == form.instance.product: 
+        
+
+            messages.success(self.request, "ایتم شما با موفقیت بروز رسانی شد")
+            return super().form_valid(form)
+
+        else:
+            messages.error(self.request, "شما نمی توانید بیشتر از یک گارانتی برای هر محصول بسازید")
+            return self.form_invalid(form)
+ 
 
     def form_invalid(self, form):
         messages.error(self.request, form.errors.as_text())

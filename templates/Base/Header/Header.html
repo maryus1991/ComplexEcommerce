@@ -148,12 +148,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <!-- SUBMENU -->
 
             </li>
-            <li class="nav-item {% if url == '/contact-us' %} text-green-500 {% endif %}">
-                <a href="{% url 'site:contact-us' %}">تماس با ما</a>
+            <li class="nav-item {% if url == '/guarantee/' %} text-green-500 {% endif %}">
+                <div class="flex items-center flex-row gap-x-1">
+                    <a href="{% url 'guarantee:serial-number-search' %}">گارانتی</a>
+
+                </div>
+     
+
             </li>
-            <li class="nav-item {% if url == '/about-us' %} text-green-500 {% endif %}">
+                        <li class="relative group {% if url == '/contact-us' or url == '/about-us' %} text-green-500 {% endif %}">
+                <div class="flex items-center flex-row gap-x-1">
+                    <span>راه های ارتباطی</span>
+                    <svg class="w-4 h-4 transition-transform duration-300 group-hover:rotate-180">
+                        <use href="#chevron-down"></use>
+                    </svg>
+                </div>
+                <!-- SUBMENU -->
+                <div
+                        class="absolute bg-white flex flex-col gap-y-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:top-10 transition-all delay-100 dark:bg-zinc-700 top-20 w-52 rounded border-t-2 border-green-500 p-5 text-base shadow-md child-hover:text-green-500 child:transition-all">
                 <a href="{% url 'site:about-us' %}">درباره ما</a>
-            </li>
+                                <a href="{% url 'site:contact-us' %}">تماس با ما</a>
+
+
+                </div>
+ 
             <li class="nav-item {% if url == '/apps/' %} text-green-500 {% endif %}">
                 <a href="{% url 'site:apps-list' %}">برنامه های کاربردی</a>
             </li>

@@ -52,7 +52,6 @@ class GuaranteeModelForm(forms.ModelForm):
             'is_active':forms.CheckboxInput(),
         }
 
-
 class ActiveGuaranteeModelForm(forms.ModelForm):
     guarantee = forms.ModelChoiceField(
         queryset=ProductGuarantee.objects.filter(is_active=True).all(),
@@ -109,8 +108,6 @@ class ActiveGuaranteeModelForm(forms.ModelForm):
         widgets = {
             'is_active':forms.CheckboxInput(),
         }
-        
-    
 
 class StorePermissions(forms.ModelForm):
     class Meta:
@@ -1363,6 +1360,11 @@ class SiteSettingModelForm(forms.ModelForm):
     long_description = forms.CharField(
         widget=CKEditorUploadingWidget(attrs={'id': 'id_description'})
     )
+
+    description_for_guarantee_page = forms.CharField(
+        widget=CKEditorUploadingWidget(attrs={'id': 'id_descriptionـguarantee'})
+    )
+
     phone = PhoneNumberField(
         widget=forms.TextInput(
             attrs={
@@ -1522,6 +1524,9 @@ class SiteSettingModelForm(forms.ModelForm):
             'product_sort_by_existing_count': forms.CheckboxInput(),
             'active_freight_delivery': forms.CheckboxInput(),
             'zero_the_count_of_all_product': forms.CheckboxInput(),
+            'active_guarantee': forms.CheckboxInput(),
+            'active_zarinpal': forms.CheckboxInput(),
+            'active_zipal_payment': forms.CheckboxInput(),
         }
 
 class BannersModelForm(forms.ModelForm):
@@ -1769,4 +1774,3 @@ class AddBlogCategoryModelForm(forms.ModelForm):
             ),
             "is_active": forms.CheckboxInput(),
         }
-

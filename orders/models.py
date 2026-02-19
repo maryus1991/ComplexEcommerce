@@ -37,12 +37,18 @@ class DeliveryPrices(models.Model):
         return f'{self.origin_city_id}-{self.destination_city_id}-{self.price}-{"tipax" if self.is_tipax else "post"} '
 
 
+class TypeOfPayment(models.TextChoices):
+    ZARIN_PALE = 'ZAR', 'زرین پال' 
+    ZIBAL = 'ZIP' , 'زیپال'
+
 class Order(models.Model):
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="orders")
     address = models.ForeignKey(
         UserAddress, null=True, on_delete=models.CASCADE, related_name="orders"
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
+
+    type_of_payment = models.CharField(max_length=255, choices=TypeOfPayment, null=True, blank=True, verbose_name='درگاه پرداخت')
 
     vip_post = models.BooleanField(default=False)
     tipax_post_delivery = models.BooleanField(default=False)
