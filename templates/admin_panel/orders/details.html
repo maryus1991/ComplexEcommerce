@@ -13,10 +13,10 @@
     <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
     <link rel="stylesheet" href="/static/dist/css/rtl.css">
     <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
+ 
+ 
     <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
+ 
     <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
     <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
     <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
@@ -117,9 +117,11 @@
                         <td class="col-md-3 col-sm-6 col-xs-12"><strong>وزن کل:</strong> {{ order.total_weight }}</td>
                         <td class="col-md-3 col-sm-6 col-xs-12"><strong>ارتفاع کل:</strong> {{ order.total_length }}</td>
                         <td class="col-md-3 col-sm-6 col-xs-12"><strong>طول کل:</strong> {{ order.total_width }}</td>
-                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>عرض کل:</strong> {{ order.total_height }}</td>
+
+                        <td class="col-md-3 col-sm-6 col-xs-12 text-sm"><span>هزینه های جانبی (ارزش افزوده , مالیات , ...) : {{ order.get_tax_and_other_prices|tdc }} </span> </td>
                     </tr>
                     <tr>
+                        <td class="col-md-3 col-sm-6 col-xs-12"><strong>عرض کل:</strong> {{ order.total_height }}</td>
                         <td class="col-md-3 col-sm-6 col-xs-12"><strong>فاکتور:</strong>
                             <span class="label label-default">
                                 {% if order.official_invoice %} رسمی {% else %} غیررسمی {% endif %}
@@ -132,7 +134,7 @@
                                 <span class="label label-danger">تحویل نشده</span>
                             {% endif %}
                         </td>
-                        <td class="col-md-6 col-sm-12 col-xs-12" colspan="2">
+                        <td class="col-md-6 col-sm-12 col-xs-12" colspan="1">
                             {% if order.official_invoice and order.official_invoice_pdf is not None and order.official_invoice_conformed_given_to_user %}
                                 <a href="{{ order.official_invoice_pdf.url }}" class="btn btn-success btn-block">
                                     مشاهده فاکتور رسمی

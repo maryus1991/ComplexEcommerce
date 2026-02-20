@@ -616,19 +616,20 @@ class ChangeStatusToDeliveredToUser(UserStoreStaffMixin, RedirectView):
         )
 
         order.delivered_to_user = True
+        order.sending = True
         send_id = self.request.GET.get("sending_id")
-        if True:
-            order.sending_id = send_id if send_id else 'تحویل شده به کاربر'
-            order.save()
-            messages.success(self.request, "تغییرات ثبت شد")
+     
+        order.sending_id = send_id if send_id else 'تحویل شده به کاربر'
+        order.save()
+        messages.success(self.request, "تغییرات ثبت شد")
 
-            if SiteSetting.objects.first().send_message_when_set_sending_id:
-                send_message.delay(
-                    str(order.user.PhoneNumber).replace(" ", ""),
-                    "deliveryID",
-                    order.sending_id
+        if SiteSetting.objects.first().send_message_when_set_sending_id:
+            send_message.delay(
+                str(order.user.PhoneNumber).replace(" ", ""),
+                "deliveryID",
+                order.sending_id
 
-                )
+            )
 
 
         return self.request.META.get("HTTP_REFERER")

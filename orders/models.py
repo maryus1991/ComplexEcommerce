@@ -316,13 +316,17 @@ class Order(models.Model):
             item.product.count = item.product.count - item.count
             item.product.save()
 
+    def get_tax_and_other_prices(self):
+        return int(self.get_payment_price() - self.delivery_price - self.calculate_total_price())
+
+
     def get_payment_price(self):
         """
 
         for calculate the payment price
 
         """
-        if not self.is_paid and not self.canceled:
+        if not self.is_paid and not self.canceled   :
             site = SiteSetting.objects.first()
 
             total_amount_of_items = self.get_total_products_with_no_discount_price()

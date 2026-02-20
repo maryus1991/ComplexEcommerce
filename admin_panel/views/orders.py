@@ -24,6 +24,7 @@ class ChangeStatusToDeliveredToUser(AdminUserMixin, RedirectView):
             Order, pk=self.kwargs["pk"]
         )
 
+        order.sending = True
         order.delivered_to_user = True
         send_id = self.request.GET.get("sending_id")
 

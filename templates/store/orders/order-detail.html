@@ -14,11 +14,8 @@
     <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
     <link rel="stylesheet" href="/static/dist/css/rtl.css">
     <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
-    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
-    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+      <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+     <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
     <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
     <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
     <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
@@ -119,7 +116,21 @@
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading" style="background-color: #5cb85c; color: white;">
-                    <h4 class="panel-title"><i class="fa fa-money"></i> اطلاعات مالی</h4>
+                    <h4 class="panel-title"><i class="fa fa-money"></i> 
+                        
+                        
+                          اطلاعات مالی :
+
+                                                    <span class="label 
+                                    {% if order.is_paid %}label-success
+                                    {% elif order.canceled %}label-danger
+                                    {% else %}label-primary{% endif %}">
+                                    {% if order.is_paid %}پرداخت شده
+                                    {% elif order.canceled %}کنسل شده
+                                    {% else %}در انتظار
+                                    {% endif %}
+                                </span>
+                    </h4>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -130,17 +141,9 @@
                         </div>
                         <div class="col-md-6">
                             <p><strong>هزینه ارسال:</strong> {{ order.delivery_price|tdc }}</p>
+                            <p><strong>هزینه های جانبی (ارزش افزوده , مالیات , ...) : {{ order.get_tax_and_other_prices|tdc }} </strong>
                             <p><strong>قیمت نهایی:</strong> <span class="text-success" style="font-weight: bold;">{{ order.get_payment_price|tdc }}</span></p>
-                            <p><strong>وضعیت پرداخت:</strong>
-                                <span class="label 
-                                    {% if order.is_paid %}label-success
-                                    {% elif order.canceled %}label-danger
-                                    {% else %}label-primary{% endif %}">
-                                    {% if order.is_paid %}پرداخت شده
-                                    {% elif order.canceled %}کنسل شده
-                                    {% else %}در انتظار
-                                    {% endif %}
-                                </span>
+
                             </p>
                         </div>
                     </div>
@@ -267,7 +270,7 @@
                             <td class="text-right text-success" style="font-weight: bold;">{{ detail.get_item_price|tdc }}</td>
                         </tr>
                         {% endfor %}
-                    </tbody>
+                    </tbody>    
                 </table>
             </div>
         </div>
