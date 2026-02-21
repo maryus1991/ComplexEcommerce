@@ -17,7 +17,7 @@ def create_active_guarantee(sender, instance, created, **kwargs):
             with transaction.atomic():
                 
                 guarantee = order.product.guarantee.first()
-                if guarantee.is_active:
+                if guarantee and  guarantee.is_active :
                     ActiveProductGuarantee.objects.create(
                         guarantee=guarantee,
                         order=order,
