@@ -620,6 +620,15 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
                     مقالات
                 </a>
             </li>
+            <li class="{% if url == '/guarantee/' %} text-green-500 {% endif %}">
+                <a href="{% url 'guarantee:serial-number-search' %}" class="flex items-center gap-x-2">
+                    <svg class="w-5 h-5">
+                        <use href="#check"></use>
+                    </svg>
+                    گارانتی
+                </a>
+            </li>
+ 
             <li class="{% if url == '/contact-us' %} text-green-500 {% endif %}">
                 <a href="{% url 'site:contact-us' %}" class="flex items-center gap-x-2">
                     <svg class="w-5 h-5">

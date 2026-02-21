@@ -1234,7 +1234,7 @@ class VerifyPaymentZipal(LoginRequiredMixin, View):
             ZIPAL_PAYMENT_VERIFY, data=json.dumps(data), timeout=20, headers=headers
         )
 
-        if response.status_code == 200 and response.json()['result'] :
+        if response.status_code == 200 and response.json()['result'] == 100  :
             response = response.json()
 
             try:
