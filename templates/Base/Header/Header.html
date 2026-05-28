@@ -178,18 +178,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <li class="nav-item {% if url == '/apps/' %} text-green-500 {% endif %}">
                 <a href="{% url 'site:apps-list' %}">برنامه های کاربردی</a>
             </li>
-            {% if request.user.is_authenticated and request.user.is_verified %}
-            {% if request.user.is_staff and request.user.store is not None and request.user.store.is_active %}
-            <li class="nav-item ">
-                <a href="{% url 'store:home' %}">مدیریت فروشگاه</a>
-            </li>
-            {% endif %}
-            {% endif %}
-            {% if user.is_superuser and user.is_verified and user.is_active %}
-            <li class="nav-item ">
-                <a href="{% url 'admin_panel:main' %}">مدیریت سایت</a>
-            </li>
-            {% endif %}
+ 
         </ul>
         {% endwith %}
 

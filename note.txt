@@ -1,2 +1,1 @@
- add messaging for site 
-fix pay with zipal
+ 

@@ -38,8 +38,8 @@ class GuaranteeCompanyModelForm(forms.ModelForm):
 
 class GuaranteeModelForm(forms.ModelForm):
 
-    product = forms.ModelChoiceField(
-        queryset=Product.objects.all(),
+    company = forms.ModelChoiceField(
+        queryset=GuaranteeCompany.objects.all(),
         required=True,
         widget=forms.Select(
             attrs={
@@ -50,15 +50,15 @@ class GuaranteeModelForm(forms.ModelForm):
                 "dir": "rtl",
             }
         ),
-        label='محصول'
+        label='شرکت'
     )
     class Meta:
         model = ProductGuarantee
         fields = '__all__'
         widgets = {
             'serial_number':forms.TextInput(attrs={'class':'form-control'}),
+            'name':forms.TextInput(attrs={'class':'form-control'}),
             'months_of_expire':forms.NumberInput(attrs={'class':'form-control'}),
-            'name_of_garantee_company':forms.TextInput(attrs={'class':'form-control'}),
             'is_active':forms.CheckboxInput(),
         }
 

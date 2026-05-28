@@ -145,11 +145,10 @@
                 <thead>
                 <tr class="bg-primary">
                     <th class="text-center" width="5%">#</th>
-                    <th width="20%">شماره سریال</th>
+                    <th width="10%">نام</th>
                     <th width="30%">نام شرکت گارانتی</th>
-                    <th width="10%">محصول</th>
+                    <th width="20%">شماره سریال</th>
                     <th width="20%">تعداد ماه های فعال</th>
-                    <th colspan="4" class="text-center" width="3%">عملیات</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -157,7 +156,7 @@
                     <tr>
                         <td class="text-center">{{ item.id }}</td>
                         <td>
-                            <strong>{{ item.serial_number }}</strong>
+                            <strong>{{ item.name }}</strong>
                             {% if not item.is_active %}
                                 <span class="label label-danger pull-left">غیر فعال</span>
                         {% else  %}
@@ -166,10 +165,10 @@
                             {% endif %}
                         </td>
  
-                        <td class="text-center"><span class="badge label-primary">{{ item.name_of_garantee_company }}</span></td>
+                        <td class="text-center"><span class="badge label-primary">{{ item.company.name }}</span></td>
 
                         <td class="text-center"><strong
-                                class="label label-primary"> {{ item.product.name }} </strong></td>
+                                class="label label-primary"> {{ item.serial_number }} </strong></td>
                         <td class="text-center">
                             
                                 <span class="label label-primary" style="margin-right: 10px; margin-left: 10px; ">
@@ -180,35 +179,6 @@
 
 
  
-                        <td class="text-center">
-                            <a href="{% url 'store:product-guarantee-active-list' item.id %}"
-                               class="btn btn-sm btn-success"
-                               data-toggle="tooltip" title="مشاهده گارانتی های فعال شده">
-                                {{ item.actives_guarantee.count }}
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'store:product-guarantee-update' item.id %}"
-                               class="btn btn-sm btn-info"
-                               data-toggle="tooltip" title="ویرایش">
-                                <i class="fa fa-edit"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'store:product-guarantee-active-deactivate' item.id %}"
-                               class="btn btn-sm btn-warning"
-                               data-toggle="tooltip"
-                               title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
-                                <i class="fa fa-power-off"></i>
-                            </a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url 'store:product-guarantee-delete' item.id %}"
-                               class="btn btn-sm btn-danger"
-                               data-toggle="tooltip" title="حذف">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

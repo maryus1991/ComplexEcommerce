@@ -119,11 +119,9 @@
     <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
     <link rel="stylesheet" href="/static/dist/css/rtl.css">
     <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
+ 
     <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
-    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+     <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
     <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
     <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
     <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
@@ -137,21 +135,11 @@
     <div class="panel box box-primary panel-default" style="margin-top: 20px;">
         <div class="panel-heading clearfix">
             <h3 class="panel-title pull-right" style="padding-top: 7px;">لیست شرکت های گارانتی </h3>
-            <a href="{% url 'admin_panel:discount-create' %}" class="pull-left btn btn-success">
+            <a href="{% url 'admin_panel:company-guarantee-create' %}" class="pull-left btn btn-success">
                 ساخت شرکت جدید</a>
-            <form method="get" class="form-inline pull-left">
-                <!-- Search Box -->
-                <div class="input-group input-group-sm" style="width: 180px; margin-left: 5px;">
-                    <input type="text" name="search" class="form-control"
-                           placeholder="جستجو..." value="{{ request.GET.search }}">
-                    <div class="input-group-btn">
-                        <button type="submit" class="btn btn-default">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </div>
-                </div>
-        
-        </form>
+            <a href="{% url 'admin_panel:guarantee-create' %}" class="pull-left btn btn-success">
+                افزودن گارانتی </a>
+ 
     </div>
 
     <div class="table-responsive">
@@ -160,11 +148,8 @@
             <tr class="bg-primary">
                 <th class="text-center" width="5%">#</th>
                 <th class="text-center" width="15%">نام</th>
-                <th class="text-center" width="10%">تعداد</th>
-                <th class="text-center" width="10%">تاریخ انقضا</th>
-                <th class="text-center" width="5%">نوع تخفیف</th>
-                <th class="text-center" width="5%">مقدار تخفیف</th>
-                <th class="text-center" width="5%">فعال بودن</th>
+                <th class="text-center" width="10%">فعال / غیر فعال</th>
+ 
                 <th colspan="3" class="text-center" width="20%"></th>
             </tr>
             </thead>
@@ -176,30 +161,6 @@
 
                     <td class="text-center">
                         <strong>{{ item.name }}</strong>
-                    </td>
-                    <td class="text-center">
-                        <strong class="label label-info">{{ item.count }}</strong>
-                    </td>
-                    <td class="text-center">
-                        <strong>{{ item.end_date_discount|to_jalali:'%H:%M - %Y/%m/%d' }}</strong>
-                    </td>
-                    <td class="text-center">
-                        <strong>
-                            {% if item.percentage_discount %}
-                                <strong class="label label-warning">درصدی</strong>
-                            {% else %}
-                                <strong class="label label-warning">مقداری</strong>
-                            {% endif %}
-                        </strong>
-                    </td>
-                    <td class="text-center">
-                        <strong>
-                            {% if item.percentage_discount %}
-                                <strong class="label label-warning"> {{ item.percent }} درصد </strong>
-                            {% else %}
-                                <strong class="label label-warning"> {{ item.price|tdc }} تومان </strong>
-                            {% endif %}
-                        </strong>
                     </td>
 
                     <td class="text-center">
@@ -216,22 +177,15 @@
 
 
                     <td class="text-center">
-                        <a href="{% url 'admin_panel:discount-update' item.id %}" class="btn btn-sm btn-info"
+                        <a href="{% url 'admin_panel:company-guarantee-update' item.id %}" class="btn btn-sm btn-info"
                            data-toggle="tooltip" title="ویرایش">
                             <i class="fa fa-edit"></i>
                         </a>
                     </td>
-                    <td class="text-center">
-                        <a href="{% url 'admin_panel:discount-active-deactivate' item.id %}"
-                           class="btn btn-sm btn-warning"
-                           data-toggle="tooltip"
-                           title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
-                            <i class="fa fa-power-off"></i>
-                        </a>
-                    </td>
+ 
 
                     <td class="text-center">
-                        <a href="{% url 'admin_panel:discount-delete' item.id %}" class="btn btn-sm btn-danger"
+                        <a href="{% url 'admin_panel:company-guarantee-delete' item.id %}" class="btn btn-sm btn-danger"
                            data-toggle="tooltip" title="حذف">
                             <i class="fa fa-trash"></i>
                         </a>

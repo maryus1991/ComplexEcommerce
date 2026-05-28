@@ -1,15 +1,10 @@
 from django.db import models
-
 from django.contrib.auth import get_user_model
-
 from dashboard.models import UserAddress
-
 from stores.models import Store
 from product.models import Product
-
 from utils.tipax_price_calc import calculate_price as calculate_price_tipax
 from utils.post_price_calc import calculate_post_price_postex
-
 from sitesetting.models import SiteSetting
 from django.utils.crypto import get_random_string
 from django.utils.timezone import now, timedelta

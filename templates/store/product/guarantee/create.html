@@ -35,24 +35,15 @@
                 اضافه کردن گارانتی
             {% endif %}
         </h3>
-        {% if item %}
-            <div class="pull-left">
-                <a href="{% url 'store:product-guarantee-active-deactivate' item.id %}"
-                   class="btn btn-sm btn-warning"
-                   data-toggle="tooltip"
-                   title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
-                    <i class="fa fa-power-off"></i>
-                </a>
-                <a href="{% url 'store:product-guarantee-delete' item.id %}"
-                   class="btn btn-sm btn-danger"
-                   data-toggle="tooltip" title="حذف">
-                    <i class="fa fa-trash"></i>
-                </a>
-            </div>
-        {% endif %}
+ 
     </div>
     <!-- /.box-header -->
     <!-- form start -->
+ 
+ 
+ 
+ 
+
     <form method="POST"
           action="{% if item %}{% url 'store:product-guarantee-update' item.id %}{% else %}{% url 'store:product-guarantee-create' %}{% endif %}">
         {% csrf_token %}
@@ -64,11 +55,20 @@
                 </div>
             {% endif %}
 
+                <div class="form-group col-md-6">
+                <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <div class="text-danger">{{ form.name.errors }}</div>
+                {% endif %}
+            </div>
+
+
             <div class="form-group col-md-6">
-                <label for="{{ form.product.id_for_label }}">{{ form.product.label }}</label>
-                {{ form.product }}
-                {% if form.product.errors %}
-                    <div class="text-danger">{{ form.product.errors }}</div>
+                <label for="{{ form.company.id_for_label }}">{{ form.company.label }}</label>
+                {{ form.company }}
+                {% if form.company.errors %}
+                    <div class="text-danger">{{ form.company.errors }}</div>
                 {% endif %}
             </div>
 
@@ -88,13 +88,6 @@
                 {% endif %}
             </div>
 
-            <div class="form-group col-md-6">
-                <label for="{{ form.name_of_garantee_company.id_for_label }}">{{ form.name_of_garantee_company.label }}</label>
-                {{ form.name_of_garantee_company }}
-                {% if form.name_of_garantee_company.errors %}
-                    <div class="text-danger">{{ form.name_of_garantee_company.errors }}</div>
-                {% endif %}
-            </div>
 
             <div class="checkbox col-md-6">
                 <label>

@@ -1,13 +1,12 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from ckeditor_uploader.fields import RichTextUploadingField
-from ckeditor.fields import RichTextField
 import secrets
 import os
 from django.shortcuts import reverse
 from stores.models import Store
-from django.utils.timezone import now
 from easy_thumbnails.fields import ThumbnailerImageField
+from guarantee.models import ProductGuarantee
 
 def photo_path_upload_to(instance, filename):
     basename = os.path.basename(filename)
@@ -59,12 +58,8 @@ class Product(models.Model):
     have_discount = models.BooleanField(default=False)
     discount = models.IntegerField(default=0)
     picture = ThumbnailerImageField(upload_to=photo_path_upload_to, null=True, blank=True)
-    brand = models.ForeignKey(
-        ProductBrand, on_delete=models.SET_NULL, null=True, related_name="products"
-    )
-    category = models.ForeignKey(
-        ProductCategory, on_delete=models.SET_NULL, null=True, related_name="products"
-    )
+    brand = models.ForeignKey(ProductBrand, on_delete=models.SET_NULL, null=True, related_name="products")
+    category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True, related_name="products")
     description = RichTextUploadingField(null=True, blank=True)
     count = models.PositiveBigIntegerField(default=0)
     weight = models.PositiveBigIntegerField(default=0)
@@ -80,6 +75,9 @@ class Product(models.Model):
     sort_number_most_sell = models.PositiveSmallIntegerField(default=0)
     sort_number_discount = models.PositiveSmallIntegerField(default=0)
     group_name = models.CharField(max_length=1000, null=True, blank=True)
+
+    guarantee = models.ForeignKey(ProductGuarantee, on_delete=models.SET_NULL, null=True, blank=True, related_name="products")
+
 
     def __str__(self):
         return f"{self.id}-|-{self.name}"

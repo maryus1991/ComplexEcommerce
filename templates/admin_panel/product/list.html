@@ -603,14 +603,7 @@
                                     <i class="fa fa-key"></i>
                                 </a>
                             </td>
-                            <td class="text-center">
-                                <a href="{% url 'admin_panel:product-guarantee-list' item.id %}"
-                                   class="btn btn-sm btn-success"
-                                   data-toggle="tooltip"
-                                   title="لیست گارانتی های این محصول">
-                                    {{ item.guarantee.count }}
-                                </a>
-                            </td>
+ 
                             <td class="text-center">
                                 <a href="{% url 'admin_panel:product-delete' item.id %}" class="btn btn-sm btn-danger"
                                    data-toggle="tooltip" title="حذف">

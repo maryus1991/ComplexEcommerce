@@ -22,8 +22,8 @@ class GuaranteeView(View):
 
     def get(self, request, *args, **kwargs):
         context = {
-            'form':GuratanteeSerialNumberSearch(request.POST or request.GET or None)
-            ,'site': self.site
+            'form':GuratanteeSerialNumberSearch(request.POST or request.GET or None),
+            'site': self.site
         }
         return render(request, 'site/guarantee.html', context)
 

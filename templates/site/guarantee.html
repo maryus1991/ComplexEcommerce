@@ -91,16 +91,17 @@
       
         <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- کارت محصول -->
+ 
+            <!-- شماره سریال -->
             <div class="bg-gray-50 dark:bg-zinc-800 rounded-xl p-5 flex items-start gap-4">
-                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-300 text-xl">
-                    <i class="fas fa-box"></i>
+                <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-600 dark:text-purple-300 text-xl">
+                    <i class="fas fa-barcode"></i>
                 </div>
-                <div onclick="window.location=this.querySelector('a').href">
-                    <p class="text-sm text-gray-500 dark:text-gray-400">نام محصول</p>
-                    <a href="{% url 'product:detail' items.product.pk %}" class="font-medium text-gray-800 dark:text-white text-lg">{{ items.product.name }}</a>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">نام</p>
+                    <p class="font-medium text-gray-800 dark:text-white text-lg dir-ltr text-left">{{ items.name }}</p>
                 </div>
             </div>
-            <!-- شماره سریال -->
             <div class="bg-gray-50 dark:bg-zinc-800 rounded-xl p-5 flex items-start gap-4">
                 <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-600 dark:text-purple-300 text-xl">
                     <i class="fas fa-barcode"></i>
@@ -117,7 +118,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 dark:text-gray-400">شرکت گارانتی‌کننده</p>
-                    <p class="font-medium text-gray-800 dark:text-white text-lg">{{ items.name_of_garantee_company }}</p>
+                    <p class="font-medium text-gray-800 dark:text-white text-lg">{{ items.company.name }}</p>
                 </div>
             </div>
             <!-- مدت اعتبار / ماه باقیمانده -->

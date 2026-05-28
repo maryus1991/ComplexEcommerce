@@ -389,7 +389,10 @@ desired effect
                                     <li class="link-activator"><a href="{% url 'store:product-guarantee-create' %}"><i
                                             class="fa fa-link"></i>
                                         <span>اضافه کردن گارانتی</span></a></li>
-                                {% endif %}
+                                        {% endif %}
+                                        <li class="link-activator"><a href="{% url 'store:product-guarantee-list' %}"><i
+                                                class="fa fa-link"></i>
+                                            <span> لیست گارانتی</span></a></li>
                                 <li class="link-activator"><a href="{% url 'store:list-brands' %}"><i
                                         class="fa fa-link"></i>
                                     <span>لیست برندها</span></a></li>
@@ -572,22 +575,48 @@ desired effect
 
                     <li class="link-activator" style="width: 100%;">
                         <div class="btn-group" style="width: 100%">
-                            <a title="دانلود بکاپ مدیا" href="{% url 'admin_panel:backup-media' %}"
-                               class="btn btn-success"
-                               style="width: 33%;  color: #FFFFFF">
-                                <i class="fa fa-download"></i> <span></span>
-                            </a>
+ 
                             <a title="پاک سازی فایل های موقت" href="{% url 'admin_panel:backup-clean-temp_file' %}"
                                class="btn btn-warning"
-                               style="width: 33%; color: #FFFFFF">
+                               style="width: 50%; color: #FFFFFF">
                                 <i class="fa fa-trash"></i> <span></span>
                             </a>
                             <a title="دانلود بکاپ" href="{% url 'admin_panel:backup' %}" class="btn btn-danger"
-                               style="width: 33%; color: #FFFFFF">
+                               style="width: 50%; color: #FFFFFF">
                                 <i class="fa fa-download"></i> <span></span>
                             </a>
 
                         </div>
+                    </li>
+                    <li class="treeview">
+                        <a><i class="fa fa-link"></i>
+                            <span>گارانتی</span>
+                            <span class="pull-left-container">
+                             <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:guarantee-list' %}"><i class="fa fa-link"></i>
+                                    <span>لیست گارانتی ها</span>
+                                </a>
+                            </li>
+
+                            <li class="link-activator"><a href="{% url 'admin_panel:guarantee-create' %}"><i
+                                    class="fa fa-link"></i>
+                                <span>اضافه کردن گارانتی</span></a></li>
+                            <li class="link-activator">
+                                <a href="{% url 'admin_panel:company-guarantee-list' %}"><i class="fa fa-link"></i>
+                                    <span>شرکت های گارانتی</span>
+                                </a>
+                            </li>
+
+                            <li class="link-activator"><a href="{% url 'admin_panel:company-guarantee-create' %}"><i
+                                    class="fa fa-link"></i>
+                                <span>اضافه کردن شرکت گارانتی</span></a></li>
+
+ 
+                        </ul>
                     </li>
                     <li class="treeview">
                         <a><i class="fa fa-link"></i>
@@ -608,9 +637,7 @@ desired effect
                             <li class="link-activator"><a href="{% url 'admin_panel:product-create' %}"><i
                                     class="fa fa-link"></i>
                                 <span>اضافه کردن محصول</span></a></li>
-                            <li class="link-activator"><a href="{% url 'admin_panel:product-guarantee-create' %}"><i
-                                    class="fa fa-link"></i>
-                                <span>اضافه کردن گارانتی</span></a></li>
+ >
 
                             <li class="link-activator">
                                 <a href="{% url 'admin_panel:product-category-list' %}"><i class="fa fa-link"></i>
