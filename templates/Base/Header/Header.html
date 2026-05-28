@@ -148,14 +148,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <!-- SUBMENU -->
 
             </li>
+            
+            {% if site.active_guarantee %}
             <li class="nav-item {% if url == '/guarantee/' %} text-green-500 {% endif %}">
                 <div class="flex items-center flex-row gap-x-1">
                     <a href="{% url 'guarantee:serial-number-search' %}">گارانتی</a>
 
                 </div>
-     
-
             </li>
+            {% endif %}
+
+
                         <li class="relative group {% if url == '/contact-us' or url == '/about-us' %} text-green-500 {% endif %}">
                 <div class="flex items-center flex-row gap-x-1">
                     <span>راه های ارتباطی</span>

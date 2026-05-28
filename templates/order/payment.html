@@ -512,12 +512,37 @@
                     <hr>
 
  <div class=" m-4 p-6 rounded-xl  ">
-                    <span class="flex items-center gap-x-1 text-blue-500 dark:text-blue-400 mb-5">
-                        <svg class="w-5 h-5">
+                    <span class="flex items-center gap-x-1  mb-1">
+                        <svg class="w-5 h-5 text-blue-500 dark:text-blue-400">
                             <use href="#check-badge"></use>
                         </svg>
-                        <p class="font-DanaMedium">درگاه پرداخت :</p>
+                        <p class="font-DanaMedium text-blue-500 dark:text-blue-400">درگاه پرداخت مورد نظر را انتخاب کنید:</p>
+ 
+                    
                     </span>
+                    <span class="flex items-center gap-x-1  text-red-500 dark:text-red-400  mb-2">
+                        {% if not site.active_zarinpal %}
+                        <svg class="w-5 h-5">
+                            <use href="#minus"></use>
+                        </svg>
+                        <p class="font-DanaMedium  ">زرین پال غیر فعال است</p>
+
+                        {% endif %}
+
+                    
+                    </span>
+                    <span class="flex items-center gap-x-1  text-red-500 dark:text-red-400  mb-2">
+                        {% if not site.active_zipal_payment %}
+                        <svg class="w-5 h-5">
+                            <use href="#minus"></use>
+                        </svg>
+                        <p class="font-DanaMedium  ">زیپال غیر فعال است</p>
+
+                        {% endif %}
+                    
+                    </span>
+                    
+                
   <div class="flex items-center justify-center gap-10 sm:gap-12 md:gap-16 lg:gap-20">
     
     <!-- لوگوی اول -->
@@ -559,7 +584,9 @@
     </div>
 
     <!-- لوگوی دوم -->
+     
     <div class="w-32  h-12 flex-shrink-0  {% if order.type_of_payment == 'ZIP' %}  bg-green-400 {% else %} bg-white {% endif %} p-2 m-2 rounded-lg">
+     
         <a {% if site.active_zipal_payment %} href='{% url "orders:type-of-payment" pk=order.id type="ZIP" %}' {% endif %}>
 
       <svg 
@@ -598,7 +625,9 @@
   </g>
 
       </svg>
+      
     </a>
+    
     </div>
 
   </div>

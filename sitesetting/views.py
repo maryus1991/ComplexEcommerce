@@ -428,7 +428,9 @@ def header_render_partial(request, title=None, microdata=None):
     site = SiteSetting.objects.filter(is_active=True).first()
     title = title if title else site.title
     return render(request, "Base/Header/Header.html", {
-        "orders": orders, "site": site, 'title': title,
+        "orders": orders, 
+        "site": site, 
+        'title': title,
         "RECAPTCHA_PUBLIC_KEY": settings.RECAPTCHA_PUBLIC_KEY,
         "microdata": microdata,
     })

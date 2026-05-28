@@ -3,7 +3,18 @@ from product.models import Product
 from orders.models import OrderDetail
 
 
+class GuaranteeCompany(models.Model):
+    name = models.CharField(max_length=200)
+    is_active = models.BooleanField(default=True, verbose_name='فعال بودن')
+
+
+    def __str__(self):
+        return self.name
+    
+
+
 class ProductGuarantee(models.Model):
+    company = models.ForeignKey(GuaranteeCompany, on_delete=models.CASCADE, db_index=True, verbose_name='شرکت', related_name='company')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, db_index=True, verbose_name='محصول', related_name='guarantee')
     serial_number = models.CharField(max_length=255, verbose_name='سریال نامبر', unique=True, db_index=True)
     months_of_expire = models.PositiveSmallIntegerField(verbose_name='تعداد ماه های انقضا')

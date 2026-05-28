@@ -1,4 +1,4 @@
-from guarantee.models import ActiveProductGuarantee, ProductGuarantee
+from guarantee.models import ActiveProductGuarantee, ProductGuarantee, GuaranteeCompany
 from django.views.generic import CreateView, UpdateView, ListView, RedirectView
 from admin_panel.forms import GuaranteeModelForm
 from user.mixins.logins import AdminUserMixin
@@ -6,6 +6,11 @@ from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 
+
+class GuaranteeCompanyListView(AdminUserMixin, ListView):pass
+class GuaranteeCompanyCreateView(AdminUserMixin, CreateView):pass
+class GuaranteeCompanyUpdateView(AdminUserMixin, UpdateView):pass
+class GuaranteeCompanyDelete(AdminUserMixin, RedirectView):pass
 
 
 class GuaranteeListView(AdminUserMixin, ListView ):
@@ -34,7 +39,6 @@ class ActiveGuaranteeListView(AdminUserMixin, ListView ):
     def get_queryset(self):
         return self.model.objects.filter(guarantee__id=self.kwargs.get('pk')).order_by(self.ordering).all()
 
-
 class GuaranteeCreateView(AdminUserMixin, CreateView ):
     model = ProductGuarantee
     form_class = GuaranteeModelForm
@@ -60,7 +64,6 @@ class GuaranteeCreateView(AdminUserMixin, CreateView ):
     def form_invalid(self, form):
         messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
-
 
 class GuaranteeUpdateView(AdminUserMixin, UpdateView ):
     model = ProductGuarantee
@@ -89,7 +92,6 @@ class GuaranteeUpdateView(AdminUserMixin, UpdateView ):
         messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
 
-
 class GuaranteeActiveAndDeactivateView(AdminUserMixin, RedirectView ):
     def get_redirect_url(self, *args, **kwargs):
         pk = kwargs.get("pk")
@@ -104,7 +106,6 @@ class GuaranteeActiveAndDeactivateView(AdminUserMixin, RedirectView ):
             messages.success(self.request, "گارانتی  مورد نظر فعال شد")
 
         return reverse_lazy("admin_panel:product-guarantee-list", kwargs={'pk': guarantee.product.id})
-
 
 class GuaranteeDeleteView(AdminUserMixin, RedirectView ):
     def get_redirect_url(self, *args, **kwargs):

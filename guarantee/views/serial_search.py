@@ -17,7 +17,7 @@ class GuaranteeView(View):
         if self.site.active_guarantee:
             return super().dispatch(request, *args, **kwargs)
         else:
-            return Http404()
+            raise Http404()
     
 
     def get(self, request, *args, **kwargs):

@@ -19,12 +19,22 @@ from blog.models import Blog, BlogCategory
 from django.contrib.auth import get_user_model
 from product.models import ProductBrand, ProductCategory, Product
 from orders.models import Discount, SpecificsOrders, OrderDetail
-from guarantee.models import ProductGuarantee, ActiveProductGuarantee
+from guarantee.models import ProductGuarantee, ActiveProductGuarantee, GuaranteeCompany
 
 from jalali_date.fields import JalaliDateField
 from jalali_date.widgets import AdminJalaliDateWidget
 
 User = get_user_model()
+
+class GuaranteeCompanyModelForm(forms.ModelForm):
+    class Meta:
+        model = GuaranteeCompany
+        fields = '__all__'
+
+        widgets = {
+            'name':forms.TextInput(attrs={'class':'form-control'}),
+            'is_active':forms.CheckboxInput(),
+        }
 
 class GuaranteeModelForm(forms.ModelForm):
 

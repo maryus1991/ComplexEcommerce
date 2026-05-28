@@ -1,0 +1,363 @@
+{% extends 'Base/AdminBase.html' %}
+{% load compress static %}
+{% block title %}
+    اضافه کردن یا بروز رسانی گارانتی
+{% endblock %}
+
+{% block header_reference %}
+{% compress css %}
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/static/dist/css/rtl.css">
+    <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
+ 
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+     <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+    <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+    <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
+    <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
+    <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
+    <link rel="stylesheet" href="/static/dist/css/skins/_all-skins.min.css">
+
+    <style>.cke {
+        visibility: hidden;
+    }</style>
+    <link rel="stylesheet" type="text/css"
+          href="/static/dist/css/bootstrapck-editor_gecko.css">
+
+    {% endcompress %}
+    {% compress js %}
+    <script type="text/javascript"
+            src="/static/dist/js/lightgray.js"></script>
+ 
+    <script type="text/javascript"
+            src="/static/dist/js/wpmore-plugin.js"></script>
+    {% endcompress %}
+
+
+
+{% endblock %}
+
+
+{% block breadcrumb %}
+    <li class="active">مدیریت</li>
+    <li class="active">گارانتی </li>
+    <li class="active"> اضافه کردن یا بروزرسانی گارانتی</li>
+{% endblock %}
+
+{% block body %}
+    {% if form.errors %}
+        <div class="col-md-12 bg-red" style="margin-bottom: 20px; margin-top: 50px; border-radius: 10px">
+            {{ form.errors }}
+
+        </div>
+
+    {% endif %}
+
+    <!-- Main content -->
+    <section class="content" style="min-height: 600px; margin-top: 20px;">
+
+    <div class="row">
+
+    <div class="col-md-12">
+
+        <!-- فرم محصول -->
+        <div class="box box-info">
+            <div class="box-header">
+                <h3 class="box-title">اضافه کردن گارانتی   </h3>
+                <div class="pull-right box-tools">
+
+                    {% if item %}
+
+                        <tabel class="pull-left">
+
+                            <button type="button" class="btn btn-info btn-sm" data-widget="collapse"
+                                    data-toggle="tooltip"
+                                    title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:discount-active-deactivate' item.id %}"
+                                   class="btn btn-sm btn-warning"
+                                   data-toggle="tooltip"
+                                   title="{% if item.is_active %}غیرفعال کردن{% else %}فعال کردن{% endif %}">
+                                    <i class="fa fa-power-off"></i>
+                                </a>
+                            </td>
+
+                            <td class="text-center">
+                                <a href="{% url 'admin_panel:discount-delete' item.id %}" class="btn btn-sm btn-danger"
+                                   data-toggle="tooltip" title="حذف">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </td>
+                        </tabel>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <div class="box-body pad">
+                <form enctype="multipart/form-data" method="post" action="">
+                    {% csrf_token %}
+
+                    <!-- ردیف اول فرم محصول -->
+                    <div class="row form-group">
+                        <div class="col-md-3">
+                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat">عنوان کد تخفیف :</span>
+                            </span>
+                                {{ form.name }}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat">درصد تخفیف :</span>
+                            </span>
+                                {{ form.percent }}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat"> مبلغ تخفیف :</span>
+                            </span>
+                                {{ form.price }}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-warning btn-flat"> تعداد استفاده هر کاربر از این کد تخفیف:</span>
+                            </span>
+                                {{ form.count_of_use_per_user }}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ردیف دوم فرم محصول -->
+                    <div class="row form-group">
+                        <div class="col-md-3">
+                            <div class="input-group" dir="rtl">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat"
+                                      style="background-color: #ed59f4; color: white;">تعداد :</span>
+                            </span>
+                                {{ form.count }}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group" dir="rtl">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #0000ff; color: white;">تاریخ انقضا :</span>
+                            </span>
+                                {{ form.end_date_discount }}
+                                {{ form.media }}
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="input-group" dir="rtl">
+                            <span class="">
+                                فعال بودن :
+                                {{ form.is_active }}
+                            </span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="input-group">
+                            <span class="">
+                                  درصدی : {{ form.percentage_discount }}
+                            </span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                                                        <div class="input-group" dir="rtl">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat" style="background-color: #0000ff; color: white;"> حداقل قیمت سبد خرید : </span>
+                            </span>
+                                {{ form.min_price }}
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+
+                        <div class="col-md-4">
+                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-flat"
+                                      style="background-color: #932ab6; color: white;">کاربر :</span>
+                            </span>
+                                {{ form.user }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-info btn-flat">فروشگاه :</span>
+                            </span>
+                                {{ form.store }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-success btn-flat">محصول :</span>
+                            </span>
+                                {{ form.product }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <p style="margin-top: 10px; margin-bottom: 10px; background-color: orange; color: white; padding: 10px;">
+                        اگر هر یک از فیلد های انتخاب محصول , فروشگاه یا کاربر را خالی بزار این معنا هست که از ان محدودیت
+                        استفاده نکردید و همه انها را انتخاب کردید
+                    </p>
+
+                    <!-- دکمه ثبت -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <br>
+                            <button type="submit" onclick="prepareFormData()" class="btn btn-success btn-block">ثبت
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+
+{% block footer_reference %}
+    {% compress js %}
+    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/select2/dist/js/select2.full.min.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="/static/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script src="/static/node_modules/moment/min/moment.min.js"></script>
+    <script src="/static/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="/static/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="/static/node_modules/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#tarikh').persianDatepicker({
+                altField: '#tarikhAlt',
+                altFormat: 'X',
+                format: 'D MMMM YYYY HH:mm a',
+                observer: true,
+                timePicker: {
+                    enabled: true
+                },
+            });
+        });
+        $(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', {'placeholder': 'dd/mm/yyyy'})
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('mm/dd/yyyy', {'placeholder': 'mm/dd/yyyy'})
+            //Money Euro
+            $('[data-mask]').inputmask()
+
+            //Date range picker
+            $('#reservation').daterangepicker()
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                format: 'MM/DD/YYYY h:mm A'
+            })
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                }
+            )
+
+            //Date picker
+            $('#datepicker').datepicker({
+                autoclose: true
+            })
+
+            //iCheck for checkbox and radio inputs
+            $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+                checkboxClass: 'icheckbox_minimal-blue',
+                radioClass: 'iradio_minimal-blue'
+            })
+            //Red color scheme for iCheck
+            $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+                checkboxClass: 'icheckbox_minimal-red',
+                radioClass: 'iradio_minimal-red'
+            })
+            //Flat red color scheme for iCheck
+            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green'
+            })
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            //Timepicker
+            $('.timepicker').timepicker({
+                showInputs: false
+            })
+        })
+    </script>
+    {#    <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>#}
+    <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/static/node_modules/fastclick/lib/fastclick.js"></script>
+    <script src="/static/dist/js/demo.js"></script>
+    <script src="/static/node_modules/ckeditor/ckeditor.js"></script>
+    <script src="/static/node_modules/tinymce/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea#mytextarea',
+            plugins: 'advlist autolink link lists preview table code pagebreak',
+            menubar: false,
+            language: 'fa',
+            height: 300,
+            relative_urls: false,
+            toolbar: 'undo redo | removeformat preview code | fontsizeselect bullist numlist | alignleft aligncenter alignright alignjustify | bold italic | pagebreak table link',
+        });
+        $(function () {
+            // Replace the <textarea id="editor1"> with a CKEditor
+            // instance, using default configuration.
+            CKEDITOR.replace('editor1')
+            //bootstrap WYSIHTML5 - text editor
+            $('.textarea').wysihtml5()
+        })
+    </script>
+    {% endcompress %}
+    {% endblock %}

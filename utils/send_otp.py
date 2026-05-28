@@ -21,7 +21,7 @@ def send_otp(number, otp):
 
 
 @shared_task(queue='sms')
-def send_message(number, template, message):
+def send_message(number, template, message, second_message=None):
     try:
         api = KavenegarAPI(KAVEH_NEGAR_OTP)
         params = {
@@ -30,8 +30,15 @@ def send_message(number, template, message):
             'token': f'{message}',
             'type': 'sms',
         }
+        if second_message:
+            params.update(
+                {
+                    'token2':second_message
+                }
+            )
+
         response = api.verify_lookup(params)
-        print(response.json())
+         
     except Exception as e:
         print(e)
 
