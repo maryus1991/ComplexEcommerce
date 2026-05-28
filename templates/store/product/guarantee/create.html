@@ -87,6 +87,13 @@
                     <div class="text-danger">{{ form.months_of_expire.errors }}</div>
                 {% endif %}
             </div>
+            <div class="form-group col-md-6">
+                <label for="{{ form.product.id_for_label }}">{{ form.product.label }}</label>
+                {{ form.product }}
+                {% if form.product.errors %}
+                    <div class="text-danger">{{ form.product.errors }}</div>
+                {% endif %}
+            </div>
 
 
             <div class="checkbox col-md-6">

@@ -17,11 +17,14 @@ urlpatterns = [
     path("guarantee/company/",views.GuaranteeCompanyListView.as_view(),name="company-guarantee-list",),
     path("guarantee/company/create/",views.GuaranteeCompanyCreateView.as_view(),name="company-guarantee-create",),
     path("guarantee/company/update/<int:pk>",views.GuaranteeCompanyUpdateView.as_view(),name="company-guarantee-update",),
-     path("guarantee/company/delete/<int:pk>",views.GuaranteeCompanyDelete.as_view(),name="company-guarantee-delete",),
+    path("guarantee/company/delete/<int:pk>",views.GuaranteeCompanyDelete.as_view(),name="company-guarantee-delete",),
 
     # active guarantee 
 
-    path("product/guarantee/active/<int:pk>/",views.ActiveGuaranteeListView.as_view(),name="product-guarantee-active-list",),
+    path("guarantee/active/",views.ActiveGuaranteeListView.as_view(),name="active-guarantee-list",),
+    path("guarantee/active/create/",views.ActiveGuaranteeCreateView.as_view(),name="active-guarantee-create",),
+    path("guarantee/active/update/<int:pk>",views.ActiveGuaranteeUpdateView.as_view(),name="active-guarantee-update",),
+    path("guarantee/active/delete/<int:pk>",views.ActiveGuaranteeDelete.as_view(),name="active-guarantee-delete",),
 
     # product fast panel colleague price
     path('product/fast-panel/colleague/change/price-amount/<int:pk>/', views.ProductFastPanelChangeColleaguePrice.as_view(),name='product-fast-panel-change-price-colleague'),
@@ -457,7 +460,6 @@ urlpatterns = [
     path("backup/db/restore/", views.BackupRestoreInOneClickView.as_view(), name="backup-restore"),
 
     # media
-    path("backup/media/download/", views.StreamMediaZipView.as_view(), name="backup-media"),
     path("backup/media/upload", views.UploadBackupView.as_view(), name="UploadBackupViewMedia"),
     path("backup/media/restore/", views.MediaBackupRestoreInOneClickView.as_view(), name="backup-media-restore"),
 

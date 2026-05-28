@@ -6,8 +6,7 @@ import os
 from django.shortcuts import reverse
 from stores.models import Store
 from easy_thumbnails.fields import ThumbnailerImageField
-from guarantee.models import ProductGuarantee
-
+ 
 def photo_path_upload_to(instance, filename):
     basename = os.path.basename(filename)
     return f"images/products/{secrets.token_urlsafe(100)}-{basename}"
@@ -76,7 +75,6 @@ class Product(models.Model):
     sort_number_discount = models.PositiveSmallIntegerField(default=0)
     group_name = models.CharField(max_length=1000, null=True, blank=True)
 
-    guarantee = models.ForeignKey(ProductGuarantee, on_delete=models.SET_NULL, null=True, blank=True, related_name="products")
 
 
     def __str__(self):

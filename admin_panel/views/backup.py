@@ -23,29 +23,30 @@ from zipfly import ZipFly
 from django.db import transaction
 
 class StreamMediaZipView(AdminUserMixin, View):
-    def get(self, request, *args, **kwargs):
-        media_root = settings.MEDIA_ROOT
-        if not os.path.exists(media_root):
-            raise Http404("مسیر media وجود ندارد.")
+    pass
+    # def get(self, request, *args, **kwargs):
+    #     media_root = settings.MEDIA_ROOT
+    #     if not os.path.exists(media_root):
+    #         raise Http404("مسیر media وجود ندارد.")
 
-        files = []
-        for root, _, filenames in os.walk(media_root):
-            for filename in filenames:
-                full_path = os.path.join(root, filename)
-                rel_path = os.path.relpath(full_path, media_root)
-                files.append({"fs": full_path, "n": rel_path})
+    #     files = []
+    #     for root, _, filenames in os.walk(media_root):
+    #         for filename in filenames:
+    #             full_path = os.path.join(root, filename)
+    #             rel_path = os.path.relpath(full_path, media_root)
+    #             files.append({"fs": full_path, "n": rel_path})
 
-        if not files:
-            raise Http404("فایلی برای زیپ کردن پیدا نشد.")
+    #     if not files:
+    #         raise Http404("فایلی برای زیپ کردن پیدا نشد.")
 
-        zfly = ZipFly(paths=files, chunksize=1024)
+    #     zfly = ZipFly(paths=files, chunksize=1024)
 
-        archive_name = 'media_backups_at_' + str(now().strftime("%Y-%m-%d--%H:%M:%S")) + '.zip'
+    #     archive_name = 'media_backups_at_' + str(now().strftime("%Y-%m-%d--%H:%M:%S")) + '.zip'
 
-        response = StreamingHttpResponse(zfly.generator(), content_type='application/zip')
-        response['Content-Disposition'] = f'attachment; filename="{archive_name}"'
+    #     response = StreamingHttpResponse(zfly.generator(), content_type='application/zip')
+    #     response['Content-Disposition'] = f'attachment; filename="{archive_name}"'
 
-        return response
+    #     return response
 
 
 class CleanTMPFiles(AdminUserMixin, RedirectView):

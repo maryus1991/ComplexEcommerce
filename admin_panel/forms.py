@@ -38,6 +38,20 @@ class GuaranteeCompanyModelForm(forms.ModelForm):
 
 class GuaranteeModelForm(forms.ModelForm):
 
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.all(),
+        required=False,
+        widget=forms.Select(
+            attrs={
+                "class": "form-control select2",
+                "style": "width: 100%;",
+                "tabindex": "-1",
+                "aria-hidden": "true",
+                "dir": "rtl",
+            }
+        ),
+    )
+
     company = forms.ModelChoiceField(
         queryset=GuaranteeCompany.objects.all(),
         required=True,
@@ -77,9 +91,9 @@ class ActiveGuaranteeModelForm(forms.ModelForm):
         ),
         label='گارانتی'
     )
-    order = forms.ModelChoiceField(
-        queryset=OrderDetail.objects.all(),
-        required=True,
+    user = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        required=False,
         widget=forms.Select(
             attrs={
                 "class": "form-control select2",
@@ -89,8 +103,9 @@ class ActiveGuaranteeModelForm(forms.ModelForm):
                 "dir": "rtl",
             }
         ),
-        label='سفارش '
+        label='کاربر'
     )
+ 
     date_of_started = JalaliDateField(
         required=False,
         label="تاریخ شروع",
@@ -111,12 +126,19 @@ class ActiveGuaranteeModelForm(forms.ModelForm):
             }
         ),
     )
+    phone_number = PhoneNumberField(
+        required=False,
+        label=" شماره کاربر (در صورتی وارد شود که کاربر در سایت وجود نداشته باشد) ",
+        widget=forms.NumberInput(attrs={"class": "form-control", "dir": "ltr"}),
+    )
     class Meta:
         model = ActiveProductGuarantee
         fields = '__all__'
 
         widgets = {
             'is_active':forms.CheckboxInput(),
+            'serial_number':forms.TextInput(attrs={'class':'form-control'}),
+
         }
 
 class StorePermissions(forms.ModelForm):
