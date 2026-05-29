@@ -375,7 +375,7 @@
                                     <th>مشاهده صفحه محصول</th>
                                     <th>بروزرسانی محصول</th>
                                     <th>فعال/غیرفعال</th>
-                                    <th> گارانتی ها</th>
+             
                                     <th>حذف کردن محصول</th>
                                 </tr>
                                 </thead>
@@ -431,18 +431,7 @@
                                                 {% endif %}
                                             </a>
                                         </td>
-                                        <td>
-                                            <a class="btn  btn-sm"
-                                               style="background: burlywood; color: white"
-                                               href="{% url 'store:product-guarantee-list' product.id %}">
-                                                {{ product.guarantee.count }}
-                                            </a>
-                                            <a class="btn  btn-sm"
-                                               style="background: #0000ff; color: white"
-                                               href="{% url 'store:product-guarantee-create-pk' product.id %}">
-                                                جدید
-                                            </a>
-                                        </td>
+ 
                                         <td>
                                             <a class="btn btn-block btn-sm" style="background: red; color: white"
                                                href="{% url 'store:remove-product' product.pk %}">

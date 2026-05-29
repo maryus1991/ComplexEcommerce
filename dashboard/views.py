@@ -35,6 +35,7 @@ from django.utils.timezone import datetime
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from guarantee.models import ActiveProductGuarantee
+from django.db.models import Q
 
 User = get_user_model()
 
@@ -48,7 +49,10 @@ class ActiveProductGuaranteeListView(LoginRequiredMixin, ListView):
     context_object_name = "items"
 
     def get_queryset(self):
-        return super().get_queryset().filter(order__order__user=self.request.user).prefetch_related('guarantee', 'order', 'order__order', 'guarantee__product').order_by("-id", 'is_active')
+        return super().get_queryset().filter(
+            Q(user=self.request.user) |
+            Q(phone_number=self.request.user.PhoneNumber)
+        ).prefetch_related("guarantee", "guarantee__company", "guarantee__product").order_by("-id")
 
 
 # Create your views here.

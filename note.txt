@@ -1,4 +1,3 @@
- add send message for guarantee 
- add guarantee to product details page 
- fix the active guarantee for user panel 
- add active guarantee for store
+add send message for guarantee 
+add guarantee to product details page 
+ -- ---- add active guarantee for store

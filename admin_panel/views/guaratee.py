@@ -26,8 +26,11 @@ class ActiveGuaranteeCreateView(AdminUserMixin, CreateView):
 
     def form_valid(self, form):
         messages.success(self.request, "ایتم شما با موفقیت ساخته شد")
-        form.instance.date_of_started = now()
-        form.instance.date_of_expire = now() + relativedelta(
+        if form.instance.date_of_started is None:
+            form.instance.date_of_started = now()
+        
+        if form.instance.date_of_expire is None:
+            form.instance.date_of_expire = now() + relativedelta(
             months=form.instance.guarantee.months_of_expire
         )
         return super().form_valid(form)
@@ -35,7 +38,6 @@ class ActiveGuaranteeCreateView(AdminUserMixin, CreateView):
     def form_invalid(self, form):
         messages.error(self.request, form.errors.as_text())
         return super().form_invalid(form)
-    
 class ActiveGuaranteeUpdateView(AdminUserMixin, UpdateView):
     """for update active guaranatee"""
 

@@ -108,7 +108,7 @@ class ActiveGuaranteeModelForm(forms.ModelForm):
  
     date_of_started = JalaliDateField(
         required=False,
-        label="تاریخ شروع",
+        label="(خالی گذاشته بشود تا خودکار توسط سیستم حساب و پر شود) تاریخ شروع",
         widget=AdminJalaliDateWidget(
             attrs={
                 "class": "form-control",
@@ -118,7 +118,7 @@ class ActiveGuaranteeModelForm(forms.ModelForm):
     )
     date_of_expire = JalaliDateField(
         required=False,
-        label="تاریخ انقضا",
+        label="تاریخ انقضا (خالی گذاشته بشود تا خودکار توسط سیستم حساب و پر شود)",
         widget=AdminJalaliDateWidget(
             attrs={
                 "class": "form-control",

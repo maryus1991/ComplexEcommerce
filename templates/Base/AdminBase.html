@@ -360,6 +360,31 @@ desired effect
                 {#                <li class="header">تیتر</li>#}
 
                 {% if user.is_staff and user.store and 'store' in request.path and 'admin' not in request.path %}
+                                        <li class="treeview">
+                            <a><i class="fa fa-link"></i> <span>گارانتی ها</span>
+                                <span class="pull-left-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                          </span>
+                            </a>
+                            <ul class="treeview-menu">
+
+                            {% if user.store.can_store_add_product_guarantee %}
+
+                                <li class="link-activator"><a href="{% url 'store:product-guarantee-create' %}"><i
+                                    class="fa fa-link"></i>
+                                <span>اضافه کردن گارانتی</span></a></li>
+                                <li class="link-activator"><a href="{% url 'store:active-guarantee-create' %}"><i
+                                    class="fa fa-link"></i>
+                                <span> فعال کردن گارانتی  </span></a></li>
+                            {% endif %}
+                            <li class="link-activator"><a href="{% url 'store:product-guarantee-list' %}"><i
+                                    class="fa fa-link"></i>
+                                <span> لیست گارانتی</span></a></li>
+                            <li class="link-activator"><a href="{% url 'store:active-guarantee-list' %}"><i
+                                    class="fa fa-link"></i>
+                                <span> لیست گارانتی های فعال </span></a></li>
+                            </ul>
+                        </li>
                     {% if user.store.can_stores_add_product_category or user.store.can_stores_add_product_brand or user.store.can_stores_add_product %}
                         <li class="treeview">
                             <a><i class="fa fa-link"></i> <span>محصولات</span>
@@ -384,15 +409,7 @@ desired effect
                                             class="fa fa-link"></i>
                                         <span>اضافه کردن محصول</span></a></li>
                                 {% endif %}
-                                {% if user.store.can_store_add_product_guarantee %}
 
-                                    <li class="link-activator"><a href="{% url 'store:product-guarantee-create' %}"><i
-                                            class="fa fa-link"></i>
-                                        <span>اضافه کردن گارانتی</span></a></li>
-                                        {% endif %}
-                                        <li class="link-activator"><a href="{% url 'store:product-guarantee-list' %}"><i
-                                                class="fa fa-link"></i>
-                                            <span> لیست گارانتی</span></a></li>
                                 <li class="link-activator"><a href="{% url 'store:list-brands' %}"><i
                                         class="fa fa-link"></i>
                                     <span>لیست برندها</span></a></li>
@@ -413,6 +430,7 @@ desired effect
                                 {% endif %}
                             </ul>
                         </li>
+
                     {% endif %}
                     {% if user.store.can_store_add_blog_category or user.store.can_store_add_blog_post %}
                         <li class="treeview">
