@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from dateutil.relativedelta import relativedelta
+from utils.send_otp import send_guarantee_message
 
 class ActiveGuaranteeListView(AdminUserMixin, ListView):
     """ for list the actived guarantee """
@@ -16,6 +17,11 @@ class ActiveGuaranteeListView(AdminUserMixin, ListView):
     ordering = "-id"
     paginate_by = 100
     context_object_name = "items"
+
+    def get_queryset(self):
+        return self.model.objects.prefetch_related('guarantee__company', 'guarantee__product', "guarantee").order_by(self.ordering)
+    
+
 class ActiveGuaranteeCreateView(AdminUserMixin, CreateView):
     """for create active guaranatee"""
 
@@ -33,6 +39,20 @@ class ActiveGuaranteeCreateView(AdminUserMixin, CreateView):
             form.instance.date_of_expire = now() + relativedelta(
             months=form.instance.guarantee.months_of_expire
         )
+        
+
+ 
+        send_guarantee_message.delay({
+            'receptor': str(form.instance.user.PhoneNumber if form.instance.user else form.instance.phone_number).replace(" ", "") ,
+            'template': "Guarantee",
+            'token':   f"{form.instance.guarantee.serial_number}",
+            'token2':  str(form.instance.user.PhoneNumber if form.instance.user else form.instance.phone_number).replace(" ", ""),
+            'token10': f"{form.instance.guarantee.months_of_expire}",
+            'token20': f"{form.instance.serial_number}",
+            'type': 'sms',
+        })
+        
+  
         return super().form_valid(form)
     
     def form_invalid(self, form):

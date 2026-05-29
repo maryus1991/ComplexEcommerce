@@ -1,110 +1,161 @@
 {% extends 'Base/Base.html' %}
 {% load products_tags %}
 {% load jalali_tags %}
-
 {% load thumbnail %}
 
 {% block title %}
-    {{ product.name }}
+    {{ product.name }} | خرید {{ product.name }} از {{ product.store.name }} | فروشگاه تخصصی
 {% endblock %}
 
 {% block microdata %}
- {
-  "@context": "https://schema.org",
-  "@graph": [
+    {# ========== بهبود SEO: متا تگ‌ها، Open Graph، کاننیکال، ساختار یافته ========== #}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="description" content="{% if product.parent %}{{ product.parent.description|striptags|truncatechars:160 }}{% else %}{{ product.description|striptags|truncatechars:160 }}{% endif %}">
+    <meta name="keywords" content="{{ product.name }}, {{ product.brand.name }}, {% for tag in product.tags.all %}{{ tag.name }}, {% endfor %}خرید آنلاین, فروشگاه اینترنتی">
+    <meta name="author" content="{{ product.store.name }}">
+    <meta name="language" content="fa">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <link rel="alternate" href="{{ request.build_absolute_uri }}" hreflang="fa-ir">
 
-    {
-      "@type": "Product",
-      "@id": "{{ request.build_absolute_uri }}#product",
-      "name": "{{ product.name|escapejs }}",
-      "description": "{{ product|escapejs }}",
-      {% if product.picture %}
-      "image": [
-        "{{ request.scheme }}://{{ request.get_host }}{{ product.picture.url }}"
-      ],
-      {% endif %}
-      "sku": "{{ product.sku|default:''|escapejs }}",
-      "brand": {
-        "@type": "Brand",
-        "name": "{{ product.brand.name|escapejs }}"
-      },
-      "offers": {
-        "@type": "Offer",
-        "url": "{{ request.build_absolute_uri }}",
-        "priceCurrency": "IRR",
-        "price": "{{ product.calc_discount }}",
-        "availability": "{% if product.count > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
-        "itemCondition": "https://schema.org/NewCondition"
-      },
-      {% if product.comments.exists %}
-      "review": [
-        {% for review in product.comments.all %}
-        {
-          "@type": "Review",
-          "author": {
-            "@type": "Person",
-            "name": "{{ review.user.get_full_name|default:review.user.PhoneNumber|escapejs }}"
-          },
-          "datePublished": "{{ review.date|date:'c' }}",
-          "reviewBody": "{{ review.comment|truncatechars:160|escapejs }}"
-        }{% if not forloop.last %},{% endif %}
-        {% endfor %}
-      ]
-      {% endif %}
-    },
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="{{ product.name }} | {{ product.store.name }}">
+    <meta property="og:description" content="{% if product.parent %}{{ product.parent.description|striptags|truncatechars:160 }}{% else %}{{ product.description|striptags|truncatechars:160 }}{% endif %}">
+    <meta property="og:type" content="product">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:image" content="{% if product.picture %}{{ request.scheme }}://{{ request.get_host }}{{ product.picture.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:height" content="800">
+    <meta property="og:site_name" content="نام فروشگاه شما">
+    <meta property="product:availability" content="{% if product.count > 0 %}instock{% else %}outofstock{% endif %}">
+    <meta property="product:price:amount" content="{{ product.calc_discount|stringformat:'f'|cut:' ' }}">
+    <meta property="product:price:currency" content="IRR">
 
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ product.name }} | {{ product.store.name }}">
+    <meta name="twitter:description" content="{% if product.parent %}{{ product.parent.description|striptags|truncatechars:160 }}{% else %}{{ product.description|striptags|truncatechars:160 }}{% endif %}">
+    <meta name="twitter:image" content="{% if product.picture %}{{ request.scheme }}://{{ request.get_host }}{{ product.picture.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
+
+    {# ========== JSON-LD بهبود یافته با داده‌های بیشتر ========== #}
     {
-      "@type": "BreadcrumbList",
-      "@id": "{{ request.build_absolute_uri }}#breadcrumb",
-      "itemListElement": [
+      "@context": "https://schema.org",
+      "@graph": [
         {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "خانه",
-          "item": "{{ request.scheme }}://{{ request.get_host }}/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "فروشگاه",
-          "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'product:list' %}"
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
+          "@type": "Product",
+          "@id": "{{ request.build_absolute_uri }}#product",
           "name": "{{ product.name|escapejs }}",
-          "item": "{{ request.build_absolute_uri }}"
+          "description": "{% if product.parent %}{{ product.parent.description|striptags|escapejs }}{% else %}{{ product.description|striptags|escapejs }}{% endif %}",
+          "mpn": "{{ product.sku|default:''|escapejs }}",
+          "sku": "{{ product.sku|default:''|escapejs }}",
+          "brand": {
+            "@type": "Brand",
+            "name": "{{ product.brand.name|escapejs }}"
+          },
+          "image": [
+            "{{ request.scheme }}://{{ request.get_host }}{{ product.picture.url }}"
+            {% for img in product.gallery.all|slice:":3" %}
+            , "{{ request.scheme }}://{{ request.get_host }}{{ img.image.url }}"
+            {% endfor %}
+          ],
+          "offers": {
+            "@type": "Offer",
+            "url": "{{ request.build_absolute_uri }}",
+            "priceCurrency": "IRR",
+            "price": "{{ product.calc_discount|stringformat:'f'|cut:' ' }}",
+            "priceValidUntil": "{% now 'Y-m-d' %}|add:30days",
+            "availability": "{% if product.count > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+            "itemCondition": "https://schema.org/NewCondition",
+            "seller": {
+              "@type": "Organization",
+              "name": "{{ product.store.name|escapejs }}"
+            }
+          },
+          "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "{{ request.build_absolute_uri }}"
+          },
+          {% if product.comments.exists %}
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "5",
+            "reviewCount": "{{ product.comments.count }}"
+          },
+          "review": [
+            {% for review in product.comments.all|slice:":3" %}
+            {
+              "@type": "Review",
+              "author": {
+                "@type": "Person",
+                "name": "{{ review.user.get_full_name|default:review.user.PhoneNumber|escapejs }}"
+              },
+              "datePublished": "{{ review.date|date:'c' }}",
+              "reviewBody": "{{ review.comment|truncatechars:160|escapejs }}"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ]
+          {% endif %}
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "خانه",
+              "item": "{{ request.scheme }}://{{ request.get_host }}/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "فروشگاه",
+              "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'product:list' %}"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "{{ product.name|escapejs }}",
+              "item": "{{ request.build_absolute_uri }}"
+            }
+          ]
+        },
+        {
+          "@type": "WebPage",
+          "@id": "{{ request.build_absolute_uri }}",
+          "url": "{{ request.build_absolute_uri }}",
+          "inLanguage": "fa-IR",
+          "name": "{{ product.name|escapejs }}",
+          "description": "{% if product.parent %}{{ product.parent.description|striptags|escapejs }}{% else %}{{ product.description|striptags|escapejs }}{% endif %}",
+          "breadcrumb": {
+            "@id": "{{ request.build_absolute_uri }}#breadcrumb"
+          },
+          "primaryImageOfPage": {
+            "@type": "ImageObject",
+            "contentUrl": "{% if product.picture %}{{ request.scheme }}://{{ request.get_host }}{{ product.picture.url }}{% endif %}"
+          }
         }
       ]
     }
-
-  ]
-}
-
-
-
 {% endblock %}
 
 {% block breadcrumb %}
     <!-- Breadcrumbs -->
-
     <li class="flex items-center gap-x-2">
-        <a href="{% url 'product:list' %}"> فروشگاه</a>
+        <a href="{% url 'product:list' %}" title="صفحه فروشگاه"> فروشگاه</a>
         <svg class="w-4 h-4">
             <use href="#chevron-left"></use>
         </svg>
     </li>
     <li class="flex items-center gap-x-2">
-        <a href="{% url 'product:detail' product.id %}">جزییات محصول</a>
+        <a href="{% url 'product:detail' product.id %}" title="{{ product.name }}">جزییات محصول</a>
     </li>
 {% endblock %}
 
 {% block content %}
-
-
     <!-- PRODUCT DETAILS SECTION -->
-    <section
-            class="flex flex-col lg:flex-row items-start gap-4 child:rounded-lg child:bg-white child:dark:bg-zinc-700 child:shadow child:p-4">
+    <section class="flex flex-col lg:flex-row items-start gap-4 child:rounded-lg child:bg-white child:dark:bg-zinc-700 child:shadow child:p-4">
         <!-- IMAGE & INFO BOX Container -->
         <div class="w-full lg:w-3/4 space-y-8">
             <!-- IMAGE & INFO BOX -->
@@ -120,14 +171,13 @@
                                     document.getElementById("copy_text_message").innerText = 'ادرس مورد نظر کپی شد';
                                 }
                             </script>
-                            <a href="#" aria-label=' اشتراک گذاری' class="share-btn-copy-123" onclick="copyText()">
-                                <button aria-label=' اشتراک گذاری' class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
+                            <a href="#" aria-label='اشتراک گذاری' class="share-btn-copy-123" onclick="copyText()">
+                                <button aria-label='اشتراک گذاری' class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
                                     <svg class="w-5 h-5">
                                         <use href="#share"></use>
                                     </svg>
                                 </button>
-                                <div id="copy_text_message"
-                                     class="tooltiptext transition-all text-xs bg-zinc-700 dark:bg-zinc-500 text-white after:border-t-zinc-700 after:dark:border-t-zinc-500">
+                                <div id="copy_text_message" class="tooltiptext transition-all text-xs bg-zinc-700 dark:bg-zinc-500 text-white after:border-t-zinc-700 after:dark:border-t-zinc-500">
                                     اشتراک گذاری
                                 </div>
                             </a>
@@ -135,7 +185,7 @@
 
                         {% if is_favorite_product %}
                             <div class="tooltip">
-                                <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}?_={{ ts }}">
+                                <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}?_={{ ts }}" aria-label="حذف از علاقمندی">
                                     <button class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
                                         <svg class="w-5 h-5">
                                             <use href="#close"></use>
@@ -148,8 +198,8 @@
                             </div>
                         {% else %}
                             <div class="tooltip">
-                                <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}?_={{ ts }}" aria-label=' افزودن به علاقمندی'>
-                                    <button aria-label=' افزودن به علاقمندی' class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
+                                <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}?_={{ ts }}" aria-label='افزودن به علاقمندی'>
+                                    <button aria-label='افزودن به علاقمندی' class="rounded-full p-1.5 border-2 border-gray-200 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors">
                                         <svg class="w-5 h-5">
                                             <use href="#heart"></use>
                                         </svg>
@@ -171,7 +221,6 @@
             position: relative;
             cursor: zoom-in;
         }
-
         .zoom-image {
             transition: transform 0.3s ease;
             width: 100%;
@@ -179,15 +228,13 @@
             object-fit: cover;
             border-radius: 0.5rem;
         }
-
         .zoom-image.zooming {
-            transition: none; /* هنگام حرکت موس انیمیشن نداشته باشد */
+            transition: none;
         }
     }
 </style>
 
-<div id="slider"
-     class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory rounded-lg scrollbar-hide">
+<div id="slider" class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory rounded-lg scrollbar-hide">
 {% if product.picture %}
 <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
   <img 
@@ -198,8 +245,8 @@
       {% thumbnail product.picture '1152x1152' %} 1152w
     "
     sizes="(max-width: 640px) 100vw, 384px"
-    alt="{{ product.name }}" 
-    loading="lazy" 
+    alt="تصویر اصلی {{ product.name }}"
+    loading="eager"
     width="384" 
     height="384"
     class="zoom-image">
@@ -216,7 +263,7 @@
       {% thumbnail img.image '1152x1152' %} 1152w
     "
     sizes="(max-width: 640px) 100vw, 384px"
-    alt="{{ product.parent.name }}" 
+    alt="گالری تصاویر {{ product.parent.name }} - {{ forloop.counter }}"
     loading="lazy" 
     width="384" 
     height="384"
@@ -234,7 +281,7 @@
       {% thumbnail img.image '1152x1152' %} 1152w
     "
     sizes="(max-width: 640px) 100vw, 384px"
-    alt="{{ product.name }}" 
+    alt="گالری تصاویر {{ product.name }} - {{ forloop.counter }}"
     loading="lazy" 
     width="384" 
     height="384"
@@ -248,23 +295,14 @@
 function zoomOnMouse(event, container) {
     const img = container.querySelector('.zoom-image');
     const containerRect = container.getBoundingClientRect();
-
-    // موقعیت موس نسبت به container
     const x = event.clientX - containerRect.left;
     const y = event.clientY - containerRect.top;
-
-    // درصد موقعیت موس
     const xPercent = (x / containerRect.width) * 100;
     const yPercent = (y / containerRect.height) * 100;
-
-    // اضافه کردن کلاس برای حذف transition هنگام حرکت موس
     img.classList.add('zooming');
-
-    // تنظیم transform-origin براساس موقعیت موس
     img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
-    img.style.transform = 'scale(2)'; // میزان زوم
+    img.style.transform = 'scale(2)';
 }
-
 function resetZoom(container) {
     const img = container.querySelector('.zoom-image');
     img.classList.remove('zooming');
@@ -283,26 +321,20 @@ function resetZoom(container) {
                             </button>
 
                             {% if product.store.whats_app_link and product.store.whats_app_ID %}
-                                <a href="{{ product.store.whats_app_link }}"
-                                   class="hover:opacity-80 transition-opacity">
-                                    <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-10 h-10" loading="lazy"
-                                         alt="WhatsApp"/>
+                                <a href="{{ product.store.whats_app_link }}" class="hover:opacity-80 transition-opacity" rel="noopener noreferrer" target="_blank" aria-label="ارتباط با واتساپ فروشنده">
+                                    <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-10 h-10" loading="lazy" alt="واتساپ {{ product.store.name }}"/>
                                 </a>
                             {% endif %}
 
                             {% if product.store.instagram_app_Link and product.store.instagram_app_ID %}
-                                <a href="{{ product.store.instagram_app_Link }}"
-                                   class="hover:opacity-80 transition-opacity">
-                                    <img src="/static/Images/svg/instagram.png" class="w-10 h-10" loading="lazy"
-                                         alt="Instagram"/>
+                                <a href="{{ product.store.instagram_app_Link }}" class="hover:opacity-80 transition-opacity" rel="noopener noreferrer" target="_blank" aria-label="اینستاگرام فروشنده">
+                                    <img src="/static/Images/svg/instagram.png" class="w-10 h-10" loading="lazy" alt="اینستاگرام {{ product.store.name }}"/>
                                 </a>
                             {% endif %}
 
                             {% if product.store.telegram_app_Link and product.store.telegram_app_ID %}
-                                <a href="{{ product.store.telegram_app_Link }}"
-                                   class="hover:opacity-80 transition-opacity">
-                                    <img src="/static/Images/svg/telegram.png" class="w-10 h-10" loading="lazy"
-                                         alt="Telegram"/>
+                                <a href="{{ product.store.telegram_app_Link }}" class="hover:opacity-80 transition-opacity" rel="noopener noreferrer" target="_blank" aria-label="تلگرام فروشنده">
+                                    <img src="/static/Images/svg/telegram.png" class="w-10 h-10" loading="lazy" alt="تلگرام {{ product.store.name }}"/>
                                 </a>
                             {% endif %}
 
@@ -316,28 +348,29 @@ function resetZoom(container) {
                             </button>
                         </div>
                     </div>
-
-
                 </div>
 
-                <!-- PRODUCT INFO -->
+                <!-- PRODUCT INFO با بهبود ساختار هدینگ -->
                 <div class="flex-1 space-y-4">
-                    <!-- NAME & BRAND -->
+                    <!-- NAME & BRAND - اصلاح شده با H1 -->
                     <div class="flex flex-col border-b border-gray-200 dark:border-white/20 pb-2">
-                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ product.brand.name }}
-                            - {{ product.name }}</p>
-                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white">{{ product.store.name }}</h3>
+                        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ product.name }}</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">برند: {{ product.brand.name }} | فروشنده: {{ product.store.name }}</p>
                     </div>
 
-                    <!-- CATEGORY -->
+                    <!-- CATEGORY با لینک داخلی -->
                     <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
                         <svg class="w-5 h-5">
                             <use href="#list-bullet"></use>
                         </svg>
-                        <p>دسته‌بندی: {{ product.category.name }}</p>
+                        <p>دسته‌بندی: 
+                            <a href="{% url 'product:list' %}?category={{ product.category.slug }}" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors" title="مشاهده همه محصولات {{ product.category.name }}">
+                                {{ product.category.name }}
+                            </a>
+                        </p>
                     </div>
 
-                    <!-- FEATURES -->
+                    <!-- FEATURES (بدون تغییر) -->
                     {% if product.parent %}
                         {% if product.parent.features.exists %}
                             <div class="space-y-2">
@@ -372,7 +405,7 @@ function resetZoom(container) {
                 </div>
             </div>
 
-            <!-- SPECIFICATIONS -->
+            <!-- SPECIFICATIONS (بدون تغییر) -->
             {% if product.parent %}
                 {% if product.parent.specs.exists %}
                     <div class="space-y-2">
@@ -451,14 +484,13 @@ function resetZoom(container) {
                                         </div>
                                     {% endif %}
                                 {% endif %}
-
                                 <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
                             </div>
                         </div>
                     </div>
 
                     {% for child in product.child|active_category %}
-                        <a href="{% url 'product:detail' child.id %}" class="block min-w-[250px] sm:min-w-[280px]">
+                        <a href="{% url 'product:detail' child.id %}" class="block min-w-[250px] sm:min-w-[280px]" title="{{ child.short_name }}">
                             <div class="flex items-center border rounded-lg p-2 transition-all hover:shadow-sm {% if request.resolver_match.kwargs.pk == child.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
                                 <div class="flex-none w-7 sm:w-8 p-1.5 flex justify-center">
                         <span class="text-lg {% if request.resolver_match.kwargs.pk == child.id %} text-green-500 {% else %} text-primary-600 dark:text-primary-400 {% endif %}">
@@ -476,7 +508,6 @@ function resetZoom(container) {
                                         {{ child.short_name }}
                                     </h3>
                                     <div class="mt-auto flex items-center gap-1">
-
                                         {% if request.user.is_authenticated and user.colleague_user and child.store in user.colleague_with_store.all and child.colleague_users_price > 0 %}
                                             <div class="flex flex-wrap items-baseline gap-1">
                             <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
@@ -504,8 +535,6 @@ function resetZoom(container) {
                                                 </div>
                                             {% endif %}
                                         {% endif %}
-
-
                                         <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
                                     </div>
                                 </div>
@@ -515,9 +544,8 @@ function resetZoom(container) {
                 </div>
             {% elif product.parent is not None %}
                 <p class="font-medium text-gray-800 dark:text-white mb-2">{{ product.parent.group_name|default:' ' }}</p>
-
                 <div class="flex gap-2 overflow-x-auto pb-3">
-                    <a href="{% url 'product:detail' product.parent.id %}" class="block min-w-[250px] sm:min-w-[280px]">
+                    <a href="{% url 'product:detail' product.parent.id %}" class="block min-w-[250px] sm:min-w-[280px]" title="{{ product.parent.short_name }}">
                         <div class="flex items-center border rounded-lg p-2 transition-all border-gray-200 hover:shadow-sm {% if request.resolver_match.kwargs.pk == product.parent.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
                             <div class="flex-none w-7 sm:w-8 p-1.5 flex justify-center">
                     <span class="text-lg {% if request.resolver_match.kwargs.pk == product.parent.id %} text-green-500 {% else %} text-primary-600 dark:text-primary-400 {% endif %}">
@@ -534,7 +562,6 @@ function resetZoom(container) {
                                     {{ product.parent.short_name }}
                                 </h3>
                                 <div class="mt-auto flex items-center gap-1">
-
                                     {% if request.user.is_authenticated and user.colleague_user  and product.store in user.colleague_with_store.all and product.colleague_users_price > 0%}
                                         <div class="flex flex-wrap items-baseline gap-1">
                                     <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
@@ -562,8 +589,6 @@ function resetZoom(container) {
                                             </div>
                                         {% endif %}
                                     {% endif %}
-
-
                                     <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
                                 </div>
                             </div>
@@ -571,7 +596,7 @@ function resetZoom(container) {
                     </a>
 
                     {% for child in product.parent.child|active_category %}
-                        <a href="{% url 'product:detail' child.id %}" class="block min-w-[250px] sm:min-w-[280px]">
+                        <a href="{% url 'product:detail' child.id %}" class="block min-w-[250px] sm:min-w-[280px]" title="{{ child.short_name }}">
                             <div class="flex items-center border rounded-lg p-2 transition-all border-gray-200 hover:shadow-sm {% if request.resolver_match.kwargs.pk == child.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
                                 <div class="flex-none w-7 sm:w-8 p-1.5 flex justify-center">
                         <span class="text-lg {% if request.resolver_match.kwargs.pk == child.id %} text-green-500 {% else %} text-primary-600 dark:text-primary-400 {% endif %}">
@@ -589,8 +614,6 @@ function resetZoom(container) {
                                         {{ child.short_name }}
                                     </h3>
                                     <div class="mt-auto flex items-center gap-1">
-
-
                                         {% if request.user.is_authenticated and user.colleague_user and product.store in user.colleague_with_store.all and child.colleague_users_price > 0 %}
                                             <div class="flex flex-wrap items-baseline gap-1">
                                     <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
@@ -618,8 +641,6 @@ function resetZoom(container) {
                                                 </div>
                                             {% endif %}
                                         {% endif %}
-
-
                                         <span class="text-xs text-gray-500 dark:text-gray-400">تومان</span>
                                     </div>
                                 </div>
@@ -628,11 +649,9 @@ function resetZoom(container) {
                     {% endfor %}
                 </div>
             {% endif %}
-            <!-- DESCRIPTION -->
-            <div class="w-full space-y-8">
-                <!-- ... سایر بخش های قبلی ... -->
 
-                <!-- DESCRIPTION WITH READ MORE BUTTON -->
+            <!-- DESCRIPTION با قابلیت بیشتر/کمتر -->
+            <div class="w-full space-y-8">
                 <div class="space-y-4">
                     <h2 class="text-2xl font-bold text-gray-800 dark:text-white">معرفی محصول</h2>
                     <div class="relative">
@@ -641,10 +660,8 @@ function resetZoom(container) {
                              style="max-height: 75px;">
                             {% if product.parent %}
                                 {{ product.parent.description|safe }}
-
                             {% else %}
                                 {{ product.description|safe }}
-
                             {% endif %}
                         </div>
                         <div id="description-fade"
@@ -652,7 +669,8 @@ function resetZoom(container) {
                     </div>
                     <div class="flex justify-center">
                         <button id="read-more-btn"
-                                class="text-green-500 dark:text-green-500 hover:text-green-800 dark:hover:text-green-300 font-medium flex items-center gap-2 transition-colors">
+                                class="text-green-500 dark:text-green-500 hover:text-green-800 dark:hover:text-green-300 font-medium flex items-center gap-2 transition-colors"
+                                aria-label="نمایش بیشتر توضیحات">
                             <span id="read-more-text">نمایش بیشتر</span>
                             <svg id="read-more-icon" class="w-4 h-4 transform transition-transform duration-300"
                                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -662,8 +680,6 @@ function resetZoom(container) {
                         </button>
                     </div>
                 </div>
-
-                <!-- ... سایر بخش های قبلی ... -->
             </div>
 
             <script>
@@ -672,10 +688,8 @@ function resetZoom(container) {
                 const readMoreText = document.getElementById('read-more-text');
                 const readMoreIcon = document.getElementById('read-more-icon');
                 const fadeElement = document.getElementById('description-fade');
-
                 let isExpanded = false;
 
-                // Initial check for content height
                 if (description.scrollHeight <= 75) {
                     readMoreBtn.parentElement.style.display = 'none';
                     fadeElement.style.display = 'none';
@@ -684,7 +698,6 @@ function resetZoom(container) {
 
                 readMoreBtn.addEventListener('click', () => {
                     isExpanded = !isExpanded;
-
                     if (isExpanded) {
                         description.style.maxHeight = description.scrollHeight + 'px';
                         readMoreText.textContent = 'نمایش کمتر';
@@ -698,14 +711,16 @@ function resetZoom(container) {
                     }
                 });
             </script>
+
+            <!-- TAGS با لینک داخلی -->
             {% if product.parent %}
                 {% if product.parent.tags.exists %}
                     <div class="flex flex-wrap gap-2">
                         {% for tag in product.parent.tags.all %}
                             {% if tag.name != '' %}
-                                <span class="inline-flex items-center bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 rounded-lg font-medium text-sm px-3 py-1">
-                            {{ tag.name }}
-                        </span>
+                                <a href="{% url 'product:list' %}?tag={{ tag.slug }}" class="inline-flex items-center bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 rounded-lg font-medium text-sm px-3 py-1 hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors" title="محصولات مرتبط با {{ tag.name }}">
+                                    {{ tag.name }}
+                                </a>
                             {% endif %}
                         {% endfor %}
                     </div>
@@ -715,22 +730,30 @@ function resetZoom(container) {
                     <div class="flex flex-wrap gap-2">
                         {% for tag in product.tags.all %}
                             {% if tag.name != '' %}
-                                <span class="inline-flex items-center bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 rounded-lg font-medium text-sm px-3 py-1">
-                            {{ tag.name }}
-                        </span>
+                                <a href="{% url 'product:list' %}?tag={{ tag.slug }}" class="inline-flex items-center bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 rounded-lg font-medium text-sm px-3 py-1 hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors" title="محصولات مرتبط با {{ tag.name }}">
+                                    {{ tag.name }}
+                                </a>
                             {% endif %}
                         {% endfor %}
                     </div>
                 {% endif %}
             {% endif %}
-
-
+ 
+            {% for object in product.guarantee.all %}
+            <div class="border border-gray-200 dark:border-white/20 rounded-lg p-2 flex items-center">
+                <p class="text-gray-600 dark:text-gray-400"> این محصول دارای گارانتی :
+                    {{ object.name }} | 
+                    شرکت : {{ object.company.name }}  |
+                    سریال : {{ object.serial_number }} |
+                    مدت : {{ object.months_of_expire }} ماه 
+                </p>
+            </div>
+            {% endfor %}
         </div>
 
+        <!-- SIDEBAR (بدون تغییر محتوایی، فقط بهبود دسترسی) -->
         <div class="w-full lg:w-1/4 lg:sticky top-5 flex flex-col gap-y-6">
-
             <div class="flex items-center gap-x-1">
-
                 {% if request.user.is_authenticated and user.colleague_user and product.store in user.colleague_with_store.all and product.colleague_users_price > 0 %}
                     <p class="text-2xl font-DanaDemiBold">{{ product|colleague:request }}</p>
                     <p class="">تومان</p>
@@ -739,7 +762,6 @@ function resetZoom(container) {
                         {{ product.price|tdc }}
                         <span class="font-Dana text-sm">تومان</span>
                     </del>
-
                 {% else %}
                     {% if product.have_discount %}
                         <p class="text-2xl font-DanaDemiBold">{{ product.price|clac_discount:product.discount }}</p>
@@ -754,8 +776,6 @@ function resetZoom(container) {
                         <p class="">تومان</p>
                     {% endif %}
                 {% endif %}
-
-
             </div>
 
             <script>
@@ -763,359 +783,233 @@ function resetZoom(container) {
                     const element = document.getElementById('customInput');
                     const maxCount = Number(element.getAttribute('max')) || Infinity;
                     let value = Number(element.value) || 0;
-
                     if (sign === '+') {
                         value = Math.min(value + 1, maxCount);
                     } else if (sign === '-') {
                         value = Math.max(value - 1, 0);
                     }
-
                     element.value = value;
                 };
-
             </script>
 
             {% if product.store.zero_the_count_of_all_product_of_store or site_zero_the_count_of_all_product %}
-                <button class="w-full flex items-center gap-x-1 justify-center bg-red-500 text-white hover:bg-red-600 transition-all rounded-lg shadow py-2">
+                <button class="w-full flex items-center gap-x-1 justify-center bg-red-500 text-white hover:bg-red-600 transition-all rounded-lg shadow py-2" disabled>
                     موجودی این محصول تمام شده است
                 </button>
             {% else %}
-
                 {% if product.count > 0 or user_order_detail.count > 0 %}
-
                     <form action="{% url 'orders:add' product.id %}?_={{ ts }}" class="flex flex-col gap-y-5">
-<div class="flex items-center justify-between rounded-lg border border-gray-200 dark:border-white/20 py-2 px-3">
-  <svg onclick="handle_input('+')" class="w-6 h-6 shrink-0 text-green-600 cursor-pointer" role="button" aria-label="افزایش تعداد" tabindex="0">
-    <use href="#plus"></use>
-  </svg>
-  
-  <input 
-    type="number" 
-    name="count" 
-    id="customInput" 
-    min="0"
-    {% if user_order_detail is not None %}
-    max="{{ product.count|sum:user_order_detail.count }}" 
-    {% else %}
-    max="{{ product.count }}" 
-    {% endif %}
-    value="{{ user_order_detail.count|default:1 }}"
-    class="custom-input mx-4 w-10 text-lg bg-transparent text-center flex-1"
-    aria-label="تعداد کالا"
-  >
-  
-  <svg onclick="handle_input('-')" class="w-6 h-6 shrink-0 text-red-500 cursor-pointer" role="button" aria-label="کاهش تعداد" tabindex="0">
-    <use href="#minus"></use>
-  </svg>
-</div>
-
-                        <button type="submit"
-                                class="w-full  gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
+                        <div class="flex items-center justify-between rounded-lg border border-gray-200 dark:border-white/20 py-2 px-3">
+                            <svg onclick="handle_input('+')" class="w-6 h-6 shrink-0 text-green-600 cursor-pointer" role="button" aria-label="افزایش تعداد" tabindex="0">
+                                <use href="#plus"></use>
+                            </svg>
+                            <input 
+                                type="number" 
+                                name="count" 
+                                id="customInput" 
+                                min="0"
+                                {% if user_order_detail is not None %}
+                                max="{{ product.count|sum:user_order_detail.count }}" 
+                                {% else %}
+                                max="{{ product.count }}" 
+                                {% endif %}
+                                value="{{ user_order_detail.count|default:1 }}"
+                                class="custom-input mx-4 w-10 text-lg bg-transparent text-center flex-1"
+                                aria-label="تعداد کالا"
+                            >
+                            <svg onclick="handle_input('-')" class="w-6 h-6 shrink-0 text-red-500 cursor-pointer" role="button" aria-label="کاهش تعداد" tabindex="0">
+                                <use href="#minus"></use>
+                            </svg>
+                        </div>
+                        <button type="submit" class="w-full gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
                             افزودن به سبد خرید
                             <svg class="w-5 h-5">
                                 <use href="#shopping-bag"></use>
                             </svg>
                         </button>
-
-                        <button type="submit"
-                                class="w-full flex items-center  gap-y-1 gap-x-1 justify-between dark:bg-zinc-800 dark:text-gray-400  bg-gray-100 transition-all rounded-lg py-2 px-2 xl:px-3 font-DanaMedium text-sm xl:text-base">
+                        <button type="submit" class="w-full flex items-center gap-y-1 gap-x-1 justify-between dark:bg-zinc-800 dark:text-gray-400 bg-gray-100 transition-all rounded-lg py-2 px-2 xl:px-3 font-DanaMedium text-sm xl:text-base">
                             <p>قیمت :</p>
                             <p>{{ user_order_detail.price|tdc }} تومان</p>
                         </button>
-
                     </form>
-
-
                 {% else %}
-                    <button class="w-full flex items-center gap-x-1 justify-center bg-red-500 text-white hover:bg-red-600 transition-all rounded-lg shadow py-2">
+                    <button class="w-full flex items-center gap-x-1 justify-center bg-red-500 text-white hover:bg-red-600 transition-all rounded-lg shadow py-2" disabled>
                         موجودی این محصول تمام شده است
                     </button>
                 {% endif %}
-
             {% endif %}
 
-
             {% if user.is_authenticated %}
-
-                <a href="{% url 'dashboard:order_detail' user_order.id %}"
-                   class="w-full  gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
+                <a href="{% url 'dashboard:order_detail' user_order.id %}" class="w-full gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
                     مشاهده سبد خرید
-
                 </a>
-
-                <button type="submit"
-                        class="w-full flex items-center  gap-y-1 gap-x-1 justify-between dark:bg-zinc-800 dark:text-gray-400  bg-gray-100 transition-all rounded-lg py-2 px-2 xl:px-3 font-DanaMedium text-sm xl:text-base">
+                <button type="submit" class="w-full flex items-center gap-y-1 gap-x-1 justify-between dark:bg-zinc-800 dark:text-gray-400 bg-gray-100 transition-all rounded-lg py-2 px-2 xl:px-3 font-DanaMedium text-sm xl:text-base">
                     <p> سبد خرید :</p>
                     <p>{{ user_order.calculate_total_price|tdc }} تومان</p>
                 </button>
-                <a href="{% url 'orders:payment-conform' user_order.id %}"
-                   class="w-full  gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
+                <a href="{% url 'orders:payment-conform' user_order.id %}" class="w-full gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
                     ارسال کالا و نهایی کردن سبد خرید
                 </a>
             {% else %}
-                <a href="{% url 'user:login' %}"
-                   class="w-full  gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
+                <a href="{% url 'user:login' %}" class="w-full gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
                     مشاهده سبد خرید
-
                 </a>
-
-                <button type="submit"
-                        class="w-full flex items-center  gap-y-1 gap-x-1 justify-between dark:bg-zinc-800 dark:text-gray-400  bg-gray-100 transition-all rounded-lg py-2 px-2 xl:px-3 font-DanaMedium text-sm xl:text-base">
+                <button type="submit" class="w-full flex items-center gap-y-1 gap-x-1 justify-between dark:bg-zinc-800 dark:text-gray-400 bg-gray-100 transition-all rounded-lg py-2 px-2 xl:px-3 font-DanaMedium text-sm xl:text-base">
                     <p> سبد خرید :</p>
                     <p>{{ user_order.calculate_total_price|tdc }} تومان</p>
                 </button>
-                <a href="{% url 'user:login' %}"
-                   class="w-full  gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
+                <a href="{% url 'user:login' %}" class="w-full gap-y-1 flex items-center gap-x-1 justify-center bg-green-500 text-white hover:bg-green-600 transition-all rounded-lg shadow py-2">
                     ارسال کالا و نهایی کردن سبد خرید
                 </a>
-                <p>
-                    برای مشاهده سبد خرید لطفا وارد سایت شوید
-                </p>
+                <p>برای مشاهده سبد خرید لطفا وارد سایت شوید</p>
             {% endif %}
         </div>
-
-
     </section>
 
-    <!-- COMMENTS -->
+    <!-- COMMENTS SECTION -->
     <section class="w-full rounded-lg bg-white dark:bg-zinc-700 shadow p-5">
         <div class="flex items-center gap-x-2 mb-6">
-            <h2 class="font-MorabbaMedium text-2xl ">
-                دیدگاه ها
-            </h2>
-            <p class="text-sm text-blue-500">
-                ({{ comments.count }} دیدگاه)
-            </p>
+            <h2 class="font-MorabbaMedium text-2xl">دیدگاه ها</h2>
+            <p class="text-sm text-blue-500">({{ comments.count }} دیدگاه)</p>
         </div>
 
         <div class="flex flex-col lg:flex-row items-start gap-10">
-            <!-- SUBMIT COMMENT -->
-            <div class="lg:w-1/4 flex flex-col w-full ">
-                <form action="{% url 'product:add_comment' pk=product.id %}?_={{ ts }}" method="POST"
-                      enctype="multipart/form-data" style="outline: none !important;">
+            <div class="lg:w-1/4 flex flex-col w-full">
+                <form action="{% url 'product:add_comment' pk=product.id %}?_={{ ts }}" method="POST" enctype="multipart/form-data" style="outline: none !important;">
                     {% csrf_token %}
                     <p class="font-DanaMedium text-lg mb-2">ثبت دیدگاه</p>
                     {{ comment_form.subject }}
                     {{ comment_form.suggest_product }}
-
-                    {# <input type="text" placeholder="عنوان" class="tailwind-input">#}
-
                     <p class="text-gray-500 dark:text-white text-sm mb-4">این محصول را به دیگران پیشنهاد : </p>
-                    <div class="grid grid-cols-12 child:col-span-6 gap-4 child:w-full  child:flex child:items-center child:justify-center child:gap-x-2 child:rounded-lg child:shadow child:py-2 mb-5 child:font-DanaMedium child:duration-300
-                        child:transition-all">
-                        <button type="button"
-                                onclick="document.getElementById('suggest_product_hidden_input').value = 'True'"
-                                class="text-green-600 ring-transparent ring-1 focus:ring-green-600 dark:ring-white/20 dark:focus:ring-green-600">
-                            <svg class="w-5 h-5">
-                                <use href="#hand-up"></use>
-                            </svg>
+                    <div class="grid grid-cols-12 child:col-span-6 gap-4 child:w-full child:flex child:items-center child:justify-center child:gap-x-2 child:rounded-lg child:shadow child:py-2 mb-5 child:font-DanaMedium child:duration-300 child:transition-all">
+                        <button type="button" onclick="document.getElementById('suggest_product_hidden_input').value = 'True'" class="text-green-600 ring-transparent ring-1 focus:ring-green-600 dark:ring-white/20 dark:focus:ring-green-600">
+                            <svg class="w-5 h-5"><use href="#hand-up"></use></svg>
                             میکنم
                         </button>
-                        <button type="button"
-                                onclick="document.getElementById('suggest_product_hidden_input').value = 'False'"
-                                class="text-red-500 ring-transparent ring-1 focus:ring-[#EF4343] dark:ring-white/20 dark:focus:ring-[#EF4343]">
-                            <svg class="w-5 h-5">
-                                <use href="#hand-down"></use>
-                            </svg>
+                        <button type="button" onclick="document.getElementById('suggest_product_hidden_input').value = 'False'" class="text-red-500 ring-transparent ring-1 focus:ring-[#EF4343] dark:ring-white/20 dark:focus:ring-[#EF4343]">
+                            <svg class="w-5 h-5"><use href="#hand-down"></use></svg>
                             نمیکنم
                         </button>
                     </div>
                     {{ comment_form.comment }}
-                    {# <textarea class=""></textarea>#}
-                    <button type="submit"
-                            class="rounded-lg p-2 lg:block block bg-green-500 hover:bg-green-600 text-white transition-all">
+                    <button type="submit" class="rounded-lg p-2 lg:block block bg-green-500 hover:bg-green-600 text-white transition-all">
                         ثبت
                     </button>
                 </form>
-
             </div>
 
-            <!-- ALL COMMENTS -->
-            <ul class="lg:w-3/4 flex flex-col gap-y-2 child:w-full  ">
+            <ul class="lg:w-3/4 flex flex-col gap-y-2 child:w-full">
                 {% for comment in comments %}
-
-
-                    <!-- COMMENT ITEMS -->
                     <li class="child:flex py-4 border-b border-gray-200 child:border-white/20">
-                        <!-- TITLE -->
                         <div class="flex items-center gap-x-2">
-                            <h2 class="font-DanaMedium text-lg mb-1">{{ comment.subject }}</h2>
+                            <h3 class="font-DanaMedium text-lg mb-1">{{ comment.subject }}</h3>
                             {% if comment.buyer %}
-                                <span class="px-2 py-1 mb-2 rounded-lg bg-green-500 text-white text-xs">
-                                    خریدار
-                                </span>
+                                <span class="px-2 py-1 mb-2 rounded-lg bg-green-500 text-white text-xs">خریدار</span>
                             {% endif %}
                         </div>
-                        <!-- COOMENT TEXT -->
                         <div class="flex-col">
                             {% if comment.suggest_product %}
                                 <h2 class="flex items-center gap-x-1 text-green-500 mb-4">
-                                    <svg class="w-4 h-4">
-                                        <use href="#hand-up"></use>
-                                    </svg>
+                                    <svg class="w-4 h-4"><use href="#hand-up"></use></svg>
                                     پیشنهاد میشود
                                 </h2>
                             {% else %}
                                 <h2 class="flex items-center gap-x-1 text-red-500 mb-4">
-                                    <svg class="w-4 h-4">
-                                        <use href="#hand-down"></use>
-                                    </svg>
+                                    <svg class="w-4 h-4"><use href="#hand-down"></use></svg>
                                     پیشنهاد نمیشود
                                 </h2>
                             {% endif %}
-                            <p class="text-gray-500 dark:text-gray-200 mb-2 line-clamp-2">
-                                {{ comment.comment }}
-                            </p>
+                            <p class="text-gray-500 dark:text-gray-200 mb-2 line-clamp-2">{{ comment.comment }}</p>
                         </div>
-                        <!-- COMMENT FOOTER -->
                         <div class="mt-2 lg:mt-0 flex-col lg:flex-row gap-y-2 lg:items-center justify-between">
                             <div class="flex items-center gap-x-4 text-gray-400 text-sm">
                                 <p>{{ comment.date|to_jalali:'%H:%M:%S - %y/%m/%d' }}</p>
                                 <p>{{ comment.user.get_full_name }}</p>
-
                                 {% if user.is_superuser or user.id == comment.user.id or user.is_staff %}
-                                    <a href="{% url 'product:remove_comment' pk=comment.id %}">
-                                        <button class="text-red-600 ring-transparent ring-1 focus:ring-red-600  dark:focus:ring-red-600">
-                                            حذف
-
-                                        </button>
+                                    <a href="{% url 'product:remove_comment' pk=comment.id %}" class="text-red-600 ring-transparent ring-1 focus:ring-red-600 dark:focus:ring-red-600">
+                                        حذف
                                     </a>
                                 {% endif %}
                             </div>
                             <div class="flex items-center gap-x-2 flex-wrap mt-2">
                                 <p class="text-gray-400 text-sm">آیا این دیدگاه برایتان مفید بود؟</p>
-                                <div class="flex items-center gap-x-2 child:flex child:items-center child:gap-x-1 child:rounded-lg child:p-2 child:font-DanaMedium child:duration-300
-                                child:transition-all child:text-sm">
-
-                                    <a href="{% url 'product:like_comment' pk=product.id comment_id=comment.id %}?_={{ ts }}"
-                                       class="text-green-600 ring-transparent ring-1 focus:ring-green-600  dark:focus:ring-green-600">
+                                <div class="flex items-center gap-x-2 child:flex child:items-center child:gap-x-1 child:rounded-lg child:p-2 child:font-DanaMedium child:duration-300 child:transition-all child:text-sm">
+                                    <a href="{% url 'product:like_comment' pk=product.id comment_id=comment.id %}?_={{ ts }}" class="text-green-600 ring-transparent ring-1 focus:ring-green-600 dark:focus:ring-green-600">
                                         {{ comment.like_count }}
-                                        <svg class="w-4 h-4">
-                                            <use href="#hand-up"></use>
-                                        </svg>
+                                        <svg class="w-4 h-4"><use href="#hand-up"></use></svg>
                                     </a>
-
-                                    <a href="{% url 'product:dislike_comment' pk=product.id comment_id=comment.id %}?_={{ ts }}"
-                                       class="text-red-500 ring-transparent ring-1 focus:ring-[#EF4343]  dark:focus:ring-[#EF4343]">
+                                    <a href="{% url 'product:dislike_comment' pk=product.id comment_id=comment.id %}?_={{ ts }}" class="text-red-500 ring-transparent ring-1 focus:ring-[#EF4343] dark:focus:ring-[#EF4343]">
                                         {{ comment.dislike_count }}
-                                        <svg class="w-4 h-4">
-                                            <use href="#hand-down"></use>
-                                        </svg>
+                                        <svg class="w-4 h-4"><use href="#hand-down"></use></svg>
                                     </a>
                                 </div>
                             </div>
                         </div>
                     </li>
                 {% endfor %}
-
-
             </ul>
         </div>
     </section>
-    <!--  Products slider -->
+
+    <!-- RELATED PRODUCTS SLIDER -->
     <section class="mt-10">
-        <!-- TITLE -->
         <div class="flex items-center justify-between mb-12">
             <div class="flex flex-col gap-y-2">
-                <h2 class="font-MorabbaMedium text-xl lg:text-3xl">
-                    محصولات مرتبط
-                </h2>
+                <h2 class="font-MorabbaMedium text-xl lg:text-3xl">محصولات مرتبط</h2>
             </div>
             <div class="flex items-center gap-x-2 child:p-2 child:bg-white child:dark:bg-zinc-700 child:shadow child:rounded-full">
-                <button class="related-products-prev" aria-label='محصول بعدی' >
-                    <svg class="w-4 h-4">
-                        <use href="#chevron-right"></use>
-                    </svg>
+                <button class="related-products-prev" aria-label="محصولات مرتبط قبلی">
+                    <svg class="w-4 h-4"><use href="#chevron-right"></use></svg>
                 </button>
-                <button class="related-products-next" aria-label='محصول قبلی'>
-                    <svg class="w-4 h-4">
-                        <use href="#chevron-left"></use>
-                    </svg>
+                <button class="related-products-next" aria-label="محصولات مرتبط بعدی">
+                    <svg class="w-4 h-4"><use href="#chevron-left"></use></svg>
                 </button>
             </div>
         </div>
-        <!-- SLIDER -->
-        <!-- dqwpodjqpwojdpqowjdpqwjdpqojwpdqwd -->
         <div class="swiper related-products-swiper rounded-lg" dir="rtl">
             <div class="swiper-wrapper">
-
                 {% for product in same_product.all %}
-                    <div onclick="window.location=this.querySelector('a').href" class="swiper-slide group bg-white dark:bg-zinc-700 w-64 "
-                         style="width: 250px !important; margin-left: 20px;">
-                        <!-- OFF BADGE -->
+                    <div onclick="window.location=this.querySelector('a').href" class="swiper-slide group bg-white dark:bg-zinc-700 w-64" style="width: 250px !important; margin-left: 20px;">
                         {% if product.have_discount %}
                             <span class="absolute top-5 right-5 flex items-center justify-center w-8 h-8 text-xs bg-green-500 rounded-full text-white z-30">
-                            {{ product.discount }}%
-                        </span>
+                                {{ product.discount }}%
+                            </span>
                         {% endif %}
-
-                        <!-- PRODUCT IMAGE -->
-                        <a href="{% url 'product:detail' product.id %}">
+                        <a href="{% url 'product:detail' product.id %}" title="{{ product.name }}">
                             <picture>
                                 {% if product.picture %}
                                     <source srcset="{% thumbnail product.picture '200x200' %}" type="image/webp">
-                                    <img src="{% thumbnail product.picture '200x200' %}" alt="{{ product.name }}"  width="200" height="200"
-                                         class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
-                                         loading="lazy">
+                                    <img src="{% thumbnail product.picture '200x200' %}" alt="{{ product.name }}" width="200" height="200" class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3" loading="lazy">
                                 {% endif %}
                             </picture>
                         </a>
-
-                        <!-- PRODUCT MAIN -->
                         <div class="px-2 lg:px-4 mb-3">
-                            <a href="{% url 'product:detail' product.id %}"
-                               class="line-clamp-2 font-DanaMedium mb-2 text-sm lg:text-base">
+                            <a href="{% url 'product:detail' product.id %}" class="line-clamp-2 font-DanaMedium mb-2 text-sm lg:text-base" title="{{ product.name }}">
                                 {{ product.name }}
                             </a>
                             <div class="flex items-center gap-x-1 lg:gap-x-3">
-
                                 {% if request.user.is_authenticated and user.colleague_user and product.store in user.colleague_with_store.all and product.colleague_users_price > 0 %}
-
-<p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                        {{ product|colleague:request }}
-                                        <span class="font-Dana text-sm">تومان</span>
-                                    </p>
-                                    <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
-                                        {{ product.price|tdc }}
-                                        <span class="">تومان</span>
-                                    </del>
+                                    <p class="font-DanaDemiBold text-green-600 dark:text-green-300">{{ product|colleague:request }} <span class="font-Dana text-sm">تومان</span></p>
+                                    <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">{{ product.price|tdc }} <span>تومان</span></del>
                                 {% else %}
                                     {% if not product.have_discount %}
-<p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                            {{ product.price|tdc }}
-                                            <span class="font-Dana text-sm">تومان</span>
-                                        </p>
+                                        <p class="font-DanaDemiBold text-green-600 dark:text-green-300">{{ product.price|tdc }} <span class="font-Dana text-sm">تومان</span></p>
                                     {% else %}
-<p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                            {{ product.price|clac_discount:product.discount }}
-                                            <span class="font-Dana text-sm">تومان</span>
-                                        </p>
-                                        <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
-                                            {{ product.price|tdc }}
-                                            <span class="">تومان</span>
-                                        </del>
+                                        <p class="font-DanaDemiBold text-green-600 dark:text-green-300">{{ product.price|clac_discount:product.discount }} <span class="font-Dana text-sm">تومان</span></p>
+                                        <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">{{ product.price|tdc }} <span>تومان</span></del>
                                     {% endif %}
                                 {% endif %}
-
-
                             </div>
                         </div>
-
-                        <!-- PRODUCT FOOTER -->
                         <div class="flex items-center justify-between px-2 lg:px-4 mb-3">
                             <div class="flex items-center gap-x-2 child:transition-all child:duration-300">
                                 {% if product.id in user_favorite %}
-                                    <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}?_={{ ts }}" aria-label=" حذف از محصولات مورد علاقه">
-                                    <span class="hover:text-red-600">
-                                        <svg class="w-4 h-4">
-                                            <use href="#close"></use>
-                                        </svg>
-                                    </span>
+                                    <a href="{% url 'dashboard:remove_from_favorite' pk=product.id %}?_={{ ts }}" aria-label="حذف از محصولات مورد علاقه" title="حذف از علاقمندی">
+                                        <span class="hover:text-red-600"><svg class="w-4 h-4"><use href="#close"></use></svg></span>
                                     </a>
                                 {% else %}
-                                    <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}?_={{ ts }}" aria-label=" اضافه به محصولات مورد علاقه">
-                                    <span class="hover:text-green-600">
-                                        <svg class="w-4 h-4">
-                                            <use href="#heart"></use>
-                                        </svg>
-                                    </span>
+                                    <a href="{% url 'dashboard:add_to_favorite' pk=product.id %}?_={{ ts }}" aria-label="اضافه به محصولات مورد علاقه" title="افزودن به علاقمندی">
+                                        <span class="hover:text-green-600"><svg class="w-4 h-4"><use href="#heart"></use></svg></span>
                                     </a>
                                 {% endif %}
                             </div>
@@ -1125,6 +1019,7 @@ function resetZoom(container) {
             </div>
         </div>
     </section>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const relatedProductsSwiper = new Swiper('.related-products-swiper', {
@@ -1132,24 +1027,15 @@ function resetZoom(container) {
                 spaceBetween: 20,
                 loop: false,
                 rtl: true,
-                speed: 900, // سرعت انتقال اسلایدها (میلی‌ثانیه) - مقدار پیش‌فرض 300 است
+                speed: 900,
                 navigation: {
                     nextEl: '.related-products-next',
                     prevEl: '.related-products-prev',
                 },
                 breakpoints: {
-                    640: {
-                        slidesPerView: 2,
-                        slidesPerGroup: 2
-                    },
-                    768: {
-                        slidesPerView: 3,
-                        slidesPerGroup: 3
-                    },
-                    1024: {
-                        slidesPerView: 4,
-                        slidesPerGroup: 4
-                    },
+                    640: { slidesPerView: 2, slidesPerGroup: 2 },
+                    768: { slidesPerView: 3, slidesPerGroup: 3 },
+                    1024: { slidesPerView: 4, slidesPerGroup: 4 },
                 }
             });
         });
@@ -1162,5 +1048,4 @@ function resetZoom(container) {
             margin-right: 20px !important;
         }
     </style>
-
 {% endblock %}

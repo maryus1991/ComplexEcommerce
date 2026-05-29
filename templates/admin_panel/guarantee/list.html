@@ -149,6 +149,8 @@
                 <tr class="bg-primary">
                     <th class="text-center" width="5%">#</th>
                     <th width="20%">نام </th>
+                    <th width="20%">محصول </th>
+
                     <th width="20%">شماره سریال</th>
                     <th width="30%">نام شرکت گارانتی</th>
            
@@ -170,6 +172,8 @@
 
                             {% endif %}
                         </td>
+                                                <td class="text-center"><span   class=""> <a href="{% url 'admin_panel:product-update' item.product.id %}"> {{item.product.name}} </a> </span></td>
+
                         <td class="text-center"><span class="badge label-primary">{{ item.serial_number }}</span></td>
                         <td class="text-center"><span class="badge label-primary">{{ item.company.name }}</span></td>
 

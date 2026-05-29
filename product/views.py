@@ -237,7 +237,12 @@ class ProductDetailView(DetailView):
                 admin_verified=True,
                 brand__is_active=True,
                 category__is_active=True,
-            ).prefetch_related("features", 'brand', 'category', 'favorite', 'comments', 'gallery', 'store', "tags", "specs", "child", 'parent')
+            ).prefetch_related(
+                "features", 'brand', 'category', 
+                'favorite', 'comments', 'gallery', 
+                'store', "tags", "specs", "child", 
+                'parent', "guarantee"
+            )
 
         if not product_obj.exists():
             raise Http404()

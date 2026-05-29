@@ -9,6 +9,7 @@ from admin_panel.forms import ActiveGuaranteeModelForm
 from dateutil.relativedelta import relativedelta
 from django.utils.timezone import now
 from user.models import User
+from utils.send_otp import send_guarantee_message
 
 
 class ActiveGuaranteeListView(UserStoreStaffMixin, ListView):
@@ -58,6 +59,17 @@ class ActiveGuaranteeCreateView(UserStoreStaffMixin, CreateView):
             months=form.instance.guarantee.months_of_expire
         )
         messages.success(self.request, "ایتم شما با موفقیت ساخته شد")
+
+        send_guarantee_message.delay({
+            'receptor': str(form.instance.phone_number).replace(" ", "") ,
+            'token2':   str(form.instance.phone_number).replace(" ", ""),
+            'template': "Guarantee",
+            'token':   f"{form.instance.guarantee.serial_number}",
+            'token10': f"{form.instance.guarantee.months_of_expire}",
+            'token20': f"{form.instance.serial_number}",
+            'type': 'sms',
+        })
+
         return super().form_valid(form)
     
     def form_invalid(self, form):

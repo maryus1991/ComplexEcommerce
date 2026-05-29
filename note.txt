@@ -1,3 +1,0 @@
-add send message for guarantee 
-add guarantee to product details page 
- -- ---- add active guarantee for store

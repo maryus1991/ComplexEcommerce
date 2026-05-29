@@ -38,7 +38,20 @@ def send_message(number, template, message, second_message=None):
             )
 
         response = api.verify_lookup(params)
-         
+
+
+
+    except Exception as e:
+        print(e)
+
+@shared_task(queue='sms')
+def send_guarantee_message(params):
+ 
+
+    try:
+        api = KavenegarAPI(KAVEH_NEGAR_OTP) 
+        response = api.verify_lookup(params)
+
     except Exception as e:
         print(e)
 
