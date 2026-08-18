@@ -26,7 +26,7 @@ COPY 1111.jpg /app/
 COPY manage.py /app/
 COPY ZARINPAL_ERRORS.py /app/
 COPY .envs /app/
-
-RUN pip install -r req.txt
+ 
+RUN pip install -i https://mirror-pypi.runflare.com/simple  -r req.txt
 
 
