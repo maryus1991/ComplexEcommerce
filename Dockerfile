@@ -12,6 +12,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 COPY req.txt req.txt
+COPY dev-req.txt dev-req.txt
 COPY /admin_panel/ /app/
 COPY /blog/ /app/
 COPY /config/ /app/
@@ -27,6 +28,7 @@ COPY manage.py /app/
 COPY ZARINPAL_ERRORS.py /app/
 COPY .envs /app/
  
-RUN pip install -i https://mirror-pypi.runflare.com/simple  -r req.txt
+RUN pip install --index-url https://mirror2.chabokan.net/pypi/simple/ -r dev-req.txt
 
+RUN pip install --index-url https://mirror2.chabokan.net/pypi/simple/ -r req.txt
 

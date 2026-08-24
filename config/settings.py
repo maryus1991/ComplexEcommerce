@@ -213,7 +213,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = "fa"
+LANGUAGE_CODE = "en"
 USE_I18N = True
 TIME_ZONE = "Asia/Tehran"
 USE_TZ = True
@@ -445,3 +445,17 @@ ZIPAL_MERCHANT_CODE=os.getenv('ZIPAL_MERCHANT_CODE')
 
 # csp config 
 #CONTENT_SECURITY_POLICY = {     "default-src": ("'self'",),     "font-src": ("'self'", "fonts.gstatic.com", "cdnjs.cloudflare.com", "cdn.jsdelivr.net"),     "img-src": ("'self'",),     "media-src": ("'self'",),     "script-src": ("'self'", "cdnjs.cloudflare.com", "cdn.jsdelivr.net", "www.googletagmanager.com", "www.google-analytics.com", "'nonce-XyZ34AbC'"),     "style-src": ("'self'", "fonts.googleapis.com", "cdnjs.cloudflare.com", "cdn.jsdelivr.net", "'nonce-XyZ34AbC'"),     "connect-src": ("'self'", "www.google-analytics.com"), }
+
+if DEBUG:
+    INSTALLED_APPS += ['debug_toolbar']
+    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+    INTERNAL_IPS = [
+
+        "127.0.0.1",
+        "172.23.0.4",
+        "172.23.0.1",
+        "app",
+        "localhost",
+        "0.0.0.0",
+
+    ]

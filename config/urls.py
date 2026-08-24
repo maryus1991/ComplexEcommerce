@@ -28,8 +28,8 @@ urlpatterns = [
 ]
 
 handler404 = "sitesetting.views.custom_404_page"
-
 if settings.DEBUG:
+
     urlpatterns = urlpatterns + static.static(
         settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
     )
@@ -38,6 +38,11 @@ if settings.DEBUG:
         path("admin-panel/", include("admin_panel.urls")),
         path("admin/", admin.site.urls),
     ]
+
+    from debug_toolbar.toolbar import debug_toolbar_urls
+
+    urlpatterns += debug_toolbar_urls()
+
 else:
     token = get_random_string(1000)
     urlpatterns += [

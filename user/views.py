@@ -265,7 +265,7 @@ class LoginView(View):
             password = form.cleaned_data["password"]
 
             user = User.objects.filter(PhoneNumber=phone_number)
-            if not user.exists() or user.count() != 1:
+            if not user.exists():
                 messages.error(request, 'کاربر پیدا نشد')
                 return render(request, self.template_name, {"login_form": LoginForm(request.POST)})
 
