@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from .managers import UserManager
 from stores.models import Store
-from utils.send_email_task import send_email_task
+
 from utils.send_otp import send_otp
 from utils.send_email_task import send_email_task
 from django.shortcuts import reverse

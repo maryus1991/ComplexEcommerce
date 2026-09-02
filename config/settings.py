@@ -129,7 +129,7 @@ MIDDLEWARE = [
     "htmlmin.middleware.MarkRequestMiddleware",
 
     "django.middleware.csrf.CsrfViewMiddleware",
-        "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
@@ -228,6 +228,8 @@ STATIC_ROOT = BASE_DIR / "static"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -445,6 +447,10 @@ ZIPAL_PAYMENT_REDIRECT=os.getenv('ZIPAL_PAYMENT_REDIRECT', default='https://gate
 ZIPAL_PAYMENT_VERIFY=os.getenv('ZIPAL_PAYMENT_VERIFY', default='https://gateway.zibal.ir/v1/verify')
 ZIPAL_MERCHANT_CODE=os.getenv('ZIPAL_MERCHANT_CODE')
 
+AUTHENTICATION_BACKENDS = [
+    "user.backends.UserCustomAuthenticatedBackend",
+]
+
 # csp config 
 #CONTENT_SECURITY_POLICY = {     "default-src": ("'self'",),     "font-src": ("'self'", "fonts.gstatic.com", "cdnjs.cloudflare.com", "cdn.jsdelivr.net"),     "img-src": ("'self'",),     "media-src": ("'self'",),     "script-src": ("'self'", "cdnjs.cloudflare.com", "cdn.jsdelivr.net", "www.googletagmanager.com", "www.google-analytics.com", "'nonce-XyZ34AbC'"),     "style-src": ("'self'", "fonts.googleapis.com", "cdnjs.cloudflare.com", "cdn.jsdelivr.net", "'nonce-XyZ34AbC'"),     "connect-src": ("'self'", "www.google-analytics.com"), }
 
@@ -461,3 +467,5 @@ if DEBUG:
         "0.0.0.0",
 
     ]
+
+

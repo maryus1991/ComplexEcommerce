@@ -7,7 +7,7 @@ from django.views.generic.edit import FormView
 import os
 from wsgiref.util import FileWrapper
 from mimetypes import guess_type
-from django.db.models import Q
+
 from orders.models import OrderDetail
 from .forms import ContactForm
 from .models import (
@@ -37,7 +37,9 @@ from django.views.decorators.csrf import csrf_exempt
 import uuid
 from django.core.cache import cache
 from easy_thumbnails.files import get_thumbnailer
-
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Q, Value, Count
+from django.db.models.functions import Coalesce
 
 class SiteLawListView(ListView):
     """for listing the law for users"""
@@ -125,7 +127,7 @@ class Main(TemplateView):
         # ============================================================
         # Products
         # ============================================================
-        products = Product.objects.filter(
+        products = Product.objects.select_related("parent", "store", "category", "brand").filter(
             is_active=True,
             count__gt=0,
         )
@@ -152,7 +154,18 @@ class Main(TemplateView):
         context["categories"] = (
             ProductCategory.objects
             .filter(is_active=True)
-            .order_by("-sort_number")[:5]
+            .select_related("parent")
+            .prefetch_related("child")
+            .annotate(
+                child_ids=Coalesce(
+                    ArrayAgg(
+                        "child__id",
+                        distinct=True,
+                        filter=Q(child__is_active=True),
+                    ),
+                    Value([]),
+                )
+            ).order_by("-sort_number")[:5]
         )
 
         context["brands"] = (
@@ -451,19 +464,28 @@ def custom_404_page(request, exception=None):
 
 def header_render_partial(request, title=None, microdata=None):
     if request.user.is_authenticated:
-        orders = OrderDetail.objects.filter(
+        orders = OrderDetail.objects.select_related("order", "product").filter(
             order__user=request.user,
             order__is_paid=False,
             order__is_active=True,
             order__canceled=False,
         )
+        orders_stats = orders.aggregate(
+            orders_count=Count("order"),
+
+        )
     else:
+        orders_stats = {
+            "orders_count": 0
+        }
         orders = None
 
 
     title = title if title else site.title
     return render(request, "Base/Header/Header.html", {
-        "orders": orders, 
+        "orders": orders,
+
+        "orders_count": orders_stats["orders_count"],
 
         'title': title,
         "RECAPTCHA_PUBLIC_KEY": settings.RECAPTCHA_PUBLIC_KEY,
@@ -483,7 +505,7 @@ def footer_render_partial(request):
         {
 
             "links1": links[0:4],
-            "links2": links[4:8],
+
             "form": NumberForAddToLettersForm(),
             "RECAPTCHA_PUBLIC_KEY": settings.RECAPTCHA_PUBLIC_KEY,
         },

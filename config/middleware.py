@@ -78,3 +78,5 @@ class SiteMiddleware(MiddlewareMixin):
 
 
         request.site = SimpleLazyObject(lambda: SiteSetting.objects.filter(is_active=True).first())
+
+

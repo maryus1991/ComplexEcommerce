@@ -26,7 +26,8 @@
                 {% endif %}
 
             </div>
-	    <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=618579&Code=y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=618579&Code=y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9' alt='' style='cursor:pointer' code='y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9'></a>
+	    <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=618579&Code=y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9'>
+            <img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=618579&Code=y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9' alt='اینماد' style='cursor:pointer' code='y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9'></a>
             <!-- GO TO TOP BTN -->
             <a href="" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;"
                class="flex items-center gap-x-2 text-sm p-2 cursor-pointer rounded-lg border-2 border-gray-200">
@@ -78,13 +79,7 @@
                                 </li>
                             {% endfor %}
                         </ul>
-                        <ul class="child-hover:text-green-500 child:transition-colors">
-                            {% for link in links2 %}
-                                <li>
-                                    <a href="{{ link.link }}">{{ link.title }}</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
+
                     </div>
                 </div>
 
@@ -121,8 +116,8 @@
                             <svg class="w-5 h-5">
                                 <use href="#phone"></use>
                             </svg>
-                                                        <a href="tel:{{ site.phone2 }}" dir="ltr"
-                                                           class="mr-2">{{ site.phone2 }}</a>
+                                <a href="tel:{{ site.phone2 }}" dir="ltr"
+                                   class="mr-2">{{ site.phone2 }}</a>
 
                         </span>
                 </div>

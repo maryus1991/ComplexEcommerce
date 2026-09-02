@@ -48,17 +48,17 @@ class ProductCategory(models.Model):
 
 
 class Product(models.Model):
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="child")
     short_name = models.CharField(max_length=1000, null=True, blank=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="child")
     store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="products")
+    category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True, related_name="products")
+    brand = models.ForeignKey(ProductBrand, on_delete=models.SET_NULL, null=True, related_name="products")
     name = models.CharField(max_length=1000)
     price = models.BigIntegerField()
     colleague_users_price = models.BigIntegerField(default=0)
     have_discount = models.BooleanField(default=False)
     discount = models.IntegerField(default=0)
     picture = ThumbnailerImageField(upload_to=photo_path_upload_to, null=True, blank=True)
-    brand = models.ForeignKey(ProductBrand, on_delete=models.SET_NULL, null=True, related_name="products")
-    category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null=True, related_name="products")
     description = RichTextUploadingField(null=True, blank=True)
     count = models.PositiveBigIntegerField(default=0)
     weight = models.PositiveBigIntegerField(default=0)

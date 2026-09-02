@@ -89,9 +89,9 @@ def order_by(orm, sort):
 def active_category(orm):
     if orm and orm.exists():
         try:
-            return orm.filter(is_active=True).order_by('-sort_number').all()
+            return orm.filter(is_active=True).order_by('-sort_number')
         except Exception as e:
-            return orm.filter(is_active=True).all()
+            return orm.filter(is_active=True)
     else:
         return None
 

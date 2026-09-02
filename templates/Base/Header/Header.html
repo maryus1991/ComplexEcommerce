@@ -37,9 +37,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta name="author" content="{{ site.title }}">
 
     <!-- Canonical URL -->
-    {% if  '/product/' not in request.path and '/apps/' not in request.path and '/blog/' not in request.path %}
-        <link rel="canonical" href="{{ request.build_absolute_uri }}">
-    {% endif %}
+     <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}">
 
     <!-- Open Graph (برای فیسبوک، تلگرام، واتساپ و...) -->
     <meta property="og:title" content="{{ title }}">
@@ -62,16 +60,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <!-- زبان صفحه -->
     <meta http-equiv="Content-Language" content="fa">
 
-    {% if request.path == '/product/' or request.path == '/apps/' or request.path == '/blog/' %}
-    <link rel="canonical" href="https://amvajsarmad.com{{ request.path }}"/>
-    {% endif %}
-
-    {% if request.path|slice:":15" == "/apps/download/" %}
-    <link rel="canonical" href="https://amvajsarmad.com{{ request.get_full_path }}"/>
-    {% endif %}
 
     {% if request.path|slice:":6" == "/user/" %}
     <meta name="robots" content="noindex, nofollow">
+    {% else %}
+    <meta name="robots" content="index, follow">
     {% endif %}
     <!-- charset -->
     <meta charset="utf-8">
@@ -385,7 +378,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
 
 
 <!-- ITEMS CART -->
-{% if orders.exists %}
+{% if orders_count > 0 %}
 <div class="flex flex-col gap-y-4 pb-20">  <!-- Added padding-bottom for button -->
     {% for order in orders.all %}
     <!-- ITEM -->
@@ -405,7 +398,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
 
                 <!-- Quantity Badge -->
                 <span class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                    {{ order.count }}
+                    {{ orders_count }}
                 </span>
             </div>
 
@@ -581,7 +574,9 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
                     <svg class="w-5 h-5">
                         <use href="#home"></use>
                     </svg>
+
                     صفحه اصلی
+
                 </a>
             </li>
             <li class="{% if url == '/product/' or url == '/store/' %} text-green-500 {% endif %}">
@@ -730,11 +725,11 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
     </a>
     <!-- OPEN SHOPPING CART BTN  -->
     <button class="open-shopping-cart__btn relative" title="سبد خرید">
-        {% if orders.exists %}
+        {% if orders_count > 0 %}
 
         <span
                 class="absolute -top-2 -right-2 w-4 h-4 text-[10px] flex items-center justify-center bg-red-500 text-white rounded-full">
-                {{ orders.count }}
+                {{ orders_count }}
                 </span>
         {% endif %}
         <svg class="w-6 h-6">

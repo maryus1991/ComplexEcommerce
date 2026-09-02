@@ -4,7 +4,17 @@
 
 {% load products_tags %}
 {% load jalali_tags %}
+{% block breadcrumb %}
 
+    <li class="flex items-center gap-x-2">
+        <a href="/" aria-label='امواج سرمد'>
+            <h1>
+                {{ site.title }}
+            </h1>
+        </a>
+    </li>
+
+{% endblock breadcrumb %}
 
 {% block title %}
 {{ site.title }}
@@ -83,6 +93,7 @@
     {% endif %}
     {% endif %}
 {% endif %}
+
 
 <!-- ALL ICONS  -->
 <svg class="hidden">
@@ -320,7 +331,7 @@
             {% for category in categories %}
 
 
-            <a href="{% url 'product:list' %}?category={{ category.id }}{% for child in category.child|active_category %}&category={{ child.id }}{% endfor %} " class="rounded-full">
+            <a href="{% url 'product:list' %}?category={{ category.id }}{% for child in category.child_ids %}&category={{ child }}{% endfor %} " class="rounded-full">
 
                 <picture>
                     <source srcset="{% thumbnail category.image '200x200' %}"
