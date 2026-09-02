@@ -21,36 +21,59 @@
 {% endblock %}
 
 {% block microdata %}
-
 {
   "@context": "https://schema.org",
   "@graph": [
 
     {
       "@type": "WebSite",
-      "@id": "{{ request.scheme }}://{{ request.get_host }}/#website",
-      "name": "{{ site.title }}",
-      "url": "{{ request.scheme }}://{{ request.get_host }}",
+      "@id": "{{ site_url }}/#website",
+      "url": "{{ site_url }}/",
+      "name": "{{ site.title|escapejs }}",
+      "inLanguage": "fa-IR",
+
+      "publisher": {
+        "@id": "{{ site_url }}/#organization"
+      },
 
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "{{ request.scheme }}://{{ request.get_host }}/product/?q={search_term_string}",
-        "query-input": "required name=q"
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "{{ site_url }}{% url 'product:list' %}?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
       }
     },
 
     {
       "@type": "Organization",
-      "@id": "{{ request.scheme }}://{{ request.get_host }}/#organization",
-      "name": "{{ site.title }}",
-      "url": "{{ request.scheme }}://{{ request.get_host }}",
-      "logo": "{{ request.scheme }}://{{ request.get_host }}{{ site.logo.url }}",
-      "email": "{{ site.email }}",
-      "telephone": "{{ site.phone }}",
+      "@id": "{{ site_url }}/#organization",
+      "name": "{{ site.title|escapejs }}",
+      "url": "{{ site_url }}/",
+
+      {% if site.logo %}
+      "logo": {
+        "@type": "ImageObject",
+        "url": "{{ site_url }}{{ site.logo.url }}"
+      },
+      {% endif %}
+
+      {% if site.email %}
+      "email": "{{ site.email|escapejs }}",
+      {% endif %}
+
+      {% if site.phone %}
+      "telephone": "{{ site.phone|escapejs }}",
+      {% endif %}
 
       "sameAs": [
-        "{{ site.telegram_link }}",
+        {% if site.telegram_link %}
+        "{{ site.telegram_link }}"{% if site.instagram_link %},{% endif %}
+        {% endif %}
+        {% if site.instagram_link %}
         "{{ site.instagram_link }}"
+        {% endif %}
       ]
     }
 

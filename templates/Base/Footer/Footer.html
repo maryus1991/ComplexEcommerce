@@ -152,22 +152,31 @@
 {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "@id": "{{ request.scheme }}://{{ request.get_host }}/#localbusiness",
+  "@id": "{{ site_url }}/#localbusiness",
 
-  "name": "{{ site.title }}",
-  "url": "{{ request.scheme }}://{{ request.get_host }}",
-  "logo": "{{ request.scheme }}://{{ request.get_host }}{{ site.logo.url }}",
-  "image": "{{ request.scheme }}://{{ request.get_host }}{{ site.logo.url }}",
+  "name": "{{ site.title|escapejs }}",
+  "url": "{{ site_url }}/",
 
-  "telephone": "02112345678",
-  "email": "{{ site.email }}",
+  {% if site.logo %}
+  "logo": "{{ site_url }}{{ site.logo.url }}",
+  {% endif %}
+
+  {% if site.phone %}
+  "telephone": "{{ site.phone|escapejs }}",
+  {% endif %}
+
+  {% if site.email %}
+  "email": "{{ site.email|escapejs }}",
+  {% endif %}
 
   "address": {
     "@type": "PostalAddress",
     "addressCountry": "IR",
     "addressRegion": "قم",
-    "addressLocality": "قم",
-    "streetAddress": "{{ site.address }}"
+    "addressLocality": "قم"
+    {% if site.address %},
+    "streetAddress": "{{ site.address|escapejs }}"
+    {% endif %}
   },
 
   "openingHoursSpecification": {
@@ -182,12 +191,9 @@
     ],
     "opens": "00:00",
     "closes": "23:59"
-  },
-
-  "priceRange": "$$"
+  }
 }
 </script>
-
 
 <!-- OVERLAY -->
 <div class="overlay hidden fixed w-full h-full top-0 left-0 right-0 bg-black/40 z-40 transition-all duration-300">
