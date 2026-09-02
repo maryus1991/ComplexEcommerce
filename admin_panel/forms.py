@@ -1420,6 +1420,15 @@ class SiteSettingModelForm(forms.ModelForm):
         ),
         label='لینک پیام ادمین (اختیاری)'
     )
+    neshan_link = forms.URLField(
+        required=False,
+        widget=forms.URLInput(
+            attrs={
+                "class": "form-control",
+            }
+        ),
+        label='لینک نقشه (می تواند خالی باشد)'
+    )
 
     message_from_admin = forms.CharField(
         required=False,

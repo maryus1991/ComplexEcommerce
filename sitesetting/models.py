@@ -32,7 +32,7 @@ class SiteSetting(models.Model):
     color_message_of_admin = models.CharField(max_length=255, default='white', verbose_name=' (به انگلیسی یا RGB ان رنگ نوشته شود) رنگ متن پیام ادمین')
     link_of_message = models.URLField( null=True, blank=True , verbose_name=' (می تواند خالی باشد) لینک پیام ادمین')
     the_message_for_all_or_just_not_auth_users = models.BooleanField(verbose_name='فعال بودن این گزینه برای همه کاربران پیام نمایش میده و غیر فعال بودن برای کاربران وارد نشده', default=False) # true for all users else just for none auth users
-
+    neshan_link =  models.URLField( null=True, blank=True , verbose_name='لینک نقشه (می تواند خالی باشد)')
 
 
     telegram_link = models.URLField(default="0", verbose_name="لینک تلگرام")

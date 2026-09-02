@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse, reverse
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, RedirectView, View, ListView, DetailView
+from django.views.generic import TemplateView, RedirectView, ListView, DetailView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.views.generic.edit import FormView
@@ -481,7 +481,7 @@ def header_render_partial(request, title=None, microdata=None):
         orders = None
 
 
-    title = title if title else site.title
+    title = title if title else request.site.title
     return render(request, "Base/Header/Header.html", {
         "orders": orders,
 
