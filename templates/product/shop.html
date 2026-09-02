@@ -11,7 +11,11 @@
 {% block breadcrumb %}
 
     <li class="flex items-center gap-x-2">
-        <a href="{% url 'product:list' %}" aria-label='محصولات'>محصولات</a>
+        <a href="{% url 'product:list' %}" aria-label='محصولات'>
+            <h1>
+                محصولات {{site.title}}
+            </h1>
+        </a>
     </li>
 {% endblock  %}
 
@@ -253,63 +257,100 @@
                                 <use href="#chevron-left"></use>
                             </svg>
                         </div>
-                        <ul id="category-accordion" style="max-height: 400px !important; overflow-y: auto!important;"
-                            class="accordion-content  hidden py-2 mx-2  child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
-                            {% for category in categories|active_category %}
-                                <hr>
-                                <li data-id="{{ category.id }}">
+<ul
+    id="category-accordion"
+    class="accordion-content hidden py-2 mx-2
+           child:dark:text-gray-200 child:text-gray-600
+           child:flex items-center child:gap-x-2 child:py-1
+           child:px-2 child:rounded space-y-2"
+    style="max-height: 400px; overflow-y: auto;"
+>
+    {% for category in categories %}
+        <hr>
+
+        <li data-id="{{ category.id }}">
+            <label class="cl-checkbox">
+                <input
+                    name="category"
+                    value="{{ category.id }}"
+                    type="checkbox"
+                    class="category-checkbox"
+                    data-id="{{ category.id }}"
+                    data-parent=""
+                >
+                <span></span>
+            </label>
+
+            <p>{{ category.name }}</p>
+
+            {% for child in category.child.all %}
+                <li
+                    data-id="{{ child.id }}"
+                    style="padding-right: 2rem;"
+                >
+                    <label class="cl-checkbox">
+                        <input
+                            name="category"
+                            value="{{ child.id }}"
+                            type="checkbox"
+                            class="category-checkbox"
+                            data-id="{{ child.id }}"
+                            data-parent="{{ category.id }}"
+                        >
+                        <span></span>
+                    </label>
+
+                    <p class="text-sm">{{ child.name }}</p>
+
+                    {% for sub_child in child.child.all %}
+                        <li
+                            data-id="{{ sub_child.id }}"
+                            style="padding-right: 4rem;"
+                        >
+                            <label class="cl-checkbox">
+                                <input
+                                    id="c{{ sub_child.id }}"
+                                    name="category"
+                                    value="{{ sub_child.id }}"
+                                    type="checkbox"
+                                    class="category-checkbox"
+                                    data-id="{{ sub_child.id }}"
+                                    data-parent="{{ child.id }}"
+                                >
+                                <span></span>
+                            </label>
+
+                            <p class="text-xs">{{ sub_child.name }}</p>
+
+                            {% for sub_sub_child in sub_child.child.all %}
+                                <li
+                                    data-id="{{ sub_sub_child.id }}"
+                                    style="padding-right: 6rem;"
+                                >
                                     <label class="cl-checkbox">
-                                        <input name="category" value="{{ category.id }}"
-                                               type="checkbox"
-                                               class="category-checkbox" data-id="{{ category.id }}" data-parent="">
+                                        <input
+                                            name="category"
+                                            value="{{ sub_sub_child.id }}"
+                                            type="checkbox"
+                                            class="category-checkbox"
+                                            data-id="{{ sub_sub_child.id }}"
+                                            data-parent="{{ sub_child.id }}"
+                                        >
                                         <span></span>
                                     </label>
-                                    <p>{{ category.name }}</p>
 
-                                    {% for child in category.child|active_category %}
-                                        <li data-id="{{ child.id }}" style="padding-right: 2rem;">
-                                            <label class="cl-checkbox">
-                                                <input name="category" value="{{ child.id }}"
-                                                       type="checkbox"
-                                                       class="category-checkbox" data-id="{{ child.id }}"
-                                                       data-parent="{{ category.id }}">
-                                                <span></span>
-                                            </label>
-                                            <p class="text-sm">{{ child.name }}</p>
-                                        </li>
-
-                                        {% for sub_child in child.child|active_category %}
-                                            <li data-id="{{ sub_child.id }}" style="padding-right: 4rem;">
-                                                <label class="cl-checkbox">
-                                                    <input id="c{{ sub_child.id }}" name="category"
-                                                           value="{{ sub_child.id }}" type="checkbox"
-                                                           class="category-checkbox" data-id="{{ sub_child.id }}"
-                                                           data-parent="{{ child.id }}">
-                                                    <span></span>
-                                                </label>
-                                                <p class="text-xs">{{ sub_child.name }}</p>
-                                            </li>
-
-                                            {% for sub_sub_child in sub_child.child|active_category %}
-                                                <li data-id="{{ sub_sub_child.id }}" style="padding-right: 6rem;">
-                                                    <label class="cl-checkbox">
-                                                        <input name="category"
-                                                               value="{{ sub_sub_child.id }}"
-                                                               type="checkbox" class="category-checkbox"
-                                                               data-id="{{ sub_sub_child.id }}"
-                                                               data-parent="{{ sub_child.id }}">
-                                                        <span></span>
-                                                    </label>
-                                                    <p class="text-xs">{{ sub_sub_child.name }}</p>
-                                                </li>
-                                            {% endfor %}
-                                        {% endfor %}
-                                    {% endfor %}
+                                    <p class="text-xs">
+                                        {{ sub_sub_child.name }}
+                                    </p>
                                 </li>
                             {% endfor %}
-                        </ul>
-
-
+                        </li>
+                    {% endfor %}
+                </li>
+            {% endfor %}
+        </li>
+    {% endfor %}
+</ul>
                         <script>
                             document.addEventListener("DOMContentLoaded", function () {
 

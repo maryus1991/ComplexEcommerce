@@ -1,6 +1,6 @@
-from django.shortcuts import render, get_object_or_404, reverse, Http404
+from django.shortcuts import get_object_or_404, reverse, Http404
 from django.views.generic import ListView, DetailView, RedirectView
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Prefetch
 from django.contrib import messages
 from django.utils.timezone import now
 from user.mixins.logins import CustomLoginRequiredMixin as LoginRequiredMixin
@@ -49,7 +49,7 @@ class ProductListView(ListView):
                 brand__is_active=True,
                 category__is_active=True,
                 parent__isnull=True,
-            ).prefetch_related("features", "tags","specs",'brand', 'category')
+            ).select_related( "store", 'brand', 'category').prefetch_related("features", "tags", "specs", )
 
         if "available" in url_params:
             if url_params["available"] == ["on"]:
@@ -152,7 +152,7 @@ class ProductListView(ListView):
 
         # --- حالت وقتی sort در URL نیست ---
         else:
-            site = SiteSetting.objects.first()
+            site = self.request.site
 
             site_sort_map = [
                 (site.product_sort_by_count, ["-count"]),
@@ -179,18 +179,35 @@ class ProductListView(ListView):
         context = super().get_context_data(**kwargs)
 
         context["categories"] = (
-            ProductCategory.objects.exclude(parent__isnull=False)
-            .prefetch_related("child")
-            .order_by("-sort_number")
-            .all()
+            ProductCategory.objects
+            .filter(
+                is_active=True,
+                parent__isnull=True,
+            )
+            .prefetch_related(
+                Prefetch(
+                    "child",
+                    queryset=ProductCategory.objects.filter(is_active=True).prefetch_related(
+                        Prefetch(
+                            "child",
+                            queryset=ProductCategory.objects.filter(is_active=True).prefetch_related(
+                                Prefetch(
+                                    "child",
+                                    queryset=ProductCategory.objects.filter(is_active=True)
+                                )
+                            )
+                        )
+                    )
+                )
+            )
         )
 
         context["stores"] = (
             Store.objects.filter(is_active=True, is_verified=True)
             .order_by("-sort_number").distinct()
-            .all()
+
         )
-        context["site_zero_the_count_of_all_product"] = SiteSetting.objects.first().zero_the_count_of_all_product
+        context["site_zero_the_count_of_all_product"] = self.request.site.zero_the_count_of_all_product
         context["brands"] = ProductBrand.objects.filter(is_active=True).order_by("-sort_number").all()
 
         if self.request.user.is_authenticated and self.request.user.is_verified:

@@ -37,7 +37,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta name="author" content="{{ site.title }}">
 
     <!-- Canonical URL -->
-     <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}">
+     <link rel="canonical" href="{{ request.build_absolute_uri }}">
 
     <!-- Open Graph (برای فیسبوک، تلگرام، واتساپ و...) -->
     <meta property="og:title" content="{{ title }}">
@@ -215,11 +215,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <use href="#shopping-cart"/>
                 </svg>
                 <!-- BADGE -->
-                {% if orders.exists %}
+                {% if orders_count > 0 %}
 
                 <span
                         class="absolute -top-2 -right-2 w-4 h-4 text-[10px] flex items-center justify-center bg-red-500 text-white rounded-full">
-                {{ orders.count }}
+                {{ orders_count }}
                 </span>
                 {% endif %}
             </button>
@@ -483,7 +483,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
            class="block w-full py-3 px-4 rounded-lg transition-colors text-center
                   bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700
                   text-white font-DanaDemiBold shadow-lg hover:shadow-xl">
-            ثبت سفارش ({{ orders.count }} محصول)
+            ثبت سفارش ({{ orders_count   }} محصول)
         </a>
     </div>
 </div>
