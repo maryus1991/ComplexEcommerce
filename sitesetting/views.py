@@ -117,45 +117,90 @@ class Main(TemplateView):
 
     template_name = "index.html"
 
+
+
     def get_context_data(self, **kwargs):
-        self.request.build_absolute_uri()
         context = super().get_context_data(**kwargs)
 
-        products = Product.objects.filter(is_active=True, count__gt=0)
+        # ============================================================
+        # Products
+        # ============================================================
+        products = Product.objects.filter(
+            is_active=True,
+            count__gt=0,
+        )
 
-        context["categories"] = (
-            ProductCategory.objects.filter(is_active=True)
-            .order_by("-sort_number")
-            .all()[0:5]
+        context["products_newst"] = (
+            products
+            .order_by("-sort_number_newest_products")[:10]
         )
-        context["brands"] = (
-            ProductBrand.objects.filter(is_active=True)
-            .order_by("-sort_number")
-            .all()[0:5]
+
+        context["products_most_selled"] = (
+            products
+            .order_by("-sort_number_most_sell")[:10]
         )
-        context["categories_blog"] = (
-            BlogCategory.objects.filter(is_active=True)
-            .order_by("-sort_number")
-            .all()[0:5]
-        )
-        context["products_newst"] = products.order_by("-id").order_by('-sort_number_newest_products').all()[0:10]
-        context["products_most_selled"] = products.order_by('-sort_number_most_sell').all()[0:10]
+
         context["products_most_discount"] = (
-            products.filter(have_discount=True).order_by("-discount").order_by('-sort_number_discount').all()[0:20]
+            products
+            .filter(have_discount=True)
+            .order_by("-sort_number_discount", "-discount")[:20]
         )
 
-        context["blogs"] = Blog.objects.filter(is_active=True).order_by('-sort_number').all()[0:4]
-        context["site"] = SiteSetting.objects.filter(is_active=True).first()
-        if self.request.user_agent.is_mobile:
+        # ============================================================
+        # Categories / Brands / Blog Categories
+        # ============================================================
+        context["categories"] = (
+            ProductCategory.objects
+            .filter(is_active=True)
+            .order_by("-sort_number")[:5]
+        )
 
-            context["Banners"] = Banners.objects.filter(is_active=True, only_show_on_phone=True)
-            context["Sliders"] = Slider.objects.filter(is_active=True, only_show_on_phone=True)
+        context["brands"] = (
+            ProductBrand.objects
+            .filter(is_active=True)
+            .order_by("-sort_number")[:5]
+        )
 
-        else:
-            context["Banners"] = Banners.objects.filter(is_active=True, only_show_on_phone=False)
-            context["Sliders"] = Slider.objects.filter(is_active=True, only_show_on_phone=False)
+        context["categories_blog"] = (
+            BlogCategory.objects
+            .filter(is_active=True)
+            .order_by("-sort_number")[:5]
+        )
+
+        # ============================================================
+        # Blogs
+        # ============================================================
+        context["blogs"] = (
+            Blog.objects
+            .filter(is_active=True)
+            .order_by("-sort_number")[:4]
+        )
+
+
+
+        # ============================================================
+        # Banners / Sliders
+        # ============================================================
+        is_mobile = self.request.user_agent.is_mobile
+
+        context["Banners"] = (
+            Banners.objects
+            .filter(
+                is_active=True,
+                only_show_on_phone=is_mobile,
+            )
+        )
+
+        context["Sliders"] = (
+            Slider.objects
+            .filter(
+                is_active=True,
+                only_show_on_phone=is_mobile,
+            )
+        )
 
         return context
+
 
 
 class QuestionsPageView(TemplateView):
@@ -178,10 +223,6 @@ class AboutUs(TemplateView):
 
     template_name = "site/aboute-us.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["site"] = SiteSetting.objects.filter(is_active=True).first()
-        return context
 
 
 class ContactUs(SuccessMessageMixin, FormView):
@@ -194,12 +235,6 @@ class ContactUs(SuccessMessageMixin, FormView):
     success_message = "پیام شما با موفقبت ارسال شد"
     success_url = reverse_lazy("site:contact-us")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context["site"] = SiteSetting.objects.filter(is_active=True).first()
-
-        return context
 
     def form_valid(self, form):
         form.save()
@@ -241,7 +276,7 @@ class UsedAppDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["site"] = SiteSetting.objects.filter(is_active=True).first()
+
         context['GOOGLE_RECAPTCHA_SITE_KEY'] = settings.GOOGLE_RECAPTCHA_SITE_KEY
 
         return context
@@ -285,7 +320,7 @@ class UsedAppView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["site"] = SiteSetting.objects.filter(is_active=True).first()
+
         context['GOOGLE_RECAPTCHA_SITE_KEY'] = settings.GOOGLE_RECAPTCHA_SITE_KEY
 
         return context
@@ -336,7 +371,7 @@ class ValidateRecaptchaView(View):
 
 class DownloadUsedAppView(View):
     def dispatch(self, request, *args, **kwargs):
-        self.site = SiteSetting.objects.filter(is_active=True).first()
+        self.site = self.request.site
         site = self.site
         if site and site.force_users_to_login_for_download_apps:
             if not request.user.is_authenticated or not request.user.is_verified:
@@ -425,11 +460,11 @@ def header_render_partial(request, title=None, microdata=None):
     else:
         orders = None
 
-    site = SiteSetting.objects.filter(is_active=True).first()
+
     title = title if title else site.title
     return render(request, "Base/Header/Header.html", {
         "orders": orders, 
-        "site": site, 
+
         'title': title,
         "RECAPTCHA_PUBLIC_KEY": settings.RECAPTCHA_PUBLIC_KEY,
         "microdata": microdata,
@@ -439,14 +474,14 @@ def header_render_partial(request, title=None, microdata=None):
 
 
 def footer_render_partial(request):
-    site = SiteSetting.objects.filter(is_active=True).first()
-    links = FastLinks.objects.all().filter(is_active=True).order_by("-sort_number")
+
+    links = FastLinks.objects.filter(is_active=True).order_by("-sort_number")
 
     return render(
         request,
         "Base/Footer/Footer.html",
         {
-            "site": site,
+
             "links1": links[0:4],
             "links2": links[4:8],
             "form": NumberForAddToLettersForm(),

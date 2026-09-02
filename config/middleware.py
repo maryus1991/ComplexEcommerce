@@ -3,6 +3,8 @@ from sitesetting.models import SiteSetting
 from django.contrib import messages
 from orders.models import Order, OrderDetail
 from product.models import Product
+from django.utils.deprecation import MiddlewareMixin
+from django.utils.functional import SimpleLazyObject
 
 
 class ProductCookieMiddleware:
@@ -69,3 +71,10 @@ class ProductCookieMiddleware:
         except Exception as e:
             messages.error(request, f"مشکلی در افزودن محصولات شده است")
             print('added_to_order_products_before_login error', e)
+
+
+class SiteMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+
+
+        request.site = SimpleLazyObject(lambda: SiteSetting.objects.filter(is_active=True).first())

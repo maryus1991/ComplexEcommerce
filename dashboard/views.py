@@ -375,7 +375,7 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
             messages.warning(request, "برای دریافت فاکتور لطفا ادرس انتخاب کنید")
             return redirect(reverse("dashboard:order_detail", kwargs={"pk": order_id}))
 
-        site = SiteSetting.objects.filter(is_active=True).first()
+        site = self.request.site
 
         # Handle official invoice case
         if obj.official_invoice and obj.official_invoice_conformed_given_to_user:

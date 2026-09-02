@@ -52,6 +52,8 @@
 {% endblock %}
 
 {% block content %}
+
+
 {% if site.message_from_admin %}
 {% if site.the_message_for_all_or_just_not_auth_users %}
     <div class="flex flex-col items-center gap-y-2 gap-x-2 col-span-12 lg:text-base" {% if site.link_of_message %} onclick="window.location={{site.link_of_message }}" {% endif %}>

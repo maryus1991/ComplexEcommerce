@@ -102,7 +102,7 @@ INSTALLED_APPS = [
     "multiupload",
     "auditlog",
     "django_celery_beat",
-    "cachalot",
+    # "cachalot",
     "django_recaptcha",
     # "csp",
    "compressor",
@@ -129,13 +129,14 @@ MIDDLEWARE = [
     "htmlmin.middleware.MarkRequestMiddleware",
 
     "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
+        "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
     "django_user_agents.middleware.UserAgentMiddleware",
     "auditlog.middleware.AuditlogMiddleware",
     "config.middleware.ProductCookieMiddleware",
+    "config.middleware.SiteMiddleware",
 ]
 
 # html minify
@@ -170,6 +171,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "utils.context_processors.ckeditor_config",
                 "utils.context_processors.timestamp",
+                "utils.context_processors.get_sitesetting",
             ],
         },
     },
