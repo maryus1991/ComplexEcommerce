@@ -293,19 +293,17 @@ class DetailArticleView(DetailView):
     """
 
     template_name = "blog/article-details.html"
-    model = Blog
+
     context_object_name = "post"
 
     def get_object(self):
-        pk = self.kwargs["pk"]
-        obj = get_object_or_404(
-            self.model,
-            pk=pk,
-            is_active=True,
-            admin_verified=True,
-            category__is_active=True,
+
+
+        return  get_object_or_404(
+            Blog.objects.filter(is_active=True, admin_verified=True, category__is_active=True,).select_related("category", "user", "store"),
+            pk=self.kwargs["pk"],
+
         )
-        return self.get_queryset().filter(id=obj.id).prefetch_related("tags").first()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -329,7 +327,7 @@ class DetailArticleView(DetailView):
         categories = (
             BlogCategory.objects.filter(is_active=True)
             .annotate(post_count=Count("blogs"))
-            .all()
+
             .order_by("-post_count")[:4]
         )
 
