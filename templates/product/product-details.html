@@ -455,7 +455,7 @@ function resetZoom(container) {
                                 {{ product.short_name }}
                             </h3>
                             <div class="mt-auto flex items-center gap-1">
-                                {% if request.user.is_authenticated and user.colleague_user and product.store.id in colleague_with_store and product.colleague_users_price > 0 %}
+                                {% if request.user.is_authenticated and user.colleague_user and product_store in colleague_with_store and product.colleague_users_price > 0 %}
                                     <div class="flex flex-wrap items-baseline gap-1">
                             <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                 {{ product|colleague:request }}
@@ -560,7 +560,7 @@ function resetZoom(container) {
                                     {{ product.parent.short_name }}
                                 </h3>
                                 <div class="mt-auto flex items-center gap-1">
-                                    {% if request.user.is_authenticated and user.colleague_user  and product.store.id in colleague_with_store and product.colleague_users_price > 0%}
+                                    {% if request.user.is_authenticated and user.colleague_user  and product_store in colleague_with_store and product.colleague_users_price > 0%}
                                         <div class="flex flex-wrap items-baseline gap-1">
                                     <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                         {{ product.parent|colleague:request }}
@@ -612,7 +612,7 @@ function resetZoom(container) {
                                         {{ child.short_name }}
                                     </h3>
                                     <div class="mt-auto flex items-center gap-1">
-                                        {% if request.user.is_authenticated and user.colleague_user and product.store.id in colleague_with_store and child.colleague_users_price > 0 %}
+                                        {% if request.user.is_authenticated and user.colleague_user and product_store in colleague_with_store and child.colleague_users_price > 0 %}
                                             <div class="flex flex-wrap items-baseline gap-1">
                                     <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                         {{ child|colleague:request }}
@@ -752,7 +752,7 @@ function resetZoom(container) {
         <!-- SIDEBAR (بدون تغییر محتوایی، فقط بهبود دسترسی) -->
         <div class="w-full lg:w-1/4 lg:sticky top-5 flex flex-col gap-y-6">
             <div class="flex items-center gap-x-1">
-                {% if request.user.is_authenticated and user.colleague_user and product.store.id in colleague_with_store and product.colleague_users_price > 0 %}
+                {% if request.user.is_authenticated and user.colleague_user and product_store in colleague_with_store and product.colleague_users_price > 0 %}
                     <p class="text-2xl font-DanaDemiBold">{{ product|colleague:request }}</p>
                     <p class="">تومان</p>
                     <br>
@@ -868,7 +868,7 @@ function resetZoom(container) {
     <section class="w-full rounded-lg bg-white dark:bg-zinc-700 shadow p-5">
         <div class="flex items-center gap-x-2 mb-6">
             <h2 class="font-MorabbaMedium text-2xl">دیدگاه ها</h2>
-            <p class="text-sm text-blue-500">({{ comments.count }} دیدگاه)</p>
+
         </div>
 
         <div class="flex flex-col lg:flex-row items-start gap-10">
@@ -986,7 +986,7 @@ function resetZoom(container) {
                                 {{ product.name }}
                             </a>
                             <div class="flex items-center gap-x-1 lg:gap-x-3">
-                                {% if request.user.is_authenticated and user.colleague_user and product.store.id in colleague_with_store and product.colleague_users_price > 0 %}
+                                {% if request.user.is_authenticated and user.colleague_user and product_store in colleague_with_store and product.colleague_users_price > 0 %}
                                     <p class="font-DanaDemiBold text-green-600 dark:text-green-300">{{ product|colleague:request }} <span class="font-Dana text-sm">تومان</span></p>
                                     <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">{{ product.price|tdc }} <span>تومان</span></del>
                                 {% else %}

@@ -37,7 +37,7 @@ class ProductListView(ListView):
     context_object_name = "products"
 
     def get_queryset(self):
-        from django.db.models import Q
+
 
         products = (
             Product.objects
@@ -64,37 +64,27 @@ class ProductListView(ListView):
 
         params = self.request.GET
 
-        # ============================================================
-        # 1. Available
-        # ============================================================
+
 
         available = params.get("available", "").strip().lower() == "on"
 
         if available:
             products = products.filter(count__gte=1)
 
-        # ============================================================
-        # 2. Search
-        # ============================================================
+
 
         search = params.get("search", "").strip()
 
         if search:
-            # اگر فقط whitespace یا مقدار نامناسب بود، نادیده گرفته می‌شود
-            if search.isalnum():
+             if search.isalnum():
                 products = products.filter(
                     name__icontains=search
                 )
 
-        # ============================================================
-        # 3. Price range
-        # ============================================================
+
 
         def get_positive_int_param(name):
-            """
-            مقدار integer معتبر و مثبت برمی‌گرداند.
-            در غیر این صورت None.
-            """
+
             value = params.get(name, "").strip()
 
             if not value:
@@ -124,18 +114,10 @@ class ProductListView(ListView):
                 price__lte=end_price
             )
 
-        # ============================================================
-        # 4. Category
-        # ============================================================
+
 
         def get_valid_ids(name):
-            """
-            لیست IDهای معتبر را از GET استخراج می‌کند.
-            مثلا:
-                ?category=1&category=2&category=abc&category=
-            =>
-                [1, 2]
-            """
+
 
             values = params.getlist(name)
 
@@ -166,9 +148,7 @@ class ProductListView(ListView):
                 category__is_active=True,
             )
 
-        # ============================================================
-        # 5. Store
-        # ============================================================
+
 
         store_ids = get_valid_ids("store")
 
@@ -177,9 +157,7 @@ class ProductListView(ListView):
                 store_id__in=store_ids
             )
 
-        # ============================================================
-        # 6. Brand
-        # ============================================================
+
 
         brand_ids = get_valid_ids("brand")
 
@@ -189,9 +167,7 @@ class ProductListView(ListView):
                 brand__is_active=True,
             )
 
-        # ============================================================
-        # 7. Sorting
-        # ============================================================
+
 
         sort_value = params.get("sort", "").strip()
 
@@ -218,9 +194,7 @@ class ProductListView(ListView):
             )
 
         else:
-            # ========================================================
-            # Default site sorting
-            # ========================================================
+
 
             site = getattr(self.request, "site", None)
 
@@ -356,7 +330,7 @@ class ProductDetailView(DetailView):
     """
 
     template_name = "product/product-details.html"
-    model = Product
+
     context_object_name = "product"
 
     def get_object(self, queryset=None):
@@ -377,7 +351,6 @@ class ProductDetailView(DetailView):
                 'parent',
             )
             .prefetch_related(
-                # Product relations
                 'gallery',
                 'features',
                 'tags',
@@ -432,6 +405,7 @@ class ProductDetailView(DetailView):
             is_favorite_product = False
         context = super().get_context_data(**kwargs)
         context["is_favorite_product"] = is_favorite_product
+        context["product_store"] = self.object.store.id
 
         # get the product comments and add comment form
 
@@ -491,7 +465,7 @@ class ProductDetailView(DetailView):
             context["user_order_detail"] = []
 
         try:
-            context["site_zero_the_count_of_all_product"] = SiteSetting.objects.first().zero_the_count_of_all_product
+            context["site_zero_the_count_of_all_product"] = self.request.site.zero_the_count_of_all_product
 
             ip, is_rout = get_client_ip(self.request)
             product_view_object = ProductViews.objects.get_or_create(
