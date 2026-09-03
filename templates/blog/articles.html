@@ -7,12 +7,16 @@
 
 
 {% block title %}
-    مقالات
+    لیست مقالات {{site.title}}
 {% endblock %}
 
 {% block breadcrumb %}
     <li class="flex items-center gap-x-2">
-        <a href="{% url 'blog:list' %}">مقالات</a>
+        <a href="{% url 'blog:list' %}">
+            <h1>
+                    لیست مقالات {{site.title}}
+            </h1>
+        </a>
     </li>
 {% endblock %}
 
