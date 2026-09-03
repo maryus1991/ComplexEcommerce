@@ -15,11 +15,3 @@ class BlogSitemap(Sitemap):
         return obj.updated_at
 
 
-class BlogCategorySitemap(Sitemap):
-    """for generate sitemap for blog category model"""
-
-    changefreq = "weekly"
-    priority = 0.7
-
-    def items(self):
-        return BlogCategory.objects.filter(is_active=True).all()

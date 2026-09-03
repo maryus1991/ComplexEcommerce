@@ -38,6 +38,5 @@ from .sitemap import (ProductSitemap,
 
 sitemaps = {
     "products": ProductSitemap,
-    "categories": ProductCategorySitemap,
-    "brands": ProductBrandSitemap,
+
 }

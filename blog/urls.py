@@ -10,4 +10,4 @@ urlpatterns = [
     path("<int:pk>/", DetailArticleView.as_view(), name="detail"),
 ]
 
-sitemaps = {"blog": BlogSitemap, "BlogCategory": BlogCategorySitemap}
+sitemaps = {"blog": BlogSitemap }
