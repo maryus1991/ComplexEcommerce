@@ -362,7 +362,7 @@ function resetZoom(container) {
                             <use href="#list-bullet"></use>
                         </svg>
                         <p>دسته‌بندی:
-                            <a href="{% url 'product:list' %}?category={{ product.category.name }}" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors" title="مشاهده همه محصولات {{ product.category.name }}">
+                            <a href="{% url 'product:list' %}?category={{ product.category.id }}" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors" title="مشاهده همه محصولات {{ product.category.name }}">
                                 {{ product.category.name }}
                             </a>
                         </p>
