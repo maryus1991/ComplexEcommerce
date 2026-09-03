@@ -54,17 +54,17 @@ class ProductListView(ListView):
                 "store",
                 "brand",
                 "category",
+
             )
             .prefetch_related(
                 "features",
                 "tags",
                 "specs",
+
             )
         )
 
         params = self.request.GET
-
-
 
         available = params.get("available", "").strip().lower() == "on"
 
@@ -356,6 +356,7 @@ class ProductDetailView(DetailView):
                 'tags',
                 'specs',
 
+
                 # Product children
                 Prefetch(
                     'child',
@@ -389,6 +390,7 @@ class ProductDetailView(DetailView):
         )
 
         return product_obj
+
 
 
     def get_context_data(self, **kwargs):

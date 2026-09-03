@@ -4,7 +4,7 @@
 {% load thumbnail %}
 
 {% block title %}
-    {{ product.name }} | {{ product.store.name }}
+    {{ product.name }}
 {% endblock %}
 
 {% block microdata %}
@@ -362,7 +362,7 @@ function resetZoom(container) {
                             <use href="#list-bullet"></use>
                         </svg>
                         <p>دسته‌بندی:
-                            <a href="{% url 'product:list' %}?category={{ product.category.slug }}" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors" title="مشاهده همه محصولات {{ product.category.name }}">
+                            <a href="{% url 'product:list' %}?category={{ product.category.name }}" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors" title="مشاهده همه محصولات {{ product.category.name }}">
                                 {{ product.category.name }}
                             </a>
                         </p>
@@ -451,9 +451,9 @@ function resetZoom(container) {
                 </span>
                         </div>
                         <div class="flex-1 min-w-0 pl-2">
-                            <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
+                            <h2 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
                                 {{ product.short_name }}
-                            </h3>
+                            </h2>
                             <div class="mt-auto flex items-center gap-1">
                                 {% if request.user.is_authenticated and user.colleague_user and product_store in colleague_with_store and product.colleague_users_price > 0 %}
                                     <div class="flex flex-wrap items-baseline gap-1">
@@ -502,9 +502,9 @@ function resetZoom(container) {
                         </span>
                                 </div>
                                 <div class="flex-1 min-w-0 pl-2">
-                                    <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
+                                    <h2 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
                                         {{ child.short_name }}
-                                    </h3>
+                                    </h2>
                                     <div class="mt-auto flex items-center gap-1">
                                         {% if request.user.is_authenticated and user.colleague_user and child.store in  colleague_with_store and child.colleague_users_price > 0 %}
                                             <div class="flex flex-wrap items-baseline gap-1">
@@ -556,9 +556,9 @@ function resetZoom(container) {
                     </span>
                             </div>
                             <div class="flex-1 min-w-0 pl-2">
-                                <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
+                                <h2 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
                                     {{ product.parent.short_name }}
-                                </h3>
+                                </h2>
                                 <div class="mt-auto flex items-center gap-1">
                                     {% if request.user.is_authenticated and user.colleague_user  and product_store in colleague_with_store and product.colleague_users_price > 0%}
                                         <div class="flex flex-wrap items-baseline gap-1">
@@ -608,9 +608,9 @@ function resetZoom(container) {
                         </span>
                                 </div>
                                 <div class="flex-1 min-w-0 pl-2">
-                                    <h3 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
+                                    <h2 class="font-medium text-xs sm:text-sm text-gray-800 dark:text-gray-200 mb-1 line-clamp-2">
                                         {{ child.short_name }}
-                                    </h3>
+                                    </h2>
                                     <div class="mt-auto flex items-center gap-1">
                                         {% if request.user.is_authenticated and user.colleague_user and product_store in colleague_with_store and child.colleague_users_price > 0 %}
                                             <div class="flex flex-wrap items-baseline gap-1">
@@ -716,7 +716,7 @@ function resetZoom(container) {
                     <div class="flex flex-wrap gap-2">
                         {% for tag in product.parent.tags.all %}
                             {% if tag.name != '' %}
-                                <a href="{% url 'product:list' %}?tag={{ tag.slug }}" class="inline-flex items-center bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 rounded-lg font-medium text-sm px-3 py-1 hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors" title="محصولات مرتبط با {{ tag.name }}">
+                                <a href="{% url 'product:list' %}?tag={{ tag.name }}" class="inline-flex items-center bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 rounded-lg font-medium text-sm px-3 py-1 hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors" title="محصولات مرتبط با {{ tag.name }}">
                                     {{ tag.name }}
                                 </a>
                             {% endif %}
@@ -728,7 +728,7 @@ function resetZoom(container) {
                     <div class="flex flex-wrap gap-2">
                         {% for tag in product.tags.all %}
                             {% if tag.name != '' %}
-                                <a href="{% url 'product:list' %}?tag={{ tag.slug }}" class="inline-flex items-center bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 rounded-lg font-medium text-sm px-3 py-1 hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors" title="محصولات مرتبط با {{ tag.name }}">
+                                <a href="{% url 'product:list' %}?tag={{ tag.name }}" class="inline-flex items-center bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-400 rounded-lg font-medium text-sm px-3 py-1 hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors" title="محصولات مرتبط با {{ tag.name }}">
                                     {{ tag.name }}
                                 </a>
                             {% endif %}
@@ -900,7 +900,7 @@ function resetZoom(container) {
                 {% for comment in comments %}
                     <li class="child:flex py-4 border-b border-gray-200 child:border-white/20">
                         <div class="flex items-center gap-x-2">
-                            <h3 class="font-DanaMedium text-lg mb-1">{{ comment.subject }}</h3>
+                            <h2 class="font-DanaMedium text-lg mb-1">{{ comment.subject }}</h2>
                             {% if comment.buyer %}
                                 <span class="px-2 py-1 mb-2 rounded-lg bg-green-500 text-white text-xs">خریدار</span>
                             {% endif %}
