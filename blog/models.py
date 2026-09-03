@@ -29,6 +29,9 @@ class BlogCategory(models.Model):
     def get_absolute_url(self):
         return reverse("blog:list") + f"?category={self.id}"
 
+    class Meta:
+        ordering = ["-sort_number"]
+
 
 class Blog(models.Model):
     user = models.ForeignKey(

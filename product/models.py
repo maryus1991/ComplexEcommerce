@@ -46,6 +46,8 @@ class ProductCategory(models.Model):
     def get_absolute_url(self):
         return reverse("product:list") + "?category=" + str(self.id)
 
+    class Meta:
+        ordering = ["-sort_number"]
 
 class Product(models.Model):
     short_name = models.CharField(max_length=1000, null=True, blank=True)

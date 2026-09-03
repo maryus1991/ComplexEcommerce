@@ -1,11 +1,11 @@
 from django.contrib import messages
-from django.db.models import Count
-from django.shortcuts import render, get_object_or_404
-from django.views.generic.base import TemplateView
+from django.db.models import Count, Prefetch
+from django.shortcuts import  get_object_or_404
+
 from django.views.generic import ListView, DetailView
 from django.utils.timezone import now, datetime, timedelta
 from stores.models import Store
-from .models import Blog, BlogView, BlogCategory, BlogTag
+from .models import Blog, BlogView, BlogCategory
 from ipware import get_client_ip
 from django.utils.dateparse import parse_date
 from .forms import BlogFilterForm
@@ -23,143 +23,257 @@ class ListArticlesView(ListView):
     context_object_name = "posts"
     paginate_by = 20
 
+
+
     def get_queryset(self):
         """
-        Returns active records annotated with their blog view counts
+        Returns active records with their view counts.
+
+        All GET parameters are validated before being used in queries,
+        so invalid, empty, duplicated, or malformed parameters are ignored
+        instead of raising exceptions.
         """
 
         item = (
             super()
             .get_queryset()
             .filter(
-                is_active=True, admin_verified=True,
+                is_active=True,
+                admin_verified=True,
                 category__is_active=True,
                 store__is_active=True,
-                store__is_verified=True
+                store__is_verified=True,
             )
-            .annotate(view_count=Count("views"))
-            .order_by('-sort_number')
-            .select_related("store", "category")
+            .annotate(
+                view_count=Count("views")
+            )
+            .select_related(
+                "store",
+                "category",
+            )
+            .order_by("-sort_number")
         )
 
-        url_params = dict(self.request.GET.lists())
+        params = self.request.GET
 
-        if "store" in url_params:
-            item = item.filter(store_id__in=url_params["store"])
 
-        if "category" in url_params:
-            category = url_params["category"]
-            category_list = []
 
-            # Handle both single values and lists
-            categories = [category] if isinstance(category, str) else category
+        def get_valid_ids(param_name):
 
-            for num in categories:
-                # Check if the value is a digit (more efficient than try/except for this case)
-                if isinstance(num, str) and num.isdigit():
-                    try:
-                        category_list.append(int(num))
-                    except (ValueError, TypeError):
-                        continue  # Skip invalid values
-                elif isinstance(num, int):
-                    category_list.append(num)
 
-            # Only apply filter if we have valid categories
-            if category_list:
-                item = item.filter(category__in=category_list)
+            values = params.getlist(param_name)
 
-            # Process start date
+            valid_ids = []
 
-        if "start_date" in url_params or "end_date" in url_params:
-            if url_params["start_date"][0] != "" or url_params["end_date"][0] != "":
-                start_date = None
-                end_date = None
+            for value in values:
+                value = value.strip()
 
-                # Helper function to parse and validate dates
-                def parse_jalali_date(date_str, field_name):
-                    try:
-                        if not isinstance(date_str, str):
-                            date_str = (
-                                "".join(date_str)
-                                if isinstance(date_str, (list, tuple))
-                                else str(date_str)
-                            )
+                if not value:
+                    continue
 
-                        parts = date_str.split("-")
+                try:
+                    number = int(value)
 
-                        if len(parts) != 3:
-                            raise ValueError("Invalid date format")
+                    if number > 0:
+                        valid_ids.append(number)
 
-                        year, month, day = map(int, parts)
-                        jalali_date = jdatetime.date(year, month, day)
-                        gregorian_date = parse_date(
-                            jalali_date.togregorian().strftime("%Y-%m-%d")
-                        )
+                except (TypeError, ValueError):
+                    continue
 
-                        if gregorian_date is None:
-                            raise ValueError("Date conversion failed")
+            return valid_ids
 
-                        return gregorian_date
-                    except (ValueError, TypeError, IndexError) as e:
-                        messages.error(
-                            self.request,
-                            f"لطفاً تاریخ {field_name} را به صورت صحیح وارد کنید (فرمت: yyyy-mm-dd)",
-                        )
-                        return None
 
-                # Process start date
-                if "start_date" in url_params:
+        store_ids = get_valid_ids("store")
 
-                    if url_params["start_date"][0] != " " and url_params["start_date"][0] != '':
-                        start_date = parse_jalali_date(url_params["start_date"], "شروع")
+        if store_ids:
+            item = item.filter(
+                store_id__in=store_ids
+            )
 
-                # Process end date
-                if "end_date" in url_params:
-                    if url_params["end_date"][0] != " " and url_params["end_date"][0] != "":
-                        end_date = parse_jalali_date(url_params["end_date"], "پایان")
 
-                # Apply date filtering
-                if start_date and end_date:
-                    if start_date > end_date:
-                        messages.error(
-                            self.request, "تاریخ شروع باید قبل از تاریخ پایان باشد"
-                        )
-                    else:
-                        item = item.filter(updated_at__range=[start_date, end_date])
-                elif start_date:
-                    item = item.filter(updated_at__gte=start_date)
-                elif end_date:
-                    item = item.filter(updated_at__lte=end_date)
+        category_ids = get_valid_ids("category")
 
-        if "newset" in url_params:
+        if category_ids:
+            item = item.filter(
+                category_id__in=category_ids,
+                category__is_active=True,
+            )
+
+
+
+        def parse_jalali_date(value, field_name):
+            """
+            Safely converts a Jalali date:
+
+                1405-01-15
+
+            to a Gregorian date.
+
+            Invalid values return None and show an error message.
+            """
+
+            value = value.strip()
+
+            if not value:
+                return None
+
+            try:
+                parts = value.split("-")
+
+                if len(parts) != 3:
+                    raise ValueError
+
+                year, month, day = map(int, parts)
+
+                jalali_date = jdatetime.date(
+                    year,
+                    month,
+                    day,
+                )
+
+                gregorian_date = jalali_date.togregorian()
+
+                return gregorian_date
+
+            except (
+                    ValueError,
+                    TypeError,
+                    OverflowError,
+            ):
+                messages.error(
+                    self.request,
+                    f"لطفاً تاریخ {field_name} را به صورت صحیح وارد کنید "
+                    f"(فرمت: yyyy-mm-dd)",
+                )
+
+                return None
+
+
+
+        start_date_value = params.get("start_date", "").strip()
+        end_date_value = params.get("end_date", "").strip()
+
+        start_date = None
+        end_date = None
+
+        if start_date_value:
+            start_date = parse_jalali_date(
+                start_date_value,
+                "شروع",
+            )
+
+        if end_date_value:
+            end_date = parse_jalali_date(
+                end_date_value,
+                "پایان",
+            )
+
+
+        if start_date and end_date:
+
+            if start_date > end_date:
+                messages.error(
+                    self.request,
+                    "تاریخ شروع باید قبل از تاریخ پایان باشد",
+                )
+
+            else:
+                item = item.filter(
+                    updated_at__range=[
+                        start_date,
+                        end_date,
+                    ]
+                )
+
+        elif start_date:
+
+            item = item.filter(
+                updated_at__gte=start_date
+            )
+
+        elif end_date:
+
+            item = item.filter(
+                updated_at__lte=end_date
+            )
+
+
+
+        if params.get("newset") is not None:
             item = item.order_by("-id")
 
-        if "hottest" in url_params:
+
+        if params.get("hottest") is not None:
             item = item.order_by("-view_count")
 
-        if "today" in url_params:
-            item = item.filter(updated_at__date=now())
 
-        if "yesterday" in url_params:
-            item = item.filter(updated_at__date=now() - timedelta(days=1))
+        if params.get("today") is not None:
+            today = now().date()
 
-        if "ordering" in url_params:
-            ordering = url_params["ordering"][0]
+            item = item.filter(
+                updated_at__date=today
+            )
 
-            if ordering == "1":
-                item = item.order_by("-view_count")
-            elif ordering == "2":
-                item = item.order_by("-id")
-            elif ordering == "3":
-                item = item.order_by("-view_count")
 
-        return item.all()
+
+        if params.get("yesterday") is not None:
+            yesterday = (
+                    now() - timedelta(days=1)
+            ).date()
+
+            item = item.filter(
+                updated_at__date=yesterday
+            )
+
+
+        ordering = params.get("ordering", "").strip()
+
+        ordering_map = {
+            "1": "-view_count",
+            "2": "-id",
+            "3": "-view_count",
+        }
+
+        if ordering in ordering_map:
+            item = item.order_by(
+                ordering_map[ordering]
+            )
+
+
+        return item
+
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        active_category_qs = BlogCategory.objects.filter(
+            is_active=True
+        ).order_by("-sort_number")
+
         context["categories"] = (
-            BlogCategory.objects.filter(parent=None).prefetch_related("children").order_by('-sort_number').all()
+            BlogCategory.objects
+            .filter(
+                is_active=True,
+                parent__isnull=True,
+            )
+            .order_by("-sort_number")
+            .prefetch_related(
+                Prefetch(
+                    "children",
+                    queryset=active_category_qs.prefetch_related(
+                        Prefetch(
+                            "children",
+                            queryset=active_category_qs.prefetch_related(
+                                Prefetch(
+                                    "children",
+                                    queryset=active_category_qs,
+                                )
+                            ),
+                        )
+                    ),
+                )
+            )
         )
 
         context["stores"] = (

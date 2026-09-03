@@ -99,6 +99,7 @@ class StoreMainTemplateDetailView(DetailView):
     def get_object(self, queryset=...):
         return get_object_or_404(Store, pk=self.kwargs['pk'], is_active=True, is_verified=True)
 
+    
 
 class StoreMainTemplateListView(ListView):
     """for store list view in main template"""

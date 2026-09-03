@@ -135,7 +135,7 @@
 
                     <ul id="category-accordion"
                         class="accordion-content  hidden py-2 mx-2 child:dark:text-gray-200 child:text-gray-600 child:flex items-center child:gap-x-2 child:py-1 child:px-2 child:rounded space-y-2">
-                        {% for category in categories|active_category %}
+                        {% for category in categories %}
                             <hr>
                             <li data-id="{{ category.id }}">
                                 <label class="cl-checkbox">
@@ -145,7 +145,7 @@
                                 </label>
                                 <p>{{ category.name }}</p>
 
-                                {% for child in category.children|active_category %}
+                                {% for child in category.prefetched_children %}
                                     <li data-id="{{ child.id }}" style="padding-right: 2rem;">
                                         <label class="cl-checkbox">
                                             <input name="category" value="{{ child.id }}" type="checkbox"
@@ -156,7 +156,7 @@
                                         <p>{{ child.name }}</p>
                                     </li>
 
-                                    {% for sub_child in child.children|active_category %}
+                                    {% for sub_child in child.prefetched_children %}
                                         <li data-id="{{ sub_child.id }}" style="padding-right: 4rem;">
                                             <label class="cl-checkbox">
                                                 <input name="category" value="{{ sub_child.id }}" type="checkbox"
@@ -167,7 +167,7 @@
                                             <p>{{ sub_child.name }}</p>
                                         </li>
 
-                                        {% for sub_sub_child in sub_child.children|active_category %}
+                                        {% for sub_sub_child in sub_child.prefetched_children %}
                                             <li data-id="{{ sub_sub_child.id }}" style="padding-right: 6rem;">
                                                 <label class="cl-checkbox">
                                                     <input name="category" value="{{ sub_sub_child.id }}"
