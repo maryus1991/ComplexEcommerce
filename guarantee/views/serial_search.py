@@ -9,7 +9,7 @@ from guarantee.forms import GuratanteeSerialNumberSearch, ActiveGuratanteeSerial
 class GuaranteeView(View):
     """
     for guarantee serial number search
-    """ 
+    """
 
     def dispatch(self, request, *args, **kwargs):
         self.site = request.site
@@ -17,76 +17,89 @@ class GuaranteeView(View):
             return super().dispatch(request, *args, **kwargs)
         else:
             raise Http404()
-    
+
 
     def get(self, request, *args, **kwargs):
-        context = {
-            'form':GuratanteeSerialNumberSearch(request.POST or request.GET or None),
-            'form_guarantee':ActiveGuratanteeSerialNumberSearch(request.POST or request.GET or None),
-            'site': self.site
-        }
-        return render(request, 'site/guarantee.html', context)
 
-    def post(self, request, *args, **kwargs):
+
         form = GuratanteeSerialNumberSearch(request.POST or request.GET or None)
-        items = None
+
+
+        context = {
+            'items': None ,
+            'form': GuratanteeSerialNumberSearch(request.POST or request.GET or None),
+            'form_guarantee': ActiveGuratanteeSerialNumberSearch(request.POST or request.GET or None)
+            , 'site': self.site
+        }
 
         if form.is_valid():
             serial_number = form.cleaned_data.get('seria_number')
-            items = ProductGuarantee.objects.filter(serial_number=serial_number)
+            items = ProductGuarantee.objects.filter(serial_number=serial_number).select_related("product", "company")
 
-            if not items.exists():
+            if items.count() != 1 :
                 messages.error(request, 'گارانتی با این شماره سریال یافت نشد')
+                return render(request, 'site/guarantee.html', context)
 
+            items = items.first()
+            if not items.is_active:
+                messages.error(request, 'گارانتی با این شماره سریال موجود است، اما هنوز فعال نشده. لطفاً برای فعال‌سازی با پشتیبانی تماس بگیرید.')
 
+                return render(request, 'site/guarantee.html', context)
 
-        else:
-            messages.error(request, form.errors.as_text)
+            context.update({
+                'items': items,
+            })
+            messages.success(request, "گارانتی مورد نظر با موفقیت یافت شد. در صورتی که محصولی با این گارانتی در اختیار دارید، برای فعال‌سازی آن با پشتیبانی تماس بگیرید.")
 
-            
-        context = {
-            'items': items.first() ,
-            'form':GuratanteeSerialNumberSearch(request.POST or request.GET or None),
-            'form_guarantee':ActiveGuratanteeSerialNumberSearch(request.POST or request.GET or None)
-            ,'site': self.site
-        }
         return render(request, 'site/guarantee.html', context)
-    
+
+
+
 
 class GuaranteeActiveView(View):
     """for search the active guaratee"""
     def dispatch(self, request, *args, **kwargs):
+
+
         self.site = request.site
         if self.site.active_guarantee:
             return super().dispatch(request, *args, **kwargs)
         else:
             raise Http404()
-        
-    def post(self, request, *args, **kwargs):
-        form = ActiveGuratanteeSerialNumberSearch(request.POST or request.GET or None)
-        items = None
 
-        if form.is_valid():
-            serial_number = form.cleaned_data.get('active_seria_number')
-            items = ActiveProductGuarantee.objects.filter(serial_number=serial_number)
-
-            if not items.exists() or not items.first().is_active :
-                messages.error(request, 'گارانتی با این شماره سریال یافت نشد')
-                return render(request, 'site/guarantee.html')
-
-
-
-        else:
-            messages.error(request, form.errors.as_text)
-            return render(request, 'site/guarantee.html')
-
-
-            
+    def get(self, request, *args, **kwargs):
         context = {
-            'items': items.first().guarantee,
-            'active_guarantee': items.first(),
+            'items': None,
+            'active_guarantee': None,
             'form':GuratanteeSerialNumberSearch(request.POST or request.GET or None),
             'form_guarantee':ActiveGuratanteeSerialNumberSearch(request.POST or request.GET or None),
             'site': self.site
         }
+
+        form = ActiveGuratanteeSerialNumberSearch(request.POST or request.GET or None)
+
+
+        if form.is_valid():
+            serial_number = form.cleaned_data.get('active_seria_number')
+            items = ActiveProductGuarantee.objects.filter(serial_number=serial_number).select_related("guarantee__company", "guarantee", "guarantee__product", "user")
+
+            if not items.exists() :
+                messages.error(request, 'گارانتی با این شماره سریال فعال نشده است')
+                return render(request, 'site/guarantee.html', context)
+
+            items = items.first()
+            if not  items.is_active  :
+                messages.error(request, 'گارانتی با این شماره سریال موجود است، اما هنوز فعال نشده. لطفاً برای فعال‌سازی با پشتیبانی تماس بگیرید.')
+                return render(request, 'site/guarantee.html', context)
+
+            context.update(
+                {
+                    'items': items.guarantee,
+                    'active_guarantee': items ,
+                    'phone_number': phone_number if items.phone_number else items.user.PhoneNumber ,
+                }
+            )
+            return render(request, 'site/guarantee.html', context)
+
+
         return render(request, 'site/guarantee.html', context)

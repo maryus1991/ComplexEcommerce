@@ -375,14 +375,14 @@ desired effect
                                 <span>اضافه کردن گارانتی</span></a></li>
                                 <li class="link-activator"><a href="{% url 'store:active-guarantee-create' %}"><i
                                     class="fa fa-link"></i>
-                                <span> فعال کردن گارانتی  </span></a></li>
+                                <span> فعال کردن گارانتی برای کاربر </span></a></li>
                             {% endif %}
                             <li class="link-activator"><a href="{% url 'store:product-guarantee-list' %}"><i
                                     class="fa fa-link"></i>
                                 <span> لیست گارانتی</span></a></li>
                             <li class="link-activator"><a href="{% url 'store:active-guarantee-list' %}"><i
                                     class="fa fa-link"></i>
-                                <span> لیست گارانتی های فعال </span></a></li>
+                                <span> لیست گارانتی های فعال کاربران </span></a></li>
                             </ul>
                         </li>
                     {% if user.store.can_stores_add_product_category or user.store.can_stores_add_product_brand or user.store.can_stores_add_product %}
@@ -616,13 +616,13 @@ desired effect
                         <ul class="treeview-menu">
                             <li class="link-activator">
                                 <a href="{% url 'admin_panel:active-guarantee-list' %}"><i class="fa fa-link"></i>
-                                    <span>  لیست گارانتی فعال</span>
+                                    <span>   لیست گارانتی فعال کاربران</span>
                                 </a>
                             </li>
 
                             <li class="link-activator"><a href="{% url 'admin_panel:active-guarantee-create' %}"><i
                                     class="fa fa-link"></i>
-                                <span>فعال کردن گارانتی </span></a></li>
+                                <span>فعال کردن گارانتی برای کاربر</span></a></li>
 
                             <li class="link-activator">
                                 <a href="{% url 'admin_panel:guarantee-list' %}"><i class="fa fa-link"></i>

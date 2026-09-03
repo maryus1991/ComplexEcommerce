@@ -37,40 +37,60 @@
                     {{ site.description_for_guarantee_page|safe }}
                 </div>
                 <!-- فرم استعلام -->
-                <form method="post" class="mt-6 space-y-5">
-                    {% csrf_token %} <!-- در صورت نیاز، در کد اصلی نبود ولی بهتر است اضافه شود -->
-                    <div class="flex flex-col sm:flex-row gap-4 items-center">
-                        <div class="flex-1">
-                            <label for="serial-input" class=" text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                                شماره سریال گارانتی <span class="text-red-500">*</span>
-                            </label>
-                            {{ form.seria_number }} <!-- ورودی اصلی با کلاس‌های پیش‌فرض -->
-                            <!-- اگر بخواهیم دستی کلاس بدیم: -->
-                            <!-- <input type="text" name="seria_number" id="serial-input" class="w-full border border-gray-300 dark:border-zinc-600 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-zinc-800 dark:text-white transition" placeholder="مثال: SN-12345-ABCD"> -->
-                        </div>
-                        <button type="submit" class=" mt-2 sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-8 rounded-lg transition duration-200 flex items-center justify-center   shadow-md">
-                    
-                            <span>بررسی گارانتی</span>
-                        </button>
-                    </div>
-                </form>
+<form method="get"
+      action="{% url 'guarantee:serial-number-search' %}"
+      class="mt-6 space-y-5">
+
+    <div class="flex flex-col sm:flex-row gap-4 items-center">
+        <div class="flex-1">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                شماره سریال گارانتی
+                <span class="text-red-500">*</span>
+            </label>
+
+            {{ form.seria_number }}
+
+                <input
+        type="hidden"
+        name="active_seria_number"
+        value="{{ form_guarantee.active_seria_number.value|default:'' }}"
+    >
+        </div>
+
+        <button type="submit"
+                class="mt-2 sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-8 rounded-lg">
+            <span>بررسی گارانتی</span>
+        </button>
+    </div>
+</form>
                 <!-- فرم استعلام -->
                  
-                <form method="post" action="{% url 'guarantee:serial-number-search-active' %}"  class="mt-6 space-y-5">
-                    {% csrf_token %} <!-- در صورت نیاز، در کد اصلی نبود ولی بهتر است اضافه شود -->
-                    <div class="flex flex-col sm:flex-row gap-4 items-center">
-                        <div class="flex-1">
-                            <label for="serial-input" class=" text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                                شماره سریال گارانتی فعال شده <span class="text-red-500">*</span>
-                            </label>
-                            {{ form_guarantee.active_seria_number }}  
-                        </div>
-                        <button type="submit" class=" mt-2 sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-8 rounded-lg transition duration-200 flex items-center justify-center   shadow-md">
-                    
-                            <span>بررسی </span>
-                        </button>
-                    </div>
-                </form>
+<form method="get"
+      action="{% url 'guarantee:serial-number-search-active' %}"
+      class="mt-6 space-y-5">
+
+    <div class="flex flex-col sm:flex-row gap-4 items-center">
+        <div class="flex-1">
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                شماره سریال گارانتی فعال شده
+                <span class="text-red-500">*</span>
+            </label>
+
+            {{ form_guarantee.active_seria_number }}
+
+                <input
+        type="hidden"
+        name="seria_number"
+        value="{{ form.seria_number.value|default:'' }}"
+    >
+        </div>
+
+        <button type="submit"
+                class="mt-2 sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-8 rounded-lg">
+            <span>بررسی</span>
+        </button>
+    </div>
+</form>
             </div>
         </div>
 
@@ -146,7 +166,7 @@
                 </div>
                 <div>
                     <p class="text-sm text-gray-500 dark:text-gray-400">محصول</p>
-                    <p class="font-medium text-gray-800 dark:text-white text-lg"><a href="{{ item.product.get_absolute_url }}">{{ items.product.name }}</a></p>
+                    <p class="font-medium text-gray-800 dark:text-white text-lg"><a href="{% url 'product:detail' items.product.id %}">{{ items.product.name }}</a></p>
                 </div>
             </div>
             <!-- مدت اعتبار / ماه باقیمانده -->
@@ -171,7 +191,7 @@
     <section class="bg-white dark:bg-zinc-700 rounded-xl shadow-md  p-5">
         <h3 class="text-xl font-semibold text-gray-800 dark:text-white border-b border-gray-200 dark:border-zinc-600 pb-3 flex items-center gap-2">
             <i class="fas fa-clipboard-check text-green-600"></i>
-            گارانتی ثبت شده 
+            گارانتی فعال شده
         </h3>
       
     
@@ -207,6 +227,17 @@
                     <p class="text-sm text-gray-500 dark:text-gray-400">زمان پایان</p>
                     <p class="font-medium text-gray-800 dark:text-white text-lg dir-ltr text-left">{{ active_guarantee.date_of_expire|to_jalali:'%Y/%m/%d' }}</p>
                 </div>
+
+            </div>
+            <div class="bg-gray-50 dark:bg-zinc-800 rounded-xl p-5 flex items-start gap-4">
+                <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-600 dark:text-purple-300 text-xl">
+                    <i class="fas fa-barcode"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">شماره ثبت شده</p>
+                    <p dir="ltr" class="font-medium text-gray-800 dark:text-white text-lg dir-ltr text-left">{{phone_number}}</p>
+                </div>
+
             </div>
  
  

@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import ListArticlesView, DetailArticleView
 
-from .sitemap import BlogSitemap, BlogCategorySitemap
+from .sitemap import BlogSitemap
 
 app_name = "blog"
 
