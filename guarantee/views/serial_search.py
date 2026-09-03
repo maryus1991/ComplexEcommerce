@@ -2,7 +2,6 @@ from guarantee.models import ProductGuarantee, ActiveProductGuarantee
 from django.views.generic import View
 from django.shortcuts import render
 from django.http import Http404
-from sitesetting.models import SiteSetting
 from django.contrib import messages
 from guarantee.forms import GuratanteeSerialNumberSearch, ActiveGuratanteeSerialNumberSearch
 
@@ -13,7 +12,7 @@ class GuaranteeView(View):
     """ 
 
     def dispatch(self, request, *args, **kwargs):
-        self.site = SiteSetting.objects.first()
+        self.site = request.site
         if self.site.active_guarantee:
             return super().dispatch(request, *args, **kwargs)
         else:
@@ -57,7 +56,7 @@ class GuaranteeView(View):
 class GuaranteeActiveView(View):
     """for search the active guaratee"""
     def dispatch(self, request, *args, **kwargs):
-        self.site = SiteSetting.objects.first()
+        self.site = request.site
         if self.site.active_guarantee:
             return super().dispatch(request, *args, **kwargs)
         else:

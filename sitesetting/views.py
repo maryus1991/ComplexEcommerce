@@ -12,7 +12,7 @@ from orders.models import OrderDetail
 from .forms import ContactForm
 from .models import (
     FastLinks,
-    SiteSetting,
+
     QuestionAndAnswer,
     Newsletter,
     Slider,
@@ -67,7 +67,7 @@ def robots_txt(request):
 
     # لینک کامل sitemap با پروتکل صحیح
     sitemap_url = request.build_absolute_uri(reverse("sitemap"))
-    print(sitemap_url)
+
     lines.append(f"Sitemap: {sitemap_url}")
 
     return HttpResponse("\n".join(lines), content_type="text/plain")
@@ -75,7 +75,7 @@ def robots_txt(request):
 
 def dynamic_favicon(request):
     try:
-        site = SiteSetting.objects.first()
+        site = self.request.site
 
         if site and site.logo:
 
