@@ -100,10 +100,10 @@ class ActiveGuaranteeModelForm(forms.ModelForm):
                 "style": "width: 100%;",
                 "tabindex": "-1",
                 "aria-hidden": "true",
-                "dir": "rtl",
+                "dir": "ltr",
             }
         ),
-        label='کاربر'
+        label= 'کاربر (می تواند خالی باشد ولی باید شماره ای در قسمت شماره کاربر حتما وارد شود )'
     )
  
     date_of_started = JalaliDateField(
@@ -128,7 +128,7 @@ class ActiveGuaranteeModelForm(forms.ModelForm):
     )
     phone_number = PhoneNumberField(
         required=False,
-        label=" شماره کاربر (در صورتی وارد شود که کاربر در سایت وجود نداشته باشد) ",
+        label=" شماره کاربر (در صورتی وارد شود که کاربر در سایت وجود نداشته باشد یا کاربری  از قسمت کاربر انتخاب نشود) ",
         widget=forms.NumberInput(attrs={"class": "form-control", "dir": "ltr"}),
     )
     class Meta:
@@ -1377,6 +1377,37 @@ class SiteSettingModelForm(forms.ModelForm):
     about_image = forms.ImageField(
         required=False,
         label="تصویر معرفی",
+        widget=forms.FileInput(
+            attrs={
+                "class": "form-control",
+            }
+        ),
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
+    )
+
+
+    telegram_logo = forms.ImageField(
+        required=False,
+        label="لوگوی تلگرام",
+        widget=forms.FileInput(
+            attrs={
+                "class": "form-control",
+            }
+        ),
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=["jpg", "jpeg", "png", "webp", "heic"]
+            )
+        ],
+    )
+
+    instagram_logo = forms.ImageField(
+        required=False,
+        label="لوگو اینستاگرام",
         widget=forms.FileInput(
             attrs={
                 "class": "form-control",

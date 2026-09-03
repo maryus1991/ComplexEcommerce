@@ -42,7 +42,7 @@ class GuaranteeView(View):
 
             items = items.first()
             if not items.is_active:
-                messages.error(request, 'گارانتی با این شماره سریال موجود است، اما هنوز فعال نشده. لطفاً برای فعال‌سازی با پشتیبانی تماس بگیرید.')
+                messages.error(request, 'گارانتی با این شماره سریال موجود است، اما غیر فعال است. لطفاً برای فعال‌سازی با پشتیبانی تماس بگیرید.')
 
                 return render(request, 'site/guarantee.html', context)
 

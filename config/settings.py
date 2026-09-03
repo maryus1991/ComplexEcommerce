@@ -456,7 +456,7 @@ AUTHENTICATION_BACKENDS = [
 
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']
-    INSTALLED_APPS += ["silk"]
+    # INSTALLED_APPS += ["silk"]
     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
     # MIDDLEWARE += ['silk.middleware.SilkyMiddleware']
     INTERNAL_IPS = [

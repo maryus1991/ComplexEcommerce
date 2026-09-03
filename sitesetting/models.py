@@ -48,6 +48,14 @@ class SiteSetting(models.Model):
     logo = ThumbnailerImageField(
         upload_to="site/logo/", null=True, verbose_name="لوگو", blank=True
     )
+
+    telegram_logo = ThumbnailerImageField(
+        upload_to="site/logo/telegram/", null=True, verbose_name="لوگوی تلگرام", blank=True
+    )
+    instagram_logo = ThumbnailerImageField(
+        upload_to="site/logo/instagram/", null=True, verbose_name="لوگو اینستاگرام", blank=True
+    )
+
     short_description = models.TextField(default="0", verbose_name="توضیحات کوتاه")
 
     long_description = RichTextUploadingField(

@@ -59,11 +59,43 @@
                 <div class="flex items-start justify-start gap-x-10">
                     <a href="{{ site.instagram_link }}" class="flex items-center gap-x-2">
                         <p dir="ltr">{{ site.instagram_ID }}</p>
-                        <img src="/static/Images/svg/instagram.png" class="w-6 h-6" alt="instagram"/>
+                                               <picture>
+    <!-- نسخه WebP با رزولوشن‌های مختلف -->
+    <source srcset="{% thumbnail site.instagram_logo '96x56' crop='center'   %} 1x,
+                    {% thumbnail site.instagram_logo '192x112' crop='center'   %} 2x,
+                    {% thumbnail site.instagram_logo '288x168' crop='center'  %} 3x"
+            type="image/webp">
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    <img src="{% thumbnail site.instagram_logo '192x112' crop='center' %}"
+         srcset="{% thumbnail site.instagram_logo '96x56' crop='center' %} 1x,
+                 {% thumbnail site.instagram_logo '192x112' crop='center' %} 2x,
+                 {% thumbnail site.instagram_logo '288x168' crop='center' %} 3x"
+         alt="Instagram"
+         class="w-24 h-14 rounded-full"
+         width="96" height="56"
+         loading="lazy">
+</picture>
                     </a>
                     <a href="{{ site.telegram_link }}" class="flex items-center gap-x-2">
                         <p dir="ltr">{{ site.telegram_ID }}</p>
-                        <img src="/static/Images/svg/telegram.png" class="w-6 h-6" alt="instagram"/>
+                                                <picture>
+    <!-- نسخه WebP با رزولوشن‌های مختلف -->
+    <source srcset="{% thumbnail site.telegram_logo '96x56' crop='center'   %} 1x,
+                    {% thumbnail site.telegram_logo '192x112' crop='center'   %} 2x,
+                    {% thumbnail site.telegram_logo '288x168' crop='center'  %} 3x"
+            type="image/webp">
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    <img src="{% thumbnail site.telegram_logo '192x112' crop='center' %}"
+         srcset="{% thumbnail site.telegram_logo '96x56' crop='center' %} 1x,
+                 {% thumbnail site.telegram_logo '192x112' crop='center' %} 2x,
+                 {% thumbnail site.telegram_logo '288x168' crop='center' %} 3x"
+         alt="Telegram"
+         class="w-24 h-14 rounded-full"
+         width="96" height="56"
+         loading="lazy">
+</picture>
                     </a>
                     <a href="tel:{{ site.phone }}" class="flex items-center gap-x-2">
                         <p dir="ltr" class=" text-lg  text-green-500">{{ site.phone }}</p>
