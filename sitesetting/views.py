@@ -300,15 +300,14 @@ class UsedAppView(ListView):
     for listing the stores apps
     """
 
-    model = StoreApps
+
     paginate_by = 24
     context_object_name = "apps"
     template_name = "site/apps/apps.html"
 
     def get_queryset(self):
         query = (
-            super()
-            .get_queryset()
+            StoreApps.objects.select_related("store")
             .order_by("-id")
             .filter(
                 is_active=True,
@@ -318,9 +317,9 @@ class UsedAppView(ListView):
             )
         )
 
-        # Add search functionality
+
         search_query = self.request.GET.get("q")
-        print(search_query)
+
         if search_query:
             query = query.filter(
                 Q(name__contains=search_query) | Q(store__name__contains=search_query)
