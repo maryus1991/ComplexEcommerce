@@ -37,11 +37,14 @@ if settings.DEBUG:
         path("store-panel/", include("stores.urls")),
         path("admin-panel/", include("admin_panel.urls")),
         path("admin/", admin.site.urls),
+        # path("silk/", include("silk.urls", namespace="silk")),
     ]
 
     from debug_toolbar.toolbar import debug_toolbar_urls
 
     urlpatterns += debug_toolbar_urls()
+
+
 
 else:
     token = get_random_string(1000)

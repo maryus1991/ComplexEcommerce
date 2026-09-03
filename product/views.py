@@ -414,7 +414,7 @@ class ProductDetailView(DetailView):
             self.object.comments.annotate(
                 like_count=Count("like", filter=Q(like__like=True)),
                 dislike_count=Count("like", filter=Q(like__like=False)),
-            )
+            ).select_related("user")
             .order_by("-id")
             .all()[0:50]
         )
