@@ -15,6 +15,7 @@ from .models import (
     NotificationUserForProductAvailability,
     ProductViews,
 )
+from guarantee.models import ProductGuarantee as Guarantee
 from stores.models import Store
 from .forms import ProductCommentForm
 from orders.models import OrderDetail, Order
@@ -36,12 +37,11 @@ class ProductListView(ListView):
     context_object_name = "products"
 
     def get_queryset(self):
+        from django.db.models import Q
 
-        # get the url params
-        url_params = dict(self.request.GET.lists())
-
-        # get the product obj
-        products = Product.objects.filter(
+        products = (
+            Product.objects
+            .filter(
                 is_active=True,
                 store__is_active=True,
                 store__is_verified=True,
@@ -49,131 +49,245 @@ class ProductListView(ListView):
                 brand__is_active=True,
                 category__is_active=True,
                 parent__isnull=True,
-            ).select_related( "store", 'brand', 'category').prefetch_related("features", "tags", "specs", )
-
-        if "available" in url_params:
-            if url_params["available"] == ["on"]:
-                available = True
-            else:
-                available = False
-        else:
-            available = False
-
-        # handle the search query
-
-        have_search_query = False
-        if "search" in url_params:
-            search = url_params["search"]
-            if len(search) == 1 and not search[0].isspace():
-                search = search[0]
-                if search.isalnum():
-                    have_search_query = True
-                else:
-                    search = None
-            else:
-                search = None
-        else:
-            search = None
-
-        # handle the price range
-
-        have_start_price = False
-        start_price = None
-        if "start_price" in url_params:
-            start_price = url_params["start_price"]
-            if len(start_price) == 1:
-                start_price = start_price[0]
-                if start_price.isdigit():
-                    have_start_price = True
-            else:
-                start_price = None
-
-        have_end_price = False
-        end_price = None
-        if "end_price" in url_params:
-            end_price = url_params["end_price"]
-
-            if len(end_price) == 1:
-                end_price = end_price[0]
-                if end_price.isdigit():
-                    have_end_price = True
-            else:
-                end_price = None
-
-        # get the url params if exist
-
-        if "category" in url_params:
-            products = products.filter(
-                Q(category_id__in=url_params["category"]),
-                Q(category__is_active=True),
             )
-
-        if "store" in url_params:
-            products = products.filter(store_id__in=url_params["store"])
-
-        if "brand" in url_params:
-            products = products.filter(
-                Q(brand_id__in=url_params["brand"]),
-                Q(brand__is_active=True)
+            .select_related(
+                "store",
+                "brand",
+                "category",
             )
+            .prefetch_related(
+                "features",
+                "tags",
+                "specs",
+            )
+        )
+
+        params = self.request.GET
+
+        # ============================================================
+        # 1. Available
+        # ============================================================
+
+        available = params.get("available", "").strip().lower() == "on"
 
         if available:
             products = products.filter(count__gte=1)
 
-        if have_start_price and start_price:
-            products = products.filter(price__gte=start_price)
+        # ============================================================
+        # 2. Search
+        # ============================================================
 
-        if have_end_price and end_price:
-            products = products.filter(price__lte=end_price)
+        search = params.get("search", "").strip()
 
-        if have_search_query and search is not None:
+        if search:
+            # اگر فقط whitespace یا مقدار نامناسب بود، نادیده گرفته می‌شود
+            if search.isalnum():
+                products = products.filter(
+                    name__icontains=search
+                )
+
+        # ============================================================
+        # 3. Price range
+        # ============================================================
+
+        def get_positive_int_param(name):
+            """
+            مقدار integer معتبر و مثبت برمی‌گرداند.
+            در غیر این صورت None.
+            """
+            value = params.get(name, "").strip()
+
+            if not value:
+                return None
+
+            try:
+                number = int(value)
+
+                if number < 0:
+                    return None
+
+                return number
+
+            except (TypeError, ValueError):
+                return None
+
+        start_price = get_positive_int_param("start_price")
+        end_price = get_positive_int_param("end_price")
+
+        if start_price is not None:
             products = products.filter(
-                Q(name__icontains=search)
+                price__gte=start_price
             )
+
+        if end_price is not None:
+            products = products.filter(
+                price__lte=end_price
+            )
+
+        # ============================================================
+        # 4. Category
+        # ============================================================
+
+        def get_valid_ids(name):
+            """
+            لیست IDهای معتبر را از GET استخراج می‌کند.
+            مثلا:
+                ?category=1&category=2&category=abc&category=
+            =>
+                [1, 2]
+            """
+
+            values = params.getlist(name)
+
+            valid_ids = []
+
+            for value in values:
+                value = value.strip()
+
+                if not value:
+                    continue
+
+                try:
+                    value = int(value)
+
+                    if value > 0:
+                        valid_ids.append(value)
+
+                except (TypeError, ValueError):
+                    continue
+
+            return valid_ids
+
+        category_ids = get_valid_ids("category")
+
+        if category_ids:
+            products = products.filter(
+                category_id__in=category_ids,
+                category__is_active=True,
+            )
+
+        # ============================================================
+        # 5. Store
+        # ============================================================
+
+        store_ids = get_valid_ids("store")
+
+        if store_ids:
+            products = products.filter(
+                store_id__in=store_ids
+            )
+
+        # ============================================================
+        # 6. Brand
+        # ============================================================
+
+        brand_ids = get_valid_ids("brand")
+
+        if brand_ids:
+            products = products.filter(
+                brand_id__in=brand_ids,
+                brand__is_active=True,
+            )
+
+        # ============================================================
+        # 7. Sorting
+        # ============================================================
+
+        sort_value = params.get("sort", "").strip()
 
         sort = None
 
-        # --- حالت وقتی پارامتر sort در URL هست ---
-        if "sort" in url_params:
-            sort_param = url_params["sort"]
-            if len(sort_param) == 1 and sort_param[0].isdigit():
-                sort = int(sort_param[0])
-                sort_map = {
-                    1: ['-have_discount', '-discount'],
-                    2: ['orders__count'],
-                    3: ['price'],
-                    4: ['-price'],
-                    5: ['-id'],
-                }
-                if sort in sort_map:
-                    products = products.order_by(*sort_map[sort]).distinct()
-                else:
-                    sort = None
+        if sort_value:
+            try:
+                sort = int(sort_value)
 
-        # --- حالت وقتی sort در URL نیست ---
+            except (TypeError, ValueError):
+                sort = None
+
+        sort_map = {
+            1: ["-have_discount", "-discount"],
+            2: ["orders__count"],
+            3: ["price"],
+            4: ["-price"],
+            5: ["-id"],
+        }
+
+        if sort in sort_map:
+            products = products.order_by(
+                *sort_map[sort]
+            )
+
         else:
-            site = self.request.site
+            # ========================================================
+            # Default site sorting
+            # ========================================================
 
-            site_sort_map = [
-                (site.product_sort_by_count, ["-count"]),
-                (site.product_sort_by_highest_price, ["-price"]),
-                (site.product_sort_by_lowest_price, ["price"]),
-                (site.product_sort_by_sort_number, ["-sort_number"]),
-                (site.product_sort_by_category_sort_number, ["-category__sort_number"]),
-                (site.product_sort_by_brand_sort_number, ["-brand__sort_number"]),
-                (site.product_sort_by_existing_count, ["-count"]),
-            ]
+            site = getattr(self.request, "site", None)
 
-            applied_sort = False
-            for condition, fields in site_sort_map:
-                if condition:
-                    products = products.order_by(*fields)
-                    applied_sort = True
+            if site:
+                site_sort_map = [
+                    (
+                        getattr(site, "product_sort_by_count", False),
+                        ["-count"],
+                    ),
+                    (
+                        getattr(site, "product_sort_by_highest_price", False),
+                        ["-price"],
+                    ),
+                    (
+                        getattr(site, "product_sort_by_lowest_price", False),
+                        ["price"],
+                    ),
+                    (
+                        getattr(site, "product_sort_by_sort_number", False),
+                        ["-sort_number"],
+                    ),
+                    (
+                        getattr(
+                            site,
+                            "product_sort_by_category_sort_number",
+                            False,
+                        ),
+                        ["-category__sort_number"],
+                    ),
+                    (
+                        getattr(
+                            site,
+                            "product_sort_by_brand_sort_number",
+                            False,
+                        ),
+                        ["-brand__sort_number"],
+                    ),
+                    (
+                        getattr(
+                            site,
+                            "product_sort_by_existing_count",
+                            False,
+                        ),
+                        ["-count"],
+                    ),
+                ]
 
-            if not applied_sort:
-                products = products.order_by("-count", "-sort_number")
+                applied_sort = False
 
-        return products.distinct().all()
+                for condition, fields in site_sort_map:
+                    if condition:
+                        products = products.order_by(*fields)
+                        applied_sort = True
+
+                if not applied_sort:
+                    products = products.order_by(
+                        "-count",
+                        "-sort_number",
+                    )
+
+            else:
+                products = products.order_by(
+                    "-count",
+                    "-sort_number",
+                )
+
+        return products.distinct()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -245,26 +359,64 @@ class ProductDetailView(DetailView):
     model = Product
     context_object_name = "product"
 
-    def get_object(self, queryset = ...):
-        product_obj = Product.objects.filter(
-                pk=self.kwargs["pk"],
+    def get_object(self, queryset=None):
+        product_obj = get_object_or_404(
+            Product.objects
+            .filter(
                 is_active=True,
                 store__is_active=True,
                 store__is_verified=True,
                 admin_verified=True,
                 brand__is_active=True,
                 category__is_active=True,
-            ).prefetch_related(
-                "features", 'brand', 'category', 
-                'favorite', 'comments', 'gallery', 
-                'store', "tags", "specs", "child", 
-                'parent', "guarantee"
             )
+            .select_related(
+                'brand',
+                'category',
+                'store',
+                'parent',
+            )
+            .prefetch_related(
+                # Product relations
+                'gallery',
+                'features',
+                'tags',
+                'specs',
 
-        if not product_obj.exists():
-            raise Http404()
+                # Product children
+                Prefetch(
+                    'child',
+                    queryset=Product.objects.filter(
+                        is_active=True,
+                    ),
+                    to_attr='active_children',
+                ),
 
-        return product_obj.first()
+                # Guarantees
+                Prefetch(
+                    'guarantee',
+                    queryset=Guarantee.objects.select_related('company'),
+                ),
+
+                # Parent relations
+                'parent__gallery',
+                'parent__features',
+                'parent__specs',
+
+                # Parent children
+                Prefetch(
+                    'parent__child',
+                    queryset=Product.objects.filter(
+                        is_active=True,
+                    ),
+                    to_attr='active_children',
+                ),
+            ),
+            pk=self.kwargs["pk"],
+        )
+
+        return product_obj
+
 
     def get_context_data(self, **kwargs):
 
@@ -323,6 +475,7 @@ class ProductDetailView(DetailView):
             )[0]
 
             context["user_order"] = order
+            context["colleague_with_store"] = self.request.user.colleague_with_store.values_list("id", flat=True)
             context["user_order_detail"] = order.details.filter(
                 product=obj,
             ).first()

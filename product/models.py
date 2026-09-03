@@ -88,10 +88,7 @@ class Product(models.Model):
     def get_product_price(self, user=None, request=None):
         """for clac the price with the discount and colleague discount"""
 
-        if request and request.user.is_authenticated and user is None:
-            user = request.user
-
-        if user.colleague_user and self.store.colleague_users.filter(id=user.id).exists()  and self.colleague_users_price > 0 :
+        if self.colleague_users_price > 0 :
             return self.colleague_users_price
 
         else :

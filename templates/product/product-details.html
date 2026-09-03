@@ -4,12 +4,11 @@
 {% load thumbnail %}
 
 {% block title %}
-    {{ product.name }} | خرید {{ product.name }} از {{ product.store.name }} | فروشگاه تخصصی
+    {{ product.name }} | {{ product.store.name }}
 {% endblock %}
 
 {% block microdata %}
-    {# ========== بهبود SEO: متا تگ‌ها، Open Graph، کاننیکال، ساختار یافته ========== #}
-    <meta charset="UTF-8">
+     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <meta name="description" content="{% if product.parent %}{{ product.parent.description|striptags|truncatechars:160 }}{% else %}{{ product.description|striptags|truncatechars:160 }}{% endif %}">
@@ -27,7 +26,7 @@
     <meta property="og:image" content="{% if product.picture %}{{ request.scheme }}://{{ request.get_host }}{{ product.picture.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
     <meta property="og:image:width" content="800">
     <meta property="og:image:height" content="800">
-    <meta property="og:site_name" content="نام فروشگاه شما">
+    <meta property="og:site_name" content="{{site.title}}">
     <meta property="product:availability" content="{% if product.count > 0 %}instock{% else %}outofstock{% endif %}">
     <meta property="product:price:amount" content="{{ product.calc_discount|stringformat:'f'|cut:' ' }}">
     <meta property="product:price:currency" content="IRR">
@@ -38,8 +37,7 @@
     <meta name="twitter:description" content="{% if product.parent %}{{ product.parent.description|striptags|truncatechars:160 }}{% else %}{{ product.description|striptags|truncatechars:160 }}{% endif %}">
     <meta name="twitter:image" content="{% if product.picture %}{{ request.scheme }}://{{ request.get_host }}{{ product.picture.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
 
-    {# ========== JSON-LD بهبود یافته با داده‌های بیشتر ========== #}
-    {
+     {
       "@context": "https://schema.org",
       "@graph": [
         {
@@ -212,7 +210,7 @@
                         {% endif %}
                     </div>
                     <div class="relative w-full">
-    
+
 <style>
     @media (min-width: 768px) {
         .zoom-image-container {
@@ -237,7 +235,7 @@
 <div id="slider" class="flex overflow-x-auto scroll-smooth snap-x snap-mandatory rounded-lg scrollbar-hide">
 {% if product.picture %}
 <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
-  <img 
+  <img
     src="{% thumbnail product.picture '384x384' %}"
     srcset="
       {% thumbnail product.picture '384x384' %} 384w,
@@ -247,7 +245,7 @@
     sizes="(max-width: 640px) 100vw, 384px"
     alt="تصویر اصلی {{ product.name }}"
     loading="eager"
-    width="384" 
+    width="384"
     height="384"
     class="zoom-image">
 </div>
@@ -255,7 +253,7 @@
 {% if product.parent %}
 {% for img in product.parent.gallery|sort_number %}
 <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
-  <img 
+  <img
     src="{% thumbnail img.image '384x384' %}"
     srcset="
       {% thumbnail img.image '384x384' %} 384w,
@@ -264,8 +262,8 @@
     "
     sizes="(max-width: 640px) 100vw, 384px"
     alt="گالری تصاویر {{ product.parent.name }} - {{ forloop.counter }}"
-    loading="lazy" 
-    width="384" 
+    loading="lazy"
+    width="384"
     height="384"
     class="zoom-image">
 </div>
@@ -273,7 +271,7 @@
 {% else %}
 {% for img in product.gallery|sort_number %}
 <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
-  <img 
+  <img
     src="{% thumbnail img.image '384x384' %}"
     srcset="
       {% thumbnail img.image '384x384' %} 384w,
@@ -282,8 +280,8 @@
     "
     sizes="(max-width: 640px) 100vw, 384px"
     alt="گالری تصاویر {{ product.name }} - {{ forloop.counter }}"
-    loading="lazy" 
-    width="384" 
+    loading="lazy"
+    width="384"
     height="384"
     class="zoom-image">
 </div>
@@ -363,7 +361,7 @@ function resetZoom(container) {
                         <svg class="w-5 h-5">
                             <use href="#list-bullet"></use>
                         </svg>
-                        <p>دسته‌بندی: 
+                        <p>دسته‌بندی:
                             <a href="{% url 'product:list' %}?category={{ product.category.slug }}" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors" title="مشاهده همه محصولات {{ product.category.name }}">
                                 {{ product.category.name }}
                             </a>
@@ -457,7 +455,7 @@ function resetZoom(container) {
                                 {{ product.short_name }}
                             </h3>
                             <div class="mt-auto flex items-center gap-1">
-                                {% if request.user.is_authenticated and user.colleague_user and product.store in user.colleague_with_store.all and product.colleague_users_price > 0 %}
+                                {% if request.user.is_authenticated and user.colleague_user and product.store.id in colleague_with_store and product.colleague_users_price > 0 %}
                                     <div class="flex flex-wrap items-baseline gap-1">
                             <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                 {{ product|colleague:request }}
@@ -508,7 +506,7 @@ function resetZoom(container) {
                                         {{ child.short_name }}
                                     </h3>
                                     <div class="mt-auto flex items-center gap-1">
-                                        {% if request.user.is_authenticated and user.colleague_user and child.store in user.colleague_with_store.all and child.colleague_users_price > 0 %}
+                                        {% if request.user.is_authenticated and user.colleague_user and child.store in  colleague_with_store and child.colleague_users_price > 0 %}
                                             <div class="flex flex-wrap items-baseline gap-1">
                             <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                 {{ child|colleague:request }}
@@ -562,7 +560,7 @@ function resetZoom(container) {
                                     {{ product.parent.short_name }}
                                 </h3>
                                 <div class="mt-auto flex items-center gap-1">
-                                    {% if request.user.is_authenticated and user.colleague_user  and product.store in user.colleague_with_store.all and product.colleague_users_price > 0%}
+                                    {% if request.user.is_authenticated and user.colleague_user  and product.store.id in colleague_with_store and product.colleague_users_price > 0%}
                                         <div class="flex flex-wrap items-baseline gap-1">
                                     <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                         {{ product.parent|colleague:request }}
@@ -614,7 +612,7 @@ function resetZoom(container) {
                                         {{ child.short_name }}
                                     </h3>
                                     <div class="mt-auto flex items-center gap-1">
-                                        {% if request.user.is_authenticated and user.colleague_user and product.store in user.colleague_with_store.all and child.colleague_users_price > 0 %}
+                                        {% if request.user.is_authenticated and user.colleague_user and product.store.id in colleague_with_store and child.colleague_users_price > 0 %}
                                             <div class="flex flex-wrap items-baseline gap-1">
                                     <span class="text-xs sm:text-sm font-bold text-primary-600 dark:text-primary-400">
                                         {{ child|colleague:request }}
@@ -738,14 +736,14 @@ function resetZoom(container) {
                     </div>
                 {% endif %}
             {% endif %}
- 
+
             {% for object in product.guarantee.all %}
             <div class="border border-gray-200 dark:border-white/20 rounded-lg p-2 flex items-center">
                 <p class="text-gray-600 dark:text-gray-400"> این محصول دارای گارانتی :
-                    {{ object.name }} | 
+                    {{ object.name }} |
                     شرکت : {{ object.company.name }}  |
                     سریال : {{ object.serial_number }} |
-                    مدت : {{ object.months_of_expire }} ماه 
+                    مدت : {{ object.months_of_expire }} ماه
                 </p>
             </div>
             {% endfor %}
@@ -754,7 +752,7 @@ function resetZoom(container) {
         <!-- SIDEBAR (بدون تغییر محتوایی، فقط بهبود دسترسی) -->
         <div class="w-full lg:w-1/4 lg:sticky top-5 flex flex-col gap-y-6">
             <div class="flex items-center gap-x-1">
-                {% if request.user.is_authenticated and user.colleague_user and product.store in user.colleague_with_store.all and product.colleague_users_price > 0 %}
+                {% if request.user.is_authenticated and user.colleague_user and product.store.id in colleague_with_store and product.colleague_users_price > 0 %}
                     <p class="text-2xl font-DanaDemiBold">{{ product|colleague:request }}</p>
                     <p class="">تومان</p>
                     <br>
@@ -803,15 +801,15 @@ function resetZoom(container) {
                             <svg onclick="handle_input('+')" class="w-6 h-6 shrink-0 text-green-600 cursor-pointer" role="button" aria-label="افزایش تعداد" tabindex="0">
                                 <use href="#plus"></use>
                             </svg>
-                            <input 
-                                type="number" 
-                                name="count" 
-                                id="customInput" 
+                            <input
+                                type="number"
+                                name="count"
+                                id="customInput"
                                 min="0"
                                 {% if user_order_detail is not None %}
-                                max="{{ product.count|sum:user_order_detail.count }}" 
+                                max="{{ product.count|sum:user_order_detail.count }}"
                                 {% else %}
-                                max="{{ product.count }}" 
+                                max="{{ product.count }}"
                                 {% endif %}
                                 value="{{ user_order_detail.count|default:1 }}"
                                 class="custom-input mx-4 w-10 text-lg bg-transparent text-center flex-1"
@@ -988,7 +986,7 @@ function resetZoom(container) {
                                 {{ product.name }}
                             </a>
                             <div class="flex items-center gap-x-1 lg:gap-x-3">
-                                {% if request.user.is_authenticated and user.colleague_user and product.store in user.colleague_with_store.all and product.colleague_users_price > 0 %}
+                                {% if request.user.is_authenticated and user.colleague_user and product.store.id in colleague_with_store and product.colleague_users_price > 0 %}
                                     <p class="font-DanaDemiBold text-green-600 dark:text-green-300">{{ product|colleague:request }} <span class="font-Dana text-sm">تومان</span></p>
                                     <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">{{ product.price|tdc }} <span>تومان</span></del>
                                 {% else %}
