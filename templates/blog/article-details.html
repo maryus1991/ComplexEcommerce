@@ -21,7 +21,7 @@
       "description": "{{ post.title|escapejs }}",
 
       "image": [
-        "{{ request.scheme }}://{{ request.get_host }}{{ post.image.url }}"
+        "https://{{ request.get_host }}{{ post.image.url }}"
       ],
 
       "author": {
@@ -33,7 +33,7 @@
         "name": "{{ post.store.name|escapejs }}",
         "logo": {
           "@type": "ImageObject",
-          "url": "{{ request.scheme }}://{{ request.get_host }}{{ post.store.logo.url }}"
+          "url": "https://{{ request.get_host }}{{ post.store.logo.url }}"
         }
       },
       "datePublished": "{{ post.created_at|date:'c' }}",
@@ -52,13 +52,13 @@
           "@type": "ListItem",
           "position": 1,
           "name": "خانه",
-          "item": "{{ request.scheme }}://{{ request.get_host }}/"
+          "item": "https://{{ request.get_host }}/"
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": "بلاگ",
-          "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'blog:list' %}"
+          "item": "https://{{ request.get_host }}{% url 'blog:list' %}"
         },
         {
           "@type": "ListItem",
@@ -73,7 +73,7 @@
       "@id": "{{ request.build_absolute_uri }}#webpage",
       "name": "{{ post.title|escapejs }}",
       "isPartOf": {
-        "@id": "{{ request.scheme }}://{{ request.get_host }}/#website"
+        "@id": "https://{{ request.get_host }}/#website"
       }
     }
 

@@ -11,8 +11,8 @@
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "{{ site.title|escapejs }}",
-  "url": "{{ request.scheme }}://{{ request.get_host }}/",
-  "logo": "{% if site.logo %}{{ request.scheme }}://{{ request.get_host }}{{ site.logo.url }}{% endif %}",
+  "url": "https://{{ request.get_host }}/",
+  "logo": "{% if site.logo %}https://{{ request.get_host }}{{ site.logo.url }}{% endif %}",
   "sameAs": [
     "{{ site.instagram_link }}",
     "{{ site.telegram_link }}"

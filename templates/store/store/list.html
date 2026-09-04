@@ -22,7 +22,7 @@
           "@type": "ListItem",
           "position": 1,
           "name": "خانه",
-          "item": "{{ request.scheme }}://{{ request.get_host }}/"
+          "item": "https://{{ request.get_host }}/"
         },
         {
           "@type": "ListItem",
@@ -41,13 +41,13 @@
         {
           "@type": "ListItem",
           "position": {{ forloop.counter }},
-          "url": "{{ request.scheme }}://{{ request.get_host }}{{ store.get_absolute_url }}",
+          "url": "https://{{ request.get_host }}{{ store.get_absolute_url }}",
           "item": {
             "@type": "LocalBusiness",
-            "@id": "{{ request.scheme }}://{{ request.get_host }}{{ store.get_absolute_url }}#store",
+            "@id": "https://{{ request.get_host }}{{ store.get_absolute_url }}#store",
             "name": "{{ store.name|escapejs }}",
             {% if store.logo %}
-            "image": "{{ request.scheme }}://{{ request.get_host }}{{ store.logo.url }}",
+            "image": "https://{{ request.get_host }}{{ store.logo.url }}",
             {% endif %}
             "telephone": "{{ store.phone }}",
             "address": {
@@ -57,7 +57,7 @@
               "addressRegion": "{{ store.province|escapejs }}",
               "addressCountry": "IR"
             },
-            "url": "{{ request.scheme }}://{{ request.get_host }}{{ store.get_absolute_url }}"
+            "url": "https://{{ request.get_host }}{{ store.get_absolute_url }}"
           }
         }{% if not forloop.last %},{% endif %}
         {% endfor %}

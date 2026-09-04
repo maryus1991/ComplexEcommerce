@@ -23,7 +23,7 @@
     <meta property="og:description" content="{% if product.parent %}{{ product.parent.description|striptags|truncatechars:160 }}{% else %}{{ product.description|striptags|truncatechars:160 }}{% endif %}">
     <meta property="og:type" content="product">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
-    <meta property="og:image" content="{% if product.picture %}{{ request.scheme }}://{{ request.get_host }}{{ product.picture.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
+    <meta property="og:image" content="{% if product.picture %}https://{{ request.get_host }}{{ product.picture.url }}{% else %}https://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
     <meta property="og:image:width" content="800">
     <meta property="og:image:height" content="800">
     <meta property="og:site_name" content="{{site.title}}">
@@ -35,7 +35,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ product.name }} | {{ product.store.name }}">
     <meta name="twitter:description" content="{% if product.parent %}{{ product.parent.description|striptags|truncatechars:160 }}{% else %}{{ product.description|striptags|truncatechars:160 }}{% endif %}">
-    <meta name="twitter:image" content="{% if product.picture %}{{ request.scheme }}://{{ request.get_host }}{{ product.picture.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
+    <meta name="twitter:image" content="{% if product.picture %}https://{{ request.get_host }}{{ product.picture.url }}{% else %}https://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
 
      {
       "@context": "https://schema.org",
@@ -52,9 +52,9 @@
             "name": "{{ product.brand.name|escapejs }}"
           },
           "image": [
-            "{{ request.scheme }}://{{ request.get_host }}{{ product.picture.url }}"
+            "https://{{ request.get_host }}{{ product.picture.url }}"
             {% for img in product.gallery.all|slice:":3" %}
-            , "{{ request.scheme }}://{{ request.get_host }}{{ img.image.url }}"
+            , "https://{{ request.get_host }}{{ img.image.url }}"
             {% endfor %}
           ],
           "offers": {
@@ -103,13 +103,13 @@
               "@type": "ListItem",
               "position": 1,
               "name": "خانه",
-              "item": "{{ request.scheme }}://{{ request.get_host }}/"
+              "item": "https://{{ request.get_host }}/"
             },
             {
               "@type": "ListItem",
               "position": 2,
               "name": "فروشگاه",
-              "item": "{{ request.scheme }}://{{ request.get_host }}{% url 'product:list' %}"
+              "item": "https://{{ request.get_host }}{% url 'product:list' %}"
             },
             {
               "@type": "ListItem",
@@ -131,7 +131,7 @@
           },
           "primaryImageOfPage": {
             "@type": "ImageObject",
-            "contentUrl": "{% if product.picture %}{{ request.scheme }}://{{ request.get_host }}{{ product.picture.url }}{% endif %}"
+            "contentUrl": "{% if product.picture %}https://{{ request.get_host }}{{ product.picture.url }}{% endif %}"
           }
         }
       ]

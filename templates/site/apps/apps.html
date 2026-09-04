@@ -23,7 +23,7 @@
           "@type": "ListItem",
           "position": 1,
           "name": "خانه",
-          "item": "{{ request.scheme }}://{{ request.get_host }}/"
+          "item": "https://{{ request.get_host }}/"
         },
         {
           "@type": "ListItem",
@@ -42,14 +42,14 @@
         {
           "@type": "ListItem",
           "position": {{ forloop.counter }},
-          "url": "{{ request.scheme }}://{{ request.get_host }}{{ app.get_absolute_url }}",
+          "url": "https://{{ request.get_host }}{{ app.get_absolute_url }}",
           "item": {
             "@type": "SoftwareApplication",
-            "@id": "{{ request.scheme }}://{{ request.get_host }}{{ app.get_absolute_url }}#app",
+            "@id": "https://{{ request.get_host }}{{ app.get_absolute_url }}#app",
             "name": "{{ app.name|escapejs }}",
             "description": "{{ app.name|truncatechars:160|escapejs }}",
             {% if app.image %}
-            "image": "{{ request.scheme }}://{{ request.get_host }}{{ app.image.url }}",
+            "image": "https://{{ request.get_host }}{{ app.image.url }}",
             {% endif %}
             "operatingSystem": "Windows",
 
