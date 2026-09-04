@@ -469,5 +469,5 @@ if DEBUG:
         "0.0.0.0",
 
     ]
-
-
+else :
+    INSTALLED_APPS += ["cachalot",]

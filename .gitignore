@@ -7,7 +7,7 @@
 /media/
 *.sqlite3
 notes.txt
-*.png
+
 /static-cdn
 *.yml
 /static/admin/
