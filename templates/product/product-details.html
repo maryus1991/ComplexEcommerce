@@ -326,13 +326,48 @@ function resetZoom(container) {
 
                             {% if product.store.instagram_app_Link and product.store.instagram_app_ID %}
                                 <a href="{{ product.store.instagram_app_Link }}" class="hover:opacity-80 transition-opacity" rel="noopener noreferrer" target="_blank" aria-label="اینستاگرام فروشنده">
-                                    <img src="/static/Images/svg/instagram.png" class="w-10 h-10" loading="lazy" alt="اینستاگرام {{ product.store.name }}"/>
+
+                                                           <picture>
+    <!-- نسخه WebP با رزولوشن‌های مختلف -->
+    <source srcset="{% thumbnail site.instagram_logo '96x56' crop='center'   %} 1x,
+                    {% thumbnail site.instagram_logo '192x112' crop='center'   %} 2x,
+                    {% thumbnail site.instagram_logo '288x168' crop='center'  %} 3x"
+            type="image/webp">
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    <img src="{% thumbnail site.instagram_logo '192x112' crop='center' %}"
+         srcset="{% thumbnail site.instagram_logo '96x56' crop='center' %} 1x,
+                 {% thumbnail site.instagram_logo '192x112' crop='center' %} 2x,
+                 {% thumbnail site.instagram_logo '288x168' crop='center' %} 3x"
+         alt="اینستاگرام {{ product.store.name }}"
+         class="w-10 h-10 rounded-full"
+
+         loading="lazy">
+</picture>
                                 </a>
                             {% endif %}
 
                             {% if product.store.telegram_app_Link and product.store.telegram_app_ID %}
                                 <a href="{{ product.store.telegram_app_Link }}" class="hover:opacity-80 transition-opacity" rel="noopener noreferrer" target="_blank" aria-label="تلگرام فروشنده">
-                                    <img src="/static/Images/svg/telegram.png" class="w-10 h-10" loading="lazy" alt="تلگرام {{ product.store.name }}"/>
+
+
+                                                            <picture >
+    <!-- نسخه WebP با رزولوشن‌های مختلف -->
+    <source class="w-10 h-10" srcset="{% thumbnail site.telegram_logo '96x56' crop='center'   %} 1x,
+                    {% thumbnail site.telegram_logo '192x112' crop='center'   %} 2x,
+                    {% thumbnail site.telegram_logo '288x168' crop='center'  %} 3x"
+            type="image/webp">
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    <img class="w-10 h-10   rounded-full" src="{% thumbnail site.telegram_logo '192x112' crop='center' %}"
+         srcset="{% thumbnail site.telegram_logo '96x56' crop='center' %} 1x,
+                 {% thumbnail site.telegram_logo '192x112' crop='center' %} 2x,
+                 {% thumbnail site.telegram_logo '288x168' crop='center' %} 3x"
+         alt="تلگرام {{ product.store.name }}"
+
+
+         loading="lazy">
+</picture>
                                 </a>
                             {% endif %}
 
