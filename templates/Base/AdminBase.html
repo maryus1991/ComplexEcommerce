@@ -1,13 +1,10 @@
 
-{% load static %}
+
 {% load compress static %}
 {% load store_tags %}
 {% load jalali_tags %}
 <!DOCTYPE html>
-<!--
-This is a starter template page. Use this page to start your new project from
-scratch. This page gets rid of all links and provides the needed markup only.
--->
+
 <html>
 <head>
     <meta charset="utf-8">
@@ -19,67 +16,35 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </title>
     <link rel="stylesheet" href="{% url 'site:fonts.css' %}"/>
 
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">
-    <!-- Bootstrap 3.3.7 -->
-{% compress css %}
+ {% compress css %}
     <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
-{#    <!-- Bootstrap rtl -->#}
+
     <link rel="stylesheet" href="/static/dist/css/rtl.css">
-{#    <!-- Font Awesome -->#}
-{#    <!-- Ionicons -->#}
+
     <link rel="stylesheet" href="/static/node_modules/ionicons/dist/css/ionicons.min.css">
     <link rel="stylesheet" href="/static/dist/css/AdminLTE.css">
     <link rel="stylesheet" href="/static/dist/css/skins/skin-blue.min.css">
 {% endcompress %}
-{#    <!-- Theme style -->#}
-{#    <!-- AdminLTE Skins. We have chosen the skin-blue for this starter#}
-{#          page. However, you can choose any other skin. Make sure you#}
-{#          apply the skin class to the body tag so the changes take effect. -->#}
-{##}
-{##}
-{#    <script src="/static/ckeditor/ckeditor/ckeditor.js"></script>#}
-
     {% block header_reference %}
 
     {% endblock %}
 
-    <!-- Google Font -->
+
 
 </head>
-<!--
-BODY TAG OPTIONS:
-=================
-Apply one or more of the following classes to get the
-desired effect
-|---------------------------------------------------------|
-| SKINS         | skin-blue                               |
-|               | skin-black                              |
-|               | skin-purple                             |
-|               | skin-yellow                             |
-|               | skin-red                                |
-|               | skin-green                              |
-|---------------------------------------------------------|
-|LAYOUT OPTIONS | fixed                                   |
-|               | layout-boxed                            |
-|               | layout-top-nav                          |
-|               | sidebar-collapse                        |
-|               | sidebar-mini                            |
-|---------------------------------------------------------|
--->
+
 <body class="hold-transition skin-blue sidebar-mini">
 
 <div class="wrapper">
 
-    <!-- Main Header -->
+
     <header class="main-header">
-        <!-- Logo -->
+
         <a href="/" class="logo">
-            <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini">پنل</span>
-            <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>
+             <span class="logo-mini">پنل</span>
+             <span class="logo-lg"><b>
                 {% if user.is_superuser and 'admin' in request.path %}
                     مدیریت سایت
                 {% else %}
@@ -87,9 +52,9 @@ desired effect
                 {% endif %} 
             </b></span>
         </a>
-        <!-- Header Navbar: style can be found in header.less -->
+
         <nav class="navbar navbar-static-top">
-            <!-- Sidebar toggle button-->
+
             <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
                 <span class="sr-only">Toggle navigation</span>
             </a>
@@ -98,7 +63,7 @@ desired effect
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     {% if user.is_staff and user.store and 'admin' not in request.path %}
-                        <!-- Messages: style can be found in dropdown.less-->
+
                         <li id="messages-menu" onclick="hideOrShowMenus(this)" class="dropdown messages-menu">
                             <a class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-envelope-o"></i>
@@ -108,7 +73,7 @@ desired effect
                                 {% endif %}
                             </a>
                             <ul class="dropdown-menu">
-                                {# Assuming this is part of a dropdown, otherwise a standard <ul> would work #}
+
                                 {% if user.store.tickets.exists %}
 
                                     {% for item in user.store.tickets|ticket_obj_response %}
@@ -124,15 +89,14 @@ desired effect
                                                                 class="fa fa-clock-o"></i> {{ item.message.last.date|to_jalali:'%H:%m - %Y/%M/%d ' }}
                                                         </small>
                                                     </p>
-                                                    {# You could add a snippet of the last message here for more context #}
-                                                    {# <p class="text-muted pull-right">{{ item.message.last.content|truncatechars:50 }}</p> #}
+
                                                 </a>
                                             </li>
                                         {% endif %}
 
                                         {% if not forloop.last %}
                                             <li role="separator" class="divider"></li>
-                                            {# Adds a separator between items #}
+
                                         {% endif %}
                                     {% empty %}
                                         <li class="text-center" style="padding: 10px;">
@@ -147,7 +111,7 @@ desired effect
 
                             </ul>
                         </li>
-                        <!-- Notifications: style can be found in dropdown.less -->
+
                         <li id="notifications-menu" onclick="hideOrShowMenus(this)" class="dropdown notifications-menu">
                             <a class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-bell-o"></i>
@@ -164,7 +128,7 @@ desired effect
                                         {{ user.store.orders|orders_count }} سفارش جدید</li>
                                     {% endif %}
                                 <li>
-                                    <!-- inner menu: contains the actual data -->
+
                                     <ul class="menu">
                                         {% if user.store.orders.exists %}
                                             {% for order in user.store.orders|orders_obj %}
@@ -194,7 +158,7 @@ desired effect
                                     همه</a></li>
                             </ul>
                         </li>
-                        <!-- Tasks: style can be found in dropdown.less -->
+
                         <li id="tasks-menu" onclick="hideOrShowMenus(this)" class="dropdown tasks-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-flag-o"></i>
@@ -211,8 +175,7 @@ desired effect
                                         {{ user.tickets|ticket_count_request }}پاسخ تیکیت های ارسالی</li>
                                     {% endif %}
                                 <li>
-                                    <!-- inner menu: contains the actual data -->
-                                    <ul class="menu">
+                                     <ul class="menu">
                                         {% if  user.tickets.exists %}
 
                                             {% for item in user.tickets|ticket_obj_request %}
@@ -226,13 +189,13 @@ desired effect
                                                                     class="fa fa-clock-o"></i> {{ item.message.last.date|to_jalali:'%H:%m - %Y/%M/%d ' }}
                                                             </small>
                                                         </p>
-                                                        {# You could add a snippet of the last message here for more context #}
-                                                        {# <p class="text-muted pull-right">{{ item.message.last.content|truncatechars:50 }}</p> #}
+
+
                                                     </a>
                                                 </li>
                                                 {% if not forloop.last %}
                                                     <li role="separator" class="divider"></li>
-                                                    {# Adds a separator between items #}
+
                                                 {% endif %}
                                             {% empty %}
                                                 <li class="text-center" style="padding: 10px;">
@@ -250,14 +213,12 @@ desired effect
                         </li>
                     {% endif %}
 
-                    <!-- User Account: style can be found in dropdown.less -->
-                    <li id="user-menu" onclick="hideOrShowMenus(this)" class="dropdown user user-menu">
+                     <li id="user-menu" onclick="hideOrShowMenus(this)" class="dropdown user user-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <span class="hidden-xs">{{ user.get_full_name }}</span>
                         </a>
                         <ul class="dropdown-menu">
-                            <!-- User image -->
-                            <li class="user-header">
+                             <li class="user-header">
 
                                 <p>
                                     {{ user.get_full_name }}
@@ -272,9 +233,7 @@ desired effect
                                     </small>
                                 </p>
                             </li>
-                            <!-- Menu Body -->
 
-                            <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-left">
                                     <a href="{% url 'dashboard:account' %}" class="btn btn-default btn-flat">پروفایل</a>
@@ -285,9 +244,9 @@ desired effect
                             </li>
                         </ul>
                     </li>
-                    <!-- Control Sidebar Toggle Button -->
+
                     <script>
-                        // بستن همه منوها
+
                         function hideAllMenus() {
                             const menus = ['messages-menu', 'notifications-menu', 'tasks-menu', 'user-menu'];
                             menus.forEach(id => {
@@ -298,7 +257,7 @@ desired effect
                             });
                         }
 
-                        // کنترل نمایش یا پنهان کردن یک منو
+
                         function hideOrShowMenus(elem) {
                             const isOpen = elem.classList.contains('open');
                             hideAllMenus();
@@ -308,8 +267,7 @@ desired effect
                             }
                         }
 
-                        // کلیک خارج از منوها باعث بسته شدن همه منوها شود
-                        document.addEventListener('click', function (event) {
+                         document.addEventListener('click', function (event) {
                             const clickedInsideMenu = event.target.closest('#messages-menu, #notifications-menu, #tasks-menu, #user-menu');
                             if (!clickedInsideMenu) {
                                 hideAllMenus();
@@ -343,21 +301,15 @@ desired effect
         </div>
 
     {% endif %}
-    <!-- right side column. contains the logo and sidebar -->
-    <aside class="main-sidebar">
+     <aside class="main-sidebar">
 
-        <!-- sidebar: style can be found in sidebar.less -->
-        <section class="sidebar">
+         <section class="sidebar">
 
 
-            <!-- search form (Optional) -->
 
-            <!-- /.search form -->
-
-            <!-- Sidebar Menu -->
 
             <ul class="sidebar-menu" data-widget="tree">
-                {#                <li class="header">تیتر</li>#}
+
 
                 {% if user.is_staff and user.store and 'store' in request.path and 'admin' not in request.path %}
                                         <li class="treeview">
@@ -928,15 +880,15 @@ desired effect
 
             </ul>
 
-            <!-- /.sidebar-menu -->
+
         </section>
 
-        <!-- /.sidebar -->
+
     </aside>
 
-    <!-- Content Wrapper. Contains page content -->
+
     <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
+
 
         <section class="content-header" id="content-header-1233">
 
@@ -952,39 +904,27 @@ desired effect
 
         </section>
 
-        <!-- Main content -->
+
         <section class="content container-fluid">
             {% block body %}
 
             {% endblock %}
-            <!--------------------------
-              | Your Page Content Here |
-              -------------------------->
+
 
         </section>
-        <!-- /.content -->
+
     </div>
-    <!-- /.content-wrapper -->
 
-    <!-- Main Footer -->
-
-
-    <!-- Control Sidebar -->
-    <!-- /.control-sidebar -->
-    <!-- Add the sidebar's background. This div must be placed
-    immediately after the control sidebar -->
     <div class="control-sidebar-bg"></div>
 </div>
-<!-- ./wrapper -->
 
-<!-- REQUIRED JS SCRIPTS -->
 
 {% compress js %}
-<!-- jQuery 3 -->
+
 <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
-<!-- Bootstrap 3.3.7 -->
+
 <script src="/static/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- AdminLTE App -->
+
 <script src="/static/dist/js/adminlte.min.js"></script>
 
 {% endcompress %}
@@ -995,41 +935,40 @@ desired effect
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // گرفتن همه inputهای عددی
+
         const numberInputs = document.querySelectorAll(
             'input[type="number"], input.number-input-tdc, input[data-numeric-input]'
         );
 
         numberInputs.forEach(originalInput => {
-            // پنهان کردن input اصلی
+
             originalInput.style.display = 'none';
 
-            // ساختن input جایگزین
+
             const fakeInput = document.createElement('input');
             fakeInput.type = 'text';
-            fakeInput.className = originalInput.className + ' visible-number-input';  // حفظ استایل
+            fakeInput.className = originalInput.className + ' visible-number-input';
             fakeInput.placeholder = originalInput.placeholder || '';
             fakeInput.style.marginBottom = '4px';
 
-            // مقدار اولیه
+
             const initialVal = originalInput.value || '';
             fakeInput.value = formatWithCommas(initialVal);
 
-            // گذاشتن input جدید جلوی input مخفی
+
             originalInput.parentNode.insertBefore(fakeInput, originalInput.nextSibling);
 
-            // هنگام تایپ در input جدید
             fakeInput.addEventListener('input', function () {
-                // پاک‌سازی کاراکترهای غیرعددی
+
                 const raw = this.value.replace(/,/g, '').replace(/[^\d]/g, '');
-                // نمایش با کاما
+
                 this.value = formatWithCommas(raw);
-                // مقدار خام به input اصلی بره
+
                 originalInput.value = raw;
             });
         });
 
-        // تابع فرمت سه‌رقمی
+
         function formatWithCommas(val) {
             if (!val) return '';
             return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');

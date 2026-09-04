@@ -517,7 +517,7 @@ class ProductListView(AdminUserMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['search_form'] = ProductSearchForm()
+        context['search_form'] = ProductSearchForm( self.request.GET  or None)
         context['product_count'] = self.get_queryset().count
         return context
 
@@ -844,7 +844,11 @@ class ProductActiveAndDeactivateView(AdminUserMixin, RedirectView):
             product.save()
             messages.success(self.request, "ایتم مورد نظر فعال شد")
 
+        if next_url := self.request.GET.get("next"):
+            return next_url
+
         return reverse_lazy("admin_panel:product-list")
+
 
 
 class ProductAdminVerifiedView(AdminUserMixin, RedirectView):
@@ -877,7 +881,11 @@ class ProductAdminVerifiedView(AdminUserMixin, RedirectView):
             product.save()
             messages.success(self.request, "ایتم مورد نظر مورد تایید ادمین قرار گرفت")
 
+        if next_url := self.request.GET.get("next"):
+            return next_url
+
         return reverse_lazy("admin_panel:product-list")
+
 
 
 class ProductDeleteView(AdminUserMixin, View):
