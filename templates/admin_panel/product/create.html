@@ -604,215 +604,597 @@
                                         min-width: 100px;
                                     }
                                 </style>
-                                <script>
-                                    // حذف تگ
-                                    function removeTag(wrapper) {
-                                        wrapper.remove();
-                                    }
+                   <script>
+    // ============================================================
+    // TAG REMOVE
+    // ============================================================
 
-                                    // ویرایش تگ
-                                    function editTag(tagElement) {
-                                        if (tagElement.classList.contains('editing')) return;
+    function removeTag(wrapper) {
+        if (wrapper) {
+            wrapper.remove();
+        }
+    }
 
-                                        const originalText = tagElement.dataset.original || tagElement.textContent.trim();
-                                        tagElement.classList.add('editing');
-                                        tagElement.setAttribute('data-original', originalText);
-                                        tagElement.innerText = originalText;
-                                        tagElement.contentEditable = true;
-                                        tagElement.focus();
 
-                                        // انتخاب متن
-                                        const range = document.createRange();
-                                        range.selectNodeContents(tagElement);
-                                        const selection = window.getSelection();
-                                        selection.removeAllRanges();
-                                        selection.addRange(range);
+    // ============================================================
+    // TAG EDIT
+    // ============================================================
 
-                                        // ذخیره با Enter
-                                        tagElement.addEventListener('keypress', function (e) {
-                                            if (e.key === 'Enter') {
-                                                e.preventDefault();
-                                                saveEdit(tagElement);
-                                            }
-                                        });
+    function editTag(tagElement) {
 
-                                        // لغو با Escape
-                                        tagElement.addEventListener('keydown', function (e) {
-                                            if (e.key === 'Escape') {
-                                                e.preventDefault();
-                                                cancelEdit(tagElement);
-                                            }
-                                        });
+        if (tagElement.classList.contains('editing')) {
+            return;
+        }
 
-                                        // ذخیره با blur
-                                        tagElement.addEventListener('blur', function () {
-                                            saveEdit(tagElement);
-                                        });
-                                    }
+        const originalText =
+            tagElement.dataset.original ||
+            tagElement.textContent.trim();
 
-                                    function saveEdit(tagElement) {
-                                        const newText = tagElement.textContent.trim();
-                                        tagElement.classList.remove('editing');
-                                        tagElement.contentEditable = false;
+        tagElement.dataset.original = originalText;
+        tagElement.classList.add('editing');
+        tagElement.contentEditable = true;
 
-                                        if (newText !== '') {
-                                            tagElement.dataset.original = newText;
-                                            tagElement.innerText = newText;
-                                            addDeleteButton(tagElement);
-                                        } else {
-                                            cancelEdit(tagElement);
-                                        }
-                                    }
+        // متن قبلی را نگه دار
+        tagElement.innerText = originalText;
 
-                                    function cancelEdit(tagElement) {
-                                        const originalText = tagElement.getAttribute('data-original');
-                                        tagElement.classList.remove('editing');
-                                        tagElement.contentEditable = false;
-                                        tagElement.innerText = originalText;
-                                        addDeleteButton(tagElement);
-                                    }
+        tagElement.focus();
 
-                                    function addDeleteButton(tagElement) {
-                                        const wrapper = tagElement.parentElement;
-                                        let delBtn = wrapper.querySelector('.tag-delete');
+        // انتخاب کل متن
+        const range = document.createRange();
+        range.selectNodeContents(tagElement);
 
-                                        if (!delBtn) {
-                                            delBtn = document.createElement('button');
-                                            delBtn.className = 'tag-delete';
-                                            delBtn.innerText = '×';
-                                            delBtn.title = 'حذف';
-                                            delBtn.onclick = function () {
-                                                removeTag(wrapper);
-                                            };
-                                            wrapper.appendChild(delBtn);
-                                        }
-                                    }
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
 
-                                    // افزودن تگ عمومی (برای ویژگی، مشخصه، تگ)
-                                    function addTagGeneric(inputId, containerId, tagClass) {
-                                        const input = document.getElementById(inputId);
-                                        const container = document.getElementById(containerId);
 
-                                        if (input.value.trim() !== "") {
-                                            const wrapper = document.createElement("span");
-                                            wrapper.className = "tag-wrapper";
-                                            wrapper.draggable = true;
-                                            wrapper.ondragstart = handleDragStart;
-                                            wrapper.ondragover = handleDragOver;
-                                            wrapper.ondrop = handleDrop;
-                                            wrapper.ondragend = handleDragEnd;
+        // جلوگیری از ثبت چندباره event
+        tagElement.onkeydown = function (e) {
 
-                                            const newTag = document.createElement("span");
-                                            newTag.className = `btn btn-default form-group tag-item ${tagClass}`;
-                                            newTag.innerText = input.value;
-                                            newTag.setAttribute('data-original', input.value);
-                                            newTag.ondblclick = function () {
-                                                editTag(this);
-                                            };
+            // ENTER
+            if (e.key === 'Enter') {
 
-                                            wrapper.appendChild(newTag);
-                                            container.appendChild(wrapper);
-                                            addDeleteButton(newTag);
-                                            input.value = "";
-                                        }
-                                    }
+                e.preventDefault();
+                e.stopPropagation();
 
-                                    // توابع اختصاصی
-                                    function addFeature() {
-                                        addTagGeneric("id_features", "features-container", "feature-tag");
-                                    }
+                saveEdit(tagElement);
 
-                                    function addSpec() {
-                                        addTagGeneric("id_specs", "specs-container", "spec-tag");
-                                    }
+                return false;
+            }
 
-                                    function addTag() {
-                                        addTagGeneric("id_tags", "tags-container", "tag");
-                                    }
+            // ESCAPE
+            if (e.key === 'Escape') {
 
-                                    // قابلیت دراگ
-                                    let draggedElement = null;
-                                    let placeholder = null;
+                e.preventDefault();
+                e.stopPropagation();
 
-                                    function handleDragStart(e) {
-                                        draggedElement = e.target.closest(".tag-wrapper");
-                                        draggedElement.classList.add("dragging");
-                                        e.dataTransfer.effectAllowed = "move";
-                                    }
+                cancelEdit(tagElement);
 
-                                    function handleDragOver(e) {
-                                        e.preventDefault();
-                                        const container = e.target.closest(".container-sortable");
-                                        if (!container) return;
+                return false;
+            }
+        };
 
-                                        const afterElement = getDragAfterElement(container, e.clientX);
-                                        if (!placeholder) {
-                                            placeholder = document.createElement("span");
-                                            placeholder.className = "sort-placeholder";
-                                            placeholder.style.width = draggedElement.offsetWidth + "px";
-                                            placeholder.style.height = draggedElement.offsetHeight + "px";
-                                        }
 
-                                        if (afterElement == null) {
-                                            container.appendChild(placeholder);
-                                        } else {
-                                            container.insertBefore(placeholder, afterElement);
-                                        }
-                                    }
+        // BLUR
+        tagElement.onblur = function () {
 
-                                    function handleDrop(e) {
-                                        e.preventDefault();
-                                        const container = e.target.closest(".container-sortable");
-                                        if (!container) return;
+            // اگر قبلاً ذخیره یا cancel شده
+            if (!tagElement.classList.contains('editing')) {
+                return;
+            }
 
-                                        if (draggedElement && placeholder) {
-                                            container.insertBefore(draggedElement, placeholder);
-                                            placeholder.remove();
-                                            placeholder = null;
-                                        }
-                                        draggedElement.classList.remove("dragging");
-                                        draggedElement = null;
-                                    }
+            saveEdit(tagElement);
+        };
+    }
 
-                                    function handleDragEnd() {
-                                        if (draggedElement) draggedElement.classList.remove("dragging");
-                                        if (placeholder && placeholder.parentNode) placeholder.remove();
-                                        draggedElement = null;
-                                        placeholder = null;
-                                    }
 
-                                    function getDragAfterElement(container, x) {
-                                        const elements = [...container.querySelectorAll('.tag-wrapper:not(.dragging)')];
-                                        return elements.reduce((closest, child) => {
-                                            const box = child.getBoundingClientRect();
-                                            const offset = x - box.left - box.width / 2;
-                                            if (offset < 0 && offset > closest.offset) {
-                                                return {offset: offset, element: child};
-                                            } else {
-                                                return closest;
-                                            }
-                                        }, {offset: Number.NEGATIVE_INFINITY}).element;
-                                    }
+    // ============================================================
+    // SAVE EDIT
+    // ============================================================
 
-                                    // آماده سازی قبل از ارسال فرم
-                                    function prepareFormData() {
-                                        ['features', 'tags', 'specs'].forEach(field => {
-                                            const container = document.getElementById(`${field}-container`);
-                                            const input = document.getElementById(`id_${field}`);
-                                            const values = [...container.querySelectorAll(`.${field === 'features' ? 'feature-tag' : field === 'specs' ? 'spec-tag' : 'tag'}`)]
-                                                .map(el => el.dataset.original || el.textContent.trim());
-                                            input.value = values.join('**');
-                                        });
-                                    }
+    function saveEdit(tagElement) {
 
-                                    // فعال‌سازی رویدادهای دراپ
-                                    document.addEventListener('DOMContentLoaded', () => {
-                                        document.querySelectorAll('.container-sortable').forEach(container => {
-                                            container.addEventListener('dragover', handleDragOver);
-                                            container.addEventListener('drop', handleDrop);
-                                        });
-                                    });
-                                </script>
+        if (!tagElement) {
+            return;
+        }
+
+        const newText = tagElement.textContent.trim();
+
+        // اگر خالی شد، تگ را حذف کن
+        if (newText === '') {
+            const wrapper = tagElement.closest('.tag-wrapper');
+
+            if (wrapper) {
+                wrapper.remove();
+            }
+
+            return;
+        }
+
+        tagElement.dataset.original = newText;
+
+        tagElement.innerText = newText;
+
+        tagElement.contentEditable = false;
+        tagElement.classList.remove('editing');
+
+        // eventهای قبلی را پاک کن
+        tagElement.onkeydown = null;
+        tagElement.onblur = null;
+
+        addDeleteButton(tagElement);
+    }
+
+
+    // ============================================================
+    // CANCEL EDIT
+    // ============================================================
+
+    function cancelEdit(tagElement) {
+
+        if (!tagElement) {
+            return;
+        }
+
+        const originalText =
+            tagElement.dataset.original || '';
+
+        tagElement.innerText = originalText;
+
+        tagElement.contentEditable = false;
+        tagElement.classList.remove('editing');
+
+        tagElement.onkeydown = null;
+        tagElement.onblur = null;
+
+        addDeleteButton(tagElement);
+    }
+
+
+    // ============================================================
+    // DELETE BUTTON
+    // ============================================================
+
+    function addDeleteButton(tagElement) {
+
+        const wrapper = tagElement.closest('.tag-wrapper');
+
+        if (!wrapper) {
+            return;
+        }
+
+        let delBtn = wrapper.querySelector('.tag-delete');
+
+        if (!delBtn) {
+
+            delBtn = document.createElement('button');
+
+            delBtn.type = 'button';
+            delBtn.className = 'tag-delete';
+            delBtn.innerText = '×';
+            delBtn.title = 'حذف';
+
+            delBtn.onclick = function (e) {
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                removeTag(wrapper);
+            };
+
+            wrapper.appendChild(delBtn);
+        }
+    }
+
+
+    // ============================================================
+    // ADD TAG
+    // ============================================================
+
+    function addTagGeneric(inputId, containerId, tagClass) {
+
+        const input = document.getElementById(inputId);
+        const container = document.getElementById(containerId);
+
+        if (!input || !container) {
+            return;
+        }
+
+        const value = input.value.trim();
+
+        if (value === '') {
+            return;
+        }
+
+        const wrapper = document.createElement('span');
+
+        wrapper.className = 'tag-wrapper';
+        wrapper.draggable = true;
+
+        wrapper.ondragstart = handleDragStart;
+        wrapper.ondragover = handleDragOver;
+        wrapper.ondrop = handleDrop;
+        wrapper.ondragend = handleDragEnd;
+
+
+        const newTag = document.createElement('span');
+
+        newTag.className =
+            `btn btn-default form-group tag-item ${tagClass}`;
+
+        newTag.innerText = value;
+
+        newTag.dataset.original = value;
+
+        newTag.ondblclick = function () {
+            editTag(this);
+        };
+
+
+        wrapper.appendChild(newTag);
+
+        container.appendChild(wrapper);
+
+        addDeleteButton(newTag);
+
+        input.value = '';
+    }
+
+
+    // ============================================================
+    // ADD FEATURE / SPEC / TAG
+    // ============================================================
+
+    function addFeature() {
+        addTagGeneric(
+            'id_features',
+            'features-container',
+            'feature-tag'
+        );
+    }
+
+    function addSpec() {
+        addTagGeneric(
+            'id_specs',
+            'specs-container',
+            'spec-tag'
+        );
+    }
+
+    function addTag() {
+        addTagGeneric(
+            'id_tags',
+            'tags-container',
+            'tag'
+        );
+    }
+
+
+    // ============================================================
+    // DRAG & DROP
+    // ============================================================
+
+    let draggedElement = null;
+    let placeholder = null;
+
+
+    function handleDragStart(e) {
+
+        draggedElement =
+            e.target.closest('.tag-wrapper');
+
+        if (!draggedElement) {
+            return;
+        }
+
+        draggedElement.classList.add('dragging');
+
+        e.dataTransfer.effectAllowed = 'move';
+    }
+
+
+    function handleDragOver(e) {
+
+        e.preventDefault();
+
+        const container =
+            e.target.closest('.container-sortable');
+
+        if (!container || !draggedElement) {
+            return;
+        }
+
+        const afterElement =
+            getDragAfterElement(
+                container,
+                e.clientX
+            );
+
+
+        if (!placeholder) {
+
+            placeholder =
+                document.createElement('span');
+
+            placeholder.className =
+                'sort-placeholder';
+
+            placeholder.style.width =
+                draggedElement.offsetWidth + 'px';
+
+            placeholder.style.height =
+                draggedElement.offsetHeight + 'px';
+        }
+
+
+        if (afterElement == null) {
+
+            container.appendChild(placeholder);
+
+        } else {
+
+            container.insertBefore(
+                placeholder,
+                afterElement
+            );
+        }
+    }
+
+
+    function handleDrop(e) {
+
+        e.preventDefault();
+
+        const container =
+            e.target.closest('.container-sortable');
+
+        if (!container) {
+            return;
+        }
+
+        if (draggedElement && placeholder) {
+
+            container.insertBefore(
+                draggedElement,
+                placeholder
+            );
+
+            placeholder.remove();
+
+            placeholder = null;
+        }
+
+        draggedElement.classList.remove('dragging');
+
+        draggedElement = null;
+    }
+
+
+    function handleDragEnd() {
+
+        if (draggedElement) {
+            draggedElement.classList.remove('dragging');
+        }
+
+        if (placeholder && placeholder.parentNode) {
+            placeholder.remove();
+        }
+
+        draggedElement = null;
+        placeholder = null;
+    }
+
+
+    function getDragAfterElement(container, x) {
+
+        const elements = [
+            ...container.querySelectorAll(
+                '.tag-wrapper:not(.dragging)'
+            )
+        ];
+
+        return elements.reduce(
+            (closest, child) => {
+
+                const box =
+                    child.getBoundingClientRect();
+
+                const offset =
+                    x -
+                    box.left -
+                    box.width / 2;
+
+                if (
+                    offset < 0 &&
+                    offset > closest.offset
+                ) {
+                    return {
+                        offset: offset,
+                        element: child
+                    };
+                }
+
+                return closest;
+            },
+            {
+                offset: Number.NEGATIVE_INFINITY
+            }
+        ).element;
+    }
+
+
+    // ============================================================
+    // PREPARE FORM
+    // ============================================================
+
+    function prepareFormData() {
+
+        // اگر تگی در حالت editing است
+        // اول آن را ذخیره کن
+        document
+            .querySelectorAll('.tag-item.editing')
+            .forEach(tag => {
+                saveEdit(tag);
+            });
+
+
+        ['features', 'tags', 'specs'].forEach(field => {
+
+            const container =
+                document.getElementById(
+                    `${field}-container`
+                );
+
+            const input =
+                document.getElementById(
+                    `id_${field}`
+                );
+
+            if (!container || !input) {
+                return;
+            }
+
+
+            let tagClass;
+
+            if (field === 'features') {
+                tagClass = 'feature-tag';
+
+            } else if (field === 'specs') {
+                tagClass = 'spec-tag';
+
+            } else {
+                tagClass = 'tag';
+            }
+
+
+            const values = [
+                ...container.querySelectorAll(
+                    `.${tagClass}`
+                )
+            ]
+                .map(el =>
+                    (
+                        el.dataset.original ||
+                        el.textContent
+                    ).trim()
+                )
+                .filter(value => value !== '');
+
+
+            input.value = values.join('**');
+        });
+    }
+
+
+    // ============================================================
+    // FORM SUBMIT
+    // ============================================================
+
+    document.addEventListener(
+        'DOMContentLoaded',
+        function () {
+
+            // Drag & Drop
+            document
+                .querySelectorAll('.container-sortable')
+                .forEach(container => {
+
+                    container.addEventListener(
+                        'dragover',
+                        handleDragOver
+                    );
+
+                    container.addEventListener(
+                        'drop',
+                        handleDrop
+                    );
+                });
+
+
+            // مهم:
+            // قبل از submit فرم، tagها را به input منتقل کن
+            document
+                .querySelectorAll('form')
+                .forEach(form => {
+
+                    form.addEventListener(
+                        'submit',
+                        function () {
+                            prepareFormData();
+                        }
+                    );
+                });
+        }
+    );
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+    const tagInputs = [
+        {
+            id: 'id_features',
+            addFunction: addFeature
+        },
+        {
+            id: 'id_specs',
+            addFunction: addSpec
+        },
+        {
+            id: 'id_tags',
+            addFunction: addTag
+        }
+    ];
+
+    tagInputs.forEach(({id, addFunction}) => {
+
+        const input = document.getElementById(id);
+
+        if (!input) {
+            return;
+        }
+
+        input.addEventListener('keydown', function (e) {
+
+            if (e.key !== 'Enter') {
+                return;
+            }
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            addFunction();
+        });
+    });
+
+
+    // Drag & Drop
+    document
+        .querySelectorAll('.container-sortable')
+        .forEach(container => {
+
+            container.addEventListener(
+                'dragover',
+                handleDragOver
+            );
+
+            container.addEventListener(
+                'drop',
+                handleDrop
+            );
+        });
+
+
+    // قبل از submit
+    document
+        .querySelectorAll('form')
+        .forEach(form => {
+
+            form.addEventListener('submit', function () {
+                prepareFormData();
+            });
+        });
+});
+</script>
 
 
                                 <!-- توضیحات محصول -->
