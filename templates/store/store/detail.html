@@ -16,9 +16,9 @@
 
     {
       "@type": "LocalBusiness",
-      "@id": "{{ request.build_absolute_uri }}#store",
+      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#store",
       "name": "{{ item.name|escapejs }}",
-      "url": "{{ request.build_absolute_uri }}",
+      "url": "https://{{ request.get_host }}{{ request.get_full_path }}",
       "telephone": "{{ item.phone }}",
 
       {% if item.logo %}
@@ -45,7 +45,7 @@
 
     {
       "@type": "BreadcrumbList",
-      "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#breadcrumb",
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -63,7 +63,7 @@
           "@type": "ListItem",
           "position": 3,
           "name": "{{ item.name|escapejs }}",
-          "item": "{{ request.build_absolute_uri }}"
+          "item": "https://{{ request.get_host }}{{ request.get_full_path }}"
         }
       ]
     }

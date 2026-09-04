@@ -16,7 +16,7 @@
 
     {
       "@type": "Article",
-      "@id": "{{ request.build_absolute_uri }}#article",
+      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#article",
       "headline": "{{ post.title|escapejs }}",
       "description": "{{ post.title|escapejs }}",
 
@@ -40,13 +40,13 @@
       "dateModified": "{{ post.updated_at|date:'c' }}",
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "{{ request.build_absolute_uri }}#webpage"
+        "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#webpage"
       }
     },
 
     {
       "@type": "BreadcrumbList",
-      "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#breadcrumb",
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -70,7 +70,7 @@
 
     {
       "@type": "WebPage",
-      "@id": "{{ request.build_absolute_uri }}#webpage",
+      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#webpage",
       "name": "{{ post.title|escapejs }}",
       "isPartOf": {
         "@id": "https://{{ request.get_host }}/#website"

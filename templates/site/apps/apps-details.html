@@ -17,7 +17,7 @@
 
     {
       "@type": "SoftwareApplication",
-      "@id": "{{ request.build_absolute_uri }}#app",
+      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#app",
       "name": "{{ item.name|escapejs }}",
       "description": "{{ item.name|escapejs }}",
       {% if item.image %}
@@ -29,7 +29,7 @@
 
     {
       "@type": "BreadcrumbList",
-      "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#breadcrumb",
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -47,7 +47,7 @@
           "@type": "ListItem",
           "position": 3,
           "name": "{{ item.name|escapejs }}",
-          "item": "{{ request.build_absolute_uri }}"
+          "item": "https://{{ request.get_host }}{{ request.get_full_path }}"
         }
       ]
     }

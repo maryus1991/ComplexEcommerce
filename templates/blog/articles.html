@@ -34,15 +34,15 @@
 
     {
       "@type": "Blog",
-      "@id": "{{ request.build_absolute_uri }}#blog",
+      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#blog",
       "name": "بلاگ امواج سرمد ",
-      "url": "{{ request.build_absolute_uri }}",
+      "url": "https://{{ request.get_host }}{{ request.get_full_path }}",
       "description": "آخرین مقالات و آموزش‌ها"
     },
 
     {
       "@type": "BreadcrumbList",
-      "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#breadcrumb",
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -61,7 +61,7 @@
 
     {
       "@type": "ItemList",
-      "@id": "{{ request.build_absolute_uri }}#itemlist",
+      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#itemlist",
       "itemListElement": [
         {% for post in posts %}
         {

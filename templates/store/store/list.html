@@ -16,7 +16,7 @@
 
     {
       "@type": "BreadcrumbList",
-      "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#breadcrumb",
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -28,14 +28,14 @@
           "@type": "ListItem",
           "position": 2,
           "name": "فروشگاه‌ها",
-          "item": "{{ request.build_absolute_uri }}"
+          "item": "https://{{ request.get_host }}{{ request.get_full_path }}"
         }
       ]
     },
 
     {
       "@type": "ItemList",
-      "@id": "{{ request.build_absolute_uri }}#itemlist",
+      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#itemlist",
       "itemListElement": [
         {% for store in items %}
         {

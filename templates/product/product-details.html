@@ -15,14 +15,14 @@
     <meta name="keywords" content="{{ product.name }}, {{ product.brand.name }}, {% for tag in product.tags.all %}{{ tag.name }}, {% endfor %}خرید آنلاین, فروشگاه اینترنتی">
     <meta name="author" content="{{ product.store.name }}">
     <meta name="language" content="fa">
-    <link rel="canonical" href="{{ request.build_absolute_uri }}">
-    <link rel="alternate" href="{{ request.build_absolute_uri }}" hreflang="fa-ir">
+    <link rel="canonical" href="https://{{ request.get_host }}{{ request.get_full_path }}">
+    <link rel="alternate" href="https://{{ request.get_host }}{{ request.get_full_path }}" hreflang="fa-ir">
 
     <!-- Open Graph / Social Media -->
     <meta property="og:title" content="{{ product.name }} | {{ product.store.name }}">
     <meta property="og:description" content="{% if product.parent %}{{ product.parent.description|striptags|truncatechars:160 }}{% else %}{{ product.description|striptags|truncatechars:160 }}{% endif %}">
     <meta property="og:type" content="product">
-    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:url" content="https://{{ request.get_host }}{{ request.get_full_path }}">
     <meta property="og:image" content="{% if product.picture %}https://{{ request.get_host }}{{ product.picture.url }}{% else %}https://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
     <meta property="og:image:width" content="800">
     <meta property="og:image:height" content="800">
@@ -42,7 +42,7 @@
       "@graph": [
         {
           "@type": "Product",
-          "@id": "{{ request.build_absolute_uri }}#product",
+          "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#product",
           "name": "{{ product.name|escapejs }}",
           "description": "{% if product.parent %}{{ product.parent.description|striptags|escapejs }}{% else %}{{ product.description|striptags|escapejs }}{% endif %}",
           "mpn": "{{ product.sku|default:''|escapejs }}",
@@ -59,7 +59,7 @@
           ],
           "offers": {
             "@type": "Offer",
-            "url": "{{ request.build_absolute_uri }}",
+            "url": "https://{{ request.get_host }}{{ request.get_full_path }}",
             "priceCurrency": "IRR",
             "price": "{{ product.calc_discount|stringformat:'f'|cut:' ' }}",
             "priceValidUntil": "{% now 'Y-m-d' %}|add:30days",
@@ -72,7 +72,7 @@
           },
           "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "{{ request.build_absolute_uri }}"
+            "@id": "https://{{ request.get_host }}{{ request.get_full_path }}"
           },
           {% if product.comments.exists %}
           "aggregateRating": {
@@ -97,7 +97,7 @@
         },
         {
           "@type": "BreadcrumbList",
-          "@id": "{{ request.build_absolute_uri }}#breadcrumb",
+          "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#breadcrumb",
           "itemListElement": [
             {
               "@type": "ListItem",
@@ -115,19 +115,19 @@
               "@type": "ListItem",
               "position": 3,
               "name": "{{ product.name|escapejs }}",
-              "item": "{{ request.build_absolute_uri }}"
+              "item": "https://{{ request.get_host }}{{ request.get_full_path }}"
             }
           ]
         },
         {
           "@type": "WebPage",
-          "@id": "{{ request.build_absolute_uri }}",
-          "url": "{{ request.build_absolute_uri }}",
+          "@id": "https://{{ request.get_host }}{{ request.get_full_path }}",
+          "url": "https://{{ request.get_host }}{{ request.get_full_path }}",
           "inLanguage": "fa-IR",
           "name": "{{ product.name|escapejs }}",
           "description": "{% if product.parent %}{{ product.parent.description|striptags|escapejs }}{% else %}{{ product.description|striptags|escapejs }}{% endif %}",
           "breadcrumb": {
-            "@id": "{{ request.build_absolute_uri }}#breadcrumb"
+            "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#breadcrumb"
           },
           "primaryImageOfPage": {
             "@type": "ImageObject",

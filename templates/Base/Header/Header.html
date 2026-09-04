@@ -37,13 +37,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta name="author" content="{{ site.title }}">
 
     <!-- Canonical URL -->
-     <link rel="canonical" href="{{ request.build_absolute_uri }}">
+     <link rel="canonical" href="https://{{ request.get_host }}{{ request.get_full_path }}">
 
     <!-- Open Graph (برای فیسبوک، تلگرام، واتساپ و...) -->
     <meta property="og:title" content="{{ title }}">
     <meta property="og:description" content="{{ site.short_description }}">
     <meta property="og:image" content="{% thumbnail site.logo '16x16' %}">
-    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:url" content="https://{{ request.get_host }}{{ request.get_full_path }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{ site.title }}">
 
