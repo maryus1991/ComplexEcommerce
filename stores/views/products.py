@@ -958,6 +958,8 @@ class ProductFastPanelListView(UserStoreStaffMixin, ListView):
         context = super().get_context_data(**kwargs)
         context["search_form"] = ProductSearchForm(self.request.GET)
         context["product_count"] = Product.objects.filter(store=self.request.user.store).count
+
+
         return context
 
 
@@ -965,28 +967,50 @@ class ProductFastPanelRowChange(UserStoreStaffMixin, RedirectView):
     """for change row info in fast panel page"""
 
     def get_redirect_url(self, *args, **kwargs):
+        product = get_object_or_404(
+            Product,
+            pk=kwargs.get("pk"),
+        )
 
-        product: Product = get_object_or_404(Product, store=self.request.user.store, pk=kwargs.get('pk'))
+        price = self.request.GET.get("price")
+        count = self.request.GET.get("count")
+        colleague_price = self.request.GET.get("colleague_price")
 
-        price = int(self.request.GET.get('price')) or None
-        count = int(self.request.GET.get('count')) or None
-        colleague_price = int(self.request.GET.get('colleague_price')) or None
+        try:
+            update_fields = []
 
-        if price and count and colleague_price:
             with transaction.atomic():
-                product.price = price
-                product.count = count
-                product.colleague_users_price = colleague_price
-                product.save()
+
+                if price not in (None, ""):
+                    product.price = int(price)
+                    update_fields.append("price")
+
+                if count not in (None, ""):
+                    product.count = int(count)
+                    update_fields.append("count")
+
+                if colleague_price not in (None, ""):
+                    product.colleague_users_price = int(colleague_price)
+                    update_fields.append("colleague_users_price")
+
+                if update_fields:
+                    product.save(update_fields=update_fields)
 
             messages.success(
-                self.request, 
-                 'تغییرات با موفقیت ثبت شد'
+                self.request,
+                "تغییرات با موفقیت ثبت شد",
             )
 
-        else:
+        except (ValueError, TypeError) as e:
             messages.error(
-                self.request, 'تغییرات ذخیره نشد و مشکلی پیش اومده'
+                self.request,
+                f"مقدار واردشده معتبر نیست: {e}",
+            )
+
+        except Exception as e:
+            messages.error(
+                self.request,
+                f"{e} — تغییرات ذخیره نشد و مشکلی پیش آمده",
             )
 
         return reverse("store:product-fast-panel-list")
