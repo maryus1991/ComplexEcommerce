@@ -30,7 +30,7 @@ class HomePageView(AdminUserMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['last_product'] = Product.objects.order_by('-id')[:6]
+        context['last_product'] = Product.objects.select_related("category").order_by('-id')[:6]
 
         views_qs = Product.objects.annotate(
             views_count=Count('views')
@@ -68,7 +68,7 @@ class HomePageView(AdminUserMixin, TemplateView):
 
         context['views_list_by_date'] = DailyViewCount.objects.filter(date__gte=now()-timedelta(days=60)).order_by('date')
 
-        context['orders'] = Order.objects.order_by('-id')[:6]
+        context['orders'] = Order.objects.select_related("user").order_by('-id')[:6]
 
         item = StoreSoldOrders.objects
 
