@@ -85,7 +85,7 @@
     </li>
     <li class="flex items-center gap-x-2">
 
-        <span class="">{{ item.name }}</span>
+        <h1 class="">{{ item.name }}</h1>
     </li>
 {% endblock %}
 
@@ -97,19 +97,30 @@
         <section class="w-full  flex flex-col lg:flex-row gap-4 p-5 rounded-lg shadow bg-white dark:bg-zinc-700">
             <div class=" w-full lg:w-2/4">
                 <!-- LOGO -->
-                <a href="/" class="text-green-500 transition-colors w-fit block">
-                    <picture>
-                        <source srcset="{{ item.logo.url|to_webp }}" class="w-24 h-15 " height="6px" width="96px"
- 
-                                type="image/webp">
-                        <img src="{{ item.logo.url }}" alt="{{ item.name }}"
-                             class="w-24 h-15 " height="6px" width="96px"
-                             loading="lazy">
-                    </picture>
-                    
+<a href="/" class="  transition-colors w-fit flex items-center gap-3">
+    <picture>
+        <source
+            srcset="{{ item.logo.url|to_webp }}"
+            class="w-10 h-10"
 
-                </a>
+            type="image/webp"
+        >
 
+        <img
+            src="{{ item.logo.url }}"
+            alt="{{ item.name }}"
+            class="w-10 h-10 object-contain"
+
+            loading="lazy"
+        >
+    </picture>
+
+    <h2 class="m-0">
+        {{ item.name }}
+    </h2>
+</a>
+                <hr>
+                <br>
                 {{ item.description|safe }}
 
 

@@ -5,7 +5,7 @@
 {% load to_webp %}
 
 {% block title %}
-    لیست فروشگاها
+    لیست فروشگاهای زیر مجموعه {{site.name}}
 {% endblock %}
 
 {% block microdata %}
@@ -75,7 +75,11 @@
 {% block breadcrumb %}
 
     <li class="flex items-center gap-x-2">
-        <a href="{% url 'product:list' %}"> فروشگاها</a>
+        <a href="{% url 'product:list' %}">
+            <h1>
+                     لیست فروشگاهای زیر مجموعه {{site.name}}
+            </h1>
+        </a>
     </li>
 {% endblock breadcrumb %}
 

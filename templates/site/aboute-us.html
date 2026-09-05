@@ -3,7 +3,7 @@
 {% load thumbnail %}
 
 {% block title %}
-    درباره ما
+    درباره ما {{site.title}}
 {% endblock %}
 
 {% block microdata %}
@@ -25,7 +25,11 @@
 {% block breadcrumb %}
 
     <li class="flex items-center gap-x-2">
-        <a href="{% url 'site:about-us' %}"> درباره ما</a>
+        <a href="{% url 'site:about-us' %}">
+            <h1>
+  درباره ما {{site.title}}
+            </h1>
+        </a>
     </li>
 {% endblock %}
 
@@ -37,18 +41,27 @@
         <section class="w-full  flex flex-col lg:flex-row gap-4 p-5 rounded-lg shadow bg-white dark:bg-zinc-700">
             <div class=" w-full lg:w-2/4">
                 <!-- LOGO -->
-                <a href="/" class="text-green-500 transition-colors w-fit block">
-                    <picture>
-                        <source srcset="{% thumbnail site.logo '96x96' %}"
-                                class="w-24 h-15 "
-                                type="image/webp">
-                        <img src="{% thumbnail site.logo '96x96' %}" alt="{{ site.title }}"
-                             class="w-24 h-15 "
-                             loading="lazy">
-                    </picture>
+<a href="/" class="text-green-500 transition-colors w-fit flex items-center gap-3">
+    <picture>
+        <source
+            srcset="{{ item.logo.url }}"
+            class="w-10 h-10"
+            alt="{{ site.title }}"
+            type="image/webp"
+        >
 
+        <img
+            src="{{ item.logo.url }}"
+            class="w-10 h-10 object-contain"
+            alt="{{ site.title }}"
+            loading="lazy"
+        >
+    </picture>
 
-                </a>
+    <h2 class="m-0">
+        {{ site.title }}
+    </h2>
+</a>
 
                 {{ site.long_description|safe }}
 
@@ -72,8 +85,8 @@
                  {% thumbnail site.instagram_logo '192x112' crop='center' %} 2x,
                  {% thumbnail site.instagram_logo '288x168' crop='center' %} 3x"
          alt="Instagram"
-         class="w-24 h-14 rounded-full"
-         width="96" height="56"
+         class="w-10 h-10 rounded-full"
+
          loading="lazy">
 </picture>
                     </a>
@@ -92,8 +105,8 @@
                  {% thumbnail site.telegram_logo '192x112' crop='center' %} 2x,
                  {% thumbnail site.telegram_logo '288x168' crop='center' %} 3x"
          alt="Telegram"
-         class="w-24 h-14 rounded-full"
-         width="96" height="56"
+         class="w-10 h-10 rounded-full"
+
          loading="lazy">
 </picture>
                     </a>
@@ -104,11 +117,11 @@
             </div>
             <div class="flex justify-end  w-full lg:w-2/4">
                 <picture>
-                    <source srcset="{% thumbnail site.about_image '652x560' %}"
+                    <source srcset="{% thumbnail site.about_image '652x560' %}" alt="عکس مغازه"
                             class="rounded-lg lg:h-[35rem]"
                             type="image/webp">
                     <img src="{% thumbnail site.about_image '652x560' %}" alt="{{ site.title }}"
-                         class="rounded-lg lg:h-[35rem]" width="652" height="560"
+                         class="rounded-lg lg:h-[35rem]"   width="652" height="560"
                          loading="lazy">
                 </picture>
 

@@ -1,7 +1,7 @@
 {% extends 'Base/Base.html' %}
 
 {% block title %}
-    تماس با ما
+    تماس با ما {{site.title}}
 {% endblock %}
 
 {% block microdata %}
@@ -26,7 +26,11 @@
 
 {% block breadcrumb %}
     <li class="flex items-center gap-x-2">
-        <a href="{% url 'site:contact-us' %}"> تماس با ما</a>
+        <a href="{% url 'site:contact-us' %}">
+            <h1>
+                    تماس با ما {{site.title}}
+            </h1>
+        </a>
     </li>
 {% endblock %}
 
