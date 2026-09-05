@@ -48,8 +48,7 @@ class ProductListView(ListView):
                 admin_verified=True,
                 brand__is_active=True,
                 category__is_active=True,
-                parent__isnull=True,
-            )
+             )
             .select_related(
                 "store",
                 "brand",
