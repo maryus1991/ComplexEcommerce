@@ -26,6 +26,11 @@ from jalali_date.widgets import AdminJalaliDateWidget
 
 User = get_user_model()
 
+
+class UserModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return str(obj.PhoneNumber).replace(" ", "").strip() + " - " + str(obj.get_full_name())
+
 class GuaranteeCompanyModelForm(forms.ModelForm):
     class Meta:
         model = GuaranteeCompany
@@ -91,19 +96,17 @@ class ActiveGuaranteeModelForm(forms.ModelForm):
         ),
         label='گارانتی'
     )
-    user = forms.ModelChoiceField(
+    user = UserModelChoiceField(
         queryset=User.objects.all(),
         required=False,
         widget=forms.Select(
             attrs={
                 "class": "form-control select2",
                 "style": "width: 100%;",
-                "tabindex": "-1",
-                "aria-hidden": "true",
                 "dir": "ltr",
             }
         ),
-        label= 'کاربر (می تواند خالی باشد ولی باید شماره ای در قسمت شماره کاربر حتما وارد شود )'
+        label="کاربر"
     )
  
     date_of_started = JalaliDateField(

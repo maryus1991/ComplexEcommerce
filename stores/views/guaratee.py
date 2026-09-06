@@ -1,11 +1,10 @@
 from guarantee.models import ActiveProductGuarantee, ProductGuarantee
-from django.views.generic import CreateView, UpdateView, ListView, RedirectView
-from admin_panel.forms import GuaranteeModelForm
+from django.views.generic import CreateView, ListView, RedirectView
 from user.mixins.logins import UserStoreStaffMixin
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
-from admin_panel.forms import ActiveGuaranteeModelForm
+from admin_panel.forms import ActiveGuaranteeModelForm, GuaranteeModelForm
 from dateutil.relativedelta import relativedelta
 from django.utils.timezone import now
 from user.models import User
