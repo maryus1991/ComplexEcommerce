@@ -96,10 +96,8 @@ class GuaranteeActiveView(View):
                 {
                     'items': items.guarantee,
                     'active_guarantee': items ,
-                    'phone_number': phone_number if items.phone_number else items.user.PhoneNumber ,
+                    'phone_number': items.phone_number if items.phone_number else items.user.PhoneNumber ,
                 }
             )
-            return render(request, 'site/guarantee.html', context)
-
 
         return render(request, 'site/guarantee.html', context)
