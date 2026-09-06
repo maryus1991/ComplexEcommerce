@@ -78,6 +78,10 @@ class Product(models.Model):
     group_name = models.CharField(max_length=1000, null=True, blank=True)
 
 
+    class Meta:
+        ordering = ["-sort_number"]
+
+
 
     def __str__(self):
         return f"{self.id}-|-{self.name}"
