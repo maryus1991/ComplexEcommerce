@@ -508,7 +508,7 @@
                                 </td>
                                 <td class="text-center"> 
                      
-                                    <a   title="اول قیمت های مصرف کننده و همکار رو وارد کنید همراه با تعداد و بعد ثبت را بزنید تا همگی ثبت بشوند" onclick="setAllChanges('{% url "store:product-fast-panel-change-row" product.id %}' , {{product.id}})" class="btn btn-success btn-sm sort-down">
+                                    <a   title="اول قیمت های مصرف کننده و همکار رو وارد کنید همراه با تعداد و بعد ثبت را بزنید تا همگی ثبت بشوند" onclick="setAllChanges('{% url "store:product-fast-panel-change-row" product.id %}?next={{ request.get_full_path|urlencode  }}' , {{product.id}})" class="btn btn-success btn-sm sort-down">
                                         <i class="fa fa-edit"></i>
                                     </button>
                                 </td>
