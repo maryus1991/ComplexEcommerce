@@ -1013,6 +1013,9 @@ class ProductFastPanelRowChange(UserStoreStaffMixin, RedirectView):
                 f"{e} — تغییرات ذخیره نشد و مشکلی پیش آمده",
             )
 
+        if next_url := self.request.GET.get("next"):
+            return next_url
+
         return reverse("store:product-fast-panel-list")
 
 
@@ -1033,6 +1036,8 @@ class ProductFastPanelGropeChange(UserStoreStaffMixin, RedirectView):
             amount = float(amount)  # استفاده از float برای پشتیبانی از اعداد اعشاری
         except (ValueError, TypeError):
             messages.error(self.request, "مقدار وارد شده معتبر نیست. لطفا یک عدد وارد کنید.")
+            if next_url := self.request.GET.get("next"):
+                return next_url
             return reverse("store:product-fast-panel-list")
 
         # تعیین اینکه کدام محصولات باید به روز شوند
@@ -1042,6 +1047,8 @@ class ProductFastPanelGropeChange(UserStoreStaffMixin, RedirectView):
             product_list = product_list.all()
         else:
             messages.error(self.request, "هیچ محصولی انتخاب نشده است.")
+            if next_url := self.request.GET.get("next"):
+                return next_url
             return reverse("store:product-fast-panel-list")
 
         number_or_rounding = int(SiteSetting.objects.first().number_or_rounding)
@@ -1071,6 +1078,8 @@ class ProductFastPanelGropeChange(UserStoreStaffMixin, RedirectView):
 
         else:
             messages.error(self.request, "نوع عمل انتخاب شده معتبر نیست.")
+            if next_url := self.request.GET.get("next"):
+                return next_url
             return reverse("store:product-fast-panel-list")
 
         messages.success(
@@ -1078,6 +1087,9 @@ class ProductFastPanelGropeChange(UserStoreStaffMixin, RedirectView):
             f'تغییرات بر روی {product_list.count()} محصول ثبت شد.'
         )
 
+
+        if next_url := self.request.GET.get("next"):
+            return next_url
         return reverse("store:product-fast-panel-list")
 
 class ProductFastPanelChangePrice(UserStoreStaffMixin, RedirectView):
@@ -1094,6 +1106,8 @@ class ProductFastPanelChangePrice(UserStoreStaffMixin, RedirectView):
         except :
             messages.error(self.request, "قیمت وارد شده نادرست می باید ")
 
+        if next_url := self.request.GET.get("next"):
+            return next_url
         return reverse("store:product-fast-panel-list")
 
 class ProductFastPanelChangeCount(UserStoreStaffMixin, RedirectView):
@@ -1110,6 +1124,8 @@ class ProductFastPanelChangeCount(UserStoreStaffMixin, RedirectView):
         except :
             messages.error(self.request, "عدد وارد شده نادرست می باید ")
 
+        if next_url := self.request.GET.get("next"):
+            return next_url
         return reverse("store:product-fast-panel-list")
 
 class ProductFastPanelChangeColleaguePrice(UserStoreStaffMixin, RedirectView):
@@ -1126,4 +1142,6 @@ class ProductFastPanelChangeColleaguePrice(UserStoreStaffMixin, RedirectView):
         except :
             messages.error(self.request, "قیمت وارد شده نادرست می باید ")
 
+        if next_url := self.request.GET.get("next"):
+            return next_url
         return reverse("store:product-fast-panel-list")

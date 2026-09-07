@@ -12,10 +12,8 @@
     <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
     <link rel="stylesheet" href="/static/dist/css/rtl.css">
     <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
-    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
+      <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+
     <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
     <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
     <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
@@ -369,6 +367,7 @@
                                     <option value="all" selected>همه محصولات</option>
                                     <option value="manual">انتخاب دستی محصولات</option>
                                 </select>
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
 
                                 <div id="manualSelection" style="display: none; margin-top: 10px;">
                                     <select multiple="multiple" class="form-control" name="product_ids" style="width: 100%; height: 120px;">

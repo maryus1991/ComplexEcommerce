@@ -366,7 +366,7 @@
                                     <option value="all">همه محصولات</option>
                                     <option value="manual">انتخاب دستی محصولات</option>
                                 </select>
-
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}">
                                  <div id="manualSelection" class="hidden" style="display: none; margin-top: 10px;">
                                     <select multiple="multiple" class="form-control" name="product_ids" style="width: 100%; height: 120px;">
                                         {% for product in products %}
@@ -460,7 +460,7 @@
                                 <td class="text-center"><a href="{% url 'product:detail' product.id %}">{{ product.name }}</a></td>
 
                                 <td class="text-center" style="min-width: 200px;">
-                                    <form action="{% url "store:product-fast-panel-change-price-colleague" product.id %}" method="POST" class="form-inline">
+                                    <form action="{% url 'store:product-fast-panel-change-price-colleague' product.id %}?next={{ request.get_full_path|urlencode  }}" method="POST" class="form-inline">
                                         {% csrf_token %}
                                         <div class="input-group input-group-sm">
                                             <input type="text" value="{{ product.colleague_users_price }}" id="colleague_users_price{{product.id}}" class="form-control input-sm" name="price" style="width: 120px; display: inline-block;">
@@ -474,7 +474,7 @@
                                 </td>
 
                                 <td class="text-center" style="min-width: 200px;">
-                                    <form action="{% url "store:product-fast-panel-change-price" product.id %}" method="POST" class="form-inline">
+                                    <form action="{% url 'store:product-fast-panel-change-price' product.id %}?next={{ request.get_full_path|urlencode  }}" method="POST" class="form-inline">
                                         {% csrf_token %}
                                         <div class="input-group input-group-sm">
                                             <input type="text" value="{{ product.price }}" id="price{{product.id}}" class="form-control input-sm" name="price" style="width: 120px; display: inline-block;">
@@ -488,7 +488,7 @@
                                 </td>
 
                                 <td class="text-center" style="min-width: 200px;">
-                                    <form action="{% url "store:product-fast-panel-change-count" product.id %}" method="POST" class="form-inline">
+                                    <form action="{% url 'store:product-fast-panel-change-count' product.id %}?next={{ request.get_full_path|urlencode  }}" method="POST" class="form-inline">
                                         {% csrf_token %}
                                         <div class="input-group input-group-sm">
                                             <input type="text" value="{{ product.count }}" id="count{{product.id}}" name="count" class="form-control input-sm" style="width: 120px; display: inline-block;">
