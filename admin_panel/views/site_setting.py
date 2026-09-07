@@ -10,7 +10,7 @@ from django.conf import settings
 import os
 from ckeditor_uploader import utils
 from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
+
 from django.contrib import messages
 from django.shortcuts import redirect, reverse, HttpResponse, get_object_or_404
 from django.core.files.storage import FileSystemStorage

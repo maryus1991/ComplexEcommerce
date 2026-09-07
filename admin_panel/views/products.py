@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.db.models.aggregates import Count
+
 from django.views.generic import ListView, UpdateView, CreateView, RedirectView, View
 from django.shortcuts import get_object_or_404, redirect, reverse, render
 from stores.forms import AddBrandForm, AddCategoryForm
@@ -169,7 +170,6 @@ class ProductFastPanelListView(AdminUserMixin, ListView):
         )
         return context
 
-
 class ProductFastPanelRowChange(AdminUserMixin, RedirectView):
     """Change product information from the fast panel."""
 
@@ -220,8 +220,10 @@ class ProductFastPanelRowChange(AdminUserMixin, RedirectView):
                 f"{e} — تغییرات ذخیره نشد و مشکلی پیش آمده",
             )
 
-        return reverse("admin_panel:product-fast-panel-list")
+        if next_url := self.request.GET.get("next"):
+            return next_url
 
+        return reverse("admin_panel:product-fast-panel-list")
 
 class ProductFastPanelGropeChange(AdminUserMixin, RedirectView):
     """for change grouply the product price and count """
@@ -233,8 +235,6 @@ class ProductFastPanelGropeChange(AdminUserMixin, RedirectView):
         type_of_price = self.request.GET.get("type_of_price")
         product_ids = self.request.GET.getlist("product_ids")  # استفاده از getlist برای دریافت لیست
         all_products = self.request.GET.get("all_products") == "true"  # بررسی آیا همه محصولات انتخاب شده
-        
-        
 
         product_list = Product.objects
 
@@ -242,6 +242,8 @@ class ProductFastPanelGropeChange(AdminUserMixin, RedirectView):
             amount = float(amount)  # استفاده از float برای پشتیبانی از اعداد اعشاری
         except (ValueError, TypeError):
             messages.error(self.request, "مقدار وارد شده معتبر نیست. لطفا یک عدد وارد کنید.")
+            if next_url := self.request.GET.get("next"):
+                return next_url
             return reverse("admin_panel:product-fast-panel-list")
 
         # تعیین اینکه کدام محصولات باید به روز شوند
@@ -251,6 +253,8 @@ class ProductFastPanelGropeChange(AdminUserMixin, RedirectView):
             product_list = product_list.all()
         else:
             messages.error(self.request, "هیچ محصولی انتخاب نشده است.")
+            if next_url := self.request.GET.get("next"):
+                return next_url
             return reverse("admin_panel:product-fast-panel-list")
 
         number_or_rounding = int(SiteSetting.objects.first().number_or_rounding)
@@ -280,12 +284,19 @@ class ProductFastPanelGropeChange(AdminUserMixin, RedirectView):
                     item.save()
         else:
             messages.error(self.request, "نوع عمل انتخاب شده معتبر نیست.")
+            if next_url := self.request.GET.get("next"):
+                return next_url
             return reverse("admin_panel:product-fast-panel-list")
 
         messages.success(
             self.request,
             f'تغییرات بر روی {product_list.count()} محصول ثبت شد.'
         )
+
+
+        if next_url := self.request.GET.get("next"):
+
+            return next_url
 
         return reverse("admin_panel:product-fast-panel-list")
 
@@ -303,6 +314,8 @@ class ProductFastPanelChangePrice(AdminUserMixin, RedirectView):
         except :
             messages.error(self.request, "قیمت وارد شده نادرست می باید ")
 
+        if next_url := self.request.GET.get("next"):
+            return next_url
         return reverse("admin_panel:product-fast-panel-list")
 
 class ProductFastPanelChangeCount(AdminUserMixin, RedirectView):
@@ -319,6 +332,8 @@ class ProductFastPanelChangeCount(AdminUserMixin, RedirectView):
         except :
             messages.error(self.request, "عدد وارد شده نادرست می باید ")
 
+        if next_url := self.request.GET.get("next"):
+            return next_url
         return reverse("admin_panel:product-fast-panel-list")
 
 class ProductFastPanelChangeColleaguePrice(AdminUserMixin, RedirectView):
@@ -334,6 +349,9 @@ class ProductFastPanelChangeColleaguePrice(AdminUserMixin, RedirectView):
 
         except :
             messages.error(self.request, "قیمت وارد شده نادرست می باید ")
+
+        if next_url := self.request.GET.get("next"):
+            return next_url
 
         return reverse("admin_panel:product-fast-panel-list")
 
