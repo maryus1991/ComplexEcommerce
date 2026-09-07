@@ -264,15 +264,15 @@
 
                 <div class="swiper-slide absolute w-full">
                     <a href="{{ Slider.link }}">
-                        
+
 <picture class="block w-full">
     {% if request.user_agent.is_mobile %}
         <source
-            srcset="{% thumbnail Slider.image '400x200' %}"
+            srcset="{% thumbnail Slider.image Slider.Width_Height  %}"
             type="image/webp">
 
         <img
-        src="{% thumbnail Slider.image '400x200' %}"
+        src="{% thumbnail Slider.image Slider.Width_Height  %}"
         class="w-full h-auto block object-contain"
         alt="{{ Slider.link }}"
         loading="lazy">
@@ -284,7 +284,7 @@
 
 
         <img
-        src="{% thumbnail Slider.image '1850x1000' %}"
+        src="{% thumbnail Slider.image Slider.Width_Height  %}"
         class="w-full h-auto block object-contain"
         alt="{{ Slider.link }}"
         loading="lazy">

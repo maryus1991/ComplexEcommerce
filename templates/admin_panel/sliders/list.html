@@ -164,6 +164,11 @@
                             {% if not slider.is_active %}
                                 <span class="label label-default pull-left">غیر فعال</span>
                             {% endif %}
+                            {% if slider.only_show_on_phone %}
+                                <span class="label label-success pull-left">مخصوص گوشی</span>
+                            {% else %}
+                                <span class="label label-success pull-left">مخصوص دسکتاپ</span>
+                            {% endif %}
                         </td>
                         <td>
                             <strong>{{ slider.name2 }}</strong>
