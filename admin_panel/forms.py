@@ -1638,7 +1638,7 @@ class SliderModelForm(forms.ModelForm):
         label="عکس",
         widget=forms.FileInput(
             attrs={
-                "class": "form-control",
+                "class": "form-control  ",
             }
         ),
         validators=[
@@ -1652,11 +1652,13 @@ class SliderModelForm(forms.ModelForm):
         model = Slider
         fields = "__all__"
         widgets = {
-            "name": forms.TextInput(attrs={"class": "form-control"}),
-            "name2": forms.TextInput(attrs={"class": "form-control"}),
-            "text": forms.TextInput(attrs={"class": "form-control"}),
-            "link": forms.URLInput(attrs={"class": "form-control"}),
-            "is_active": forms.CheckboxInput(attrs={"checked": "checked"}),
+            "name": forms.TextInput(attrs={"class": "form-control "}),
+            "name2": forms.TextInput(attrs={"class": "form-control "}),
+            "text": forms.TextInput(attrs={"class": "form-control "}),
+            "Width_Height": forms.TextInput(attrs={"class": "form-control "}),
+            "sort_number": forms.NumberInput(attrs={"class": "form-control "}),
+            "link": forms.URLInput(attrs={"class": "form-control "}),
+            "is_active": forms.CheckboxInput(),
             "only_show_on_phone": forms.CheckboxInput(),
         }
 

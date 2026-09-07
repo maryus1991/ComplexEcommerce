@@ -121,11 +121,8 @@
     <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
     <link rel="stylesheet" href="/static/dist/css/rtl.css">
     <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
-    <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
-    <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
+      <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+     <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
     <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
     <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
     <link rel="stylesheet" href="/static/node_modules/select2/dist/css/select2.min.css">
@@ -150,6 +147,8 @@
                     <th width="25%">عنوان اسلایدر</th>
                     <th width="15%">عنوان دوم اسلایدر</th>
                     <th width="15%"> متن اسلایدر</th>
+                    <th width="15%">طول در عرض</th>
+                    <th width="15%">ترتیب</th>
                     <th class="text-center" width="10%">لینک اسلایدر</th>
                     <th colspan="4" class="text-center" width="35%">عملیات</th>
                 </tr>
@@ -171,6 +170,10 @@
                         </td>
                         <td>
                             <strong>{{ slider.text }}</strong>
+                        </td>                        <td>
+                            <strong>{{ slider.Width_Height }}</strong>
+                        </td><td>
+                            <strong>{{ slider.sort_number }}</strong>
                         </td>
                         <td>
                             <strong><a class="btn btn-info" href="{{ slider.link }}">لینک</a></strong>

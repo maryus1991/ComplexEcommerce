@@ -255,7 +255,7 @@
 
     <!-- SLIDER -->
     <div>
-        <div class="swiper mySwiper w-full h-48 md:h-72 lg:h-[450px] mt-4 lg:mt-6">
+        <div class="swiper mySwiper w-full  mt-4 lg:mt-6">
             <div class="swiper-wrapper  w-full">
 
                 <!-- SLIDER ITEM -->
@@ -264,23 +264,34 @@
 
                 <div class="swiper-slide absolute w-full">
                     <a href="{{ Slider.link }}">
-                        {% if request.user_agent.is_mobile %}
-                        <picture>
-                            <source class="w-full h-full object-cover"
-                                    srcset="{% thumbnail Slider.image '394x192' %}" type="image/webp">
-                            <img src="{% thumbnail Slider.image '394x192'  %}"
-                                 class="w-full h-full object-cover" width="394" height="192"
-                                 alt="{{ Slider.link }}" loading="lazy">
-                        </picture>
-                        {% else %}
-                        <picture>
-                            <source class="w-full h-full object-cover"
-                                    srcset="{% thumbnail Slider.image '1850x450' %}" type="image/webp">
-                            <img src="{% thumbnail Slider.image '1850x450' %}"
-                                 class="w-full h-full object-cover" width="1850" height="450"
-                                 alt="{{ Slider.link }}" loading="lazy">
-                        </picture>
-                        {% endif %}
+                        
+<picture class="block w-full">
+    {% if request.user_agent.is_mobile %}
+        <source
+            srcset="{% thumbnail Slider.image '400x200' %}"
+            type="image/webp">
+
+        <img
+        src="{% thumbnail Slider.image '400x200' %}"
+        class="w-full h-auto block object-contain"
+        alt="{{ Slider.link }}"
+        loading="lazy">
+
+    {% else %}
+        <source
+            srcset="{% thumbnail Slider.image Slider.Width_Height %}"
+            type="image/webp">
+
+
+        <img
+        src="{% thumbnail Slider.image '1850x1000' %}"
+        class="w-full h-auto block object-contain"
+        alt="{{ Slider.link }}"
+        loading="lazy">
+    {% endif %}
+
+
+</picture>
 
                         <div class="flex items-start  flex-col absolute  right-5 top-5 md:right-10 md:top-10 lg:top-20 lg:right-40 xl:right-48  text-white">
                             {% if Slider.name is not None %}

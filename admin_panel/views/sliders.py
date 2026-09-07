@@ -16,6 +16,8 @@ class SliderListView(AdminUserMixin, ListView):
     template_name = "admin_panel/sliders/list.html"
 
 
+
+
 class SliderCreateView(AdminUserMixin, CreateView):
     """
     for creating a slider
@@ -25,6 +27,8 @@ class SliderCreateView(AdminUserMixin, CreateView):
     form_class = SliderModelForm
     template_name = "admin_panel/sliders/form.html"
     success_url = reverse_lazy("admin_panel:sliders-list")
+
+
 
     def form_valid(self, form):
         messages.success(self.request, "اسلایدر شما با موفقت ساخته شد")

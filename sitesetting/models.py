@@ -263,22 +263,21 @@ class ContactUs(models.Model):
 
 class Slider(models.Model):
     image = ThumbnailerImageField(upload_to=photo_path_upload_to, verbose_name="عکس")
-    name = models.CharField(
-        max_length=100, null=True, blank=True, verbose_name="عنوان اول"
-    )
-    name2 = models.CharField(
-        max_length=100, null=True, blank=True, verbose_name="عنوان دوم"
-    )
+    name = models.CharField(max_length=100, null=True, blank=True, verbose_name="عنوان اول")
+    name2 = models.CharField(max_length=100, null=True, blank=True, verbose_name="عنوان دوم")
     text = models.CharField(max_length=250, null=True, blank=True, verbose_name="متن")
     link = models.URLField(verbose_name="لینک")
-    is_active = models.BooleanField(
-        default=True, null=True, blank=True, verbose_name="فعال یا فعال نبودن"
-    )
-    only_show_on_phone = models.BooleanField(default=True, verbose_name="مخصوص نمایش در گوشی")
+    is_active = models.BooleanField(default=True, null=True, blank=True, verbose_name="فعال یا فعال نبودن")
+    only_show_on_phone = models.BooleanField(default=False, verbose_name="مخصوص نمایش در گوشی")
+    sort_number = models.IntegerField(default=0, verbose_name="ترتیب")
+    Width_Height = models.CharField(default="1850x500", max_length=10, verbose_name="طول در عرض (  در مقدار پیش فرض ۱۸۵۰ طول هست و ۵۰۰ عرض هست و ابعاد که برای گوشی هست  400x200 که باید دستی وارد شود )")
+
 
     def __str__(self):
         return f"{self.id}"
 
+    class Meta:
+        ordering = ['-sort_number', "-id"]
 
 class SiteLaw(models.Model):
     name = models.CharField(verbose_name="نام قانون", max_length=250)
