@@ -427,6 +427,14 @@
         <div class="box">
 <div class="box-header">
     <h3 class="box-title pull-right">محصولات</h3>
+<button
+    type="button"
+    id="toggleHiddenableButtons"
+    class="btn btn-warning pull-left"
+     onclick="toggleHiddenableButtons()"
+>
+    غیرفعال کردن ویرایش (جهت قفل دکمه ها)
+    </button>
 
     <button
         type="button"
@@ -493,11 +501,11 @@
     data-product-id="{{ product.id }}"
     data-field="colleague_users_price"
     data-original="{{ product.colleague_users_price }}"
-    class="form-control number-format input-sm product-field"
+    class="form-control number-format input-sm product-field hiddenable-buttons"
     name="price"
     style="width: 120px; display: inline-block;"
 >                                               <div class="input-group-btn">
-                                                <button type="submit" class="btn btn-success btn-sm sort-down">
+                                                <button type="submit" class="btn btn-success btn-sm sort-down hiddenable-buttons">
                                                     <i class="fa fa-hand-pointer-o"></i>
                                                 </button>
                                             </div>
@@ -516,11 +524,11 @@
     data-product-id="{{ product.id }}"
     data-field="price"
     data-original="{{ product.price }}"
-    class="form-control number-format input-sm product-field"
+    class="form-control number-format input-sm product-field hiddenable-buttons "
     name="price"
     style="width: 120px; display: inline-block;"
 >                                            <div class="input-group-btn">
-                                                <button type="submit" class="btn btn-success btn-sm sort-down">
+                                                <button type="submit" class="btn btn-success btn-sm sort-down hiddenable-buttons">
                                                     <i class="fa fa-hand-pointer-o"></i>
                                                 </button>
                                             </div>
@@ -539,11 +547,11 @@
     data-product-id="{{ product.id }}"
     data-field="count"
     data-original="{{ product.count }}"
-    class="form-control number-format input-sm product-field"
+    class="form-control number-format input-sm product-field hiddenable-buttons "
     name="count"
     style="width: 120px; display: inline-block;"
 >                                             <div class="input-group-btn">
-                                                <button type="submit" class="btn btn-success btn-sm sort-down">
+                                                <button type="submit" class="btn btn-success btn-sm sort-down hiddenable-buttons">
                                                     <i class="fa fa-hand-pointer-o"></i>
                                                 </button>
                                             </div>
@@ -552,7 +560,7 @@
                                 </td>
                                 <td class="text-center"> 
                      
-                                    <a   title="اول قیمت های مصرف کننده و همکار رو وارد کنید همراه با تعداد و بعد ثبت را بزنید تا همگی ثبت بشوند" onclick="setAllChanges('{% url "store:product-fast-panel-change-row" product.id %}?next={{ request.get_full_path|urlencode  }}' , {{product.id}})" class="btn btn-success btn-sm sort-down">
+                                    <button  title="اول قیمت های مصرف کننده و همکار رو وارد کنید همراه با تعداد و بعد ثبت را بزنید تا همگی ثبت بشوند" onclick="setAllChanges('{% url "store:product-fast-panel-change-row" product.id %}?next={{ request.get_full_path|urlencode  }}' , {{product.id}})" class="btn btn-success btn-sm sort-down hiddenable-buttons">
                                         <i class="fa fa-edit"></i>
                                     </button>
                                 </td>
@@ -903,6 +911,138 @@ function submitChangedProducts() {
 }
 
 </script>
+<script>
+
+let hiddenableDisabled = false;
+
+
+/*
+|--------------------------------------------------------------------------
+| دکمه فعال / غیرفعال کردن
+|--------------------------------------------------------------------------
+*/
+
+function toggleHiddenableButtons() {
+
+    hiddenableDisabled = !hiddenableDisabled;
+
+    const toggleButton = document.getElementById(
+        "toggleHiddenableButtons"
+    );
+
+
+    if (hiddenableDisabled) {
+
+        toggleButton.innerText = "فعال کردن ثبت";
+
+        toggleButton.classList.remove("btn-warning");
+        toggleButton.classList.add("btn-success");
+
+    } else {
+
+        toggleButton.innerText = "غیرفعال کردن ثبت";
+
+        toggleButton.classList.remove("btn-success");
+        toggleButton.classList.add("btn-warning");
+
+    }
+
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| جلوگیری از کلیک روی دکمه‌های hiddenable-buttons
+|--------------------------------------------------------------------------
+*/
+
+document.addEventListener("click", function (event) {
+
+    if (!hiddenableDisabled) {
+        return;
+    }
+
+
+    const button = event.target.closest(
+        "button.hiddenable-buttons"
+    );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+}, true);
+
+
+/*
+|--------------------------------------------------------------------------
+| جلوگیری از Submit با Enter
+|--------------------------------------------------------------------------
+*/
+
+document.addEventListener("keydown", function (event) {
+
+
+
+
+    if (event.key !== "Enter") {
+        return;
+    }
+
+
+    const target = event.target;
+
+
+    // اگر داخل input هستیم
+    if (
+        target.tagName === "INPUT" &&
+        target.classList.contains("hiddenable-buttons")
+    ) {
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        return;
+    }
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| جلوگیری قطعی از Submit فرم
+|--------------------------------------------------------------------------
+*/
+
+document.addEventListener("submit", function (event) {
+
+    if (!hiddenableDisabled) {
+        return;
+    }
+
+
+    const submitter = event.submitter;
+
+
+    if (
+        submitter &&
+        submitter.classList.contains("hiddenable-buttons")
+    ) {
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+    }
+
+}, true);
+
+</script>
+
 <style>
     .box-primary {
         border-top-color: #3c8dbc;
