@@ -35,6 +35,7 @@ urlpatterns = [
     path('product/fast-panel/change/price-amount/<int:pk>/', views.ProductFastPanelChangePrice.as_view(), name='product-fast-panel-change-price'),
     path('product/fast-panel/change/count-amount/<int:pk>/', views.ProductFastPanelChangeCount.as_view(), name='product-fast-panel-change-count'),
     path('product/fast-panel/change/row/<int:pk>/', views.ProductFastPanelRowChange.as_view(), name='product-fast-panel-change-row'),
+    path('product/fast-panel/change/bulk-product-change', views.BulkProductChangeFastPanel.as_view(), name='bulk-product-change-fast-panel'),
 
     # return orders
     path("return-order/", views.ReturnOrderList.as_view(), name="return-order-list"),
@@ -43,63 +44,19 @@ urlpatterns = [
          name="return-accept-by-store"),
 
     # specifics orders
-    path(
-        "specifics-orders/",
-        views.SpecificsOrdersListView.as_view(),
-        name="specifics-list",
-    ),
-    path(
-        "specifics-orders/create/",
-        views.SpecificsOrderCreateView.as_view(),
-        name="specifics-create",
-    ),
-    path(
-        "specifics-orders/detail/<int:pk>/",
-        views.SpecificsOrderDetailView.as_view(),
-        name="specifics-details",
-    ),
-    path(
-        "specifics-orders/update/<int:pk>/",
-        views.SpecificsOrdersUpdateView.as_view(),
-        name="specifics-update",
-    ),
-    path(
-        "specifics-orders/delete/<int:pk>/",
-        views.SpecificsOrdersDeleteView.as_view(),
-        name="specifics-delete",
-    ),
+    path("specifics-orders/",views.SpecificsOrdersListView.as_view(),name="specifics-list",    ),
+    path("specifics-orders/create/",views.SpecificsOrderCreateView.as_view(),name="specifics-create",    ),
+    path("specifics-orders/detail/<int:pk>/",views.SpecificsOrderDetailView.as_view(),name="specifics-details",    ),
+    path("specifics-orders/update/<int:pk>/",views.SpecificsOrdersUpdateView.as_view(),name="specifics-update",    ),
+    path("specifics-orders/delete/<int:pk>/",views.SpecificsOrdersDeleteView.as_view(),name="specifics-delete",    ),
 
     # site law
-    path(
-        "site-law/",
-        views.SiteLawListView.as_view(),
-        name="site-law-list",
-    ),
-    path(
-        "site-law/set-sort-number/<int:pk>",
-        views.SiteLawChangeSortNumber.as_view(),
-        name="site-law-sort-number",
-    ),
-    path(
-        "site-law/create/",
-        views.SiteLawCreateView.as_view(),
-        name="site-law-create",
-    ),
-    path(
-        "site-law/update/<int:pk>",
-        views.SiteLawUpdateView.as_view(),
-        name="site-law-update",
-    ),
-    path(
-        "site-law/active-deactivate/<int:pk>",
-        views.SiteLawActiveAndDeactivateView.as_view(),
-        name="site-law-active-deactivate",
-    ),
-    path(
-        "site-law/delete/<int:pk>",
-        views.SiteLawDeleteView.as_view(),
-        name="site-law-delete",
-    ),
+    path("site-law/",views.SiteLawListView.as_view(),name="site-law-list",),
+    path("site-law/set-sort-number/<int:pk>",views.SiteLawChangeSortNumber.as_view(),name="site-law-sort-number",),
+    path("site-law/create/",views.SiteLawCreateView.as_view(),name="site-law-create",),
+    path("site-law/update/<int:pk>",views.SiteLawUpdateView.as_view(),name="site-law-update",),
+    path("site-law/active-deactivate/<int:pk>",views.SiteLawActiveAndDeactivateView.as_view(),name="site-law-active-deactivate",),
+    path("site-law/delete/<int:pk>",views.SiteLawDeleteView.as_view(),name="site-law-delete",),
     # site setting
     path(
         "update-site-setting/",

@@ -1,3 +1,8 @@
+
+
+import json
+from typing import Any
+
 from django.contrib import messages
 from django.db.models.aggregates import Count
 
@@ -26,10 +31,64 @@ from django.db import transaction
 from decimal import Decimal, InvalidOperation
 
 
+
+
 # product
 
 
 # fastpanel
+
+class BulkProductChangeFastPanel(AdminUserMixin, RedirectView):
+    "for bulk change the products "
+
+
+
+    def get_redirect_url(self, *args: Any, **kwargs: Any):
+
+        products_data = self.request.POST.get("products", "[]")
+
+        try:
+            products = json.loads(products_data)
+        except json.JSONDecodeError:
+            return self.request.META.get("HTTP_REFERER")
+
+        with transaction.atomic():
+
+            for item in products:
+
+                product_id = item.get("id")
+                changes = item.get("changes", {})
+
+                if not product_id:
+                    continue
+
+                product = get_object_or_404(
+                    Product,
+                    pk=product_id
+                )
+
+                if "price" in changes:
+                    product.price = changes["price"]
+
+                if "colleague_users_price" in changes:
+                    product.colleague_users_price = changes["colleague_users_price"]
+
+                if "count" in changes:
+                    product.count = changes["count"]
+
+                product.save(
+                    update_fields=[
+                        field
+                        for field in [
+                            "price",
+                            "colleague_users_price",
+                            "count",
+                        ]
+                        if field in changes
+                    ]
+                )
+
+        return self.request.META.get("HTTP_REFERER")
 
 class ProductFastPanelListView(AdminUserMixin, ListView):
     """for listing and set fast changes for products"""
