@@ -43,7 +43,7 @@ from product.models import (
 )
 from orders.models import OrderDetail
 
-
+import json
 
 from user.mixins.logins import UserStoreStaffMixin, StoreAdminUserStaff
 
@@ -959,6 +959,14 @@ class ProductFastPanelListView(UserStoreStaffMixin, ListView):
         context["search_form"] = ProductSearchForm(self.request.GET)
         context["product_count"] = Product.objects.filter(store=self.request.user.store).count
 
+        messages.warning(
+            self.request,
+            "برای صفر کردن مقداری حتما باید  صفر وارد شود"
+        )
+        messages.warning(
+            self.request,
+            "توجه داشته باشید که هنگام انجام تغییرات سراسری روی دکمه ثبت همگانی یا ثبت تغییرات جزئی کلیک نشود تا هر چی وارد کردید از بین نرود"
+        )
 
         return context
 
@@ -1269,3 +1277,62 @@ class ProductFastPanelChangeColleaguePrice(UserStoreStaffMixin, RedirectView):
         if next_url := self.request.GET.get("next"):
             return next_url
         return reverse("store:product-fast-panel-list")
+
+
+class BulkProductChangeFastPanel(UserStoreStaffMixin, RedirectView):
+    "for bulk change the products "
+
+    def get_redirect_url(self, *args, **kwargs):
+
+        products_data = self.request.POST.get("products", "[]")
+
+        try:
+            products = json.loads(products_data)
+        except json.JSONDecodeError:
+            messages.error(
+                self.request,
+                "مشکلی در تشخیص محصولات پیش اومد"
+            )
+            return self.request.META.get("HTTP_REFERER")
+
+        with transaction.atomic():
+
+            for item in products:
+
+                product_id = item.get("id")
+                changes = item.get("changes", {})
+
+                if not product_id:
+                    continue
+
+                product = get_object_or_404(
+                    Product,
+                    store=self.request.user.store,
+                    pk=product_id,
+                )
+
+                if "price" in changes:
+                    product.price = changes["price"]
+
+                if "colleague_users_price" in changes:
+                    product.colleague_users_price = changes["colleague_users_price"]
+
+                if "count" in changes:
+                    product.count = changes["count"]
+
+                product.save(
+                    update_fields=[
+                        field
+                        for field in [
+                            "price",
+                            "colleague_users_price",
+                            "count",
+                        ]
+                        if field in changes
+                    ]
+                )
+        messages.success(
+            self.request,
+            "تغییرات اعمال شد"
+        )
+        return self.request.META.get("HTTP_REFERER")

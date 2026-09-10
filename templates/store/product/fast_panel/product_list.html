@@ -425,9 +425,17 @@
         </div>
 
         <div class="box">
-            <div class="box-header">
-                <h3 class="box-title">محصولات فروشگاه {{ user.store.name }}</h3>
-            </div>
+<div class="box-header">
+    <h3 class="box-title pull-right">محصولات</h3>
+
+    <button
+        type="button"
+        class="btn btn-primary pull-left"
+        onclick="submitChangedProducts()"
+    >
+           ثبت تغییرات همگانی (بعد از اعمال تغییرات روی چند محصول، همه تغییرات یکجا ذخیره شوند)
+    </button>
+</div>
 
             <div class="box-body">
                 <div class="table-responsive">
@@ -478,8 +486,17 @@
                                     <form action="{% url 'store:product-fast-panel-change-price-colleague' product.id %}?next={{ request.get_full_path|urlencode  }}" method="POST" class="form-inline">
                                         {% csrf_token %}
                                         <div class="input-group input-group-sm">
-                                            <input type="text" value="{{ product.colleague_users_price }}" id="colleague_users_price{{product.id}}" class="form-control input-sm number-format" name="price" style="width: 120px; display: inline-block;">
-                                            <div class="input-group-btn">
+<input
+    type="text"
+    value="{{ product.colleague_users_price }}"
+    id="colleague_users_price{{ product.id }}"
+    data-product-id="{{ product.id }}"
+    data-field="colleague_users_price"
+    data-original="{{ product.colleague_users_price }}"
+    class="form-control number-format input-sm product-field"
+    name="price"
+    style="width: 120px; display: inline-block;"
+>                                               <div class="input-group-btn">
                                                 <button type="submit" class="btn btn-success btn-sm sort-down">
                                                     <i class="fa fa-hand-pointer-o"></i>
                                                 </button>
@@ -492,8 +509,17 @@
                                     <form action="{% url 'store:product-fast-panel-change-price' product.id %}?next={{ request.get_full_path|urlencode  }}" method="POST" class="form-inline">
                                         {% csrf_token %}
                                         <div class="input-group input-group-sm">
-                                            <input type="text" value="{{ product.price }}" id="price{{product.id}}" class="form-control input-sm number-format" name="price" style="width: 120px; display: inline-block;">
-                                            <div class="input-group-btn">
+<input
+    type="text"
+    value="{{ product.price }}"
+    id="price{{ product.id }}"
+    data-product-id="{{ product.id }}"
+    data-field="price"
+    data-original="{{ product.price }}"
+    class="form-control number-format input-sm product-field"
+    name="price"
+    style="width: 120px; display: inline-block;"
+>                                            <div class="input-group-btn">
                                                 <button type="submit" class="btn btn-success btn-sm sort-down">
                                                     <i class="fa fa-hand-pointer-o"></i>
                                                 </button>
@@ -506,8 +532,17 @@
                                     <form action="{% url 'store:product-fast-panel-change-count' product.id %}?next={{ request.get_full_path|urlencode  }}" method="POST" class="form-inline">
                                         {% csrf_token %}
                                         <div class="input-group input-group-sm">
-                                            <input type="text" value="{{ product.count }}" id="count{{product.id}}" name="count" class="form-control input-sm number-format" style="width: 120px; display: inline-block;">
-                                            <div class="input-group-btn">
+<input
+    type="text"
+    value="{{ product.count }}"
+    id="count{{ product.id }}"
+    data-product-id="{{ product.id }}"
+    data-field="count"
+    data-original="{{ product.count }}"
+    class="form-control number-format input-sm product-field"
+    name="count"
+    style="width: 120px; display: inline-block;"
+>                                             <div class="input-group-btn">
                                                 <button type="submit" class="btn btn-success btn-sm sort-down">
                                                     <i class="fa fa-hand-pointer-o"></i>
                                                 </button>
@@ -774,7 +809,100 @@ document.querySelectorAll('.number-format').forEach(input => {
 
     });
 </script>
-<!-- استایل برای بهتر نمایش داده شدن فرم -->
+<script>
+
+function normalizeNumber(value) {
+    return String(value ?? "")
+        .replace(/,/g, "")
+        .replace(/\s/g, "")
+        .trim();
+}
+
+
+function getChangedProducts() {
+
+    const products = {};
+
+    document.querySelectorAll(".product-field").forEach(function (input) {
+
+        const productId = input.dataset.productId;
+        const field = input.dataset.field;
+
+        if (!productId || !field) {
+            return;
+        }
+
+        const original = normalizeNumber(input.dataset.original);
+        const current = normalizeNumber(input.value);
+
+        if (original !== current) {
+
+            if (!products[productId]) {
+                products[productId] = {
+                    id: productId,
+                    changes: {}
+                };
+            }
+
+            products[productId].changes[field] = current;
+        }
+
+    });
+
+    return products;
+}
+
+
+function submitChangedProducts() {
+
+    const products = getChangedProducts();
+
+    const changedProducts = Object.values(products);
+
+    if (changedProducts.length === 0) {
+
+        alert("هیچ تغییری انجام نشده است.");
+
+        return;
+    }
+
+
+
+
+
+    const form = document.createElement("form");
+
+    form.method = "POST";
+
+    form.action = "{% url 'store:product-fast-panel-change-bulk' %}";
+
+
+
+    const csrf = document.createElement("input");
+
+    csrf.type = "hidden";
+    csrf.name = "csrfmiddlewaretoken";
+    csrf.value = "{{ csrf_token }}";
+
+    form.appendChild(csrf);
+
+
+    // محصولات تغییر کرده
+    const data = document.createElement("input");
+
+    data.type = "hidden";
+    data.name = "products";
+    data.value = JSON.stringify(changedProducts);
+
+    form.appendChild(data);
+
+
+    document.body.appendChild(form);
+
+    form.submit();
+}
+
+</script>
 <style>
     .box-primary {
         border-top-color: #3c8dbc;

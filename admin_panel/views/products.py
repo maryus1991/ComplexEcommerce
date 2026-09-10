@@ -50,6 +50,10 @@ class BulkProductChangeFastPanel(AdminUserMixin, RedirectView):
         try:
             products = json.loads(products_data)
         except json.JSONDecodeError:
+            messages.error(
+                self.request,
+                "مشکلی در تشخیص محصولات پیش اومد"
+            )
             return self.request.META.get("HTTP_REFERER")
 
         with transaction.atomic():
@@ -87,7 +91,10 @@ class BulkProductChangeFastPanel(AdminUserMixin, RedirectView):
                         if field in changes
                     ]
                 )
-
+        messages.success(
+            self.request,
+            "تغییرات اعمال شد"
+        )
         return self.request.META.get("HTTP_REFERER")
 
 class ProductFastPanelListView(AdminUserMixin, ListView):
@@ -228,6 +235,10 @@ class ProductFastPanelListView(AdminUserMixin, ListView):
         messages.warning(
             self.request,
             "برای صفر کردن مقداری حتما باید  صفر وارد شود"
+        )
+        messages.warning(
+            self.request,
+            "توجه داشته باشید که هنگام انجام تغییرات سراسری روی دکمه ثبت همگانی یا ثبت تغییرات جزئی کلیک نشود تا هر چی وارد کردید از بین نرود"
         )
         return context
 

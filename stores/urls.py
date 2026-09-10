@@ -29,6 +29,7 @@ urlpatterns = [
     path('product/fast-panel/change/price-amount/<int:pk>/', views.ProductFastPanelChangePrice.as_view(), name='product-fast-panel-change-price'),
     path('product/fast-panel/change/count-amount/<int:pk>/', views.ProductFastPanelChangeCount.as_view(), name='product-fast-panel-change-count'),
     path('product/fast-panel/change/row/<int:pk>/', views.ProductFastPanelRowChange.as_view(), name='product-fast-panel-change-row'),
+    path('product/fast-panel/change/bulk', views.BulkProductChangeFastPanel.as_view(), name='product-fast-panel-change-bulk'),
 
     # children of product
     path('product/children/<int:pk>/list/', views.ProductChildrenListView.as_view(), name='product-children-list'),
