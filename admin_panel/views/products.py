@@ -22,7 +22,9 @@ from admin_panel.search_forms import ProductSearchForm
 from stores.forms import BrandAndCategorySearchForm
 from django.db.models import Q
 from django.db import transaction
-from sitesetting.models import SiteSetting
+
+from decimal import Decimal, InvalidOperation
+
 
 # product
 
@@ -233,72 +235,194 @@ class ProductFastPanelGropeChange(AdminUserMixin, RedirectView):
         action_type = self.request.GET.get("action_type")
         amount = self.request.GET.get("amount")
         type_of_price = self.request.GET.get("type_of_price")
-        product_ids = self.request.GET.getlist("product_ids")  # استفاده از getlist برای دریافت لیست
-        all_products = self.request.GET.get("all_products") == "true"  # بررسی آیا همه محصولات انتخاب شده
+        type_of_operation = self.request.GET.get("type")
+        product_ids = self.request.GET.getlist("product_ids")
+        all_products = self.request.GET.get("all_products") == "true"
 
-        product_list = Product.objects
+        redirect_url = (
+                self.request.GET.get("next")
+                or reverse("admin_panel:product-fast-panel-list")
+        )
 
+        # -----------------------------
+        # اعتبارسنجی نوع عملیات
+        # -----------------------------
+        if type_of_operation not in ("plus", "minus"):
+            messages.error(
+                self.request,
+                "روند عملیات انتخاب شده معتبر نیست."
+            )
+            return redirect_url
+
+        # -----------------------------
+        # تبدیل مقدار
+        # -----------------------------
         try:
-            amount = float(amount)  # استفاده از float برای پشتیبانی از اعداد اعشاری
-        except (ValueError, TypeError):
-            messages.error(self.request, "مقدار وارد شده معتبر نیست. لطفا یک عدد وارد کنید.")
-            if next_url := self.request.GET.get("next"):
-                return next_url
-            return reverse("admin_panel:product-fast-panel-list")
+            amount = Decimal(amount)
+        except (InvalidOperation, TypeError):
+            messages.error(
+                self.request,
+                "مقدار وارد شده معتبر نیست. لطفاً یک عدد وارد کنید."
+            )
+            return redirect_url
 
-        # تعیین اینکه کدام محصولات باید به روز شوند
+        # مقدار منفی مجاز نیست؛
+        # روند افزایش/کاهش را select تعیین می‌کند.
+        if amount < 0:
+            messages.error(
+                self.request,
+                "مقدار تغییر باید مثبت باشد."
+            )
+            return redirect_url
+
+        # -----------------------------
+        # تعیین افزایش یا کاهش
+        # -----------------------------
+        if type_of_operation == "minus":
+            amount = -amount
+
+        # -----------------------------
+        # انتخاب محصولات
+        # -----------------------------
+        product_list = Product.objects.all()
+
         if selection_type == "manual" and product_ids:
             product_list = product_list.filter(id__in=product_ids)
-        elif selection_type == "all" or all_products:
-            product_list = product_list.all()
-        else:
-            messages.error(self.request, "هیچ محصولی انتخاب نشده است.")
-            if next_url := self.request.GET.get("next"):
-                return next_url
-            return reverse("admin_panel:product-fast-panel-list")
 
-        number_or_rounding = int(SiteSetting.objects.first().number_or_rounding)
+        elif selection_type == "all" or all_products:
+            pass
+
+        else:
+            messages.error(
+                self.request,
+                "هیچ محصولی انتخاب نشده است."
+            )
+            return redirect_url
+
+        # -----------------------------
+        # تعداد محصولات
+        # -----------------------------
+        product_count = product_list.count()
+
+        if product_count == 0:
+            messages.error(
+                self.request,
+                "محصولی برای اعمال تغییرات پیدا نشد."
+            )
+            return redirect_url
+
+        # -----------------------------
+        # تنظیمات سایت
+        # -----------------------------
+        setting = self.request.site
+
+        number_or_rounding = (
+            int(setting.number_or_rounding)
+            if setting and setting.number_or_rounding
+            else 1
+        )
+
         if number_or_rounding < 1:
             number_or_rounding = 1
 
+        rounding = Decimal(number_or_rounding)
 
-        # اعمال تغییرات بر روی محصولات
-        if action_type == "fixed":
-            if type_of_price == 'colleague_user':
-                for item in product_list:
-                    item.colleague_users_price = int((((item.price + amount) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
-                    item.save()
-            else:
-                for item in product_list:
-                    item.price = int((((item.price + amount) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
-                    item.save()
-                    
-        elif action_type == "percent":
-            if type_of_price == 'colleague_user':
-                for item in product_list:
-                    item.colleague_users_price = int((((item.price + (item.price * (amount / 100))) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
-                    item.save()
-            else:
-                for item in product_list:
-                    item.price = int((((item.price + (item.price * (amount / 100))) + number_or_rounding - 1) // number_or_rounding) * number_or_rounding)
-                    item.save()
-        else:
-            messages.error(self.request, "نوع عمل انتخاب شده معتبر نیست.")
-            if next_url := self.request.GET.get("next"):
-                return next_url
-            return reverse("admin_panel:product-fast-panel-list")
+        # -----------------------------
+        # اعتبارسنجی نوع تغییر
+        # -----------------------------
+        if action_type not in ("fixed", "percent"):
+            messages.error(
+                self.request,
+                "نوع عمل انتخاب شده معتبر نیست."
+            )
+            return redirect_url
 
+        if type_of_price not in ("colleague_user", "price"):
+            messages.error(
+                self.request,
+                "نوع قیمت انتخاب شده معتبر نیست."
+            )
+            return redirect_url
+
+        # -----------------------------
+        # دریافت محصولات
+        # -----------------------------
+        products = list(product_list)
+
+        with transaction.atomic():
+
+            for product in products:
+
+                if type_of_price == "colleague_user":
+                    current_price = Decimal(
+                        product.colleague_users_price or 0
+                    )
+                else:
+                    current_price = Decimal(
+                        product.price or 0
+                    )
+
+                # -----------------------------
+                # تغییر ثابت
+                # -----------------------------
+                if action_type == "fixed":
+                    new_price = current_price + amount
+
+                # -----------------------------
+                # تغییر درصدی
+                # -----------------------------
+                else:
+                    new_price = current_price + (
+                            current_price * amount / Decimal("100")
+                    )
+
+                # جلوگیری از قیمت منفی
+                new_price = max(new_price, Decimal("0"))
+
+                # -----------------------------
+                # گرد کردن
+                # -----------------------------
+                new_price = (
+                                    (new_price + rounding - Decimal("1"))
+                                    // rounding
+                            ) * rounding
+
+                new_price = int(new_price)
+
+                # -----------------------------
+                # قرار دادن مقدار جدید
+                # -----------------------------
+                if type_of_price == "colleague_user":
+                    product.colleague_users_price = new_price
+                else:
+                    product.price = new_price
+
+            # -----------------------------
+            # ذخیره گروهی
+            # -----------------------------
+            if type_of_price == "colleague_user":
+
+                Product.objects.bulk_update(
+                    products,
+                    ["colleague_users_price"]
+                )
+
+            else:
+
+                Product.objects.bulk_update(
+                    products,
+                    ["price"]
+                )
+
+        # -----------------------------
+        # پیام موفقیت
+        # -----------------------------
         messages.success(
             self.request,
-            f'تغییرات بر روی {product_list.count()} محصول ثبت شد.'
+            f"تغییرات بر روی {product_count} محصول ثبت شد."
         )
 
-
-        if next_url := self.request.GET.get("next"):
-
-            return next_url
-
-        return reverse("admin_panel:product-fast-panel-list")
+        return redirect_url
 
 class ProductFastPanelChangePrice(AdminUserMixin, RedirectView):
     """for change the product PRICE """

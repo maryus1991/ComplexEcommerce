@@ -377,17 +377,26 @@
                                 </div>  
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label>همکار یا مصرف کننده :</label>
                                 <select class="form-control" name="type_of_price">
-                                    <option value="regulare_user">قیمت مصرف کننده</option>
+                                    <option value="price">قیمت مصرف کننده</option>
                                     <option value="colleague_user">قیمت همکار</option>
                                 </select>
  
                             </div>
                         </div>
+<div class="col-md-2">
+    <div class="form-group">
+        <label for="type">روند:</label>
 
+        <select class="form-control" name="type" id="type">
+            <option value="plus">افزایش</option>
+            <option value="minus">کاهش</option>
+        </select>
+    </div>
+</div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label>نوع تغییر قیمت:</label>
@@ -398,7 +407,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label id="amountLabel">درصد تغییر:</label>
                                 <input type="text" step="0.01" class="form-control number-format" name="amount" placeholder="مثال: 10 برای افزایش 10%">
