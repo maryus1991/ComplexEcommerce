@@ -27,4 +27,5 @@ mailserver/
 snappymail/
 backups/*
 backups_*
-backup_20260608160944.json
+backup_*
+backup_20260920192459.json

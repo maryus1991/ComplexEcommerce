@@ -643,11 +643,11 @@ class StoreSoleOrders(UserStoreStaffMixin, ListView):
     context_object_name = "items"
     paginate_by = 100
 
+
     def get_queryset(self):
         return self.model.objects.filter(
             store_id=self.request.user.store.id
-        ).order_by("is_returned_by_admin"
-                   ).prefetch_related("order")
+        ).prefetch_related("order").order_by("-pk")
 
     def get_context_data(
             self, *, object_list=..., **kwargs

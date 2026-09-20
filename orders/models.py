@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from easy_thumbnails.fields import ThumbnailerImageField
+
 from dashboard.models import UserAddress
 from stores.models import Store
 from product.models import Product
@@ -491,6 +493,8 @@ class StoreSoldOrders(models.Model):
     is_returned_by_admin = models.BooleanField(default=False)
     open_date = models.DateTimeField(auto_now_add=True)
     paid_by_admin_date = models.DateTimeField(null=True, blank=True)
+    ids_paid_together = models.CharField(max_length=100, null=True, blank=True, db_index=True)
+    file = models.FileField(null=True, blank=True, upload_to="store_sold_orders/")
 
     def __str__(self):
         return f"{self.price} <-> {self.store.name} <-> {self.is_returned_by_admin}"

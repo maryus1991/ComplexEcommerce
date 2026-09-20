@@ -121,10 +121,9 @@
     <link rel="stylesheet" href="/static/dist/css/bootstrap-theme.css">
     <link rel="stylesheet" href="/static/dist/css/rtl.css">
     <link rel="stylesheet" href="/static/dist/css/persian-datepicker-0.4.5.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/font-awesome/css/font-awesome.min.css">#}
-{#    <link rel="stylesheet" href="/static/node_modules/ionicons/css/ionicons.min.css">#}
+
     <link rel="stylesheet" href="/static/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-{#    <link rel="stylesheet" href="/static/node_modules/bootstrap-daterangepicker/daterangepicker.css">#}
+
     <link rel="stylesheet" href="/static/plugins/iCheck/all.css">
     <link rel="stylesheet" href="/static/node_modules/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
     <link rel="stylesheet" href="/static/plugins/timepicker/bootstrap-timepicker.min.css">
@@ -150,7 +149,9 @@
                     <th class="text-center" width="15%">نام فروشگاه</th>
                     <th class="text-center" width="15%">مبلغ</th>
                     <th class="text-center" width="15%">تصفیه </th>
-                    <th class="text-center" width="15%">زمان تصفیه</th>
+                    <th class="text-center" width="15%">عکس یا pdf </th>
+
+
                     <th class="text-center" width="5%">مشاهده فروشگاه</th>
                     <th class="text-center" width="10%">تبدیل وضعیت به تصفیه شده</th>
                 </tr>
@@ -164,16 +165,30 @@
                             <td class="text-center">{{ item.name }}</td>
                             <td class="text-center">{{ price|tdc }}</td>
                             <td class="text-center">
-                                {% if order.is_returned_by_admin %}
+                                {% if price < 1 %}
                                     <span class="label label-success">تصفیه شده</span>
                                 {% else %}
                                     <span class="label label-danger">تصفیه نشده</span>
                                 {% endif %}
                             </td>
+                            <td class="text-center">
+                                <form action="{% url 'admin_panel:orders-change-sold-list-status' item.id %}" method="post" class="form-inline" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input  type="file" name="file"  class="form-control btn"/>
+                                <button
+                                        type="submit"
+                                   class="btn btn-sm btn-success"
+                                   data-toggle="tooltip"
+                                   title="ارسال">
+                                    <i class="fa fa-key"></i>
+                                </button>
+                                </form>
+                            </td>
 
-                            <td class="text-center">{{ order.paid_by_admin_date|to_jalali:'%H:%M - %Y/%m/%d' }}</td>
 
-                            
+
+
+
                             <td class="text-center">
                                 <a href="{% url 'admin_panel:store-detail' item.id %}"
                                    class="btn btn-sm btn-warning"
@@ -267,6 +282,7 @@
                     <th class="text-center" width="5%">مشاهده جزییات</th>
                     <th class="text-center" width="5%">مشاهده فروشگاه</th>
                     <th class="text-center" width="5%">مشاهده خریدار</th>
+                    <th class="text-center" width="5%"> فایل تصفیه</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -304,10 +320,12 @@
                             </td>
                             <td class="text-center">{{ order.get_payment_price|tdc }}</td>
                             <td class="text-center">
-                                {% if item.sending %}
-                                    <span class="label label-warning"> درحال ارسال </span>
-                                {% elif item.delivered_to_user %}
+
+                                                                {% if item.delivered_to_user %}
                                     <span class="label label-success">تحویل شده</span>
+                                {% elif item.sending %}
+                                    <span class="label label-warning"> درحال ارسال </span>
+
                                 {% else %}
                                     <span class="label label-danger">ارسال نشده</span>
                                 {% endif %}
@@ -349,6 +367,16 @@
                                    title="مشاهده خریدار">
                                     <i class="fa fa-eye"></i>
                                 </a>
+                            </td>
+                            <td class="text-center">
+                                 {% if order.file   %}
+                                <a href="{{ order.file.url }}"
+                                   class="btn btn-sm btn-danger"
+                                   data-toggle="tooltip"
+                                   title="مشاهده قایل">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endwith %}

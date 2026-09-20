@@ -14,7 +14,7 @@ class SiteSetting(models.Model):
     title = models.CharField(max_length=100, default="0", verbose_name="عنوان سایت")
     tax = models.FloatField(default=1, verbose_name="مالیات زیر ساخت")
     min_payment = models.PositiveBigIntegerField(default=1000, verbose_name="حداقل مبلغ سبد خرید")
-    number_or_rounding = models.PositiveBigIntegerField(default=1000 , verbose_name="عدد تقسیم برای معادله روند کردن (۱ برای غیر فعال سازی روند کردن)")
+    number_or_rounding = models.PositiveBigIntegerField(default=1000 , verbose_name="عدد تقسیم برای معادله رند کردن (۱ برای غیر فعال سازی رند کردن)")
     minute_for_clean_order_detail_product = models.PositiveBigIntegerField(default=15, verbose_name="(دقیقه)برای پاک کردن محصول از سبد خرید")
     minute_for_clean_order_submitted_detail_product = models.PositiveBigIntegerField(default=120, verbose_name="حداکثر زمان برای حذف کلیه محصولات از سبد خرید (دقیقه)")
     copy_right_text = models.CharField(

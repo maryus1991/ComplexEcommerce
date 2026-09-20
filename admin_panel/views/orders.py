@@ -432,16 +432,34 @@ class OrderSoledChangeStatus(AdminUserMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         store_id = self.kwargs["pk"]
-        items = StoreSoldOrders.objects.filter(store_id=store_id, is_returned_by_admin=False).all()
+
+        try:
+            file = self.request.FILES["file"]
+        except KeyError:
+            file = None
+
+        items = StoreSoldOrders.objects.filter(
+            store_id=store_id,
+            is_returned_by_admin=False
+        )
+
+        ids_paid_together = str(
+            list(items.values_list("id", flat=True))
+        )
 
         for item in items:
             item.is_returned_by_admin = True
             item.paid_by_admin_date = now()
+            item.ids_paid_together = ids_paid_together
+
+            if file:
+                item.file = file
+
             item.save()
 
         messages.success(
             self.request,
-            'حساب مورد نظر تصفیه شد'
+            "حساب مورد نظر تصفیه شد"
         )
 
         return reverse("admin_panel:orders-sold-list")

@@ -41,6 +41,7 @@
                     <th class="text-center" width="15%">نحوه ارسال</th>
                     <th class="text-center" width="15%">تایخ پرداخت توسط کاربر</th>
                     <th class="text-center" width="5%">مشاهده جزییات</th>
+                    <th class="text-center" width="5%"> فایل تصفیه</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -78,10 +79,11 @@
                                 </td>
                                 <td class="text-center">{{ order.get_payment_price|tdc }}</td>
                                 <td class="text-center">
-                                    {% if item.sending %}
-                                        <span class="label label-warning"> درحال ارسال </span>
-                                    {% elif item.delivered_to_user %}
-                                        <span class="label label-success">تحویل شده</span>
+
+                                    {% if item.delivered_to_user %}
+                                    <span class="label label-success">تحویل شده</span>
+                                    {% elif item.sending %}
+                                    <span class="label label-warning"> درحال ارسال </span>
                                     {% else %}
                                         <span class="label label-danger">ارسال نشده</span>
                                     {% endif %}
@@ -109,6 +111,17 @@
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </td>
+                                 <td>
+                                                                      {% if order.file   %}
+                                <a href="{{ order.file.url }}"
+                                   class="btn btn-sm btn-danger"
+                                   data-toggle="tooltip"
+                                   title="مشاهده قایل">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                {% endif %}
+                                 </td>
+
 
                             </tr>
                         {% endwith %}
