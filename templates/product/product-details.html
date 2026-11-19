@@ -23,7 +23,7 @@
     <meta property="og:description" content="{% if product.parent %}{{ product.parent.description|striptags|truncatechars:160 }}{% else %}{{ product.description|striptags|truncatechars:160 }}{% endif %}">
     <meta property="og:type" content="product">
     <meta property="og:url" content="https://{{ request.get_host }}{{ request.get_full_path }}">
-    <meta property="og:image" content="{% if product.picture %}https://{{ request.get_host }}{{ product.picture.url }}{% else %}https://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
+    <meta property="og:image" content="{% if product.picture %}{% if product.picture.url|slice:':4' == 'http' %}{{ product.picture.url }}{% else %}https://{{ request.get_host }}{{ product.picture.url }}{% endif %}{% else %}https://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
     <meta property="og:image:width" content="800">
     <meta property="og:image:height" content="800">
     <meta property="og:site_name" content="{{site.title}}">
@@ -35,7 +35,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ product.name }} | {{ product.store.name }}">
     <meta name="twitter:description" content="{% if product.parent %}{{ product.parent.description|striptags|truncatechars:160 }}{% else %}{{ product.description|striptags|truncatechars:160 }}{% endif %}">
-    <meta name="twitter:image" content="{% if product.picture %}https://{{ request.get_host }}{{ product.picture.url }}{% else %}https://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
+    <meta name="twitter:image" content="{% if product.picture %}{% if product.picture.url|slice:':4' == 'http' %}{{ product.picture.url }}{% else %}https://{{ request.get_host }}{{ product.picture.url }}{% endif %}{% else %}https://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
 
      {
       "@context": "https://schema.org",
@@ -52,9 +52,9 @@
             "name": "{{ product.brand.name|escapejs }}"
           },
           "image": [
-            "https://{{ request.get_host }}{{ product.picture.url }}"
+            "{% if product.picture.url|slice:':4' == 'http' %}{{ product.picture.url }}{% else %}https://{{ request.get_host }}{{ product.picture.url }}{% endif %}"
             {% for img in product.gallery.all|slice:":3" %}
-            , "https://{{ request.get_host }}{{ img.image.url }}"
+            , "{% if img.image.url|slice:':4' == 'http' %}{{ img.image.url }}{% else %}https://{{ request.get_host }}{{ img.image.url }}{% endif %}"
             {% endfor %}
           ],
           "offers": {
@@ -131,7 +131,7 @@
           },
           "primaryImageOfPage": {
             "@type": "ImageObject",
-            "contentUrl": "{% if product.picture %}https://{{ request.get_host }}{{ product.picture.url }}{% endif %}"
+            "contentUrl": "{% if product.picture %}{% if product.picture.url|slice:':4' == 'http' %}{{ product.picture.url }}{% else %}https://{{ request.get_host }}{{ product.picture.url }}{% endif %}{% endif %}"
           }
         }
       ]

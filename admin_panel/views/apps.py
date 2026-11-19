@@ -14,6 +14,7 @@ from django.http import JsonResponse
 from django.core.files.storage import default_storage
 import os
 import shutil
+import tempfile
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -24,7 +25,7 @@ class ChunkedFileUploadView(AdminUserMixin, View):
         total_chunks = int(request.POST.get('totalChunks'))
         filename = request.POST.get('filename')
 
-        tmp_dir = f'media/uploads/tmp/{filename}'
+        tmp_dir = os.path.join(tempfile.gettempdir(), 'chunked_uploads', filename)
         os.makedirs(tmp_dir, exist_ok=True)
         chunk_path = os.path.join(tmp_dir, f'chunk_{chunk_number}')
 
@@ -33,13 +34,21 @@ class ChunkedFileUploadView(AdminUserMixin, View):
                 f.write(part)
 
         if chunk_number == total_chunks:
-            final_path = f'media/app/{filename}'
-            with open(final_path, 'wb+') as final_file:
+            temp_combined = os.path.join(tmp_dir, 'combined')
+            with open(temp_combined, 'wb+') as final_file:
                 for i in range(1, total_chunks + 1):
                     chunk_file = os.path.join(tmp_dir, f'chunk_{i}')
                     with open(chunk_file, 'rb') as part:
-                        final_file.write(part.read())
-            shutil.rmtree(tmp_dir)
+                        shutil.copyfileobj(part, final_file)
+
+            temp_combined_path = f'uploads/tmp/{filename}'
+            if default_storage.exists(temp_combined_path):
+                default_storage.delete(temp_combined_path)
+
+            with open(temp_combined, 'rb') as combined_f:
+                default_storage.save(temp_combined_path, combined_f)
+
+            shutil.rmtree(tmp_dir, ignore_errors=True)
 
         return JsonResponse({'status': 'ok'})
 
@@ -101,11 +110,11 @@ class AppsCreateView(AdminUserMixin, CreateView):
 
         uploaded_filename = self.request.POST.get('uploaded_filename')
         if uploaded_filename:
-            full_path = os.path.join(settings.MEDIA_ROOT, 'app', uploaded_filename)
-            if os.path.exists(full_path):
-                with open(full_path, 'rb') as f:
-                    form.instance.file.save(uploaded_filename, File(f), save=False)
-                os.remove(full_path)  # اختیاری: حذف فایل بعد از attach شدن
+            temp_storage_path = f'uploads/tmp/{uploaded_filename}'
+            if default_storage.exists(temp_storage_path):
+                with default_storage.open(temp_storage_path, 'rb') as f:
+                    form.instance.file.save(uploaded_filename, f, save=False)
+                default_storage.delete(temp_storage_path)
 
         messages.success(self.request, "برنامه مورد نظر با موفقیت افزوده شد")
         return super().form_valid(form)
@@ -133,12 +142,11 @@ class AppsUpdateView(AdminUserMixin, UpdateView):
         uploaded_filename = self.request.POST.get('uploaded_filename')
 
         if uploaded_filename:
-            full_path = os.path.join(settings.MEDIA_ROOT, 'app', uploaded_filename)
-            if os.path.exists(full_path):
-                # فقط وقتی فایل جدید هست، فایل قبلی رو جایگزین کن
-                with open(full_path, 'rb') as f:
-                    form.instance.file.save(uploaded_filename, File(f), save=False)
-                os.remove(full_path)  # اختیاری: حذف فایل بعد از attach شدن
+            temp_storage_path = f'uploads/tmp/{uploaded_filename}'
+            if default_storage.exists(temp_storage_path):
+                with default_storage.open(temp_storage_path, 'rb') as f:
+                    form.instance.file.save(uploaded_filename, f, save=False)
+                default_storage.delete(temp_storage_path)
         form.instance.is_active = True
         form.instance.admin_verified = True
         messages.success(self.request, "تغییرات با موفقیت اعمال شد")

@@ -49,7 +49,7 @@
             "name": "{{ app.name|escapejs }}",
             "description": "{{ app.name|truncatechars:160|escapejs }}",
             {% if app.image %}
-            "image": "https://{{ request.get_host }}{{ app.image.url }}",
+            "image": "{% if app.image.url|slice:':4' == 'http' %}{{ app.image.url }}{% else %}https://{{ request.get_host }}{{ app.image.url }}{% endif %}",
             {% endif %}
             "operatingSystem": "Windows",
 

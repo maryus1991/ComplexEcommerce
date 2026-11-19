@@ -406,11 +406,11 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
                     reverse("dashboard:order_detail", kwargs={"pk": order_id})
                 )
 
-            # Safely open and return the file
+            # Safely open and return the file via Storage API
             try:
-                file = open(
-                    obj.official_invoice_pdf.path, "rb"
-                )  # Using .path for FileField
+                if not obj.official_invoice_pdf:
+                    raise FileNotFoundError
+                file = obj.official_invoice_pdf.open("rb")
                 response = FileResponse(file)
                 response["Content-Type"] = "application/pdf"
                 response["Content-Disposition"] = (

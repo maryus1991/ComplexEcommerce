@@ -1,7 +1,10 @@
 from django import template
 from PIL import Image
-import os
+import io
+from urllib.parse import urlparse
 from django.conf import settings
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 register = template.Library()
 
@@ -10,25 +13,51 @@ register = template.Library()
 def to_webp(image_url):
     try:
         if not image_url:
-            print('12')
             return '/static/images/1111.jpg'
-        if image_url.startswith(settings.MEDIA_URL):
-            image_path = image_url[len(settings.MEDIA_URL):]
+
+        # If already a webp, return as is
+        clean_url = str(image_url).split('?')[0]
+        if clean_url.lower().endswith('.webp'):
+            return image_url
+
+        # Determine relative storage path from URL
+        image_path = None
+        media_url = getattr(settings, 'MEDIA_URL', '')
+        if media_url and image_url.startswith(media_url):
+            image_path = image_url[len(media_url):].lstrip('/')
+        elif image_url.startswith('http://') or image_url.startswith('https://'):
+            parsed = urlparse(image_url)
+            path = parsed.path.lstrip('/')
+            bucket = getattr(settings, 'AWS_STORAGE_BUCKET_NAME', '')
+            if bucket and path.startswith(f"{bucket}/"):
+                path = path[len(bucket) + 1:]
+            location = getattr(settings, 'AWS_LOCATION', '')
+            if location and path.startswith(f"{location}/"):
+                path = path[len(location) + 1:]
+            image_path = path
         else:
-            image_path = image_url
+            image_path = str(image_url).lstrip('/')
 
-        full_path = os.path.join(settings.MEDIA_ROOT, image_path)
-        webp_path = full_path.rsplit('.', 1)[0] + '.webp'
+        if not image_path or ('.' not in image_path):
+            return image_url
 
-        if not os.path.exists(webp_path):
+        webp_path = image_path.rsplit('.', 1)[0] + '.webp'
+
+        if default_storage.exists(webp_path):
+            return default_storage.url(webp_path)
+
+        if default_storage.exists(image_path):
             try:
-                img = Image.open(full_path)
-                img.save(webp_path, 'WEBP', quality=85)
-            except Exception as e:
+                with default_storage.open(image_path, 'rb') as f:
+                    img = Image.open(f)
+                    buffer = io.BytesIO()
+                    img.save(buffer, 'WEBP', quality=85)
+                    buffer.seek(0)
+                    default_storage.save(webp_path, ContentFile(buffer.getvalue()))
+                return default_storage.url(webp_path)
+            except Exception:
                 return image_url
 
-        webp_url = settings.MEDIA_URL + image_path.rsplit('.', 1)[0] + '.webp'
-        return webp_url
-    except Exception as e:
-
+        return image_url
+    except Exception:
         return '/static/images/1111.jpg'

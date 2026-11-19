@@ -21,7 +21,7 @@
       "description": "{{ post.title|escapejs }}",
 
       "image": [
-        "https://{{ request.get_host }}{{ post.image.url }}"
+        "{% if post.image.url|slice:':4' == 'http' %}{{ post.image.url }}{% else %}https://{{ request.get_host }}{{ post.image.url }}{% endif %}"
       ],
 
       "author": {
@@ -33,7 +33,7 @@
         "name": "{{ post.store.name|escapejs }}",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://{{ request.get_host }}{{ post.store.logo.url }}"
+          "url": "{% if post.store.logo.url|slice:':4' == 'http' %}{{ post.store.logo.url }}{% else %}https://{{ request.get_host }}{{ post.store.logo.url }}{% endif %}"
         }
       },
       "datePublished": "{{ post.created_at|date:'c' }}",

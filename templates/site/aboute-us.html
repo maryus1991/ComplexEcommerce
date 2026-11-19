@@ -12,7 +12,7 @@
   "@type": "Organization",
   "name": "{{ site.title|escapejs }}",
   "url": "https://{{ request.get_host }}/",
-  "logo": "{% if site.logo %}https://{{ request.get_host }}{{ site.logo.url }}{% endif %}",
+  "logo": "{% if site.logo %}{% if site.logo.url|slice:':4' == 'http' %}{{ site.logo.url }}{% else %}https://{{ request.get_host }}{{ site.logo.url }}{% endif %}{% endif %}",
   "sameAs": [
     "{{ site.instagram_link }}",
     "{{ site.telegram_link }}"

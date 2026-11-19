@@ -13,7 +13,6 @@ from django.core.files.storage import default_storage
 
 from django.contrib import messages
 from django.shortcuts import redirect, reverse, HttpResponse, get_object_or_404
-from django.core.files.storage import FileSystemStorage
 
 
 class SiteLawChangeSortNumber(AdminUserMixin, RedirectView):
@@ -264,21 +263,12 @@ class UploadFontView(AdminUserMixin, View):
             messages.error(request, 'فرمت فایل مجاز نیست. فقط فایل‌های فونت قابل قبول هستند')
             return redirect('font-manager')
 
-        user_upload_path = os.path.join(settings.MEDIA_ROOT, settings.CKEDITOR_UPLOAD_PATH,
-                                        'fonts')
-        if not os.path.exists(user_upload_path):
-            os.makedirs(user_upload_path, mode=0o755, exist_ok=True)
-
-        font_storage = FileSystemStorage(
-            location=os.path.join(settings.MEDIA_ROOT, 'check_editor/uploads/fonts'),
-            base_url='/media/check_editor/uploads/fonts/'
-        )
-
         try:
             file_name = get_valid_filename(os.path.basename(uploaded_file.name))
-            saved_name = font_storage.save(file_name, uploaded_file)
+            storage_path = os.path.join(settings.CKEDITOR_UPLOAD_PATH, 'fonts', file_name)
+            saved_name = default_storage.save(storage_path, uploaded_file)
 
-            messages.success(request, f'فونت "{saved_name}" با موفقیت آپلود شد')
+            messages.success(request, f'فونت "{file_name}" با موفقیت آپلود شد')
 
         except Exception as e:
             messages.error(request, f'خطا در آپلود فونت: {str(e)}')

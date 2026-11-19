@@ -22,7 +22,7 @@
       "telephone": "{{ item.phone }}",
 
       {% if item.logo %}
-      "image": "https://{{ request.get_host }}{{ item.logo.url }}",
+      "image": "{% if item.logo.url|slice:':4' == 'http' %}{{ item.logo.url }}{% else %}https://{{ request.get_host }}{{ item.logo.url }}{% endif %}",
       {% endif %}
       "address": {
         "@type": "PostalAddress",

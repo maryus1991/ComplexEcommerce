@@ -21,7 +21,7 @@
       "name": "{{ item.name|escapejs }}",
       "description": "{{ item.name|escapejs }}",
       {% if item.image %}
-        "image": "https://{{ request.get_host }}{{ item.image.url }}",
+        "image": "{% if item.image.url|slice:':4' == 'http' %}{{ item.image.url }}{% else %}https://{{ request.get_host }}{{ item.image.url }}{% endif %}",
       {% endif %}
 
       "operatingSystem": "Windows"

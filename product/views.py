@@ -435,7 +435,7 @@ class ProductDetailView(DetailView):
             )
             .exclude(id=obj.id)
             .distinct()
-            .order_by("-id")
+            .order_by("-id")[:16]
         )
         context["same_product"] = same_product
 
@@ -498,13 +498,13 @@ class AddProductComment(LoginRequiredMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         product = get_object_or_404(Product, pk=self.kwargs["pk"])
-        print(1)
+
         if self.request.method == "POST":
             # check the request
             comment_form = ProductCommentForm(self.request.POST)
-            print(2)
+
             if comment_form.is_valid():
-                print(3)
+
                 subject = comment_form.cleaned_data["subject"]
                 comment = comment_form.cleaned_data["comment"]
                 suggest_product = comment_form.cleaned_data["suggest_product"]

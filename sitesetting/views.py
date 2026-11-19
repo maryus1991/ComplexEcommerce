@@ -434,27 +434,9 @@ class DownloadUsedAppView(View):
         return self.serve_file(app)
 
     def serve_file(self, app):
-        if not app.file or not os.path.exists(app.file.path):
+        if not app.file:
             raise Http404("File not available")
-
-        file_path = app.file.path
-        file_ext = os.path.splitext(app.file.name)[1]
-        file_name = f"{app.name}{file_ext}"
-
-        quoted_file_name = quote(file_name)
-
-        response = HttpResponse(
-            FileWrapper(open(file_path, "rb")), content_type=guess_type(file_path)[0]
-        )
-
-        response["Content-Disposition"] = (
-            f'attachment; filename="download{file_ext}"; filename*=UTF-8\'\'{quoted_file_name}'
-        )
-
-        response["Content-Length"] = os.path.getsize(file_path)
-        response["X-Accel-Redirect"] = f"/media/app/{os.path.basename(file_path)}"
-
-        return response
+        return redirect(app.file.url)
 
 
 def custom_404_page(request, exception=None):

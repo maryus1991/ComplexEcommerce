@@ -251,13 +251,18 @@ class MediaBackupRestoreInOneClickView(AdminUserMixin, View):
         if not os.path.exists(backup_path):
             return JsonResponse({'success': False, 'error': 'فایل بکاپ یافت نشد'})
 
-        media_path = settings.MEDIA_ROOT
-        if not os.path.exists(media_path):
-            os.makedirs(media_path)
-
         try:
-            shutil.unpack_archive(backup_path, extract_dir=media_path)
-            messages.info(request, 'فایل‌ها با موفقیت در media استخراج شدند')
+            with tempfile.TemporaryDirectory() as tmp_extract_dir:
+                shutil.unpack_archive(backup_path, extract_dir=tmp_extract_dir)
+                for root, _, filenames in os.walk(tmp_extract_dir):
+                    for fname in filenames:
+                        src_file = os.path.join(root, fname)
+                        rel_path = os.path.relpath(src_file, tmp_extract_dir)
+                        with open(src_file, 'rb') as f:
+                            if default_storage.exists(rel_path):
+                                default_storage.delete(rel_path)
+                            default_storage.save(rel_path, f)
+            messages.info(request, 'فایل‌ها با موفقیت در فضای ذخیره‌سازی ابری استخراج و بازیابی شدند')
             return redirect('admin_panel:backup-media-restore')
         except shutil.ReadError:
             messages.info(request, 'فرمت فایل پشتیبان پشتیبانی نمی‌شود یا خراب است')

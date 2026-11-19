@@ -30,9 +30,11 @@ urlpatterns = [
 handler404 = "sitesetting.views.custom_404_page"
 if settings.DEBUG:
 
-    urlpatterns = urlpatterns + static.static(
-        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
-    )
+    # Only serve media locally if Object Storage is not active
+    if not settings.MEDIA_URL.startswith(('http://', 'https://')):
+        urlpatterns = urlpatterns + static.static(
+            settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+        )
     urlpatterns += [
         path("store-panel/", include("stores.urls")),
         path("admin-panel/", include("admin_panel.urls")),
@@ -44,12 +46,10 @@ if settings.DEBUG:
 
     urlpatterns += debug_toolbar_urls()
 
-
-
 else:
     token = get_random_string(1000)
     urlpatterns += [
-        path(f"panel-store/{get_random_string(1000)}/", include("stores.urls")),
+        path(f"panel-store/{token}/", include("stores.urls")),
         path(f"admin-panel/{token}/", include("admin_panel.urls")),
 
         path(f"admin/{token}/", admin.site.urls),

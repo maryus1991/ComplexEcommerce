@@ -122,6 +122,7 @@ USER_AGENTS_CACHE = "default"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
 
     "django.middleware.common.CommonMiddleware",
@@ -145,15 +146,15 @@ HTML_MINIFY_EXCLUDE_EXTENSIONS = (
     'json',
     'xml',
 )
-HTML_MINIFY_IGNORE_COMMENTS = True
 
 # THUMBNAIL
 THUMBNAIL_DEFAULT_OPTIONS = {
-    'format': 'WEBP',      # همیشه WebP تولید کنه
-    'quality': 70,         # کیفیت پیش‌فرض (می‌تونی تغییر بدی)
-    'crop': 'center',      # همیشه از مرکز crop کنه (اگر crop فعال باشه)
-    'optimize': True,      # بهینه‌سازی lossless با Pillow
+    'format': 'WEBP',
+    'quality': 70,
+    'crop': 'center',
+    'optimize': True,
 }
+THUMBNAIL_DEFAULT_STORAGE_ALIAS = 'default'
 
 
 
@@ -224,9 +225,55 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "/static/"
+
 STATIC_ROOT = BASE_DIR / "static"
 
-MEDIA_URL = "/media/"
+THUMBNAIL_CACHE_TIMEOUT = 60 * 60 * 24 * 30
+
+
+# AWS / S3-Compatible Object Storage configuration
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
+AWS_S3_CUSTOM_DOMAIN = os.getenv("AWS_S3_CUSTOM_DOMAIN")
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
+AWS_S3_SIGNATURE_VERSION = os.getenv("AWS_S3_SIGNATURE_VERSION", "s3v4")
+AWS_S3_FILE_OVERWRITE = False
+AWS_QUERYSTRING_AUTH = os.getenv("AWS_QUERYSTRING_AUTH", "False").lower() in ("true", "1")
+AWS_LOCATION = os.getenv("AWS_LOCATION", "")
+AWS_DEFAULT_ACL = os.getenv("AWS_DEFAULT_ACL", None) or None
+
+# Configure Django's STORAGES
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "access_key": AWS_ACCESS_KEY_ID,
+            "secret_key": AWS_SECRET_ACCESS_KEY,
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "endpoint_url": AWS_S3_ENDPOINT_URL,
+            "custom_domain": AWS_S3_CUSTOM_DOMAIN,
+            "region_name": AWS_S3_REGION_NAME,
+            "signature_version": AWS_S3_SIGNATURE_VERSION,
+            "file_overwrite": AWS_S3_FILE_OVERWRITE,
+            "querystring_auth": AWS_QUERYSTRING_AUTH,
+            "location": AWS_LOCATION,
+            "default_acl": AWS_DEFAULT_ACL,
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+if AWS_S3_CUSTOM_DOMAIN:
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION + '/' if AWS_LOCATION else ''}"
+elif AWS_S3_ENDPOINT_URL and AWS_STORAGE_BUCKET_NAME:
+    MEDIA_URL = f"{AWS_S3_ENDPOINT_URL.rstrip('/')}/{AWS_STORAGE_BUCKET_NAME}/{AWS_LOCATION + '/' if AWS_LOCATION else ''}"
+else:
+    MEDIA_URL = "/media/"
+
 MEDIA_ROOT = BASE_DIR / "media"
 
 
@@ -455,19 +502,24 @@ AUTHENTICATION_BACKENDS = [
 #CONTENT_SECURITY_POLICY = {     "default-src": ("'self'",),     "font-src": ("'self'", "fonts.gstatic.com", "cdnjs.cloudflare.com", "cdn.jsdelivr.net"),     "img-src": ("'self'",),     "media-src": ("'self'",),     "script-src": ("'self'", "cdnjs.cloudflare.com", "cdn.jsdelivr.net", "www.googletagmanager.com", "www.google-analytics.com", "'nonce-XyZ34AbC'"),     "style-src": ("'self'", "fonts.googleapis.com", "cdnjs.cloudflare.com", "cdn.jsdelivr.net", "'nonce-XyZ34AbC'"),     "connect-src": ("'self'", "www.google-analytics.com"), }
 
 if DEBUG:
+
     INSTALLED_APPS += ['debug_toolbar']
     # INSTALLED_APPS += ["silk"]
     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
     # MIDDLEWARE += ['silk.middleware.SilkyMiddleware']
+
+
     INTERNAL_IPS = [
 
-        "127.0.0.1",
-        "172.23.0.4",
-        "172.23.0.1",
+        "172.25.0.4",
+        "172.25.0.1",
         "app",
         "localhost",
+        "localhost:8000",
         "0.0.0.0",
 
     ]
+
+
 else :
     INSTALLED_APPS += ["cachalot",]

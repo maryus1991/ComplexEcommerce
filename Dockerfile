@@ -28,7 +28,7 @@ COPY manage.py /app/
 COPY ZARINPAL_ERRORS.py /app/
 COPY .envs /app/
  
-RUN pip install --index-url https://mirror2.chabokan.net/pypi/simple/ -r dev-req.txt
+RUN pip install  -r dev-req.txt
 
-RUN pip install --index-url https://mirror2.chabokan.net/pypi/simple/ -r req.txt
+RUN pip install   -r req.txt
 

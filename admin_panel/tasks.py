@@ -15,10 +15,11 @@ def clean_temp_files(self, max_age_minutes=60):
     dirs_list = [
         'admin_panel/backups/db/',
         'admin_panel/backups/media/',
-        'media/uploads/tmp/'
     ]
 
     for temp_dir in dirs_list:
+        if not os.path.exists(temp_dir):
+            continue
         for filename in os.listdir(temp_dir):
             file_path = os.path.join(temp_dir, filename)
 

@@ -47,7 +47,7 @@
             "@id": "https://{{ request.get_host }}{{ store.get_absolute_url }}#store",
             "name": "{{ store.name|escapejs }}",
             {% if store.logo %}
-            "image": "https://{{ request.get_host }}{{ store.logo.url }}",
+            "image": "{% if store.logo.url|slice:':4' == 'http' %}{{ store.logo.url }}{% else %}https://{{ request.get_host }}{{ store.logo.url }}{% endif %}",
             {% endif %}
             "telephone": "{{ store.phone }}",
             "address": {
