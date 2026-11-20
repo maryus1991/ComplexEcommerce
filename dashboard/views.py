@@ -35,7 +35,8 @@ from django.utils.timezone import datetime
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from guarantee.models import ActiveProductGuarantee
-from django.db.models import Q
+from django.db.models import Q, Count, Sum, Prefetch
+from django.db.models.functions import Coalesce
 
 User = get_user_model()
 
@@ -52,7 +53,12 @@ class ActiveProductGuaranteeListView(LoginRequiredMixin, ListView):
         return super().get_queryset().filter(
             Q(user=self.request.user) |
             Q(phone_number=self.request.user.PhoneNumber)
-        ).prefetch_related("guarantee", "guarantee__company", "guarantee__product").order_by("-id")
+        ).select_related(
+            "guarantee",
+            "guarantee__company",
+            "guarantee__product",
+            "guarantee__product__store",
+        ).order_by("-id")
 
 
 # Create your views here.
@@ -177,23 +183,29 @@ class Dashboard(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         details = OrderDetail.objects.filter(order__user=self.request.user)
-
-        context["all_order_price"] = sum(
-            details.filter(order__canceled=False).values_list("price", flat=True)
+        detail_stats = details.aggregate(
+            all_order_price=Coalesce(Sum("price", filter=Q(order__canceled=False)), 0),
+            all_order_count=Count("id"),
+            canceled=Count("id", filter=Q(order__canceled=True)),
+            paid=Count("id", filter=Q(order__is_paid=True)),
+            continue_count=Count("id", filter=Q(order__is_paid=False, order__canceled=False)),
         )
-        context["all_order_count"] = details.count()
-        context["last_detail_product"] = details.order_by("-id")[0:3]
 
-        context["canceled"] = details.filter(order__canceled=True).count()
-        context["paid"] = details.filter(order__is_paid=True).count()
-        context["continue"] = details.filter(
-            order__is_paid=False, order__canceled=False
-        ).count()
+        context["all_order_price"] = detail_stats["all_order_price"]
+        context["all_order_count"] = detail_stats["all_order_count"]
+        context["last_detail_product"] = details.select_related("product", "order").order_by("-id")[0:3]
 
-        tickets = Ticket.objects.filter(user=self.request.user)
+        context["canceled"] = detail_stats["canceled"]
+        context["paid"] = detail_stats["paid"]
+        context["continue"] = detail_stats["continue_count"]
 
-        context["all_ticket"] = tickets.count()
-        context["close_ticket"] = tickets.filter(close_ticket=True).count()
+        ticket_stats = Ticket.objects.filter(user=self.request.user).aggregate(
+            all_ticket=Count("id"),
+            close_ticket=Count("id", filter=Q(close_ticket=True)),
+        )
+
+        context["all_ticket"] = ticket_stats["all_ticket"]
+        context["close_ticket"] = ticket_stats["close_ticket"]
 
         return context
 
@@ -204,7 +216,7 @@ class ReturnOrderView(LoginRequiredMixin, View):
     """for send return order request"""
 
     def dispatch(self, request, *args, **kwargs):
-        self.order = get_object_or_404(Order, user=self.request.user, pk=self.kwargs["pk"], is_paid=True)
+        self.order = get_object_or_404(Order.objects.select_related("store"), user=self.request.user, pk=self.kwargs["pk"], is_paid=True)
         self.store = self.order.store
 
         store_date_for_accept_return_order = self.order.second_date + timedelta(
@@ -262,7 +274,19 @@ class ReturnsOrderListView(LoginRequiredMixin, ListView):
     context_object_name = "items"
 
     def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user).order_by("-id")
+        return (
+            super()
+            .get_queryset()
+            .filter(user=self.request.user)
+            .select_related("order", "order__store", "order__discount")
+            .prefetch_related(
+                Prefetch(
+                    "order__details",
+                    queryset=OrderDetail.objects.select_related("product", "order"),
+                )
+            )
+            .order_by("-id")
+        )
 
 @method_decorator(never_cache, name='dispatch')
 class ReturnsOrderDelete(LoginRequiredMixin, RedirectView):
@@ -270,10 +294,9 @@ class ReturnsOrderDelete(LoginRequiredMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         pk = kwargs.get("pk")
-        obj = self.request.user.returns_orders.filter(pk=pk)
+        obj = self.request.user.returns_orders.filter(pk=pk).first()
 
-        if obj.exists():
-            obj = obj.first()
+        if obj is not None:
             if not obj.accept_by_store :
                 if obj.date_close_request is None:
                     obj.delete()
@@ -314,9 +337,19 @@ class OrdersHistoryDashboard(LoginRequiredMixin, ListView):
     template_name = "dashboard/orders/list.html"
 
     def get_queryset(self):
-        return Order.objects.filter(
-            user=self.request.user,
-        ).order_by("-id")
+        return (
+            Order.objects.filter(
+                user=self.request.user,
+            )
+            .select_related("store", "address", "discount")
+            .prefetch_related(
+                Prefetch(
+                    "details",
+                    queryset=OrderDetail.objects.select_related("product", "order"),
+                )
+            )
+            .order_by("-id")
+        )
 
 @method_decorator(never_cache, name='dispatch')
 class OrdersDetailHistoryDashboard(LoginRequiredMixin, ListView):
@@ -329,25 +362,42 @@ class OrdersDetailHistoryDashboard(LoginRequiredMixin, ListView):
     template_name = "dashboard/orders/details.html"
 
     def get_queryset(self):
-        obj = get_object_or_404(
-            self.model, user=self.request.user, id=self.kwargs.get("pk")
+        self._order_obj = get_object_or_404(
+            self.model.objects.select_related("store", "address", "discount").prefetch_related(
+                Prefetch(
+                    "details",
+                    queryset=OrderDetail.objects.select_related(
+                        "product", "product__store", "order"
+                    ),
+                )
+            ),
+            user=self.request.user,
+            id=self.kwargs.get("pk"),
         )
-        return obj.details.all()
+        details = list(self._order_obj.details.all())
+        for detail in details:
+            detail.order = self._order_obj
+        return details
 
     def get_context_data(
             self, *, object_list=..., **kwargs
     ):
         context = super().get_context_data(**kwargs)
+        context["order_obj"] = self._order_obj
 
-        self.order = Order.objects.filter(user=self.request.user, pk=self.kwargs["pk"], is_paid=True).first()
+        self.order = self._order_obj if self._order_obj.is_paid else None
+        has_return = (
+            self.request.user.returns_orders.filter(order=self.order).exists()
+            if self.order
+            else False
+        )
 
-        if self.order and not self.request.user.returns_orders.filter(order=self.order).exists():
-
+        if self.order and not has_return:
             store_date_for_accept_return_order = self.order.second_date + timedelta(
                 days=self.order.store.time_for_return_order_days)
 
             context['can_return'] = store_date_for_accept_return_order >= now()
-        elif self.request.user.returns_orders.filter(order=self.order).exists():
+        elif has_return:
             context['can_return'] = 2
         else:
             context['can_return'] = False
@@ -363,7 +413,16 @@ class GenerateOrderInvoice(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         order_id = self.kwargs.get("pk")
         obj = get_object_or_404(
-            Order, is_paid=True, is_active=True, canceled=False, id=order_id
+            Order.objects.select_related("store", "user", "address", "discount").prefetch_related(
+                Prefetch(
+                    "details",
+                    queryset=OrderDetail.objects.select_related("product", "order"),
+                )
+            ),
+            is_paid=True,
+            is_active=True,
+            canceled=False,
+            id=order_id,
         )
 
         if not request.user.is_superuser:
@@ -449,7 +508,11 @@ class FavoriteProductsDashboard(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         # for return the specific user favorite products
-        return UserFavorite.objects.filter(user=self.request.user).all()
+        return (
+            UserFavorite.objects.filter(user=self.request.user)
+            .select_related("product", "product__store", "product__category", "product__brand")
+            .order_by("-id")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -497,11 +560,11 @@ class RemoveFavoriteProduct(LoginRequiredMixin, RedirectView):
         product = get_object_or_404(Product, pk=self.kwargs["pk"])
         if self.request.user.is_authenticated:
             # check the is user logged in and get obj
-            obj = UserFavorite.objects.filter(user=self.request.user, product=product)
+            objs = list(UserFavorite.objects.filter(user=self.request.user, product=product)[:2])
 
             # check the obj count and delete it
-            if obj.count() == 1:
-                obj.delete()
+            if len(objs) == 1:
+                objs[0].delete()
                 messages.success(self.request, "ایتم مورد نظر حذف شد")
             else:
                 return Http404()
@@ -675,7 +738,11 @@ class UserTicketDashboard(LoginRequiredMixin, ListView):
     context_object_name = "tickets"
 
     def get_queryset(self):
-        return Ticket.objects.filter(user=self.request.user).order_by("-id").all()
+        return (
+            Ticket.objects.filter(user=self.request.user)
+            .select_related("store")
+            .order_by("-id")
+        )
 
 @method_decorator(never_cache, name='dispatch')
 class UserTicketConversation(LoginRequiredMixin, View):
@@ -687,13 +754,17 @@ class UserTicketConversation(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         # get the ticket obj
-        tickets = get_object_or_404(Ticket, user=request.user, id=kwargs["pk"])
+        tickets = get_object_or_404(
+            Ticket.objects.select_related("store", "user"),
+            user=request.user,
+            id=kwargs["pk"],
+        )
         tickets_messages = tickets.message
 
-        for ticket in tickets_messages.filter(is_read_by_client=False):
-            ticket.is_read_by_client = True
-            ticket.date_read_by_client = datetime.now()
-            ticket.save()
+        tickets_messages.filter(is_read_by_client=False).update(
+            is_read_by_client=True,
+            date_read_by_client=datetime.now(),
+        )
 
         if self.request.user_agent.is_mobile:
             form = TicketConversationMobileForm()
@@ -745,7 +816,7 @@ class CloseTicket(LoginRequiredMixin, RedirectView):
         ticket = get_object_or_404(Ticket, user=self.request.user, pk=kwargs["pk"])
         ticket_id = ticket.id
         ticket.close_ticket = True
-        ticket.save()
+        ticket.save(update_fields=["close_ticket"])
         messages.success(self.request, "تیکیت شما بسته شد")
         return reverse("dashboard:tickets-conversation", kwargs={"pk": ticket_id})
 
@@ -762,7 +833,7 @@ class DeleteMessageTicket(LoginRequiredMixin, RedirectView):
             TicketConversation, ticket__user=self.request.user, pk=kwargs["pk"]
         )
         url = reverse(
-            "dashboard:tickets-conversation", kwargs={"pk": message.ticket.id}
+            "dashboard:tickets-conversation", kwargs={"pk": message.ticket_id}
         )
         if message.admin_message:
             messages.error(self.request, "توان حذف پیام ادمین را ندارید")

@@ -5,16 +5,14 @@
 {% load products_tags %}
 
 
-{% block title %}
-    لیست مقالات {{site.title}}
-{% endblock %}
+{% block title %}مقالات و راهنمای خرید | {{ site.title }}{% endblock %}
+
+{% block meta_description %}جدیدترین مقالات تخصصی، آموزش‌ها و راهنمای خرید محصولات در وبلاگ {{ site.title }}.{% endblock %}
 
 {% block breadcrumb %}
     <li class="flex items-center gap-x-2">
         <a href="{% url 'blog:list' %}">
-            <h1>
-                    لیست مقالات {{site.title}}
-            </h1>
+            <h1>مقالات {{ site.title }}</h1>
         </a>
     </li>
 {% endblock %}
@@ -26,63 +24,58 @@
 {% endblock %}
 
 {% block microdata %}
-
 {
   "@context": "https://schema.org",
   "@graph": [
-
     {
-      "@type": "Blog",
-      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#blog",
-      "name": "بلاگ امواج سرمد ",
-      "url": "https://{{ request.get_host }}{{ request.get_full_path }}",
-      "description": "آخرین مقالات و آموزش‌ها"
+      "@type": "CollectionPage",
+      "@id": "{{ canonical_url }}#webpage",
+      "url": "{{ canonical_url }}",
+      "name": "مقالات {{ site.title|escapejs }}",
+      "inLanguage": "fa-IR",
+      "isPartOf": { "@id": "{{ site_url }}/#website" }
     },
-
     {
       "@type": "BreadcrumbList",
-      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#breadcrumb",
+      "@id": "{{ canonical_url }}#breadcrumb",
       "itemListElement": [
         {
           "@type": "ListItem",
           "position": 1,
           "name": "خانه",
-          "item": "https://{{ request.get_host }}/"
+          "item": "{{ site_url }}/"
         },
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "بلاگ",
-          "item": "https://{{ request.get_host }}{% url 'blog:list' %}"
+          "name": "مقالات",
+          "item": "{{ site_url }}{% url 'blog:list' %}"
         }
       ]
     },
-
     {
       "@type": "ItemList",
-      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#itemlist",
+      "@id": "{{ canonical_url }}#itemlist",
+      "numberOfItems": {{ posts|length }},
       "itemListElement": [
         {% for post in posts %}
         {
           "@type": "ListItem",
           "position": {{ forloop.counter }},
-          "url": "https://{{ request.get_host }}{{ post.get_absolute_url }}"
+          "name": "{{ post.title|escapejs }}",
+          "url": "{{ site_url }}{{ post.get_absolute_url }}"
         }{% if not forloop.last %},{% endif %}
         {% endfor %}
       ]
     }
-
   ]
 }
-
-
-
 {% endblock %}
 
 
 {% block content %}
 
-    <main class="container child:mt-8">
+    <div class="container child:mt-8">
         <!-- Breadcrumbs -->
 
         <div class="flex flex-col lg:flex-row gap-4">
@@ -498,52 +491,47 @@
                     <!-- ITEM -->
 
                     {% for post in posts %}
-                        <div class="group">
+                        <article class="group">
                             <div class="relative overflow-hidden rounded-lg">
-                                <a href="{% url 'blog:detail' post.id %}" aria-label="{{ post.title }}">
-                                    {% if post.image %}
-                                        <img src="{{ post.image.url }}" alt="{{ post.title }}" width="384" height="384"
+                                <a href="{% url 'blog:detail' post.id %}" aria-label="{{ post.title }}" class="block">
+                                    <span class="sr-only">{{ post.title }}</span>
+                                                                            {% if post.image %}
+                                        <img src="{{ post.image.url }}" alt="" width="384" height="384"
                                              class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
-                                             loading="lazy">
-                                    {% endif %}
-                                    <a href="{% url 'blog:detail' post.id %}" aria-label="{{ post.title }}">
-                                        <div
-                                                class="absolute opacity-0 left-0 top-0 bottom-0 right-0 bg-black/60 flex items-center justify-center group-hover:opacity-100 duration-300 transition-all rounded-bl-3xl rounded-tr-3xl">
-                                            <a href="{% url 'blog:detail' post.id %}" aria-label="{{ post.title }}"
-                                               class="flex items-center px-2 py-1 gap-x-1 font-DanaMedium rounded-lg border-2 border-white text-white">
-                                                <p>ادامه مطالب</p>
-                                                <svg class="w-4 h-4">
-                                                    <use href="#chevron-left"></use>
-                                                </svg>
-                                            </a>
-                                        </div>
-                                    </a>
+                                             loading="lazy" decoding="async">
+                                        {% endif %}
+                                    
                                 </a>
-
+                                <div class="absolute opacity-0 left-0 top-0 bottom-0 right-0 bg-black/60 flex items-center justify-center group-hover:opacity-100 duration-300 transition-all rounded-bl-3xl rounded-tr-3xl pointer-events-none">
+                                    <span class="flex items-center px-2 py-1 gap-x-1 font-DanaMedium rounded-lg border-2 border-white text-white">
+                                        <span>ادامه مطالب</span>
+                                        <svg class="w-4 h-4" aria-hidden="true">
+                                            <use href="#chevron-left"></use>
+                                        </svg>
+                                    </span>
+                                </div>
                             </div>
-                            <a href="{% url 'blog:detail' post.id %}" aria-label="{{ post.title }}">
-                                <div class="flex flex-col gap-y-1 my-2 px-1">
-                                    <h2 class="font-DanaDemiBold">{{ post.title|truncatewords:5 }}</h2>
-                                </div>
-                                <span class="flex w-full h-1 py-1 border-t border-gray-100 dark:border-white/10"></span>
-                                <div class="flex items-center justify-between text-sm px-1">
-                            <span class="flex items-center gap-x-1 text-gray-400">
-                                <svg class="w-4 h-4">
-                                    <use href="#calendar"></use>
-                                </svg>
-                                <p class="mt-1 font-DanaDemiBold text-zinc-700 dark:text-white">{{ post.updated_at|to_jalali:'%Y/%m/%d' }}</p>
-                            </span>
-                                    <span class="flex items-start gap-x-1 text-gray-400">
-                                <p class="font-DanaDemiBold text-zinc-700 dark:text-white">{{ post.view_count }}</p>
-                                <svg class="w-4 h-4">
-                                    <use href="#eye"></use>
-                                </svg>
-                            </span>
-                                </div>
-                            </a>
-
-
-                        </div>
+                            <div class="flex flex-col gap-y-1 my-2 px-1">
+                                <h2 class="font-DanaDemiBold">
+                                    <a href="{% url 'blog:detail' post.id %}">{{ post.title|truncatewords:5 }}</a>
+                                </h2>
+                            </div>
+                            <span class="flex w-full h-1 py-1 border-t border-gray-100 dark:border-white/10"></span>
+                            <div class="flex items-center justify-between text-sm px-1">
+                                <span class="flex items-center gap-x-1 text-gray-600 dark:text-gray-300">
+                                    <svg class="w-4 h-4" aria-hidden="true">
+                                        <use href="#calendar"></use>
+                                    </svg>
+                                    <span class="mt-1 font-DanaDemiBold text-zinc-700 dark:text-white">{{ post.updated_at|to_jalali:'%Y/%m/%d' }}</span>
+                                </span>
+                                <span class="flex items-start gap-x-1 text-gray-600 dark:text-gray-300">
+                                    <span class="font-DanaDemiBold text-zinc-700 dark:text-white">{{ post.view_count }}</span>
+                                    <svg class="w-4 h-4" aria-hidden="true">
+                                        <use href="#eye"></use>
+                                    </svg>
+                                </span>
+                            </div>
+                        </article>
                     {% endfor %}
 
                 </div>
@@ -553,7 +541,7 @@
                     <ul class="flex items-center gap-x-3 child:flex child:items-center child:justify-center child:w-8 child:h-8 child:cursor-pointer child:shadow child:rounded-lg child:transition-all child:duration-300">
                         {% if page_obj.has_previous %}
                             <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
-                                <a href="?page={{ page_obj.previous_page_number }}">
+                                <a href="?page={{ page_obj.previous_page_number }}" aria-label="صفحه قبلی">
 
                                     <svg class="w-5 h-5">
                                         <use href="#chevron-right"></use>
@@ -574,7 +562,7 @@
                         {% if page_obj.has_next %}
 
                             <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
-                                <a href="?page={{ page_obj.next_page_number }}">
+                                <a href="?page={{ page_obj.next_page_number }}" aria-label="صفحه بعدی">
                                     <svg class="w-5 h-5">
                                         <use href="#chevron-left"></use>
                                     </svg>
@@ -586,7 +574,7 @@
             </div>
         </div>
 
-    </main>
+    </div>
     <script>
         function categoryFilter(id) {
             let elem = document.getElementById(id).classList;

@@ -2,139 +2,127 @@
 {% load products_tags %}
 {% load jalali_tags %}
 
-{% block title %}
-    {{ product.name }}
+{% block title %}{{ product.name }} | {{ site.title }}{% endblock %}
+
+{% block meta_description %}{% if product.parent and product.parent.description %}{{ product.parent.description|striptags|truncatechars:155 }}{% elif product.description %}{{ product.description|striptags|truncatechars:155 }}{% else %}خرید آنلاین {{ product.name }}{% if product.brand %} برند {{ product.brand.name }}{% endif %} با بهترین قیمت و گارانتی معتبر از {{ site.title }}.{% endif %}{% endblock %}
+
+{% block og_type %}product{% endblock %}
+
+{% block og_image %}{% if product.picture %}{{ product.picture.url }}{% endif %}{% endblock %}
+
+{% block extra_meta %}
+    <meta property="product:availability" content="{% if product.count > 0 %}instock{% else %}outofstock{% endif %}">
+    <meta property="product:price:amount" content="{{ product.calc_discount }}">
+    <meta property="product:price:currency" content="IRR">
 {% endblock %}
 
 {% block microdata %}
-     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-    <meta name="description" content="{% if product.parent %}{{ product.parent.description|striptags|truncatechars:160 }}{% else %}{{ product.description|striptags|truncatechars:160 }}{% endif %}">
-    <meta name="keywords" content="{{ product.name }}, {{ product.brand.name }}, {% for tag in product.tags.all %}{{ tag.name }}, {% endfor %}خرید آنلاین, فروشگاه اینترنتی">
-    <meta name="author" content="{{ product.store.name }}">
-    <meta name="language" content="fa">
-    <link rel="canonical" href="https://{{ request.get_host }}{{ request.get_full_path }}">
-    <link rel="alternate" href="https://{{ request.get_host }}{{ request.get_full_path }}" hreflang="fa-ir">
-
-    <!-- Open Graph / Social Media -->
-    <meta property="og:title" content="{{ product.name }} | {{ product.store.name }}">
-    <meta property="og:description" content="{% if product.parent %}{{ product.parent.description|striptags|truncatechars:160 }}{% else %}{{ product.description|striptags|truncatechars:160 }}{% endif %}">
-    <meta property="og:type" content="product">
-    <meta property="og:url" content="https://{{ request.get_host }}{{ request.get_full_path }}">
-    <meta property="og:image" content="{% if product.picture %}{% if product.picture.url|slice:':4' == 'http' %}{{ product.picture.url }}{% else %}https://{{ request.get_host }}{{ product.picture.url }}{% endif %}{% else %}https://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
-    <meta property="og:image:width" content="800">
-    <meta property="og:image:height" content="800">
-    <meta property="og:site_name" content="{{site.title}}">
-    <meta property="product:availability" content="{% if product.count > 0 %}instock{% else %}outofstock{% endif %}">
-    <meta property="product:price:amount" content="{{ product.calc_discount|stringformat:'f'|cut:' ' }}">
-    <meta property="product:price:currency" content="IRR">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ product.name }} | {{ product.store.name }}">
-    <meta name="twitter:description" content="{% if product.parent %}{{ product.parent.description|striptags|truncatechars:160 }}{% else %}{{ product.description|striptags|truncatechars:160 }}{% endif %}">
-    <meta name="twitter:image" content="{% if product.picture %}{% if product.picture.url|slice:':4' == 'http' %}{{ product.picture.url }}{% else %}https://{{ request.get_host }}{{ product.picture.url }}{% endif %}{% else %}https://{{ request.get_host }}/static/images/default-product.jpg{% endif %}">
-
-     {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "Product",
-          "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#product",
-          "name": "{{ product.name|escapejs }}",
-          "description": "{% if product.parent %}{{ product.parent.description|striptags|escapejs }}{% else %}{{ product.description|striptags|escapejs }}{% endif %}",
-          "mpn": "{{ product.sku|default:''|escapejs }}",
-          "sku": "{{ product.sku|default:''|escapejs }}",
-          "brand": {
-            "@type": "Brand",
-            "name": "{{ product.brand.name|escapejs }}"
-          },
-          "image": [
-            "{% if product.picture.url|slice:':4' == 'http' %}{{ product.picture.url }}{% else %}https://{{ request.get_host }}{{ product.picture.url }}{% endif %}"
-            {% for img in product.gallery.all|slice:":3" %}
-            , "{% if img.image.url|slice:':4' == 'http' %}{{ img.image.url }}{% else %}https://{{ request.get_host }}{{ img.image.url }}{% endif %}"
-            {% endfor %}
-          ],
-          "offers": {
-            "@type": "Offer",
-            "url": "https://{{ request.get_host }}{{ request.get_full_path }}",
-            "priceCurrency": "IRR",
-            "price": "{{ product.calc_discount|stringformat:'f'|cut:' ' }}",
-            "priceValidUntil": "{% now 'Y-m-d' %}|add:30days",
-            "availability": "{% if product.count > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
-            "itemCondition": "https://schema.org/NewCondition",
-            "seller": {
-              "@type": "Organization",
-              "name": "{{ product.store.name|escapejs }}"
-            }
-          },
-          "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https://{{ request.get_host }}{{ request.get_full_path }}"
-          },
-          {% if product.comments.exists %}
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "5",
-            "reviewCount": "{{ product.comments.count }}"
-          },
-          "review": [
-            {% for review in product.comments.all|slice:":3" %}
-            {
-              "@type": "Review",
-              "author": {
-                "@type": "Person",
-                "name": "{{ review.user.get_full_name|default:review.user.PhoneNumber|escapejs }}"
-              },
-              "datePublished": "{{ review.date|date:'c' }}",
-              "reviewBody": "{{ review.comment|truncatechars:160|escapejs }}"
-            }{% if not forloop.last %},{% endif %}
-            {% endfor %}
-          ]
-          {% endif %}
-        },
-        {
-          "@type": "BreadcrumbList",
-          "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#breadcrumb",
-          "itemListElement": [
-            {
-              "@type": "ListItem",
-              "position": 1,
-              "name": "خانه",
-              "item": "https://{{ request.get_host }}/"
-            },
-            {
-              "@type": "ListItem",
-              "position": 2,
-              "name": "فروشگاه",
-              "item": "https://{{ request.get_host }}{% url 'product:list' %}"
-            },
-            {
-              "@type": "ListItem",
-              "position": 3,
-              "name": "{{ product.name|escapejs }}",
-              "item": "https://{{ request.get_host }}{{ request.get_full_path }}"
-            }
-          ]
-        },
-        {
-          "@type": "WebPage",
-          "@id": "https://{{ request.get_host }}{{ request.get_full_path }}",
-          "url": "https://{{ request.get_host }}{{ request.get_full_path }}",
-          "inLanguage": "fa-IR",
-          "name": "{{ product.name|escapejs }}",
-          "description": "{% if product.parent %}{{ product.parent.description|striptags|escapejs }}{% else %}{{ product.description|striptags|escapejs }}{% endif %}",
-          "breadcrumb": {
-            "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#breadcrumb"
-          },
-          "primaryImageOfPage": {
-            "@type": "ImageObject",
-            "contentUrl": "{% if product.picture %}{% if product.picture.url|slice:':4' == 'http' %}{{ product.picture.url }}{% else %}https://{{ request.get_host }}{{ product.picture.url }}{% endif %}{% endif %}"
-          }
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Product",
+      "@id": "{{ canonical_url }}#product",
+      "name": "{{ product.name|escapejs }}",
+      "description": "{% if product.parent and product.parent.description %}{{ product.parent.description|striptags|truncatechars:300|escapejs }}{% elif product.description %}{{ product.description|striptags|truncatechars:300|escapejs }}{% else %}{{ product.name|escapejs }}{% endif %}",
+      "sku": "{{ product.sku|default:product.id|escapejs }}",
+      "mpn": "{{ product.sku|default:product.id|escapejs }}"{% if product.brand %},
+      "brand": {
+        "@type": "Brand",
+        "name": "{{ product.brand.name|escapejs }}"
+      }{% endif %}{% if product.picture %},
+      "image": [
+        "{% if product.picture.url|slice:':4' == 'http' %}{{ product.picture.url }}{% else %}{{ site_url }}{{ product.picture.url }}{% endif %}"{% for img in product.gallery.all|slice:":3" %}{% if img.image %},
+        "{% if img.image.url|slice:':4' == 'http' %}{{ img.image.url }}{% else %}{{ site_url }}{{ img.image.url }}{% endif %}"{% endif %}{% endfor %}
+      ]{% endif %},
+      "offers": {
+        "@type": "Offer",
+        "url": "{{ canonical_url }}",
+        "priceCurrency": "IRR",
+        "price": "{{ product.calc_discount }}",
+        "priceValidUntil": "{{ price_valid_until }}",
+        "availability": "{% if product.count > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+        "itemCondition": "https://schema.org/NewCondition",
+        "seller": {
+          "@type": "Organization",
+          "name": "{{ product.store.name|escapejs }}"
         }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ canonical_url }}"
+      }{% if comments %},
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5",
+        "reviewCount": "{{ comments|length }}"
+      },
+      "review": [
+        {% for review in comments|slice:":3" %}
+        {
+          "@type": "Review",
+          "author": {
+            "@type": "Person",
+            "name": "{{ review.user.get_full_name|default:'کاربر سایت'|escapejs }}"
+          },
+          "datePublished": "{{ review.date|date:'c' }}",
+          "reviewBody": "{{ review.comment|truncatechars:160|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ]{% endif %}
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ canonical_url }}#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "خانه",
+          "item": "{{ site_url }}/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "فروشگاه",
+          "item": "{{ site_url }}{% url 'product:list' %}"
+        }{% if product.category %},
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ product.category.name|escapejs }}",
+          "item": "{{ site_url }}{{ product.category.get_absolute_url }}"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "{{ product.name|escapejs }}",
+          "item": "{{ canonical_url }}"
+        }{% else %},
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ product.name|escapejs }}",
+          "item": "{{ canonical_url }}"
+        }{% endif %}
       ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "{{ canonical_url }}",
+      "url": "{{ canonical_url }}",
+      "inLanguage": "fa-IR",
+      "name": "{{ product.name|escapejs }}",
+      "breadcrumb": {
+        "@id": "{{ canonical_url }}#breadcrumb"
+      }{% if product.picture %},
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "contentUrl": "{% if product.picture.url|slice:':4' == 'http' %}{{ product.picture.url }}{% else %}{{ site_url }}{{ product.picture.url }}{% endif %}"
+      }{% endif %}
     }
+  ]
+}
 {% endblock %}
 
 {% block breadcrumb %}
@@ -238,6 +226,8 @@
     src="{{ product.picture.url }}"
     alt="تصویر اصلی {{ product.name }}"
     loading="eager"
+    fetchpriority="high"
+    decoding="async"
     width="384"
     height="384"
     class="zoom-image">
@@ -245,31 +235,29 @@
 {% endif %}
 {% if product.parent %}
 {% for img in product.parent.gallery|sort_number %}
-{% if img.image %}
 <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
-  <img
+  {% if img.image %}<img
     src="{{ img.image.url }}"
     alt="گالری تصاویر {{ product.parent.name }} - {{ forloop.counter }}"
     loading="lazy"
+    decoding="async"
     width="384"
     height="384"
-    class="zoom-image">
+    class="zoom-image">{% endif %}
 </div>
-{% endif %}
 {% endfor %}
 {% else %}
 {% for img in product.gallery|sort_number %}
-{% if img.image %}
 <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
-  <img
+  {% if img.image %}<img
     src="{{ img.image.url }}"
     alt="گالری تصاویر {{ product.name }} - {{ forloop.counter }}"
     loading="lazy"
+    decoding="async"
     width="384"
     height="384"
-    class="zoom-image">
+    class="zoom-image">{% endif %}
 </div>
-{% endif %}
 {% endfor %}
 {% endif %}
 </div>
@@ -305,19 +293,21 @@ function resetZoom(container) {
 
                             {% if product.store.whats_app_link and product.store.whats_app_ID %}
                                 <a href="{{ product.store.whats_app_link }}" class="hover:opacity-80 transition-opacity" rel="noopener noreferrer" target="_blank" aria-label="ارتباط با واتساپ فروشنده">
-                                    <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-10 h-10" loading="lazy" alt="واتساپ {{ product.store.name }}"/>
+                                    <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-10 h-10" width="40" height="40" loading="lazy" decoding="async" alt=""/>
                                 </a>
                             {% endif %}
 
                             {% if product.store.instagram_app_Link and product.store.instagram_app_ID %}
                                 <a href="{{ product.store.instagram_app_Link }}" class="hover:opacity-80 transition-opacity" rel="noopener noreferrer" target="_blank" aria-label="اینستاگرام فروشنده">
 
-                                                           {% if site.instagram_logo %}
-    <img src="{{ site.instagram_logo.url }}"
-         alt="اینستاگرام {{ product.store.name }}"
+                                                               <!-- نسخه WebP با رزولوشن‌های مختلف -->
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    {% if site.instagram_logo %}<img src="{{ site.instagram_logo.url }}"
+         alt=""
+         width="40" height="40"
          class="w-10 h-10 rounded-full"
-         loading="lazy">
-                                                           {% endif %}
+         loading="lazy" decoding="async">{% endif %}
                                 </a>
                             {% endif %}
 
@@ -325,11 +315,13 @@ function resetZoom(container) {
                                 <a href="{{ product.store.telegram_app_Link }}" class="hover:opacity-80 transition-opacity" rel="noopener noreferrer" target="_blank" aria-label="تلگرام فروشنده">
 
 
-                                                            {% if site.telegram_logo %}
-    <img class="w-10 h-10   rounded-full" src="{{ site.telegram_logo.url }}"
-         alt="تلگرام {{ product.store.name }}"
-         loading="lazy">
-                                                            {% endif %}
+                                                                <!-- نسخه WebP با رزولوشن‌های مختلف -->
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    {% if site.telegram_logo %}<img class="w-10 h-10   rounded-full" src="{{ site.telegram_logo.url }}"
+         alt=""
+         width="40" height="40"
+         loading="lazy" decoding="async">{% endif %}
                                 </a>
                             {% endif %}
 
@@ -367,7 +359,7 @@ function resetZoom(container) {
 
                     <!-- FEATURES (بدون تغییر) -->
                     {% if product.parent %}
-                        {% if product.parent.features.exists %}
+                        {% if product.parent.features.all %}
                             <div class="space-y-2">
                                 <p class="font-medium text-gray-800 dark:text-white">ویژگی های محصول:</p>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -382,7 +374,7 @@ function resetZoom(container) {
                             </div>
                         {% endif %}
                     {% else %}
-                        {% if product.features.exists %}
+                        {% if product.features.all %}
                             <div class="space-y-2">
                                 <p class="font-medium text-gray-800 dark:text-white">ویژگی های محصول:</p>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -402,7 +394,7 @@ function resetZoom(container) {
 
             <!-- SPECIFICATIONS (بدون تغییر) -->
             {% if product.parent %}
-                {% if product.parent.specs.exists %}
+                {% if product.parent.specs.all %}
                     <div class="space-y-2">
                         <p class="font-medium text-gray-800 dark:text-white">مشخصات محصول:</p>
                         <div class=" gap-3">
@@ -417,7 +409,7 @@ function resetZoom(container) {
                     </div>
                 {% endif %}
             {% else %}
-                {% if product.specs.exists %}
+                {% if product.specs.all %}
                     <div class="space-y-2">
                         <p class="font-medium text-gray-800 dark:text-white">مشخصات محصول:</p>
                         <div class=" gap-3">
@@ -433,7 +425,7 @@ function resetZoom(container) {
                 {% endif %}
             {% endif %}
 
-            {% if product.child.exists and product.parent is None %}
+            {% if product.child.all and product.parent is None %}
                 <p class="font-medium text-gray-800 dark:text-white mb-2">{{ product.group_name|default:' ' }}</p>
                 <div class="flex gap-2 overflow-x-auto pb-3">
                     <div class="flex items-center rounded-lg p-2 transition-all border hover:shadow-sm min-w-[250px] sm:min-w-[280px] {% if request.resolver_match.kwargs.pk == product.id %} border-2 border-green-500 {% else %} border-gray-200 dark:border-white/20 {% endif %}">
@@ -709,7 +701,7 @@ function resetZoom(container) {
 
             <!-- TAGS با لینک داخلی -->
             {% if product.parent %}
-                {% if product.parent.tags.exists %}
+                {% if product.parent.tags.all %}
                     <div class="flex flex-wrap gap-2">
                         {% for tag in product.parent.tags.all %}
                             {% if tag.name != '' %}
@@ -721,7 +713,7 @@ function resetZoom(container) {
                     </div>
                 {% endif %}
             {% else %}
-                {% if product.tags.exists %}
+                {% if product.tags.all %}
                     <div class="flex flex-wrap gap-2">
                         {% for tag in product.tags.all %}
                             {% if tag.name != '' %}
@@ -753,7 +745,7 @@ function resetZoom(container) {
                     <p class="text-2xl font-DanaDemiBold">{{ product|colleague:request }}</p>
                     <p class="">تومان</p>
                     <br>
-                    <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                    <del class="font-Dana text-xs lg:text-sm text-rose-700 dark:text-rose-300 hidden lg:inline">
                         {{ product.price|tdc }}
                         <span class="font-Dana text-sm">تومان</span>
                     </del>
@@ -762,7 +754,7 @@ function resetZoom(container) {
                         <p class="text-2xl font-DanaDemiBold">{{ product.price|clac_discount:product.discount }}</p>
                         <p class="">تومان</p>
                         <br>
-                        <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                        <del class="font-Dana text-xs lg:text-sm text-rose-700 dark:text-rose-300 hidden lg:inline">
                             {{ product.price|tdc }}
                             <span class="font-Dana text-sm">تومان</span>
                         </del>
@@ -897,19 +889,19 @@ function resetZoom(container) {
                 {% for comment in comments %}
                     <li class="child:flex py-4 border-b border-gray-200 child:border-white/20">
                         <div class="flex items-center gap-x-2">
-                            <h2 class="font-DanaMedium text-lg mb-1">{{ comment.subject }}</h2>
+                            <h3 class="font-DanaMedium text-lg mb-1">{{ comment.subject }}</h3>
                             {% if comment.buyer %}
                                 <span class="px-2 py-1 mb-2 rounded-lg bg-green-500 text-white text-xs">خریدار</span>
                             {% endif %}
                         </div>
                         <div class="flex-col">
                             {% if comment.suggest_product %}
-                                <h2 class="flex items-center gap-x-1 text-green-500 mb-4">
+                                <p class="flex items-center gap-x-1 text-green-700 dark:text-green-300 mb-4">
                                     <svg class="w-4 h-4"><use href="#hand-up"></use></svg>
                                     پیشنهاد میشود
                                 </h2>
                             {% else %}
-                                <h2 class="flex items-center gap-x-1 text-red-500 mb-4">
+                                <p class="flex items-center gap-x-1 text-rose-700 dark:text-rose-300 mb-4">
                                     <svg class="w-4 h-4"><use href="#hand-down"></use></svg>
                                     پیشنهاد نمیشود
                                 </h2>
@@ -917,7 +909,7 @@ function resetZoom(container) {
                             <p class="text-gray-500 dark:text-gray-200 mb-2 line-clamp-2">{{ comment.comment }}</p>
                         </div>
                         <div class="mt-2 lg:mt-0 flex-col lg:flex-row gap-y-2 lg:items-center justify-between">
-                            <div class="flex items-center gap-x-4 text-gray-400 text-sm">
+                            <div class="flex items-center gap-x-4 text-gray-600 dark:text-gray-300 text-sm">
                                 <p>{{ comment.date|to_jalali:'%H:%M:%S - %y/%m/%d' }}</p>
                                 <p>{{ comment.user.get_full_name }}</p>
                                 {% if user.is_superuser or user.id == comment.user.id or user.is_staff %}
@@ -927,7 +919,7 @@ function resetZoom(container) {
                                 {% endif %}
                             </div>
                             <div class="flex items-center gap-x-2 flex-wrap mt-2">
-                                <p class="text-gray-400 text-sm">آیا این دیدگاه برایتان مفید بود؟</p>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">آیا این دیدگاه برایتان مفید بود؟</p>
                                 <div class="flex items-center gap-x-2 child:flex child:items-center child:gap-x-1 child:rounded-lg child:p-2 child:font-DanaMedium child:duration-300 child:transition-all child:text-sm">
                                     <a href="{% url 'product:like_comment' pk=product.id comment_id=comment.id %}?_={{ ts }}" class="text-green-600 ring-transparent ring-1 focus:ring-green-600 dark:focus:ring-green-600">
                                         {{ comment.like_count }}
@@ -953,10 +945,10 @@ function resetZoom(container) {
                 <h2 class="font-MorabbaMedium text-xl lg:text-3xl">محصولات مرتبط</h2>
             </div>
             <div class="flex items-center gap-x-2 child:p-2 child:bg-white child:dark:bg-zinc-700 child:shadow child:rounded-full">
-                <button class="related-products-prev" aria-label="محصولات مرتبط قبلی">
+                <button type="button" class="related-products-prev" aria-label="محصولات مرتبط قبلی">
                     <svg class="w-4 h-4"><use href="#chevron-right"></use></svg>
                 </button>
-                <button class="related-products-next" aria-label="محصولات مرتبط بعدی">
+                <button type="button" class="related-products-next" aria-label="محصولات مرتبط بعدی">
                     <svg class="w-4 h-4"><use href="#chevron-left"></use></svg>
                 </button>
             </div>
@@ -964,16 +956,18 @@ function resetZoom(container) {
         <div class="swiper related-products-swiper rounded-lg" dir="rtl">
             <div class="swiper-wrapper">
                 {% for product in same_product.all %}
-                    <div onclick="window.location=this.querySelector('a').href" class="swiper-slide group bg-white dark:bg-zinc-700 w-64" style="width: 250px !important; margin-left: 20px;">
+                    <div class="swiper-slide group bg-white dark:bg-zinc-700 w-64" style="width: 250px !important; margin-left: 20px;">
                         {% if product.have_discount %}
                             <span class="absolute top-5 right-5 flex items-center justify-center w-8 h-8 text-xs bg-green-500 rounded-full text-white z-30">
                                 {{ product.discount }}%
                             </span>
                         {% endif %}
-                        <a href="{% url 'product:detail' product.id %}" title="{{ product.name }}">
-                            {% if product.picture %}
-                                <img src="{{ product.picture.url }}" alt="{{ product.name }}" width="200" height="200" class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3" loading="lazy">
-                            {% endif %}
+                        <a href="{% url 'product:detail' product.id %}" aria-label="{{ product.name }}" title="{{ product.name }}" class="block">
+                            <span class="sr-only">{{ product.name }}</span>
+                                                            {% if product.picture %}
+                                    <img src="{{ product.picture.url }}" alt="" width="200" height="200" class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3 object-contain" loading="lazy" decoding="async">
+                                {% endif %}
+                            
                         </a>
                         <div class="px-2 lg:px-4 mb-3">
                             <a href="{% url 'product:detail' product.id %}" class="line-clamp-2 font-DanaMedium mb-2 text-sm lg:text-base" title="{{ product.name }}">
@@ -981,14 +975,14 @@ function resetZoom(container) {
                             </a>
                             <div class="flex items-center gap-x-1 lg:gap-x-3">
                                 {% if request.user.is_authenticated and user.colleague_user and product_store in colleague_with_store and product.colleague_users_price > 0 %}
-                                    <p class="font-DanaDemiBold text-green-600 dark:text-green-300">{{ product|colleague:request }} <span class="font-Dana text-sm">تومان</span></p>
-                                    <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">{{ product.price|tdc }} <span>تومان</span></del>
+                                    <p class="font-DanaDemiBold text-green-700 dark:text-green-300">{{ product|colleague:request }} <span class="font-Dana text-sm">تومان</span></p>
+                                    <del class="font-Dana text-xs lg:text-sm text-rose-700 dark:text-rose-300 hidden lg:inline">{{ product.price|tdc }} <span>تومان</span></del>
                                 {% else %}
                                     {% if not product.have_discount %}
-                                        <p class="font-DanaDemiBold text-green-600 dark:text-green-300">{{ product.price|tdc }} <span class="font-Dana text-sm">تومان</span></p>
+                                        <p class="font-DanaDemiBold text-green-700 dark:text-green-300">{{ product.price|tdc }} <span class="font-Dana text-sm">تومان</span></p>
                                     {% else %}
-                                        <p class="font-DanaDemiBold text-green-600 dark:text-green-300">{{ product.price|clac_discount:product.discount }} <span class="font-Dana text-sm">تومان</span></p>
-                                        <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">{{ product.price|tdc }} <span>تومان</span></del>
+                                        <p class="font-DanaDemiBold text-green-700 dark:text-green-300">{{ product.price|clac_discount:product.discount }} <span class="font-Dana text-sm">تومان</span></p>
+                                        <del class="font-Dana text-xs lg:text-sm text-rose-700 dark:text-rose-300 hidden lg:inline">{{ product.price|tdc }} <span>تومان</span></del>
                                     {% endif %}
                                 {% endif %}
                             </div>

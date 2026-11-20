@@ -1,60 +1,35 @@
 {% extends 'Base/Base.html' %}
 
 
-{% block title %}
+{% block title %}{{ item.name }} | {{ site.title }}{% endblock %}
 
-    {{ item.name }} | {{site.title}}
+{% block meta_description %}{{ item.short_description|striptags|truncatechars:155|default:item.name }}{% endblock %}
 
-{% endblock %}
-
+{% block og_image %}{% if item.image %}{{ item.image.url }}{% endif %}{% endblock %}
 
 {% block microdata %}
-
 {
   "@context": "https://schema.org",
   "@graph": [
-
     {
       "@type": "SoftwareApplication",
-      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#app",
+      "@id": "{{ canonical_url }}#app",
       "name": "{{ item.name|escapejs }}",
-      "description": "{{ item.name|escapejs }}",
-      {% if item.image %}
-        "image": "{% if item.image.url|slice:':4' == 'http' %}{{ item.image.url }}{% else %}https://{{ request.get_host }}{{ item.image.url }}{% endif %}",
-      {% endif %}
-
+      "description": "{{ item.short_description|striptags|truncatechars:200|default:item.name|escapejs }}"{% if item.image %},
+      "image": "{% if item.image.url|slice:':4' == 'http' %}{{ item.image.url }}{% else %}{{ site_url }}{{ item.image.url }}{% endif %}"{% endif %},
       "operatingSystem": "Windows"
-      },
-
+    },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#breadcrumb",
+      "@id": "{{ canonical_url }}#breadcrumb",
       "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "خانه",
-          "item": "https://{{ request.get_host }}/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "برنامه‌ها",
-          "item": "https://{{ request.get_host }}{% url 'site:apps-list' %}"
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "name": "{{ item.name|escapejs }}",
-          "item": "https://{{ request.get_host }}{{ request.get_full_path }}"
-        }
+        { "@type": "ListItem", "position": 1, "name": "خانه", "item": "{{ site_url }}/" },
+        { "@type": "ListItem", "position": 2, "name": "برنامه‌ها", "item": "{{ site_url }}{% url 'site:apps-list' %}" },
+        { "@type": "ListItem", "position": 3, "name": "{{ item.name|escapejs }}", "item": "{{ canonical_url }}" }
       ]
     }
-
   ]
 }
-
-
 {% endblock %}
 
 {% block breadcrumb %}
@@ -73,7 +48,7 @@
 {% endblock %}
 
 {% block content %}
-    <main class="container child:mt-8">
+    <div class="container child:mt-8">
 
 
         <!-- app  -->
@@ -83,11 +58,14 @@
                 <!-- LOGO -->
                 <span class="text-green-500 transition-colors w-fit  block">
                     {% if item.image %}
-<img src="{{ item.image.url }}"
-     alt="{{ item.name }}"
-     class="w-24 h-14 rounded-full"
-     width="96" height="56"
-     loading="lazy">
+    <!-- نسخه WebP با رزولوشن‌های مختلف -->
+
+    <!-- fallback (همون WebP، چون پشتیبانی WebP الان بالای ۹۷٪ هست) -->
+    <img src="{{ item.image.url }}"
+         alt="{{ item.name }}"
+         class="w-24 h-14 rounded-full" width="96" height="56" loading="eager" fetchpriority="high" decoding="async"
+         width="96" height="56"
+         loading="lazy">
 
                     {% endif %}
 
@@ -167,6 +145,6 @@
             </div>
 
         </section>
-    </main>
+    </div>
 {% endblock %}
 

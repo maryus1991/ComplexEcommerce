@@ -23,8 +23,8 @@ class ProductBrand(models.Model):
         resize_source={"size": (600, 600), "crop": False, "upscale": False, "quality": 80},
     )
     updated_at = models.DateTimeField(auto_now=True, null=True)
-    is_active = models.BooleanField(default=True)
-    sort_number = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True, db_index=True)
+    sort_number = models.PositiveSmallIntegerField(default=0, db_index=True)
 
     def __str__(self):
         return self.name
@@ -45,8 +45,8 @@ class ProductCategory(models.Model):
         resize_source={"size": (600, 600), "crop": False, "upscale": False, "quality": 80},
     )
     updated_at = models.DateTimeField(auto_now=True, null=True)
-    is_active = models.BooleanField(default=True)
-    sort_number = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True, db_index=True)
+    sort_number = models.PositiveSmallIntegerField(default=0, db_index=True)
 
     def __str__(self):
         return self.name
@@ -93,6 +93,14 @@ class Product(models.Model):
 
     class Meta:
         ordering = ["-sort_number"]
+        indexes = [
+            models.Index(fields=["is_active", "admin_verified"]),
+            models.Index(fields=["is_active", "admin_verified", "count"]),
+            models.Index(fields=["have_discount", "-sort_number_discount"]),
+            models.Index(fields=["-sort_number_newest_products"]),
+            models.Index(fields=["-sort_number_most_sell"]),
+            models.Index(fields=["price"]),
+        ]
 
 
 
@@ -193,7 +201,12 @@ class ProductViews(models.Model):
         User, on_delete=models.CASCADE, related_name="views", null=True, blank=True
     )
     count = models.PositiveBigIntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["product", "ip"]),
+        ]
 
 
 class UserFavorite(models.Model):

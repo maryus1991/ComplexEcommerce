@@ -129,7 +129,8 @@ class StoreBlogListView(UserStoreStaffMixin, ListView):
             super()
             .get_queryset()
             .filter(store=self.request.user.store)
-            .prefetch_related("views")
+            .select_related("category", "user", "store")
+            .annotate(views_count=Count("views", distinct=True))
         )
 
         form = StoreBlogFilteringForm(self.request.GET)

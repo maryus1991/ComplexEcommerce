@@ -50,13 +50,13 @@ class BlogListView(AdminUserMixin, ListView):
     context_object_name = "items"
 
     def get_queryset(self):
-        return super().get_queryset().prefetch_related(
-            'views', 'store' , 'category'
-        ).annotate(views_count=Count('views')).order_by('-id')
-    
-    def get_queryset(self):
-        query = super().get_queryset().prefetch_related('views', 'store' , 'category'
-        ).annotate(views_count=Count('views')).order_by('-id')
+        query = (
+            super()
+            .get_queryset()
+            .select_related('store', 'category', 'user')
+            .annotate(views_count=Count('views'))
+            .order_by('-id')
+        )
 
         form = AdminBlogFilteringForm(self.request.GET)
 
@@ -252,7 +252,7 @@ class BlogCategoryListView(AdminUserMixin, ListView):
 
     def get_queryset(self):
  
-        query = super().get_queryset().prefetch_related("children","parent","blogs")
+        query = super().get_queryset().select_related("parent").prefetch_related("children", "blogs")
  
         search = self.request.GET.get("search")
         status = self.request.GET.get("status")

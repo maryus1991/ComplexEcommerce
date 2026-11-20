@@ -64,46 +64,44 @@
                 <ul class="nav navbar-nav">
                     {% if user.is_staff and user.store and 'admin' not in request.path %}
 
+                        {% with response_tickets=user.store.tickets|ticket_obj_response %}
                         <li id="messages-menu" onclick="hideOrShowMenus(this)" class="dropdown messages-menu">
                             <a class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-envelope-o"></i>
-                                {% if user.store.tickets.exists %}
+                                {% if response_tickets %}
 
-                                    <span class="label label-success">{{ user.store.tickets|ticket_count_response }}</span>
+                                    <span class="label label-success">{{ response_tickets|length }}</span>
                                 {% endif %}
                             </a>
                             <ul class="dropdown-menu">
 
-                                {% if user.store.tickets.exists %}
+                                {% for item in response_tickets %}
+                                    {% if forloop.counter <= 5 %}
 
-                                    {% for item in user.store.tickets|ticket_obj_response %}
-                                        {% if forloop.counter <= 5 %}
+                                        <li>
+                                            <a href="{% url 'store:response-received-ticket' item.id %}"
+                                               class="clearfix">
+                                                <p class="pull-left">
+                                                    {{ item.user.get_full_name }}
+                                                    <br>
+                                                    <small class="text-muted"><i
+                                                            class="fa fa-clock-o"></i> {{ item.last_message_date|to_jalali:'%H:%m - %Y/%M/%d ' }}
+                                                    </small>
+                                                </p>
 
-                                            <li>
-                                                <a href="{% url 'store:response-received-ticket' item.id %}"
-                                                   class="clearfix">
-                                                    <p class="pull-left">
-                                                        {{ item.user.get_full_name }}
-                                                        <br>
-                                                        <small class="text-muted"><i
-                                                                class="fa fa-clock-o"></i> {{ item.message.last.date|to_jalali:'%H:%m - %Y/%M/%d ' }}
-                                                        </small>
-                                                    </p>
-
-                                                </a>
-                                            </li>
-                                        {% endif %}
-
-                                        {% if not forloop.last %}
-                                            <li role="separator" class="divider"></li>
-
-                                        {% endif %}
-                                    {% empty %}
-                                        <li class="text-center" style="padding: 10px;">
-                                            <p class="text-muted">هنوز پیامی دریافت نکردید</p>
+                                            </a>
                                         </li>
-                                    {% endfor %}
-                                {% endif %}
+                                    {% endif %}
+
+                                    {% if not forloop.last %}
+                                        <li role="separator" class="divider"></li>
+
+                                    {% endif %}
+                                {% empty %}
+                                    <li class="text-center" style="padding: 10px;">
+                                        <p class="text-muted">هنوز پیامی دریافت نکردید</p>
+                                    </li>
+                                {% endfor %}
 
                                 <li class="footer text-center">
                                     <a href="{% url 'store:list-received-ticket' %}">نمایش تمام پیام ها</a>
@@ -111,98 +109,97 @@
 
                             </ul>
                         </li>
+                        {% endwith %}
 
+                        {% with store_recent_orders=user.store.orders|orders_obj %}
                         <li id="notifications-menu" onclick="hideOrShowMenus(this)" class="dropdown notifications-menu">
                             <a class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-bell-o"></i>
                                 <span class="label label-warning">
-                                    {% if user.store.orders.exists %}
+                                    {% if store_recent_orders %}
 
-                                        {{ user.store.orders|orders_count }}</span>
+                                        {{ store_recent_orders|length }}</span>
                                     {% endif %}
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="header">
-                                    {% if user.store.orders.exists %}
+                                    {% if store_recent_orders %}
 
-                                        {{ user.store.orders|orders_count }} سفارش جدید</li>
+                                        {{ store_recent_orders|length }} سفارش جدید</li>
                                     {% endif %}
                                 <li>
 
                                     <ul class="menu">
-                                        {% if user.store.orders.exists %}
-                                            {% for order in user.store.orders|orders_obj %}
+                                        {% for order in store_recent_orders %}
 
 
-                                                <li>
-                                                    <a href="{% url 'store:orders-detail' order.id %}">
-                                                        <i class="fa fa-shopping-cart text-green"></i>
-                                                        سفارش شماره {{ order.id }}
-                                                    </a>
-                                                </li>
+                                            <li>
+                                                <a href="{% url 'store:orders-detail' order.id %}">
+                                                    <i class="fa fa-shopping-cart text-green"></i>
+                                                    سفارش شماره {{ order.id }}
+                                                </a>
+                                            </li>
 
-                                                {% if not forloop.last %}
-                                                    <li role="separator" class="divider"></li>
+                                            {% if not forloop.last %}
+                                                <li role="separator" class="divider"></li>
 
-                                                {% endif %}
+                                            {% endif %}
 
-                                            {% empty %}
-                                                <li class="text-center" style="padding: 10px;">
-                                                    <p class="text-muted">هنوز پیامی دریافت نکردید</p>
-                                                </li>
-                                            {% endfor %}
-                                        {% endif %}
+                                        {% empty %}
+                                            <li class="text-center" style="padding: 10px;">
+                                                <p class="text-muted">هنوز پیامی دریافت نکردید</p>
+                                            </li>
+                                        {% endfor %}
                                     </ul>
                                 </li>
                                 <li class="footer"><a href="{% url 'store:orders-list-wait-for-sending-list' %}">نمایش
                                     همه</a></li>
                             </ul>
                         </li>
+                        {% endwith %}
 
+                        {% with request_tickets=user.tickets|ticket_obj_request %}
                         <li id="tasks-menu" onclick="hideOrShowMenus(this)" class="dropdown tasks-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-flag-o"></i>
                                 <span class="label label-danger">
-                                    {% if  user.tickets.exists %}
+                                    {% if request_tickets %}
 
-                                        {{ user.tickets|ticket_count_request }}</span>
+                                        {{ request_tickets|length }}</span>
                                     {% endif %}
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="header">
-                                    {% if  user.tickets.exists %}
+                                    {% if request_tickets %}
 
-                                        {{ user.tickets|ticket_count_request }}پاسخ تیکیت های ارسالی</li>
+                                        {{ request_tickets|length }}پاسخ تیکیت های ارسالی</li>
                                     {% endif %}
                                 <li>
                                      <ul class="menu">
-                                        {% if  user.tickets.exists %}
-
-                                            {% for item in user.tickets|ticket_obj_request %}
-                                                <li class="">
-                                                    <a href="{% url 'store:conversation-ticket' item.id %}"
-                                                       class="clearfix">
-                                                        <p class="pull-right">
-                                                            {{ item.user.get_full_name }}
-                                                            <br>
-                                                            <small class="text-muted"><i
-                                                                    class="fa fa-clock-o"></i> {{ item.message.last.date|to_jalali:'%H:%m - %Y/%M/%d ' }}
-                                                            </small>
-                                                        </p>
+                                        {% for item in request_tickets %}
+                                            <li class="">
+                                                <a href="{% url 'store:conversation-ticket' item.id %}"
+                                                   class="clearfix">
+                                                    <p class="pull-right">
+                                                        {{ item.user.get_full_name }}
+                                                        <br>
+                                                        <small class="text-muted"><i
+                                                                class="fa fa-clock-o"></i> {{ item.last_message_date|to_jalali:'%H:%m - %Y/%M/%d ' }}
+                                                        </small>
+                                                    </p>
 
 
-                                                    </a>
-                                                </li>
-                                                {% if not forloop.last %}
-                                                    <li role="separator" class="divider"></li>
+                                                </a>
+                                            </li>
+                                            {% if not forloop.last %}
+                                                <li role="separator" class="divider"></li>
 
-                                                {% endif %}
-                                            {% empty %}
-                                                <li class="text-center" style="padding: 10px;">
-                                                    <p class="text-muted">هنوز پیامی دریافت نکردید</p>
-                                                </li>
-                                            {% endfor %}
-                                        {% endif %}
+                                            {% endif %}
+                                        {% empty %}
+                                            <li class="text-center" style="padding: 10px;">
+                                                <p class="text-muted">هنوز پیامی دریافت نکردید</p>
+                                            </li>
+                                        {% endfor %}
                                     </ul>
 
                                 </li>
@@ -211,6 +208,7 @@
                                 </li>
                             </ul>
                         </li>
+                        {% endwith %}
                     {% endif %}
 
                      <li id="user-menu" onclick="hideOrShowMenus(this)" class="dropdown user user-menu">

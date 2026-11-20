@@ -1,7 +1,39 @@
 {% extends 'Base/Base.html' %}
 
-{% block title %}
-    سوالات احتمالی شما
+{% block title %}سوالات متداول | {{ site.title }}{% endblock %}
+
+{% block meta_description %}پاسخ به سوالات متداول درباره ثبت سفارش، ارسال، گارانتی و پشتیبانی در فروشگاه {{ site.title }}.{% endblock %}
+
+{% block microdata %}
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "FAQPage",
+      "@id": "{{ canonical_url }}#faq",
+      "mainEntity": [
+        {% for question in questions %}
+        {
+          "@type": "Question",
+          "name": "{{ question.question|escapejs }}",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{ question.answer|striptags|escapejs }}"
+          }
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ canonical_url }}#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "خانه", "item": "{{ site_url }}/" },
+        { "@type": "ListItem", "position": 2, "name": "سوالات متداول", "item": "{{ canonical_url }}" }
+      ]
+    }
+  ]
+}
 {% endblock %}
 
 {% block breadcrumb %}
@@ -12,14 +44,14 @@
 {% endblock %}
 
 {% block content %}
-    <main class="container child:mt-8">
+    <div class="container child:mt-8">
 
 
         <section class="w-full px-5 pt-5 pb-10 rounded-lg shadow bg-white dark:bg-zinc-700">
-            <h2 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1">سوالات متداول</h2>
+            <h1 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1">سوالات متداول</h1>
             <p class="text-gray-500 dark:text-gray-400 font-DanaMedium mt-4 mb-8 text-sm lg:text-base">
                 اگر سوال مورد نظر خود را پیدا نکردید به <a href="{% url 'site:contact-us' %}"
-                                                           class="font-DanaMedium text-green-500">پشتیبانی</a>
+                                                           class="font-DanaMedium text-green-700 dark:text-green-300">پشتیبانی</a>
                 تیکت بدهید
             </p>
 
@@ -39,7 +71,7 @@
                             <use href="#chevron-left"></use>
                         </svg>
                     </div>
-                    <div id="body-num-{{ question.id }}" class="accordion-content hidden py-2 mx-4 child:dark:text-gray-200 child:text-gray-400">
+                    <div id="body-num-{{ question.id }}" class="accordion-content hidden py-2 mx-4 child:dark:text-gray-200 child:text-gray-600">
                         <p>
                             {{ question.answer }}
                         </p>
@@ -62,5 +94,5 @@
             </script>
             
         </section>
-    </main>
+    </div>
 {% endblock %}

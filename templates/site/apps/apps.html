@@ -3,64 +3,46 @@
 {% load jalali_tags %}
 
 {% load compress static %}
-{% block title %}
-    {{site.title}} برنامه های کاربردی
-{% endblock %}
+{% block title %}برنامه‌های کاربردی | {{ site.title }}{% endblock %}
 
-
+{% block meta_description %}دانلود رایگان نرم‌افزارها و برنامه‌های کاربردی رسمی و تاییدشده در {{ site.title }}.{% endblock %}
 
 {% block microdata %}
- {
+{
   "@context": "https://schema.org",
   "@graph": [
-
     {
       "@type": "BreadcrumbList",
-      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#breadcrumb",
+      "@id": "{{ canonical_url }}#breadcrumb",
       "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "خانه",
-          "item": "https://{{ request.get_host }}/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "برنامه‌ها",
-          "item": "https://{{ request.get_host }}{{ request.get_full_path }}"
-        }
+        { "@type": "ListItem", "position": 1, "name": "خانه", "item": "{{ site_url }}/" },
+        { "@type": "ListItem", "position": 2, "name": "برنامه‌های کاربردی", "item": "{{ site_url }}{% url 'site:apps-list' %}" }
       ]
     },
-
     {
       "@type": "ItemList",
-      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#itemlist",
+      "@id": "{{ canonical_url }}#itemlist",
+      "numberOfItems": {{ apps|length }},
       "itemListElement": [
         {% for app in apps %}
         {
           "@type": "ListItem",
           "position": {{ forloop.counter }},
-          "url": "https://{{ request.get_host }}{{ app.get_absolute_url }}",
+          "url": "{{ site_url }}{{ app.get_absolute_url }}",
           "item": {
             "@type": "SoftwareApplication",
-            "@id": "https://{{ request.get_host }}{{ app.get_absolute_url }}#app",
+            "@id": "{{ site_url }}{{ app.get_absolute_url }}#app",
             "name": "{{ app.name|escapejs }}",
-            "description": "{{ app.name|truncatechars:160|escapejs }}",
-            {% if app.image %}
-            "image": "{% if app.image.url|slice:':4' == 'http' %}{{ app.image.url }}{% else %}https://{{ request.get_host }}{{ app.image.url }}{% endif %}",
-            {% endif %}
-            "operatingSystem": "Windows",
-
+            "description": "{{ app.short_description|striptags|truncatechars:160|default:app.name|escapejs }}"{% if app.image %},
+            "image": "{% if app.image.url|slice:':4' == 'http' %}{{ app.image.url }}{% else %}{{ site_url }}{{ app.image.url }}{% endif %}"{% endif %},
+            "operatingSystem": "Windows"
           }
         }{% if not forloop.last %},{% endif %}
         {% endfor %}
       ]
     }
-
   ]
 }
-
 {% endblock %}
 
 {% block breadcrumb %}
@@ -94,7 +76,7 @@
 {% endblock %}
 
 {% block content %}
-    <main class="container mx-auto px-4 py-8">
+    <div class="container mx-auto px-4 py-8">
         <!-- Breadcrumbs -->
 
 
@@ -146,15 +128,16 @@
                     {% endif %}
                     {% for app in apps %}
                         <div class="app-card bg-white dark:bg-zinc-700 rounded-xl overflow-hidden shadow-md hover:shadow-lg border border-gray-100 dark:border-gray-600 transition-all duration-300">
-                            <a href="{% url 'site:apps-details' app.pk %}">
-                                <div class="p-5">
+                            <div class="p-5">
+                                <a href="{% url 'site:apps-details' app.pk %}" aria-label="{{ app.name }}" class="block">
                                     <div class="flex justify-between items-start mb-4">
                                         <!-- لوگو برنامه -->
                                         <div class="flex-shrink-0 mr-4 px-4 ">
                                             {% if app.image %}
-                                                <img src="{{ app.image.url }}" alt="{{ app.name }}" width="64" height="64"
-                                                     class="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:border-gray-600"
-                                                     loading="lazy">
+                                                                                                    <img src="{{ app.image.url }}" alt="" width="64" height="64" decoding="async"
+                                                         class="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:border-gray-600"
+                                                         loading="lazy">
+                                                
 
                                             {% else %}
                                                 <div class="w-16 h-16 bg-gray-200 dark:bg-zinc-600 rounded-lg flex items-center justify-center">
@@ -187,6 +170,7 @@
                                     </div>
 
 
+                                </a>
                                     <div class="flex justify-between items-center mt-4">
                                         <div class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                                             {% if app.file %}
@@ -204,7 +188,7 @@
                                         <a {% if not site.active_google_reCAPTCHA %}
                                             href="{% url 'site:apps-download' app.id %}" {% else %} href="#" {% endif %}
                                             data-download-url="{% url 'site:apps-download' app.id %}"
-                                            class="download-button bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-1.5 lg:p-2">
+                                            class="download-button bg-green-500/20 text-green-700 dark:text-green-300 flex items-center gap-x-1 rounded-lg p-1.5 lg:p-2">
                                             <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor"
                                                  viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -215,15 +199,14 @@
 
 
                                         <a href="{% url 'site:apps-details' app.pk %}"
-                                           class="bg-green-500/20 text-green-500 flex items-center gap-x-1 rounded-lg p-1.5 lg:p-2 ">
+                                           class="bg-green-500/20 text-green-700 dark:text-green-300 flex items-center gap-x-1 rounded-lg p-1.5 lg:p-2 ">
                                             <p class="text-xs lg:text-sm"> بیشتر بخونید </p>
                                             <svg class="w-4 h-4 lg:w-5 lg:h-5">
                                                 <use href="#chevron-left"></use>
                                             </svg>
                                         </a>
                                     </div>
-                                </div>
-                            </a>
+                            </div>
                         </div>
                     {% endfor %}
                 </div>
@@ -320,5 +303,5 @@
                 {% endif %}
             </div>
         </div>
-    </main>
+    </div>
 {% endblock %}

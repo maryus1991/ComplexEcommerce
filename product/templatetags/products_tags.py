@@ -85,42 +85,66 @@ def order_by(orm, sort):
     return orm.order_by(sort)
 
 
+def _get_prefetched_items(orm):
+    instance = getattr(orm, "instance", None)
+    rel = getattr(orm, "rel", None)
+    if instance is not None and rel is not None:
+        cache_name = rel.get_cache_name()
+        prefetched = getattr(instance, "_prefetched_objects_cache", None)
+        if prefetched and cache_name in prefetched:
+            return prefetched[cache_name]
+    return None
+
+
 @register.filter
 def active_category(orm):
-    if orm and orm.exists():
-        try:
-            return orm.filter(is_active=True).order_by('-sort_number')
-        except Exception as e:
-            return orm.filter(is_active=True)
-    else:
+    if not orm:
         return None
+    prefetched = _get_prefetched_items(orm)
+    if prefetched is not None:
+        active = [obj for obj in prefetched if getattr(obj, "is_active", False)]
+        if not active:
+            return None
+        active.sort(key=lambda obj: getattr(obj, "sort_number", 0), reverse=True)
+        return active
+    try:
+        qs = orm.filter(is_active=True).order_by('-sort_number')
+    except Exception:
+        qs = orm.filter(is_active=True)
+    return qs
+
 
 @register.filter
 def active_product(orm):
-    if orm and orm.exists():
-        orm = orm.filter(is_active=True,
-                         store__is_active=True,
-                         store__is_verified=True,
-                         admin_verified=True,
-                         brand__is_active=True,
-                         category__is_active=True,
-                         )
-        try:
-           return orm.order_by('-sort_number').all()
-        except Exception as e:
-            return orm.all()
-    else:
+    if not orm:
         return None
+    qs = orm.filter(
+        is_active=True,
+        store__is_active=True,
+        store__is_verified=True,
+        admin_verified=True,
+        brand__is_active=True,
+        category__is_active=True,
+    )
+    try:
+        return qs.order_by('-sort_number')
+    except Exception:
+        return qs
+
 
 @register.filter
 def sort_number(orm):
-    if orm and orm.exists():
-        try:
-            return orm.order_by('-sort_number').all()
-        except Exception as e:
-            return orm.all()
-    else:
+    if not orm:
         return None
+    prefetched = _get_prefetched_items(orm)
+    if prefetched is not None:
+        if not prefetched:
+            return None
+        return sorted(prefetched, key=lambda obj: getattr(obj, "sort_number", 0), reverse=True)
+    try:
+        return orm.order_by('-sort_number')
+    except Exception:
+        return orm.all()
 
 @register.filter
 def multiply(x, y):

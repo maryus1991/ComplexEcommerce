@@ -3,9 +3,9 @@
 {% load jalali_tags %}
 {% load to_webp %}
 
-{% block title %}
-    لیست فروشگاهای زیر مجموعه {{site.name}}
-{% endblock %}
+{% block title %}لیست فروشگاه‌های همکار | {{ site.title }}{% endblock %}
+
+{% block meta_description %}مشاهده فهرست کامل فروشگاه‌ها و فروشندگان تاییدشده در {{ site.title }}.{% endblock %}
 
 {% block microdata %}
 
@@ -76,7 +76,7 @@
     <li class="flex items-center gap-x-2">
         <a href="{% url 'product:list' %}">
             <h1>
-                     لیست فروشگاهای زیر مجموعه {{site.name}}
+                     لیست فروشگاهای زیر مجموعه {{ site.title }}
             </h1>
         </a>
     </li>
@@ -124,14 +124,14 @@
                 {% for item in items %}
                     <div class="group bg-white dark:bg-zinc-700 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 w-full">
                         <!-- تصویر فروشگاه -->
-                        <a href="{% url 'stores:main-template-detail' item.id %}" class="block relative">
+                        <a href="{% url 'stores:main-template-detail' item.id %}" aria-label="{{ item.name }}" class="block relative">
                             <picture>
                                 <source srcset="{{ item.about_image.url|to_webp }}"
                                         class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                                         type="image/webp">
-                                <img src="{{ item.about_image.url }}" alt="{{ item.name }}"
+                                {% if item.about_image %}<img src="{{ item.about_image.url }}" alt="" width="400" height="224" loading="lazy" decoding="async"
                                      class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                                     loading="lazy">
+                                     loading="lazy">{% endif %}
                             </picture>
 
                             <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -144,8 +144,8 @@
                                    class="block font-medium text-gray-800 dark:text-white hover:text-green-600 transition-colors duration-200 line-clamp-2">
                                     {{ item.name }}
                                 </a>
-                                <a href="{% url 'stores:main-template-detail' item.id %}">
-                                    <img src="{{ item.logo.url }}" alt="{{ item.name }}" class="w-24 h-14 rounded-full" loading="lazy">
+                                <a href="{% url 'stores:main-template-detail' item.id %}" aria-label="لوگوی {{ item.name }}">
+                                    {% if item.logo %}<img src="{{ item.logo.url }}" alt="" width="96" height="56" loading="lazy" decoding="async" class="w-24 h-14 rounded-full">{% endif %}
                                 </a>
                             </div>
 
@@ -169,7 +169,7 @@
                 <ul class="flex items-center gap-x-3 child:flex child:items-center child:justify-center child:w-8 child:h-8 child:cursor-pointer child:shadow child:rounded-lg child:transition-all child:duration-300">
                     {% if page_obj.has_previous %}
                         <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
-                            <a href="?page={{ page_obj.previous_page_number }}">
+                            <a href="?page={{ page_obj.previous_page_number }}" aria-label="صفحه قبلی">
 
                                 <svg class="w-5 h-5">
                                     <use href="#chevron-right"></use>
@@ -190,7 +190,7 @@
                     {% if page_obj.has_next %}
 
                         <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
-                            <a href="?page={{ page_obj.next_page_number }}">
+                            <a href="?page={{ page_obj.next_page_number }}" aria-label="صفحه بعدی">
                                 <svg class="w-5 h-5">
                                     <use href="#chevron-left"></use>
                                 </svg>

@@ -19,7 +19,7 @@ class ActiveGuaranteeListView(AdminUserMixin, ListView):
     context_object_name = "items"
 
     def get_queryset(self):
-        return self.model.objects.prefetch_related('guarantee__company', 'guarantee__product', "guarantee").order_by(self.ordering)
+        return self.model.objects.select_related("guarantee", "guarantee__company", "guarantee__product", "user").order_by(self.ordering)
     
 
 class ActiveGuaranteeCreateView(AdminUserMixin, CreateView):
@@ -145,7 +145,7 @@ class GuaranteeListView(AdminUserMixin, ListView ):
     context_object_name="items"
 
     def get_queryset(self):
-        return ProductGuarantee.objects.prefetch_related('company').all()
+        return ProductGuarantee.objects.select_related('company', 'product')
 class GuaranteeCreateView(AdminUserMixin, CreateView ):
     """for create guarantee"""
     model = ProductGuarantee

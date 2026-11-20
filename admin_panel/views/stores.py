@@ -338,23 +338,16 @@ class StoreDeleteView(AdminUserMixin, View):
             request,
             "بهتر است که به جای حذف فروشگاه ان را غیر فعال کنید و از حذف این همه اطلاعات جلوگیری کنید",
         )
-        obj = get_object_or_404(Store, pk=self.kwargs["pk"])
-        obj = (
-            Store.objects.filter(id=obj.id)
-            .prefetch_related("products")
-            .prefetch_related("users")
-            .first()
+        obj = get_object_or_404(
+            Store.objects.prefetch_related("products", "users"),
+            pk=self.kwargs["pk"],
         )
         return render(request, "admin_panel/store/delete.html", {"item": obj})
 
     def post(self, request, *args, **kwargs):
-        obj = get_object_or_404(Store, pk=self.kwargs["pk"])
-        obj = (
-            Store.objects.filter(id=obj.id)
-            .prefetch_related("products")
-            .prefetch_related("users")
-            .prefetch_related("blogs")
-            .first()
+        obj = get_object_or_404(
+            Store.objects.prefetch_related("products", "users", "blogs"),
+            pk=self.kwargs["pk"],
         )
 
         if obj.name == request.POST.get("conform"):

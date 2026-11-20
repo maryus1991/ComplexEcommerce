@@ -3,9 +3,19 @@
 {% load jalali_tags %}
 {% load compress %}
 
-{% block title %}
-     استعلام گارانتی
- {{site.title}}
+{% block title %}استعلام گارانتی | {{ site.title }}{% endblock %}
+
+{% block meta_description %}استعلام آنلاین اصالت و وضعیت گارانتی محصولات خریداری‌شده از فروشگاه {{ site.title }} با شماره سریال.{% endblock %}
+
+{% block microdata %}
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "خانه", "item": "{{ site_url }}/" },
+    { "@type": "ListItem", "position": 2, "name": "استعلام گارانتی", "item": "{{ canonical_url }}" }
+  ]
+}
 {% endblock %}
 
  
@@ -171,7 +181,7 @@
             </div>
             <!-- مدت اعتبار / ماه باقیمانده -->
             <div class="bg-gray-50 dark:bg-zinc-800 rounded-xl p-5 flex items-start gap-4">
-                <div class="w-12 h-12 {% if items.months_of_expire > 0 %}bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-300{% else %}bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300{% endif %} rounded-full flex items-center justify-center text-xl">
+                <div class="w-12 h-12 {% if items.months_of_expire > 0 %}bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300{% else %}bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300{% endif %} rounded-full flex items-center justify-center text-xl">
                     <i class="fas fa-calendar-alt"></i>
                 </div>
                 <div>

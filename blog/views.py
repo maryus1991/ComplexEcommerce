@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.db.models import Count, Prefetch
+from django.db.models import Count, Prefetch, F
 from django.shortcuts import  get_object_or_404
 
 from django.views.generic import ListView, DetailView
@@ -310,15 +310,13 @@ class DetailArticleView(DetailView):
 
         try:
             ip, is_rout = get_client_ip(self.request)
-            view = BlogView.objects.get_or_create(ip=ip, blog_id=self.kwargs["pk"])
-
-            if not view[1]:
-                view[0].count += 1
-                view[0].save()
-
-            if view[0].count == 0:
-                view[0].count = 1
-                view[0].save()
+            view, created = BlogView.objects.get_or_create(
+                ip=ip,
+                blog_id=self.kwargs["pk"],
+                defaults={"count": 1},
+            )
+            if not created:
+                BlogView.objects.filter(pk=view.pk).update(count=F("count") + 1)
 
         except Exception as e:
             pass

@@ -144,7 +144,7 @@ class StoreSendTicketsListView(UserStoreStaffMixin, ListView):
 
     def get_queryset(self):
         query = (
-            super().get_queryset().filter(user=self.request.user).order_by("-id", 'close_ticket')
+            super().get_queryset().filter(user=self.request.user).select_related("store", "user").order_by("-id", 'close_ticket')
         )
 
         form = TicketFilterForm(self.request.GET)
@@ -255,11 +255,13 @@ class StoreConversationsView(UserStoreStaffMixin, View):
 
     def get(self, request, *args, **kwargs):
         form = TicketConversationForm()
-        obj = get_object_or_404(Ticket, id=self.kwargs["pk"], user=self.request.user)
+        obj = get_object_or_404(
+            Ticket.objects.select_related("store", "user"),
+            id=self.kwargs["pk"],
+            user=self.request.user,
+        )
 
-        for message in obj.message.filter(is_read_by_client=False).all():
-            message.is_read_by_client = True
-            message.save()
+        obj.message.filter(is_read_by_client=False).update(is_read_by_client=True)
 
         return render(request, self.template_name, {"form": form, "obj": obj})
 
@@ -312,7 +314,9 @@ class StoreReceiveTicketListView(UserStoreStaffMixin, ListView):
             .get_queryset()
             .filter(
                 store=self.request.user.store,
-            ).order_by("-id", 'close_ticket')
+            )
+            .select_related("store", "user")
+            .order_by("-id", 'close_ticket')
         )
 
         form = TicketFilterForm(self.request.GET)
@@ -427,14 +431,15 @@ class StoreResponseToUsersTicketView(UserStoreStaffMixin, View):
 
     def get(self, request, *args, **kwargs):
         pk = self.kwargs["pk"]
-        obj = get_object_or_404(Ticket, pk=pk, store=self.request.user.store)
+        obj = get_object_or_404(
+            Ticket.objects.select_related("store", "user"),
+            pk=pk,
+            store=self.request.user.store,
+        )
 
-        for message in obj.message.filter(
+        obj.message.filter(
             is_read_by_server=False, date_read_by_admin=None
-        ).all():
-            message.is_read_by_server = True
-            message.date_read_by_admin = now()
-            message.save()
+        ).update(is_read_by_server=True, date_read_by_admin=now())
 
         return render(request, self.template_name, {"obj": obj})
 
@@ -465,7 +470,8 @@ class StoreResponseToUsersTicketView(UserStoreStaffMixin, View):
             admin_message=True,
         )
 
-        if SiteSetting.objects.first().send_message_response_to_ticket:
+        site = SiteSetting.get_cached()
+        if site and site.send_message_response_to_ticket:
 
             send_message.delay(
                 str(obj.user.PhoneNumber).replace(" ", ""),

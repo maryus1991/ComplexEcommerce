@@ -1,34 +1,38 @@
 from django.contrib import admin
 from auditlog.registry import auditlog
-
-# Register your models here.
 from .models import (
     ProductBrand,
-ProductCategory,
-Product,
-NotificationUserForProductAvailability,
-ProductGallery,
-ProductComment,
-ProductCommentLikeAndDislike,
-ProductFeature,
-ProductTag,
-ProductSpecifications,
-ProductViews,
-UserFavorite
+    ProductCategory,
+    Product,
+    NotificationUserForProductAvailability,
+    ProductGallery,
+    ProductComment,
+    ProductCommentLikeAndDislike,
+    ProductFeature,
+    ProductTag,
+    ProductSpecifications,
+    ProductViews,
+    UserFavorite,
 )
 
+
+class SelectRelatedAdmin(admin.ModelAdmin):
+    list_select_related = True
+
+
 admin.site.register(ProductBrand)
-admin.site.register(ProductCategory)
-admin.site.register(Product)
-admin.site.register(NotificationUserForProductAvailability)
-admin.site.register(ProductGallery)
-admin.site.register(ProductComment)
-admin.site.register(ProductCommentLikeAndDislike)
-admin.site.register(ProductFeature)
-admin.site.register(ProductTag)
-admin.site.register(ProductSpecifications)
-admin.site.register(ProductViews)
-admin.site.register(UserFavorite)
+admin.site.register(ProductCategory, SelectRelatedAdmin)
+admin.site.register(Product, SelectRelatedAdmin)
+admin.site.register(NotificationUserForProductAvailability, SelectRelatedAdmin)
+admin.site.register(ProductGallery, SelectRelatedAdmin)
+admin.site.register(ProductComment, SelectRelatedAdmin)
+admin.site.register(ProductCommentLikeAndDislike, SelectRelatedAdmin)
+admin.site.register(ProductFeature, SelectRelatedAdmin)
+admin.site.register(ProductTag, SelectRelatedAdmin)
+admin.site.register(ProductSpecifications, SelectRelatedAdmin)
+admin.site.register(ProductViews, SelectRelatedAdmin)
+admin.site.register(UserFavorite, SelectRelatedAdmin)
+
 
 auditlog.register(UserFavorite)
 auditlog.register(ProductCommentLikeAndDislike)

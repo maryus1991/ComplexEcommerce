@@ -21,7 +21,7 @@ class ActiveGuaranteeListView(UserStoreStaffMixin, ListView):
     context_object_name = "items"
 
     def get_queryset(self):
-        return super().get_queryset().filter(guarantee__product__store=self.request.user.store).prefetch_related("guarantee", "user", "guarantee__company", "guarantee__product").order_by(self.ordering).all()
+        return super().get_queryset().filter(guarantee__product__store=self.request.user.store).select_related("guarantee", "user", "guarantee__company", "guarantee__product").order_by(self.ordering)
 class ActiveGuaranteeCreateView(UserStoreStaffMixin, CreateView):
     """for create active guaranatee"""
 
@@ -45,9 +45,9 @@ class ActiveGuaranteeCreateView(UserStoreStaffMixin, CreateView):
         
         
         if str(form.instance.phone_number).replace(" ", "") != "" :
-            user = User.objects.filter(PhoneNumber = form.instance.phone_number )
-            if user.exists() :
-                form.instance.user = user.first()
+            user = User.objects.filter(PhoneNumber=form.instance.phone_number).first()
+            if user is not None:
+                form.instance.user = user
         else:
             form.add_error("phone_number", " شماره نباید خالی بماند " )
             messages.error(self.request, " شماره نباید خالی بماند " )
@@ -84,7 +84,7 @@ class ActiveGuaranteeDelete(UserStoreStaffMixin, RedirectView):
         return redirect("store:active-guarantee-list")
     
     def get_redirect_url(self, *args, **kwargs):
-        obj = get_object_or_404(ActiveProductGuarantee, id=kwargs.get('pk'))
+        obj = get_object_or_404(ActiveProductGuarantee.objects.select_related('guarantee__product'), id=kwargs.get('pk'))
 
         if obj.guarantee.product.store == self.request.user.store:
 
@@ -117,7 +117,7 @@ class GuaranteeListView(UserStoreStaffMixin, ListView ):
     
 
     def get_queryset(self):
-        return self.model.objects.prefetch_related('company').order_by(self.ordering).all()
+        return self.model.objects.select_related('company', 'product').order_by(self.ordering)
 class GuaranteeCreateView(UserStoreStaffMixin, CreateView):
     """for create guarantee for store"""
 

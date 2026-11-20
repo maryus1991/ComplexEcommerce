@@ -64,8 +64,8 @@ class AppsListView(AdminUserMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        obj = super().get_queryset().prefetch_related(
-            'store', 'views'
+        obj = super().get_queryset().select_related(
+            'store'
         ).annotate(views_count=Count('views')).order_by('-id')
 
         request = self.request

@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, reverse, Http404
 from django.views.generic import ListView, DetailView, RedirectView
-from django.db.models import Q, Count, Prefetch
+from django.db.models import Q, Count, Prefetch, F
 from django.contrib import messages
 from django.utils.timezone import now
 from user.mixins.logins import CustomLoginRequiredMixin as LoginRequiredMixin
@@ -53,13 +53,6 @@ class ProductListView(ListView):
                 "store",
                 "brand",
                 "category",
-
-            )
-            .prefetch_related(
-                "features",
-                "tags",
-                "specs",
-
             )
         )
 
@@ -316,9 +309,44 @@ class ProductListView(ListView):
             context["user_favorite"] = []
             context["user_details_orders"] = []
 
+        if self.request.user.is_authenticated and self.request.user.colleague_user:
+            context["colleague_store_ids"] = set(
+                self.request.user.colleague_with_store.values_list("id", flat=True)
+            )
+        else:
+            context["colleague_store_ids"] = set()
+
         if "search" in dict(self.request.GET.lists()):
             context['search_param'] = dict(self.request.GET.lists())["search"][0]
 
+        site_title = getattr(self.request.site, "title", "") if getattr(self.request, "site", None) else ""
+        cat_ids = [int(v) for v in self.request.GET.getlist("category") if v.strip().isdigit()]
+        brand_ids = [int(v) for v in self.request.GET.getlist("brand") if v.strip().isdigit()]
+        active_category = ProductCategory.objects.filter(pk=cat_ids[0], is_active=True).first() if len(cat_ids) == 1 else None
+        active_brand = ProductBrand.objects.filter(pk=brand_ids[0], is_active=True).first() if len(brand_ids) == 1 else None
+
+        if active_category and active_brand:
+            page_title = f"{active_category.name} {active_brand.name} | {site_title}"
+            page_description = f"خرید آنلاین و بررسی قیمت انواع {active_category.name} برند {active_brand.name} با گارانتی معتبر از {site_title}."
+        elif active_category:
+            page_title = f"{active_category.name} | خرید و قیمت در {site_title}"
+            page_description = f"مشاهده قیمت، مشخصات فنی و خرید آنلاین انواع {active_category.name} با تضمین اصالت کالا در {site_title}."
+        elif active_brand:
+            page_title = f"محصولات برند {active_brand.name} | {site_title}"
+            page_description = f"فروشگاه آنلاین محصولات اورجینال برند {active_brand.name} با بهترین قیمت و ارسال سریع در {site_title}."
+        elif context.get("search_param"):
+            page_title = f"جستجوی {context['search_param']} | {site_title}"
+            page_description = f"نتایج جستجو برای {context['search_param']} در فروشگاه اینترنتی {site_title}."
+        else:
+            page_title = f"فروشگاه و لیست محصولات | {site_title}"
+            page_description = f"مشاهده، مقایسه قیمت و خرید آنلاین تمامی محصولات با گارانتی و ارسال سریع از فروشگاه {site_title}."
+
+        scheme = "https" if self.request.is_secure() else self.request.scheme
+        context["active_category"] = active_category
+        context["active_brand"] = active_brand
+        context["page_title"] = page_title
+        context["page_description"] = page_description
+        context["page_url"] = f"{scheme}://{self.request.get_host()}{self.request.path}"
 
         return context
 
@@ -348,6 +376,7 @@ class ProductDetailView(DetailView):
                 'category',
                 'store',
                 'parent',
+                'parent__store',
             )
             .prefetch_related(
                 'gallery',
@@ -355,14 +384,18 @@ class ProductDetailView(DetailView):
                 'tags',
                 'specs',
 
+                # Product comments (used in JSON-LD structured data)
+                Prefetch(
+                    'comments',
+                    queryset=ProductComment.objects.select_related('user'),
+                ),
 
                 # Product children
                 Prefetch(
                     'child',
                     queryset=Product.objects.filter(
                         is_active=True,
-                    ),
-                    to_attr='active_children',
+                    ).select_related('store'),
                 ),
 
                 # Guarantees
@@ -375,14 +408,14 @@ class ProductDetailView(DetailView):
                 'parent__gallery',
                 'parent__features',
                 'parent__specs',
+                'parent__tags',
 
                 # Parent children
                 Prefetch(
                     'parent__child',
                     queryset=Product.objects.filter(
                         is_active=True,
-                    ),
-                    to_attr='active_children',
+                    ).select_related('store'),
                 ),
             ),
             pk=self.kwargs["pk"],
@@ -396,23 +429,14 @@ class ProductDetailView(DetailView):
 
 
 
-        # check if the product is the user favorite or not
-        if self.request.user.is_authenticated:
-            is_favorite_product = UserFavorite.objects.filter(
-                user=self.request.user, product=self.object
-            ).exists()
-
-        else:
-            is_favorite_product = False
         context = super().get_context_data(**kwargs)
-        context["is_favorite_product"] = is_favorite_product
-        context["product_store"] = self.object.store.id
+        obj = self.object
+        context["product_store"] = obj.store_id
 
         # get the product comments and add comment form
-
         context["comment_form"] = ProductCommentForm()
         comments = (
-            self.object.comments.annotate(
+            obj.comments.annotate(
                 like_count=Count("like", filter=Q(like__like=True)),
                 dislike_count=Count("like", filter=Q(like__like=False)),
             ).select_related("user")
@@ -422,7 +446,6 @@ class ProductDetailView(DetailView):
         context["comments"] = comments
 
         # get the same product
-        obj = self.object
         same_product = (
             Product.objects.filter(
                 Q(is_active=True),
@@ -433,6 +456,7 @@ class ProductDetailView(DetailView):
                         Q(category__parent=obj.category, category__parent__is_active=True)
                 )
             )
+            .select_related("store", "brand", "category")
             .exclude(id=obj.id)
             .distinct()
             .order_by("-id")[:16]
@@ -440,48 +464,76 @@ class ProductDetailView(DetailView):
         context["same_product"] = same_product
 
         if self.request.user.is_authenticated:
-
-            order = Order.objects.get_or_create(
-                user=self.request.user,
-                store=obj.store,
-                is_active=True,
-                is_paid=False,
-                canceled=False,
-            )[0]
-
-            context["user_order"] = order
-            context["colleague_with_store"] = self.request.user.colleague_with_store.values_list("id", flat=True)
-            context["user_order_detail"] = order.details.filter(
-                product=obj,
-            ).first()
-
-            context["user_favorite"] = list(
+            user_favorite = list(
                 UserFavorite.objects.filter(user=self.request.user).values_list(
                     "product_id", flat=True
                 )
             )
+            context["user_favorite"] = user_favorite
+            context["is_favorite_product"] = obj.id in user_favorite
+
+            order = (
+                Order.objects.filter(
+                    user=self.request.user,
+                    store=obj.store,
+                    is_active=True,
+                    is_paid=False,
+                    canceled=False,
+                )
+                .select_related("discount")
+                .prefetch_related(
+                    Prefetch(
+                        "details",
+                        queryset=OrderDetail.objects.select_related("product", "order"),
+                    )
+                )
+                .first()
+            )
+            if order is None:
+                order = Order.objects.create(
+                    user=self.request.user,
+                    store=obj.store,
+                    is_active=True,
+                    is_paid=False,
+                    canceled=False,
+                )
+                order._prefetched_objects_cache = {"details": []}
+
+            order_details = list(order.details.all())
+            for d in order_details:
+                d.order = order
+
+            context["user_order"] = order
+            context["colleague_with_store"] = (
+                list(self.request.user.colleague_with_store.values_list("id", flat=True))
+                if self.request.user.colleague_user
+                else []
+            )
+            context["user_order_detail"] = next(
+                (d for d in order_details if d.product_id == obj.id), None
+            )
         else:
+            context["is_favorite_product"] = False
             context["user_favorite"] = []
             context["user_order"] = []
             context["user_order_detail"] = []
+            context["colleague_with_store"] = []
 
         try:
             context["site_zero_the_count_of_all_product"] = self.request.site.zero_the_count_of_all_product
 
             ip, is_rout = get_client_ip(self.request)
-            product_view_object = ProductViews.objects.get_or_create(
+            product_view_object, created = ProductViews.objects.get_or_create(
                 created_at__gte=now().replace(hour=0, minute=0, second=0, microsecond=0),
                 user=self.request.user if self.request.user.is_authenticated else None,
                 product=self.object,
                 ip=ip,
+                defaults={"count": 1},
             )
-            if not product_view_object[1]:
-                product_view_object[0].count += 1
-                product_view_object[0].save()
-
-            if product_view_object[0].count == 0:
-                product_view_object[0].count = 1
-                product_view_object[0].save()
+            if not created:
+                ProductViews.objects.filter(pk=product_view_object.pk).update(
+                    count=F("count") + 1
+                )
 
         except Exception as e:
             pass
@@ -509,13 +561,13 @@ class AddProductComment(LoginRequiredMixin, RedirectView):
                 comment = comment_form.cleaned_data["comment"]
                 suggest_product = comment_form.cleaned_data["suggest_product"]
 
-                comment_obj = ProductComment.objects.create(
+                ProductComment.objects.create(
                     Product=product,
                     user=self.request.user,
                     subject=subject,
                     comment=comment,
                     suggest_product=suggest_product,
-                ).save()
+                )
                 messages.success(self.request, "نظر شما ثبت شد")
 
             else:
@@ -533,20 +585,22 @@ class RemoveProductComment(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         # get the comment obj
         comment: ProductComment = get_object_or_404(
-            ProductComment, pk=self.kwargs["pk"]
+            ProductComment.objects.select_related("Product", "Product__store", "user"),
+            pk=self.kwargs["pk"],
         )
+        product_pk = comment.Product_id
 
         # allowed the super user or store staff or comment creator to remove the comment
         if (
             self.request.user.is_superuser
-            or (self.request.user.store == comment.Product.store)
-            or (self.request.user == comment.user)
+            or (self.request.user.store_id == comment.Product.store_id)
+            or (self.request.user.id == comment.user_id)
         ):
             comment.delete()
 
         messages.info(self.request, "نظر شما حذف شد")
 
-        return reverse("product:detail", kwargs={"pk": comment.Product.pk})
+        return reverse("product:detail", kwargs={"pk": product_pk})
 
 
 class AddLikeComment(LoginRequiredMixin, RedirectView):
@@ -558,12 +612,11 @@ class AddLikeComment(LoginRequiredMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         comment = get_object_or_404(ProductComment, pk=self.kwargs["comment_id"])
-        obj = ProductCommentLikeAndDislike.objects.get_or_create(
+        ProductCommentLikeAndDislike.objects.update_or_create(
             comment=comment,
             user=self.request.user,
-        )[0]
-        obj.like = True
-        obj.save()
+            defaults={"like": True},
+        )
         messages.info(self.request, "نظر شما ثبت شد")
 
         return reverse("product:detail", kwargs={"pk": self.kwargs["pk"]})
@@ -578,13 +631,12 @@ class DisLikeComment(LoginRequiredMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         comment = get_object_or_404(ProductComment, pk=self.kwargs["comment_id"])
-        if comment.Product.id == self.kwargs["pk"]:
-            obj = ProductCommentLikeAndDislike.objects.get_or_create(
+        if comment.Product_id == self.kwargs["pk"]:
+            ProductCommentLikeAndDislike.objects.update_or_create(
                 comment=comment,
                 user=self.request.user,
-            )[0]
-            obj.like = False
-            obj.save()
+                defaults={"like": False},
+            )
             messages.info(self.request, "نظر شما ثبت شد")
 
             return reverse("product:detail", kwargs={"pk": self.kwargs["pk"]})

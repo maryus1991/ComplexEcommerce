@@ -38,7 +38,7 @@ class StoreColleagueUserList(UserStoreStaffMixin, ListView):
     
     def get_queryset(self):
         try :
-            return Store.objects.get(pk=self.request.user.store.id).colleague_users.order_by("-colleague_request").all()
+            return self.request.user.store.colleague_users.order_by("-colleague_request")
         except Exception as E:
             print(self.__class__.__name__ , E)
             return Http404()
@@ -53,7 +53,7 @@ class StoreColleagueUserDetail(UserStoreStaffMixin, DetailView):
 
     def get_object(self):
         try :
-            return Store.objects.get(pk=self.request.user.store.id).colleague_users.get(id=self.kwargs.get('pk'))
+            return self.request.user.store.colleague_users.prefetch_related('colleague_with_store').get(id=self.kwargs.get('pk'))
         except Exception as E:
             print(self.__class__.__name__ , E)
             return Http404()
@@ -65,7 +65,7 @@ class StoreColleagueUserConformRequest(UserStoreStaffMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         try :
-            user = Store.objects.get(pk=self.request.user.store.id).colleague_users.get(id=self.kwargs.get('pk'))
+            user = self.request.user.store.colleague_users.get(id=self.kwargs.get('pk'))
         except Exception as E:
             print(self.__class__.__name__ , E)
             return Http404()
@@ -237,7 +237,7 @@ class StoreAddUsersView(StoreAdminUserStaff, FormView):
             .all()
         )
 
-        if not user_exit_check.exists() and user_exit_check.count() == 0:
+        if not user_exit_check.exists():
 
             get_user_model().objects.create_staff_user(
                 PhoneNumber=phone_number,
@@ -313,7 +313,7 @@ class StoreUpdateUsersView(StoreAdminUserStaff, UpdateView):
             user_exit = get_user_model().objects.filter(
                 PhoneNumber=phone_number,
             )
-            if not user_exit.exists() and user_exit.count() == 0:
+            if not user_exit.exists():
                 user.PhoneNumber = phone_number
                 user.is_verified = False
                 user.save()
@@ -328,7 +328,7 @@ class StoreUpdateUsersView(StoreAdminUserStaff, UpdateView):
             user_exit = get_user_model().objects.filter(
                 email=email,
             )
-            if not user_exit.exists() and user_exit.count() == 0:
+            if not user_exit.exists():
                 user.email = email
                 user.save()
                 messages.success(self.request, "ایمیل مورد کاربر مورد نظر تغییر یافت")
@@ -428,14 +428,16 @@ class StoreUserShowActivities(StoreAdminUserStaff, ListView):
     paginate_by = 100
 
     def get_queryset(self):
-        user = get_object_or_404(self.request.user.store.users, pk=self.kwargs["pk"])
+        self._target_user = get_object_or_404(self.request.user.store.users, pk=self.kwargs["pk"])
 
-        return LogEntry.objects.filter(actor=user).order_by("-timestamp")
+        return (
+            LogEntry.objects.filter(actor=self._target_user)
+            .select_related("content_type", "actor")
+            .order_by("-timestamp")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # اضافه کردن کاربر به context
-        context["user"] = get_object_or_404(
-            self.request.user.store.users, pk=self.kwargs["pk"]
-        )
+        context["user"] = self._target_user
         return context

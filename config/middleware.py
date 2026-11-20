@@ -15,9 +15,7 @@ class ProductCookieMiddleware:
         self.site = None
 
     def get_site(self):
-        if self.site is None:
-            self.site = SiteSetting.objects.first()
-        return self.site
+        return SiteSetting.get_cached()
 
     def __call__(self, request):
 
@@ -37,13 +35,16 @@ class ProductCookieMiddleware:
 
 
 
-            products_pks = cookie_value.split(',')
+            site = self.get_site()
+            if not site or site.zero_the_count_of_all_product or not site.active_zarinpal_payment:
+                return
+
+            products_pks = [int(pk) for pk in cookie_value.split(',') if pk.strip()]
+            products_by_id = Product.objects.select_related('store').in_bulk(products_pks)
             for pk in products_pks:
-                product = Product.objects.filter(pk=int(pk)).prefetch_related('store').first()
+                product = products_by_id.get(pk)
                 if ( product and product.is_active and product.admin_verified and product.count > 0 and
                     not product.store.zero_the_count_of_all_product_of_store and
-                    not self.get_site().zero_the_count_of_all_product and
-                    self.get_site().active_zarinpal_payment and
                     product.store.is_active and product.store.is_verified ) :
 
                     with transaction.atomic():
@@ -61,7 +62,7 @@ class ProductCookieMiddleware:
                         )
 
                         product.count -= 1
-                        product.save()
+                        product.save(update_fields=['count'])
 
                     messages.success(
                         request,
@@ -77,6 +78,10 @@ class SiteMiddleware(MiddlewareMixin):
     def process_request(self, request):
 
 
-        request.site = SimpleLazyObject(lambda: SiteSetting.objects.filter(is_active=True).first())
+        def _get_active_site():
+            site = SiteSetting.get_cached()
+            return site if site and site.is_active else None
+
+        request.site = SimpleLazyObject(_get_active_site)
 
 

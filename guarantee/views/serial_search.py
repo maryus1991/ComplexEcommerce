@@ -34,13 +34,16 @@ class GuaranteeView(View):
 
         if form.is_valid():
             serial_number = form.cleaned_data.get('seria_number')
-            items = ProductGuarantee.objects.filter(serial_number=serial_number).select_related("product", "company")
+            matched_items = list(
+                ProductGuarantee.objects.filter(serial_number=serial_number)
+                .select_related("product", "company")[:2]
+            )
 
-            if items.count() != 1 :
+            if len(matched_items) != 1:
                 messages.error(request, 'گارانتی با این شماره سریال یافت نشد')
                 return render(request, 'site/guarantee.html', context)
 
-            items = items.first()
+            items = matched_items[0]
             if not items.is_active:
                 messages.error(request, 'گارانتی با این شماره سریال موجود است، اما غیر فعال است. لطفاً برای فعال‌سازی با پشتیبانی تماس بگیرید.')
 
@@ -81,13 +84,15 @@ class GuaranteeActiveView(View):
 
         if form.is_valid():
             serial_number = form.cleaned_data.get('active_seria_number')
-            items = ActiveProductGuarantee.objects.filter(serial_number=serial_number).select_related("guarantee__company", "guarantee", "guarantee__product", "user")
+            items = (
+                ActiveProductGuarantee.objects.filter(serial_number=serial_number)
+                .select_related("guarantee__company", "guarantee", "guarantee__product", "user")
+                .first()
+            )
 
-            if not items.exists() :
+            if items is None:
                 messages.error(request, 'گارانتی با این شماره سریال فعال نشده است')
                 return render(request, 'site/guarantee.html', context)
-
-            items = items.first()
             if not  items.is_active  :
                 messages.error(request, 'گارانتی با این شماره سریال موجود است، اما هنوز فعال نشده. لطفاً برای فعال‌سازی با پشتیبانی تماس بگیرید.')
                 return render(request, 'site/guarantee.html', context)

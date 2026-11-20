@@ -1,76 +1,50 @@
 {% extends 'Base/Base.html' %}
 {% load to_webp %}
 
-{% block title %}
+{% block title %}{{ item.name }} | {{ site.title }}{% endblock %}
 
-    {{ item.name }}
+{% block meta_description %}{{ item.description|striptags|truncatechars:155|default:item.name }}{% endblock %}
 
-{% endblock %}
+{% block og_image %}{% if item.logo %}{{ item.logo.url }}{% endif %}{% endblock %}
 
 {% block microdata %}
-
- {
+{
   "@context": "https://schema.org",
   "@graph": [
-
     {
       "@type": "LocalBusiness",
-      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#store",
+      "@id": "{{ canonical_url }}#store",
       "name": "{{ item.name|escapejs }}",
-      "url": "https://{{ request.get_host }}{{ request.get_full_path }}",
-      "telephone": "{{ item.phone }}",
-
-      {% if item.logo %}
-      "image": "{% if item.logo.url|slice:':4' == 'http' %}{{ item.logo.url }}{% else %}https://{{ request.get_host }}{{ item.logo.url }}{% endif %}",
-      {% endif %}
+      "url": "{{ canonical_url }}",
+      "telephone": "{{ item.phone|default:''|escapejs }}"{% if item.logo %},
+      "image": "{% if item.logo.url|slice:':4' == 'http' %}{{ item.logo.url }}{% else %}{{ site_url }}{{ item.logo.url }}{% endif %}"{% endif %},
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "{{ item.address|escapejs }}",
-        "addressLocality": "{{ item.orgin_city|escapejs }}",
-        "addressRegion": "{{ item.province|escapejs }}",
+        "streetAddress": "{{ item.address|default:''|escapejs }}",
+        "addressLocality": "{{ item.orgin_city|default:''|escapejs }}",
+        "addressRegion": "{{ item.province|default:''|escapejs }}",
         "addressCountry": "IR"
       },
       "openingHoursSpecification": [
-
         {
           "@type": "OpeningHoursSpecification",
-          "dayOfWeek": "all",
+          "dayOfWeek": ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
           "opens": "00:00",
           "closes": "23:59"
         }
-      ],
-
+      ]
     },
-
     {
       "@type": "BreadcrumbList",
-      "@id": "https://{{ request.get_host }}{{ request.get_full_path }}#breadcrumb",
+      "@id": "{{ canonical_url }}#breadcrumb",
       "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "خانه",
-          "item": "https://{{ request.get_host }}/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "فروشگاه‌ها",
-          "item": "https://{{ request.get_host }}{% url 'stores:main-template-list' %}"
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "name": "{{ item.name|escapejs }}",
-          "item": "https://{{ request.get_host }}{{ request.get_full_path }}"
-        }
+        { "@type": "ListItem", "position": 1, "name": "خانه", "item": "{{ site_url }}/" },
+        { "@type": "ListItem", "position": 2, "name": "فروشگاه‌ها", "item": "{{ site_url }}{% url 'stores:main-template-list' %}" },
+        { "@type": "ListItem", "position": 3, "name": "{{ item.name|escapejs }}", "item": "{{ canonical_url }}" }
       ]
     }
-
   ]
 }
-
-
 {% endblock %}
 
 {% block breadcrumb %}
@@ -89,7 +63,7 @@
 {% endblock %}
 
 {% block content %}
-    <main class="container child:mt-8">
+    <div class="container child:mt-8">
 
 
         <!-- aboute us -->
@@ -105,13 +79,13 @@
             type="image/webp"
         >
 
-        <img
+        {% if item.logo %}<img
             src="{{ item.logo.url }}"
-            alt="{{ item.name }}"
+            alt=""
+            width="40" height="40"
             class="w-10 h-10 object-contain"
-
-            loading="lazy"
-        >
+            loading="lazy" decoding="async"
+        >{% endif %}
     </picture>
 
     <h2 class="m-0">
@@ -131,12 +105,14 @@
                         <a href="{{ item.instagram_app_Link }}"
                            class="flex items-center gap-x-2 bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-600 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
                             <p dir="ltr" class="text-sm sm:text-base">{{ item.instagram_app_ID }}</p>
-                                                   {% if site.instagram_logo %}
-    <img src="{{ site.instagram_logo.url }}"
-         alt="Instagram"
+                                                       <!-- نسخه WebP با رزولوشن‌های مختلف -->
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    {% if site.instagram_logo %}<img src="{{ site.instagram_logo.url }}"
+         alt=""
+         width="40" height="40"
          class="w-10 h-10 rounded-full"
-         loading="lazy">
-                                                   {% endif %}
+         loading="lazy" decoding="async">{% endif %}
                         </a>
                     {% endif %}
 
@@ -144,12 +120,14 @@
                         <a href="{{ item.telegram_app_Link }}"
                            class="flex items-center gap-x-2 bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-600 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
                             <p dir="ltr" class="text-sm sm:text-base">{{ item.telegram_app_ID }}</p>
-                                                    {% if site.telegram_logo %}
-    <img src="{{ site.telegram_logo.url }}"
-         alt="Telegram"
+                                                        <!-- نسخه WebP با رزولوشن‌های مختلف -->
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    {% if site.telegram_logo %}<img src="{{ site.telegram_logo.url }}"
+         alt=""
+         width="40" height="40"
          class="w-10 h-10 rounded-full"
-         loading="lazy">
-                                                    {% endif %}
+         loading="lazy" decoding="async">{% endif %}
                         </a>
                     {% endif %}
 
@@ -157,8 +135,8 @@
                         <a href="{{ item.whats_app_link }}"
                            class="flex items-center gap-x-2 bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-600 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
                             <p dir="ltr" class="text-sm sm:text-base">{{ item.whats_app_ID }}</p>
-                            <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-5 h-5 sm:w-6 sm:h-6"
-                                 alt="whatsapp" loading="lazy"/>
+                            <img src="/static/Images/svg/WhatsApp_logo1.svg" width="24" height="24" loading="lazy" decoding="async" class="w-5 h-5 sm:w-6 sm:h-6"
+                                 alt=""/>
                         </a>
                     {% endif %}
                     {% if item.products.count > 0 %}
@@ -186,13 +164,13 @@
                     <source srcset="{{ item.about_image.url|to_webp }}"
                             class="rounded-lg lg:h-[35rem]"
                             type="image/webp">
-                    <img src="{{ item.about_image.url }}" alt="{{ item.name }}"
+                    {% if item.about_image %}<img src="{{ item.about_image.url }}" alt="{{ item.name }}" width="652" height="560"
                          class="rounded-lg lg:h-[35rem]"
-                         loading="lazy">
+                         loading="lazy" decoding="async">{% endif %}
                 </picture>
 
             </div>
         </section>
-    </main>
+    </div>
 {% endblock %}
 

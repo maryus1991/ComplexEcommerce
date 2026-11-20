@@ -432,3 +432,75 @@
 }
 
 }
+
+/* ==========================================================================
+   Technical SEO, WCAG AA Contrast & Core Web Vitals (CLS Prevention)
+   ========================================================================== */
+.text-green-700 {
+  --tw-text-opacity: 1;
+  color: rgb(21 128 61 / var(--tw-text-opacity));
+}
+.text-emerald-700 {
+  --tw-text-opacity: 1;
+  color: rgb(4 120 87 / var(--tw-text-opacity));
+}
+.text-rose-700 {
+  --tw-text-opacity: 1;
+  color: rgb(190 18 60 / var(--tw-text-opacity));
+}
+.dark .dark\:text-green-300 {
+  --tw-text-opacity: 1;
+  color: rgb(134 239 172 / var(--tw-text-opacity));
+}
+.dark .dark\:text-emerald-300 {
+  --tw-text-opacity: 1;
+  color: rgb(110 231 183 / var(--tw-text-opacity));
+}
+.dark .dark\:text-rose-300 {
+  --tw-text-opacity: 1;
+  color: rgb(253 164 175 / var(--tw-text-opacity));
+}
+
+/* Reserve explicit geometry for above-the-fold hero slider & product carousels before Swiper initializes */
+.mySwiper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .mySwiper {
+    aspect-ratio: 1850 / 500;
+  }
+}
+.mySwiper:not(.swiper-initialized) .swiper-wrapper {
+  display: flex;
+}
+.mySwiper:not(.swiper-initialized) .swiper-slide {
+  flex: 0 0 100%;
+  width: 100%;
+}
+.mySwiper:not(.swiper-initialized) .swiper-slide:not(:first-child) {
+  display: none;
+}
+.LatestProducts,
+.BestSelling,
+.offerSlider,
+.related-products-swiper {
+  min-height: 290px;
+  overflow: hidden;
+}
+.LatestProducts:not(.swiper-initialized) .swiper-wrapper,
+.BestSelling:not(.swiper-initialized) .swiper-wrapper,
+.offerSlider:not(.swiper-initialized) .swiper-wrapper,
+.related-products-swiper:not(.swiper-initialized) .swiper-wrapper {
+  display: flex;
+  gap: 1rem;
+  overflow: hidden;
+}
+.LatestProducts:not(.swiper-initialized) .swiper-slide,
+.BestSelling:not(.swiper-initialized) .swiper-slide,
+.offerSlider:not(.swiper-initialized) .swiper-slide,
+.related-products-swiper:not(.swiper-initialized) .swiper-slide {
+  flex: 0 0 16rem;
+}

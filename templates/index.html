@@ -6,7 +6,7 @@
 {% block breadcrumb %}
 
     <li class="flex items-center gap-x-2">
-        <a href="/" aria-label='امواج سرمد'>
+        <a href="/" aria-label="{{ site.title }}">
             <h1>
                 {{ site.title }}
             </h1>
@@ -15,72 +15,50 @@
 
 {% endblock breadcrumb %}
 
-{% block title %}
-{{ site.title }}
-{% endblock %}
+{% block title %}{{ site.title }}{% endblock %}
+
+{% block meta_description %}{{ site.short_description|striptags|truncatechars:160 }}{% endblock %}
 
 {% block microdata %}
 {
   "@context": "https://schema.org",
   "@graph": [
-
     {
       "@type": "WebSite",
       "@id": "{{ site_url }}/#website",
       "url": "{{ site_url }}/",
       "name": "{{ site.title|escapejs }}",
       "inLanguage": "fa-IR",
-
       "publisher": {
         "@id": "{{ site_url }}/#organization"
       },
-
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
           "@type": "EntryPoint",
-          "urlTemplate": "{{ site_url }}{% url 'product:list' %}?q={search_term_string}"
+          "urlTemplate": "{{ site_url }}{% url 'product:list' %}?search={search_term_string}"
         },
         "query-input": "required name=search_term_string"
       }
     },
-
     {
       "@type": "Organization",
       "@id": "{{ site_url }}/#organization",
       "name": "{{ site.title|escapejs }}",
-      "url": "{{ site_url }}/",
-
-      {% if site.logo %}
+      "url": "{{ site_url }}/"{% if site.logo %},
       "logo": {
         "@type": "ImageObject",
-        "url": "{{ site_url }}{{ site.logo.url }}"
-      },
-      {% endif %}
-
-      {% if site.email %}
-      "email": "{{ site.email|escapejs }}",
-      {% endif %}
-
-      {% if site.phone %}
-      "telephone": "{{ site.phone|escapejs }}",
-      {% endif %}
-
+        "url": "{% if site.logo.url|slice:':4' == 'http' %}{{ site.logo.url }}{% else %}{{ site_url }}{{ site.logo.url }}{% endif %}"
+      }{% endif %}{% if site.email %},
+      "email": "{{ site.email|escapejs }}"{% endif %}{% if site.phone %},
+      "telephone": "{{ site.phone|escapejs }}"{% endif %}{% if site.telegram_link or site.instagram_link %},
       "sameAs": [
-        {% if site.telegram_link %}
-        "{{ site.telegram_link }}"{% if site.instagram_link %},{% endif %}
-        {% endif %}
-        {% if site.instagram_link %}
-        "{{ site.instagram_link }}"
-        {% endif %}
-      ]
+        {% if site.telegram_link %}"{{ site.telegram_link|escapejs }}"{% if site.instagram_link %},{% endif %}{% endif %}
+        {% if site.instagram_link %}"{{ site.instagram_link|escapejs }}"{% endif %}
+      ]{% endif %}
     }
-
   ]
 }
-
-
-
 {% endblock %}
 
 {% block content %}
@@ -250,81 +228,67 @@
 <!-- ALERT TOP -->
 {% if site.active_slider_in_main_page %}
 
-<header>
+<section aria-label="اسلایدر اصلی">
 
     <!-- SLIDER -->
     <div>
-        <div class="swiper mySwiper w-full  mt-4 lg:mt-6">
-            <div class="swiper-wrapper  w-full">
+        <div class="swiper mySwiper w-full mt-4 lg:mt-6">
+            <div class="swiper-wrapper w-full">
 
                 <!-- SLIDER ITEM -->
                 {% for Slider in Sliders %}
+                <div class="swiper-slide relative w-full">
+                    <a href="{{ Slider.link }}" aria-label="{{ Slider.name|default:site.title }}">
+                                                    {% if Slider.image %}<img
+                                src="{{ Slider.image.url }}"
+                                class="w-full h-auto block object-cover"
+                                alt="{{ Slider.name|default:site.title }}"
+                                width="{{ Slider.slider_width }}"
+                                height="{{ Slider.slider_height }}"
+                                {% if forloop.first %}loading="eager" fetchpriority="high" decoding="sync"{% else %}loading="lazy" decoding="async"{% endif %}>{% endif %}
+                        
 
-
-                <div class="swiper-slide absolute w-full ">
-                    <a href="{{ Slider.link }}">
-
-{% if Slider.image %}
-    <img
-        src="{{ Slider.image.url }}"
-        class="block h-full w-full object-cover "
-        alt="{{ Slider.name|default:'اسلایدر' }}"
-        width="{{ Slider.image.width }}"
-        height="{{ Slider.image.height }}"
-                         >
-{% endif %}
-
-                        <div class="flex items-start  flex-col absolute  right-5 top-5 md:right-10 md:top-10 lg:top-20 lg:right-40 xl:right-48  text-white">
+                        <div class="flex items-start flex-col absolute right-5 top-5 md:right-10 md:top-10 lg:top-20 lg:right-40 xl:right-48 text-white">
                             {% if Slider.name is not None %}
-
                             <h2 class="font-MorabbaMedium text-xl lg:text-5xl mb-2 lg:mb-4">
                                 {{ Slider.name }}
                             </h2>
                             {% endif %}
                             {% if Slider.name2 is not None %}
-
-                            <p
-                                    class="text-base lg:text-2xl font-MorabbaLight border-b border-gray-300 pb-2 lg:pb-4 mb-2 lg:mb-4">
-
+                            <p class="text-base lg:text-2xl font-MorabbaLight border-b border-gray-300 pb-2 lg:pb-4 mb-2 lg:mb-4">
                                 {{ Slider.name2 }}
                             </p>
                             {% endif %}
                             {% if Slider.text is not None %}
-
                             <p class="w-[60%] text-sm lg:text-base lg:leading-8 mb-2 lg:mb-4 line-clamp-2">
                                 {{ Slider.text }}
                             </p>
                             {% endif %}
-
                         </div>
                     </a>
-
                 </div>
                 {% endfor %}
 
-
             </div>
             <!-- NEXT & PREV BTN -->
-            <div class=" absolute  flex items-center justify-end gap-x-3 left-4 lg:left-0 bottom-5 z-30 child:cursor-pointenr
-            child:bg-white
-            child:dark:bg-zinc-700 child:shadow child:rounded-full child:p-1  ">
-                <button class="button-prev ">
-                    <svg class="w-5 h-5">
+            <div class="absolute flex items-center justify-end gap-x-3 left-4 lg:left-0 bottom-5 z-30 child:cursor-pointer child:bg-white child:dark:bg-zinc-700 child:shadow child:rounded-full child:p-1">
+                <button type="button" class="button-prev" aria-label="اسلاید قبلی">
+                    <svg class="w-5 h-5" aria-hidden="true">
                         <use href="#arrow-long-right"></use>
                     </svg>
                 </button>
-                <button class="button-next dark:bg-zinc-700 shadow rounded-full p-1 lg:p-1.5">
-                    <svg class="w-5 h-5">
+                <button type="button" class="button-next dark:bg-zinc-700 shadow rounded-full p-1 lg:p-1.5" aria-label="اسلاید بعدی">
+                    <svg class="w-5 h-5" aria-hidden="true">
                         <use href="#arrow-long-left"></use>
                     </svg>
                 </button>
             </div>
         </div>
     </div>
-</header>
+</section>
 {% endif %}
 
-<main class="child:mt-14">
+<div class="child:mt-14">
     <!-- CATEGORIES -->
     {% if site.active_categories_in_main_page %}
 
@@ -348,11 +312,10 @@
 
             <a href="{% url 'product:list' %}?category={{ category.id }}{% for child in category.child_ids %}&category={{ child }}{% endfor %} " class="rounded-full">
 
-                {% if category.image %}
-                    <img src="{{ category.image.url }}" alt="{{ category.name }}"
+                                    {% if category.image %}<img src="{{ category.image.url }}" alt=""
                          class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                         loading="lazy" width="200" height="200">
-                {% endif %}
+                         loading="lazy" decoding="async" width="200" height="200">{% endif %}
+                
 
 
                 <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
@@ -386,11 +349,10 @@
 
             <a href="{% url 'product:list' %}?brand={{ category.id }}" class="rounded-full">
 
-                {% if category.image %}
-                    <img src="{{ category.image.url }}" alt="{{ category.name }}"
+                                    {% if category.image %}<img src="{{ category.image.url }}" alt=""
                          class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                         loading="lazy" width="200" height="200">
-                {% endif %}
+                         loading="lazy" decoding="async" width="200" height="200">{% endif %}
+                
 
                 <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
                     {{ category.name }}
@@ -421,11 +383,10 @@
             {% for category in categories_blog %}
             <a href="{% url 'blog:list' %}?category={{ category.id }}{% for child in category.children|active_category %}&category={{ child.id }}{% endfor %}" class="rounded-full">
 
-                {% if category.image %}
-                    <img src="{{ category.image.url }}" alt="{{ category.name }}"
+                                    {% if category.image %}<img src="{{ category.image.url }}" alt=""
                          class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                         loading="lazy" width="200" height="200">
-                {% endif %}
+                         loading="lazy" decoding="async" width="200" height="200">{% endif %}
+                
 
                 <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
                     {{ category.name }}
@@ -450,12 +411,12 @@
             </div>
             <div
                     class="flex items-center gap-x-2 child:p-2 child:bg-white child:dark:bg-zinc-700 child:shadow child:rounded-full">
-                <button class="prev-slide ">
+                <button type="button" class="prev-slide" aria-label="محصول قبلی">
                     <svg class="w-4 h-4">
                         <use href="#chevron-right"></use>
                     </svg>
                 </button>
-                <button class="next-slide ">
+                <button type="button" class="next-slide" aria-label="محصول بعدی">
                     <svg class="w-4 h-4">
                         <use href="#chevron-left"></use>
                     </svg>
@@ -468,57 +429,50 @@
                     class="swiper-wrapper rounded-lg mb-2 child:cursor-pointer child:overflow-hidden child:rounded-lg child:bg-white child:dark:bg-zinc-700 child:shadow child:w-64  child:relative">
                 <!-- PRODUCT ITEM -->
                 {% for product in products_newst %}
-
-
-                <div class="swiper-slide group" onclick="window.location=this.querySelector('a').href">
-                    <!-- PRODUCT IMGAE -->
-                    <a href="{% url 'product:detail' product.id %}">
-
-                        {% if product.picture %}
+                <div class="swiper-slide group">
+                    <!-- PRODUCT IMAGE -->
+                    <a href="{% url 'product:detail' product.id %}" aria-label="{{ product.name }}" class="block">
+                        <span class="sr-only">{{ product.name }}</span>
+                                                    {% if product.picture %}
                             <img src="{{ product.picture.url }}"
-                                 alt="{{ product.name }}"
-                                 class="group-hover:scale-105 duration-300 w-full h-full lg:w-48 lg:h-48 mx-auto mb-3"
-                                 loading="lazy" width="200" height="200">
-                        {% endif %}
-
+                                 alt=""
+                                 class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3 object-contain"
+                                 loading="lazy" decoding="async" width="200" height="200">
+                            {% endif %}
+                        
+                    </a>
 
                     <!-- PRODUCT MAIN -->
                     <div class="px-2 lg:px-4 mb-3">
                         <a href="{% url 'product:detail' product.id %}"
-                           class="line-clamp-2 font-DanaMedium mb-2 text-sm lg:text-base">
+                           class="line-clamp-2 font-DanaMedium mb-2 text-sm lg:text-base block">
                             {{ product.name }}
                         </a>
                         <div class="flex items-center gap-x-1 lg:gap-x-3">
                             {% if user.colleague_user and user.colleague_with_store == product.store and product.colleague_users_price > 0 %}
-                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
+                            <p class="font-DanaDemiBold text-green-700 dark:text-green-300">
                                 {{ product.colleague_users_price|tdc }}
                                 <span class="font-Dana text-sm">تومان</span>
                             </p>
-                            <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                            <del class="font-Dana text-xs lg:text-sm text-rose-700 dark:text-rose-300 hidden lg:inline">
                                 {{ product.price|tdc }}
-                                <span class="">تومان</span>
+                                <span>تومان</span>
                             </del>
                             {% elif product.have_discount %}
-                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
-                                {{ product.calc_discount|tdc }}
+                            <p class="font-DanaDemiBold text-green-700 dark:text-green-300"> {{ product.calc_discount|tdc }}
                                 <span class="font-Dana text-sm">تومان</span>
                             </p>
-                            <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                            <del class="font-Dana text-xs lg:text-sm text-rose-700 dark:text-rose-300 hidden lg:inline">
                                 {{ product.price|tdc }}
-                                <span class="">تومان</span>
+                                <span>تومان</span>
                             </del>
                             {% else %}
-                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
-                                {{ product.price|tdc }}
+                            <p class="font-DanaDemiBold text-green-700 dark:text-green-300"> {{ product.price|tdc }}
                                 <span class="font-Dana text-sm">تومان</span>
                             </p>
                             {% endif %}
-
                         </div>
                     </div>
-                    <!-- PRODUCT FOOTER -->
-                        </a>
-
                 </div>
                 {% endfor %}
 
@@ -540,12 +494,12 @@
             </div>
             <div
                     class="flex items-center gap-x-2 child:p-2 child:bg-white child:dark:bg-zinc-700 child:shadow child:rounded-full">
-                <button class="prev-slide-best ">
+                <button type="button" class="prev-slide-best" aria-label="محصول پرفروش قبلی">
                     <svg class="w-4 h-4">
                         <use href="#chevron-right"></use>
                     </svg>
                 </button>
-                <button class="next-slide-best ">
+                <button type="button" class="next-slide-best" aria-label="محصول پرفروش بعدی">
                     <svg class="w-4 h-4">
                         <use href="#chevron-left"></use>
                     </svg>
@@ -554,57 +508,54 @@
 
         </div>
         <!-- SLIDER  -->
-        <div class="swiper BestSelling rounded-lg" dir="rtl" onclick="window.location=this.querySelector('a').href">
+        <div class="swiper BestSelling rounded-lg" dir="rtl">
             <div
                     class="swiper-wrapper rounded-lg mb-2 child:cursor-pointer child:overflow-hidden child:rounded-lg child:bg-white child:dark:bg-zinc-700 child:shadow child:w-64 child:relative">
                 {% for product in products_most_selled %}
-
-
                 <div class="swiper-slide group">
-                    <!-- PRODUCT IMGAE -->
-                    <a href="{% url 'product:detail' product.id %}">
-
-                        {% if product.picture %}
+                    <!-- PRODUCT IMAGE -->
+                    <a href="{% url 'product:detail' product.id %}" aria-label="{{ product.name }}" class="block">
+                        <span class="sr-only">{{ product.name }}</span>
+                                                    {% if product.picture %}
                             <img src="{{ product.picture.url }}"
-                                 alt="{{ product.name }}" width="200" height="200"
-                                 class="group-hover:scale-105 duration-300 w-full h-full lg:w-48 lg:h-48 mx-auto mb-3"
-                                 loading="lazy">
-                        {% endif %}
+                                 alt=""
+                                 class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3 object-contain"
+                                 loading="lazy" decoding="async" width="200" height="200">
+                            {% endif %}
+                        
                     </a>
+
                     <!-- PRODUCT MAIN -->
                     <div class="px-2 lg:px-4 mb-3">
                         <a href="{% url 'product:detail' product.id %}"
-                           class="line-clamp-2 font-DanaMedium mb-2 text-sm lg:text-base">
+                           class="line-clamp-2 font-DanaMedium mb-2 text-sm lg:text-base block">
                             {{ product.name }}
                         </a>
                         <div class="flex items-center gap-x-1 lg:gap-x-3">
-                                                        {% if user.colleague_user and user.colleague_with_store == product.store and product.colleague_users_price > 0 %}
-                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
+                            {% if user.colleague_user and user.colleague_with_store == product.store and product.colleague_users_price > 0 %}
+                            <p class="font-DanaDemiBold text-green-700 dark:text-green-300">
                                 {{ product.colleague_users_price|tdc }}
                                 <span class="font-Dana text-sm">تومان</span>
                             </p>
-                            <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                            <del class="font-Dana text-xs lg:text-sm text-rose-700 dark:text-rose-300 hidden lg:inline">
                                 {{ product.price|tdc }}
-                                <span class="">تومان</span>
+                                <span>تومان</span>
                             </del>
                             {% elif product.have_discount %}
-                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300"> {{ product.calc_discount|tdc }}
+                            <p class="font-DanaDemiBold text-green-700 dark:text-green-300"> {{ product.calc_discount|tdc }}
                                 <span class="font-Dana text-sm">تومان</span>
                             </p>
-                            <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                            <del class="font-Dana text-xs lg:text-sm text-rose-700 dark:text-rose-300 hidden lg:inline">
                                 {{ product.price|tdc }}
-                                <span class="">تومان</span>
+                                <span>تومان</span>
                             </del>
                             {% else %}
-                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300"> {{ product.price|tdc }}
+                            <p class="font-DanaDemiBold text-green-700 dark:text-green-300"> {{ product.price|tdc }}
                                 <span class="font-Dana text-sm">تومان</span>
                             </p>
                             {% endif %}
-
                         </div>
                     </div>
-                    <!-- PRODUCT FOOTER -->
-
                 </div>
                 {% endfor %}
             </div>
@@ -622,7 +573,7 @@
 
 
             <a href="{{ Banner.link }}" class="banner  group child:duration-300"
-               style="background: linear-gradient(270deg, rgba(0, 0, 0, 0.6) 33.85%, rgba(0, 0, 0, 0.1) 100%){% if Banner.image %}, url('{{ Banner.image.url }}'){% endif %};">
+               style="background: linear-gradient(270deg, rgba(0, 0, 0, 0.6) 33.85%, rgba(0, 0, 0, 0.1) 100%), url('{% if product.picture %}{{ product.picture.url }}{% endif %}');">
             {% if Banner.name %}
 
             <h2 class="font-MorabbaMedium text-xl lg:text-3xl group-hover:mr-5">
@@ -673,56 +624,53 @@
                 <div
                         class="swiper-wrapper rounded-lg mb-2 child:cursor-pointer child:overflow-hidden child:rounded-lg child:bg-white child:dark:bg-zinc-600 child:shadow child:w-64 child:relative">
 
-                    {% for product in products_most_discount %}
-
-
-                    <div class="swiper-slide group" onclick="window.location=this.querySelector('a').href">
-                        <!-- PRODUCT IMGAE -->
-                        <a href="{% url 'product:detail' product.id %}">
-
-                            {% if product.picture %}
-                                <img src="{{ product.picture.url }}"
-                                     alt="{{ product.name }}" width="200" height="200"
-                                     class="group-hover:scale-105 duration-300 w-full h-full lg:w-48 lg:h-48 mx-auto mb-3"
-                                     loading="lazy">
+                {% for product in products_most_discount %}
+                <div class="swiper-slide group">
+                    <!-- PRODUCT IMAGE -->
+                    <a href="{% url 'product:detail' product.id %}" aria-label="{{ product.name }}" class="block">
+                        <span class="sr-only">{{ product.name }}</span>
+                                                    {% if product.picture %}
+                            <img src="{{ product.picture.url }}"
+                                 alt=""
+                                 class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3 object-contain"
+                                 loading="lazy" decoding="async" width="200" height="200">
                             {% endif %}
+                        
+                    </a>
+
+                    <!-- PRODUCT MAIN -->
+                    <div class="px-2 lg:px-4 mb-3">
+                        <a href="{% url 'product:detail' product.id %}"
+                           class="line-clamp-2 font-DanaMedium mb-2 text-sm lg:text-base block">
+                            {{ product.name }}
                         </a>
-                        <!-- PRODUCT MAIN -->
-                        <div class="px-2 lg:px-4 mb-3">
-                            <a href="{% url 'product:detail' product.id %}"
-                               class="line-clamp-2 font-DanaMedium mb-2 text-sm lg:text-base">
-                                {{ product.name }}
-                            </a>
-                            <div class="flex items-center gap-x-1 lg:gap-x-3">
-                                                            {% if user.colleague_user and user.colleague_with_store == productf.store and product.colleague_users_price > 0 %}
-                            <p class="font-DanaDemiBold text-green-600 dark:text-green-300">
+                        <div class="flex items-center gap-x-1 lg:gap-x-3">
+                            {% if user.colleague_user and user.colleague_with_store == product.store and product.colleague_users_price > 0 %}
+                            <p class="font-DanaDemiBold text-green-700 dark:text-green-300">
                                 {{ product.colleague_users_price|tdc }}
                                 <span class="font-Dana text-sm">تومان</span>
                             </p>
-                            <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
+                            <del class="font-Dana text-xs lg:text-sm text-rose-700 dark:text-rose-300 hidden lg:inline">
                                 {{ product.price|tdc }}
-                                <span class="">تومان</span>
+                                <span>تومان</span>
                             </del>
-                                {% elif product.have_discount %}
-                                <p class="font-DanaDemiBold text-green-600 dark:text-green-300"> {{ product.calc_discount|tdc }}
-                                    <span class="font-Dana text-sm">تومان</span>
-                                </p>
-                                <del class="font-Dana text-xs lg:text-sm text-rose-300 hidden lg:inline">
-                                    {{ product.price|tdc }}
-                                    <span class="">تومان</span>
-                                </del>
-                                {% else %}
-                                <p class="font-DanaDemiBold text-green-600 dark:text-green-300"> {{ product.price|tdc }}
-                                    <span class="font-Dana text-sm">تومان</span>
-                                </p>
-                                {% endif %}
-
-                            </div>
+                            {% elif product.have_discount %}
+                            <p class="font-DanaDemiBold text-green-700 dark:text-green-300"> {{ product.calc_discount|tdc }}
+                                <span class="font-Dana text-sm">تومان</span>
+                            </p>
+                            <del class="font-Dana text-xs lg:text-sm text-rose-700 dark:text-rose-300 hidden lg:inline">
+                                {{ product.price|tdc }}
+                                <span>تومان</span>
+                            </del>
+                            {% else %}
+                            <p class="font-DanaDemiBold text-green-700 dark:text-green-300"> {{ product.price|tdc }}
+                                <span class="font-Dana text-sm">تومان</span>
+                            </p>
+                            {% endif %}
                         </div>
-                        <!-- PRODUCT FOOTER -->
-
                     </div>
-                    {% endfor %}
+                </div>
+                {% endfor %}
 
 
                 </div>
@@ -743,7 +691,7 @@
                 </h2>
             </div>
             <a href="{% url 'blog:list' %}"
-               class="flex items-center px-2 py-1 rounded-lg gap-x-2 text-green-500 hover:ml-2 duration-300 transition-all">
+               class="flex items-center px-2 py-1 rounded-lg gap-x-2 text-green-700 dark:text-green-300 hover:ml-2 duration-300 transition-all">
                 مشاهده همه
                 <svg class="w-4 h-4">
                     <use href="#chevron-left"></use>
@@ -757,13 +705,12 @@
             {% for blog in blogs %}
             <div class="group">
                 <div class="relative overflow-hidden rounded-lg">
-                    <a href="{% url 'blog:detail' blog.id %}">
-                        {% if blog.image %}
-                            <img src="{{ blog.image.url }}" alt="{{ blog.title }}"
+                    <a href="{% url 'blog:detail' blog.id %}" aria-label="{{ blog.title }}" class="block">
+                        <span class="sr-only">{{ blog.title }}</span>
+                                                    {% if blog.image %}<img src="{{ blog.image.url }}" alt=""
                                  class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
-                                 loading="lazy" width="200" height="200">
-                        {% endif %}
-
+                                 loading="lazy" decoding="async" width="200" height="200">{% endif %}
+                        
                     </a>
                     <div
                             class="absolute opacity-0 left-0 top-0 bottom-0 right-0 bg-black/60 flex items-center justify-center group-hover:opacity-100 duration-300 transition-all rounded-bl-3xl rounded-tr-3xl">
@@ -777,12 +724,12 @@
                     </div>
                 </div>
                 <div class="flex flex-col gap-y-1 my-2 px-1">
-                    <h2 class="font-DanaDemiBold">{{ blog.title }}</h2>
+                    <h3 class="font-DanaDemiBold"><a href="{% url 'blog:detail' blog.id %}">{{ blog.title }}</a></h3>
 
                 </div>
                 <span class="flex w-full h-1 py-1 border-t border-gray-100 dark:border-white/10"></span>
                 <div class="flex items-center justify-between text-sm px-1">
-                    <span class="flex items-center gap-x-1 text-gray-400">
+                    <span class="flex items-center gap-x-1 text-gray-600 dark:text-gray-300">
                         <svg class="w-4 h-4">
                             <use href="#calendar"></use>
                         </svg>
@@ -790,8 +737,8 @@
                             {{ blog.updated_at|to_jalali:'%Y/%m/%d' }}
                         </p>
                     </span>
-                    <span class="flex items-start gap-x-1 text-gray-400">
-                        <p class="font-DanaDemiBold">{{ blog.views.count }}</p>
+                    <span class="flex items-start gap-x-1 text-gray-600 dark:text-gray-300">
+                        <p class="font-DanaDemiBold">{{ blog.views_count }}</p>
                         <svg class="w-4 h-4">
                             <use href="#eye"></use>
                         </svg>
@@ -806,7 +753,7 @@
     </section>
     {% endif %}
 
-</main>
+</div>
 {% endblock %}
 
 

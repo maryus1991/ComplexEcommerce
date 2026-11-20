@@ -14,8 +14,8 @@ from sitesetting.models import FastLinks, QuestionAndAnswer
 from django.contrib import messages
  
 from product.models import Product, ProductViews
-from orders.models import Order, StoreSoldOrders
-from django.db.models import Count, Sum, Case, When, IntegerField
+from orders.models import Order, OrderDetail, StoreSoldOrders
+from django.db.models import Count, Sum, Case, When, IntegerField, Q, Prefetch
 from django.utils.timezone import timedelta, now
 from django.db.models.functions import TruncDate, Coalesce
 from admin_panel.models import DailyViewCount
@@ -66,17 +66,28 @@ class HomePageView(AdminUserMixin, TemplateView):
             DailyViewCount.objects.bulk_create([DailyViewCount(date=d, count=0) for d in missing_dates])
 
 
-        context['views_list_by_date'] = DailyViewCount.objects.filter(date__gte=now()-timedelta(days=60)).order_by('date')
+        context['views_list_by_date'] = list(DailyViewCount.objects.filter(date__gte=now()-timedelta(days=60)).order_by('date'))
 
-        context['orders'] = Order.objects.select_related("user").order_by('-id')[:6]
+        context['orders'] = (
+            Order.objects.select_related("user", "store", "discount")
+            .prefetch_related(
+                Prefetch(
+                    "details",
+                    queryset=OrderDetail.objects.select_related("product", "order"),
+                )
+            )
+            .order_by('-id')[:6]
+        )
 
         item = StoreSoldOrders.objects
-
-        context['total_price_not_returned_from_admin'] = item.filter(
-            is_returned_by_admin=False
-        ).aggregate(total=Sum('price'))['total'] or 0
-
-        context['total_price'] = item.aggregate(total=Sum('price'))['total'] or 0
+        sold_stats = item.aggregate(
+            total_price=Coalesce(Sum('price'), 0),
+            total_price_not_returned_from_admin=Coalesce(
+                Sum('price', filter=Q(is_returned_by_admin=False)), 0
+            ),
+        )
+        context['total_price_not_returned_from_admin'] = sold_stats['total_price_not_returned_from_admin']
+        context['total_price'] = sold_stats['total_price']
 
         daily_sales_qs = item.filter(
             open_date__date__gte=start_date,

@@ -1,25 +1,19 @@
 {% load compress static %}
-
- 
- 
 <meta name="google-site-verification" content="1l9Tiq1KcW3p1XnmpzZ4QrW2BnJht3tSYso7BdVuvZo">
 
-<script type="text/javascript">
-	    (function(c,l,a,r,i,t,y){
-		            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-		            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-		            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-		        })(window, document, "clarity", "script", "y4fzyrn9ds");
-</script>
+<link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+<link rel="preconnect" href="https://www.clarity.ms" crossorigin>
+<link rel="preload" href="/static/fonts/Dana/woff2/DanaFaNum-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/static/fonts/Dana/woff2/DanaFaNum-DemiBold.woff2" as="font" type="font/woff2" crossorigin>
+
 {% compress css %}
 <link rel="stylesheet" href="/static/styles/app.css"/>
-
 <link rel="stylesheet" href="/static/styles/swiper.css"/>
 {% endcompress %}
+<link rel="stylesheet" href="{% url 'site:fonts.css' %}" media="print" onload="this.media='all'"/>
+<noscript><link rel="stylesheet" href="{% url 'site:fonts.css' %}"/></noscript>
 
-<link rel="stylesheet" href="{% url 'site:fonts.css' %}"/>
-<!-- ==========================  DARK MODE SCRPT ============================= -->
-
+<!-- ==========================  DARK MODE SCRIPT ============================= -->
 <script type="text/javascript">
     const theme = localStorage.getItem("theme");
     const isSystemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -29,4 +23,12 @@
     } else {
         document.documentElement.classList.remove("dark");
     }
+</script>
+
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "y4fzyrn9ds");
 </script>

@@ -1,8 +1,10 @@
+from django.db.models import Prefetch, Sum
+from django.db.models.functions import Coalesce
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, View, RedirectView, CreateView, UpdateView
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.urls import reverse_lazy
-from orders.models import Order, StoreSoldOrders, Store, ReturnsOrders, SpecificsOrders
+from orders.models import Order, OrderDetail, StoreSoldOrders, Store, ReturnsOrders, SpecificsOrders
 from user.mixins.logins import AdminUserMixin
 from django.db.models.aggregates import Count
 from django.utils.timezone import now
@@ -32,7 +34,8 @@ class ChangeStatusToDeliveredToUser(AdminUserMixin, RedirectView):
         order.save()
         messages.success(self.request, "تغییرات ثبت شد")
 
-        if SiteSetting.objects.first().send_message_when_set_sending_id:
+        site = SiteSetting.get_cached()
+        if site and site.send_message_when_set_sending_id:
             send_message.delay(
                 str(order.user.PhoneNumber).replace(" ", ""),
                 'deliveryID',
@@ -95,8 +98,16 @@ class OrderListView(AdminUserMixin, ListView):
     paginate_by = 100
 
     def get_queryset(self):
-        query = super().get_queryset().prefetch_related(
-            'address', 'user', 'store'
+        query = (
+            super()
+            .get_queryset()
+            .select_related('address', 'user', 'store', 'discount')
+            .prefetch_related(
+                Prefetch(
+                    'details',
+                    queryset=OrderDetail.objects.select_related('product', 'order'),
+                )
+            )
         )
 
         query = query.order_by('-id')
@@ -399,15 +410,23 @@ class OrderSoldListView(AdminUserMixin, ListView):
     paginate_by = 100
 
     def get_queryset(self):
-        return super().get_queryset().prefetch_related("store", 'order')
+        return super().get_queryset().select_related("store", "order", "order__user")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['stores'] = Store.objects.annotate(
-            order_count=Count('store_sold_orders')
-        ).filter(
-            order_count__gte=1
-        ).all()
+        context['stores'] = (
+            Store.objects.annotate(
+                order_count=Count('store_sold_orders'),
+                sold_orders_total=Coalesce(
+                    Sum(
+                        'store_sold_orders__price',
+                        filter=Q(store_sold_orders__is_returned_by_admin=False),
+                    ),
+                    0,
+                ),
+            )
+            .filter(order_count__gte=1)
+        )
         return context
 
 
@@ -421,7 +440,13 @@ class OrderDetailView(AdminUserMixin, DetailView):
     def get_object(self, queryset=None):
         order = (
             Order.objects.filter(pk=self.kwargs["pk"])
-            .prefetch_related("address", "user", "store")
+            .select_related("address", "user", "store", "discount")
+            .prefetch_related(
+                Prefetch(
+                    "details",
+                    queryset=OrderDetail.objects.select_related("product", "order"),
+                )
+            )
             .first()
         )
         return order
@@ -443,19 +468,23 @@ class OrderSoledChangeStatus(AdminUserMixin, RedirectView):
             is_returned_by_admin=False
         )
 
-        ids_paid_together = str(
-            list(items.values_list("id", flat=True))
-        )
+        item_ids = list(items.values_list("id", flat=True))
+        ids_paid_together = str(item_ids)
+        paid_time = now()
 
-        for item in items:
-            item.is_returned_by_admin = True
-            item.paid_by_admin_date = now()
-            item.ids_paid_together = ids_paid_together
-
-            if file:
+        if file:
+            for item in items:
+                item.is_returned_by_admin = True
+                item.paid_by_admin_date = paid_time
+                item.ids_paid_together = ids_paid_together
                 item.file = file
-
-            item.save()
+                item.save()
+        elif item_ids:
+            StoreSoldOrders.objects.filter(id__in=item_ids).update(
+                is_returned_by_admin=True,
+                paid_by_admin_date=paid_time,
+                ids_paid_together=ids_paid_together,
+            )
 
         messages.success(
             self.request,
@@ -474,7 +503,7 @@ class SpecificsOrdersListView(AdminUserMixin, ListView):
 
     def get_queryset(self):
         request = self.request
-        queryset = self.model.objects.prefetch_related('user', 'store')
+        queryset = self.model.objects.select_related('user', 'store')
         if number := request.GET.get('number'):
             number = str(number)
             queryset = queryset.filter(user__PhoneNumber=number)
@@ -576,7 +605,7 @@ class ReturnOrderList(AdminUserMixin, ListView):
 
     def get_queryset(self):
 
-        queryset = super().get_queryset().prefetch_related('order', 'user').order_by('-id')
+        queryset = super().get_queryset().select_related('order', 'order__store', 'user').order_by('-id')
 
         if number := self.request.GET.get('number'):
             number = str(number)
@@ -595,7 +624,7 @@ class ReturnOrderDetail(AdminUserMixin, DetailView):
     context_object_name = 'item'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(ReturnsOrders, pk=self.kwargs['pk'])
+        return get_object_or_404(ReturnsOrders.objects.select_related('order', 'order__store', 'order__discount', 'user').prefetch_related(Prefetch('order__details', queryset=OrderDetail.objects.select_related('product', 'order'))), pk=self.kwargs['pk'])
 
 
 class ReturnOrderAcceptByAdmin(AdminUserMixin, RedirectView):

@@ -1,6 +1,8 @@
 from datetime import timedelta
 from easy_thumbnails.fields import ThumbnailerImageField
 from django.db import models
+from django.db.models import Sum
+from django.db.models.functions import Coalesce
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.shortcuts import reverse
@@ -11,7 +13,7 @@ class Store(models.Model):
     phone = PhoneNumberField(null=True, blank=True)
     phone2 = PhoneNumberField(null=True, blank=True)
 
-    sort_number = models.IntegerField(default=0)
+    sort_number = models.IntegerField(default=0, db_index=True)
     whats_app_link = models.URLField(
         null=True,
         blank=True,
@@ -43,8 +45,8 @@ class Store(models.Model):
     card_shaba = models.CharField(null=True, blank=True, max_length=100)
     card_name = models.CharField(null=True, blank=True, max_length=100)
 
-    is_active = models.BooleanField(default=True)
-    is_verified = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, db_index=True)
+    is_verified = models.BooleanField(default=True, db_index=True)
 
     description = RichTextUploadingField(null=True, blank=True)
     about_image = ThumbnailerImageField(
@@ -98,7 +100,11 @@ class Store(models.Model):
     allowed_to_activate_post_categories_with_out_admin_per = models.BooleanField(default=False)
 
     def calculate_store_sold_orders(self):
-        return sum(list(self.store_sold_orders.filter(is_returned_by_admin=False).values_list("price", flat=True)))
+        if hasattr(self, "sold_orders_total") and self.sold_orders_total is not None:
+            return self.sold_orders_total
+        return self.store_sold_orders.filter(is_returned_by_admin=False).aggregate(
+            total=Coalesce(Sum("price"), 0)
+        )["total"]
 
     def get_absolute_url(self):
         return reverse('stores:main-template-detail', kwargs={'pk': self.pk})
@@ -116,11 +122,11 @@ class StoreApps(models.Model):
     )
     file = models.FileField(upload_to="app/", verbose_name="فایل")
     name = models.CharField(max_length=100, verbose_name="نام")
-    is_active = models.BooleanField(default=False, verbose_name="فعال / غیر فعال")
+    is_active = models.BooleanField(default=False, db_index=True, verbose_name="فعال / غیر فعال")
     short_description = RichTextUploadingField(null=True,
         blank=True,verbose_name='توضیحات'
     )
-    admin_verified = models.BooleanField(default=True)
+    admin_verified = models.BooleanField(default=True, db_index=True)
     image = ThumbnailerImageField(
         upload_to="site/apps/logo/",
         null=True,

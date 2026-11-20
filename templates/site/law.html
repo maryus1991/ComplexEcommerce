@@ -1,7 +1,18 @@
 {% extends 'Base/Base.html' %}
 
-{% block title %}
-    قوانین و مقررات سایت
+{% block title %}قوانین و مقررات | {{ site.title }}{% endblock %}
+
+{% block meta_description %}مطالعه قوانین و مقررات خرید، گارانتی، بازگشت کالا و حریم خصوصی در {{ site.title }}.{% endblock %}
+
+{% block microdata %}
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "خانه", "item": "{{ site_url }}/" },
+    { "@type": "ListItem", "position": 2, "name": "قوانین و مقررات", "item": "{{ canonical_url }}" }
+  ]
+}
 {% endblock %}
 
 {% block breadcrumb %}
@@ -12,11 +23,11 @@
 {% endblock %}
 
 {% block content %}
-    <main class="container child:mt-8">
+    <div class="container child:mt-8">
 
 
         <section class="w-full px-5 pt-5 pb-10 rounded-lg shadow bg-white dark:bg-zinc-700">
-            <h2 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1">قوانین و مقررات</h2>
+            <h1 class="font-MorabbaMedium text-xl flex w-fit border-b-2 border-green-500 pb-1">قوانین و مقررات</h1>
 
             {% for item in items %}
 
@@ -32,7 +43,7 @@
                             <use href="#chevron-left"></use>
                         </svg>
                     </div>
-                    <div class="accordion-content py-2 mx-4 child:dark:text-gray-200 child:text-gray-400">
+                    <div class="accordion-content py-2 mx-4 child:dark:text-gray-200 child:text-gray-600">
                         <p>
                             {{ item.description|safe }}
                         </p>
@@ -42,5 +53,5 @@
             {% endfor %}
 
         </section>
-    </main>
+    </div>
 {% endblock %}

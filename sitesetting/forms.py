@@ -41,7 +41,8 @@ class ContactForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         from sitesetting.models import SiteSetting
         from django_recaptcha import fields, widgets
-        if SiteSetting.objects.first().active_google_reCAPTCHA:
+        site = SiteSetting.get_cached()
+        if site and site.active_google_reCAPTCHA:
             self.fields['recaptcha'] = fields.ReCaptchaField(
                 widget=widgets.ReCaptchaV3(action='signup'),
             )

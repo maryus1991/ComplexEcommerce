@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 import json
 import requests
 from django.contrib import messages
@@ -47,7 +48,7 @@ class SpecificsOrdersView(LoginRequiredMixin, View):
     """for list and payment the specifics orders"""
 
     def get(self, request, *args, **kwargs):
-        orders = SpecificsOrders.objects.filter(user=request.user).order_by('is_paid').order_by('-id')
+        orders = SpecificsOrders.objects.select_related('store', 'user').filter(user=request.user).order_by('is_paid', '-id')
         context = {
             'items': orders.all(),
         }
@@ -55,7 +56,7 @@ class SpecificsOrdersView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
 
-        order = get_object_or_404(SpecificsOrders, user=request.user, pk=request.POST.get('order_id'))
+        order = get_object_or_404(SpecificsOrders.objects.select_related('store', 'user'), user=request.user, pk=request.POST.get('order_id'))
 
         base = "https://" if request.is_secure() else "http://"
 
@@ -118,7 +119,7 @@ class SpecificsOrdersVerifyPayment(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
 
-        order = SpecificsOrders.objects.get(pk=kwargs.get('pk'), Authority=request.GET.get('Authority'))
+        order = SpecificsOrders.objects.select_related('store', 'user').get(pk=kwargs.get('pk'), Authority=request.GET.get('Authority'))
 
         data = {
             "merchant_id": MERCHANT_ID,
@@ -180,7 +181,7 @@ class AddOrder(LoginRequiredMixin, RedirectView):
     """
 
     def dispatch(self, request, *args, **kwargs):
-        self.product = get_object_or_404(Product, pk=kwargs.get("pk"),
+        self.product = get_object_or_404(Product.objects.select_related("store"), pk=kwargs.get("pk"),
                                     is_active=True, store__is_active=True, store__is_verified=True,
                                     admin_verified=True, brand__is_active=True, category__is_active=True)
 
@@ -188,7 +189,8 @@ class AddOrder(LoginRequiredMixin, RedirectView):
         self.referer = request.META.get("HTTP_REFERER", "/")
 
 
-        if SiteSetting.objects.first().zero_the_count_of_all_product:
+        site = SiteSetting.get_cached()
+        if site and site.zero_the_count_of_all_product:
             messages.info(
                 request, 'فروش توسط ادمین بسته شده است و تمام موجودی کالا ها صفر شد لطفا با ادمین سایت در ارتباط باشید'
             )
@@ -352,14 +354,17 @@ class CancelingOrder(LoginRequiredMixin, RedirectView):
         )
 
         # بازگرداندن موجودی محصولات
-        for detail in order.details.all():
+        products_to_update = []
+        for detail in order.details.select_related("product").all():
             detail.product.count += detail.count
-            detail.product.save()
+            products_to_update.append(detail.product)
+        if products_to_update:
+            Product.objects.bulk_update(products_to_update, ["count"])
 
         order.canceled = True
         order.is_active = False
         order.second_date = timezone.now()
-        order.save()
+        order.save(update_fields=["canceled", "is_active", "second_date"])
         messages.info(self.request, "سبد خرید شما با موفقیت کنسل شد")
 
         return reverse("dashboard:orders")
@@ -374,7 +379,7 @@ class RemoveItemFromOrder(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         doid = kwargs.get("pk")
         obj = get_object_or_404(
-            OrderDetail,
+            OrderDetail.objects.select_related("product", "order", "order__discount"),
             pk=doid,
             order__user=self.request.user,
             order__is_active=True,
@@ -384,11 +389,11 @@ class RemoveItemFromOrder(LoginRequiredMixin, RedirectView):
 
         # بازگرداندن موجودی محصول
         obj.product.count += obj.count
-        obj.product.save()
+        obj.product.save(update_fields=["count"])
 
+        order_obj = obj.order
         obj.delete()
-        obj.order.calculate_total_price()
-        obj.order.save()
+        order_obj.calculate_total_price()
 
         messages.info(self.request, "ایتم مورد نظر با موفقیت از سبد خرید شما حذف شد ")
         return self.request.META.get("HTTP_REFERER", "/")
@@ -402,23 +407,25 @@ class RemoveProductFromOrder(LoginRequiredMixin, RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         doid = kwargs.get("pk")
-        obj = get_object_or_404(Product, pk=doid)
+        obj = get_object_or_404(Product.objects.select_related("store"), pk=doid)
 
-        order = OrderDetail.objects.filter(
-            order__user=self.request.user,
-            product=obj,
-            order__store=obj.store,
-            order__is_active=True,
-            order__canceled=False,
-            order__is_paid=False,
+        order_details = list(
+            OrderDetail.objects.filter(
+                order__user=self.request.user,
+                product=obj,
+                order__store=obj.store,
+                order__is_active=True,
+                order__canceled=False,
+                order__is_paid=False,
+            )[:2]
         )
 
-        if order.exists() and order.count() == 1:
-            order_detail = order.first()
+        if len(order_details) == 1:
+            order_detail = order_details[0]
 
             # بازگرداندن موجودی محصول
             obj.count += order_detail.count
-            obj.save()
+            obj.save(update_fields=["count"])
 
             order_detail.delete()
         else:
@@ -503,7 +510,7 @@ class ChangeInvoiceToOfficial(LoginRequiredMixin, RedirectView):
             order_obj.save()
             messages.warning(self.request, "دریافت فاکتور رسمی برای این فروشگاه غیر فعال هست ")
 
-        site = SiteSetting.objects.first()
+        site = SiteSetting.get_cached()
         if site.active_receive_official_invoice:
             if order_obj.official_invoice:
                 order_obj.official_invoice = False
@@ -553,13 +560,15 @@ class OrderSetDiscount(LoginRequiredMixin, RedirectView):
 
         if discount_name != " ":
             if discount_name.isalnum():
-                discount_obj = Discount.objects.filter(
-                    name=discount_name, is_active=True
+                discounts = list(
+                    Discount.objects.filter(
+                        name=discount_name, is_active=True
+                    )[:2]
                 )
-                if discount_obj.exists():
-                    if discount_obj.count() == 1:
-                        if discount_obj.first().count > 0:
-                            discount_obj = discount_obj.first()
+                if discounts:
+                    if len(discounts) == 1:
+                        if discounts[0].count > 0:
+                            discount_obj = discounts[0]
                             if discount_obj.end_date_discount is not None and discount_obj.end_date_discount < timezone.now():
                                 messages.error(
                                     self.request,
@@ -729,10 +738,10 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
         store_id = kwargs.get("store_id")
         user = self.request.user
         delivery_id = kwargs.get("did")
-        site = SiteSetting.objects.first()
+        site = SiteSetting.get_cached()
 
         order = get_object_or_404(
-            Order,
+            Order.objects.select_related("store", "address", "discount"),
             pk=pk,
             is_active=True,
             canceled=False,
@@ -757,7 +766,6 @@ class ChooseTypeOfDelivery(LoginRequiredMixin, RedirectView):
                 order.in_city_delivery = False
                 order.freight_delivery = False
                 order.physical_delivery = False
-                price = order.calculate_post_price()
 
                 order.delivery_price = price
                 order.save()
@@ -846,7 +854,7 @@ class ChooseTypeOfPaymanet(LoginRequiredMixin, RedirectView):
 
         order = get_object_or_404(Order, pk=kwargs.get('pk'))
         type_of_payment = kwargs.get('type') 
-        site = SiteSetting.objects.first()
+        site = SiteSetting.get_cached()
 
         if type_of_payment == 'ZAR' and site.active_zarinpal :
             order.type_of_payment = 'ZAR'
@@ -872,11 +880,16 @@ class ConformPayment(LoginRequiredMixin, View):
 
     def dispatch(self, request, *args, **kwargs):
         try:
-            self.site = SiteSetting.objects.first()
+            self.site = SiteSetting.get_cached()
 
             self.pk = kwargs.get("pk")
             self.order = get_object_or_404(
-                Order,
+                Order.objects.select_related("store", "user", "address", "discount").prefetch_related(
+                    Prefetch(
+                        "details",
+                        queryset=OrderDetail.objects.select_related("product", "product__store", "order"),
+                    )
+                ),
                 pk=self.pk,
                 user=request.user,
                 is_paid=False,
@@ -895,8 +908,6 @@ class ConformPayment(LoginRequiredMixin, View):
             
 
             self.result = self.order.get_payment_price()
-
-            self.site = SiteSetting.objects.first()
             
 
             if self.order.is_paid:
@@ -940,6 +951,11 @@ class ConformPayment(LoginRequiredMixin, View):
             "order": self.order,
             "tax": self.site.tax,
             "site": self.site,
+            "colleague_store_ids": (
+                set(request.user.colleague_with_store.values_list("id", flat=True))
+                if request.user.colleague_user
+                else set()
+            ),
         }
         return render(request, "order/payment.html", context)
 
@@ -1034,9 +1050,8 @@ class ConformPayment(LoginRequiredMixin, View):
 
                 if response.status_code == 200:
                     authority = response.json()["data"]["authority"]
-                    order = Order.objects.get(pk=self.pk)
                     order.Authority = authority
-                    order.save()
+                    order.save(update_fields=["Authority"])
                     return redirect(f"{ZARINPAL_REDIRECT_USER_TO_PAYMENT_PAGE}{authority}")
 
                 else:
@@ -1083,9 +1098,8 @@ class ConformPayment(LoginRequiredMixin, View):
                 
                     if response.status_code == 200 and response.json()['result'] == 100:
                         authority = response.json()["trackId"]
-                        order = Order.objects.get(pk=self.pk)
                         order.Authority = authority
-                        order.save()
+                        order.save(update_fields=["Authority"])
                         print(f"{ZIPAL_PAYMENT_REDIRECT}/{authority}")
                         return redirect(f"{ZIPAL_PAYMENT_REDIRECT}/{authority}")
 
@@ -1116,7 +1130,9 @@ class VerifyPayment(LoginRequiredMixin, View):
         self.authority = request.GET.get("Authority")
         self.status = request.GET.get("Status")
         self.order = get_object_or_404(
-            Order,
+            Order.objects.select_related("store", "user", "discount").prefetch_related(
+                Prefetch("details", queryset=OrderDetail.objects.select_related("product", "order"))
+            ),
             pk=self.pk,
             Authority=self.authority,
             is_paid=False,
@@ -1125,7 +1141,7 @@ class VerifyPayment(LoginRequiredMixin, View):
         )
         self.result = self.order.get_payment_price()
 
-        self.site = SiteSetting.objects.first()
+        self.site = SiteSetting.get_cached()
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -1151,7 +1167,7 @@ class VerifyPayment(LoginRequiredMixin, View):
                 payment_id = response["data"]["ref_id"]
                 fee = response["data"]["fee"]
 
-                order = Order.objects.get(pk=self.pk, Authority=self.authority)
+                order = self.order
 
                 order.cart_hash = card_hash
                 order.cart = card_pan
@@ -1208,7 +1224,9 @@ class VerifyPaymentZipal(LoginRequiredMixin, View):
         self.authority = request.GET.get("trackId")
         self.status = request.GET.get("status")
         self.order = get_object_or_404(
-            Order,
+            Order.objects.select_related("store", "user", "discount").prefetch_related(
+                Prefetch("details", queryset=OrderDetail.objects.select_related("product", "order"))
+            ),
             pk=self.pk,
             Authority=self.authority,
             is_paid=False,
@@ -1217,7 +1235,7 @@ class VerifyPaymentZipal(LoginRequiredMixin, View):
         )
         self.result = self.order.get_payment_price()
 
-        self.site = SiteSetting.objects.first()
+        self.site = SiteSetting.get_cached()
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -1245,7 +1263,7 @@ class VerifyPaymentZipal(LoginRequiredMixin, View):
             payment_id = response["refNumber"] 
             fee = response["result"] 
 
-            order = Order.objects.get(pk=self.pk, Authority=self.authority)
+            order = self.order
 
             order.cart_hash = card_pan
             order.cart = card_pan

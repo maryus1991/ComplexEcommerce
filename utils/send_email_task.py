@@ -13,7 +13,7 @@ def send_email_task(self, recipient_email, link):
     try:
         # آماده سازی context
         context = {
-            'site': SiteSetting.objects.first(),
+            'site': SiteSetting.get_cached(),
             'link': link,
         }
 

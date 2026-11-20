@@ -14,6 +14,7 @@ class CustomUserAdmin(UserAdmin):
     """
 
     model = User
+    list_select_related = ("store",)
     list_display = ("PhoneNumber", "is_staff", "is_superuser", "is_active")
     list_filter = ("is_staff", "is_superuser", "is_active", "PhoneNumber")
     search_fields = ("PhoneNumber", "first_name", "last_name")

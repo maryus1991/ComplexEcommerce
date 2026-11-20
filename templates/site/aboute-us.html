@@ -1,24 +1,35 @@
 {% extends 'Base/Base.html' %}
 {% load to_webp %}
 
-{% block title %}
-    درباره ما {{site.title}}
-{% endblock %}
+{% block title %}درباره ما | {{ site.title }}{% endblock %}
+
+{% block meta_description %}آشنایی با فروشگاه {{ site.title }}، خدمات، اطلاعات تماس و مجوزهای رسمی فعالیت.{% endblock %}
 
 {% block microdata %}
- {
+{
   "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "{{ site.title|escapejs }}",
-  "url": "https://{{ request.get_host }}/",
-  "logo": "{% if site.logo %}{% if site.logo.url|slice:':4' == 'http' %}{{ site.logo.url }}{% else %}https://{{ request.get_host }}{{ site.logo.url }}{% endif %}{% endif %}",
-  "sameAs": [
-    "{{ site.instagram_link }}",
-    "{{ site.telegram_link }}"
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "{{ site_url }}/#organization",
+      "name": "{{ site.title|escapejs }}",
+      "url": "{{ site_url }}/"{% if site.logo %},
+      "logo": "{% if site.logo.url|slice:':4' == 'http' %}{{ site.logo.url }}{% else %}{{ site_url }}{{ site.logo.url }}{% endif %}"{% endif %}{% if site.instagram_link or site.telegram_link %},
+      "sameAs": [
+        {% if site.instagram_link %}"{{ site.instagram_link|escapejs }}"{% if site.telegram_link %},{% endif %}{% endif %}
+        {% if site.telegram_link %}"{{ site.telegram_link|escapejs }}"{% endif %}
+      ]{% endif %}
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{ canonical_url }}#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "خانه", "item": "{{ site_url }}/" },
+        { "@type": "ListItem", "position": 2, "name": "درباره ما", "item": "{{ canonical_url }}" }
+      ]
+    }
   ]
 }
-
-
 {% endblock %}
 
 {% block breadcrumb %}
@@ -33,28 +44,28 @@
 {% endblock %}
 
 {% block content %}
-    <main class="container child:mt-8">
+    <div class="container child:mt-8">
 
 
         <!-- aboute us -->
         <section class="w-full  flex flex-col lg:flex-row gap-4 p-5 rounded-lg shadow bg-white dark:bg-zinc-700">
             <div class=" w-full lg:w-2/4">
                 <!-- LOGO -->
-<a href="/" class="text-green-500 transition-colors w-fit flex items-center gap-3">
+<a href="/" class="text-green-700 dark:text-green-300 transition-colors w-fit flex items-center gap-3">
     <picture>
         <source
             srcset="{{ site.logo.url }}"
             class="w-10 h-10"
-            alt="{{ site.title }}"
             type="image/webp"
         >
 
-        <img
+        {% if site.logo %}<img
             src="{{ site.logo.url }}"
             class="w-10 h-10 object-contain"
-            alt="{{ site.title }}"
-            loading="lazy"
-        >
+            width="40" height="40"
+            alt=""
+            loading="lazy" decoding="async"
+        >{% endif %}
     </picture>
 
     <h2 class="m-0">
@@ -71,36 +82,39 @@
                 <div class="flex items-start justify-start gap-x-10">
                     <a href="{{ site.instagram_link }}" class="flex items-center gap-x-2">
                         <p dir="ltr">{{ site.instagram_ID }}</p>
-                                               {% if site.instagram_logo %}
-    <img src="{{ site.instagram_logo.url }}"
-         alt="Instagram"
+                                                   <!-- نسخه WebP با رزولوشن‌های مختلف -->
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    {% if site.instagram_logo %}<img src="{{ site.instagram_logo.url }}"
+         alt=""
+         width="40" height="40"
          class="w-10 h-10 rounded-full"
-         loading="lazy">
-                                               {% endif %}
+         loading="lazy" decoding="async">{% endif %}
                     </a>
                     <a href="{{ site.telegram_link }}" class="flex items-center gap-x-2">
                         <p dir="ltr">{{ site.telegram_ID }}</p>
-                                                {% if site.telegram_logo %}
-    <img src="{{ site.telegram_logo.url }}"
-         alt="Telegram"
+                                                    <!-- نسخه WebP با رزولوشن‌های مختلف -->
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    {% if site.telegram_logo %}<img src="{{ site.telegram_logo.url }}"
+         alt=""
+         width="40" height="40"
          class="w-10 h-10 rounded-full"
-         loading="lazy">
-                                                {% endif %}
+         loading="lazy" decoding="async">{% endif %}
                     </a>
                     <a href="tel:{{ site.phone }}" class="flex items-center gap-x-2">
-                        <p dir="ltr" class=" text-lg  text-green-500">{{ site.phone }}</p>
+                        <p dir="ltr" class=" text-lg  text-green-700 dark:text-green-300">{{ site.phone }}</p>
                     </a>
                 </div>
             </div>
             <div class="flex justify-end  w-full lg:w-2/4">
-                {% if site.about_image %}
-                    <img src="{{ site.about_image.url }}" alt="{{ site.title }}"
-                         class="rounded-lg lg:h-[35rem]" width="652" height="560"
-                         loading="lazy">
-                {% endif %}
+                                    {% if site.about_image %}<img src="{{ site.about_image.url }}" alt="{{ site.title }}"
+                         class="rounded-lg lg:h-[35rem]"   width="652" height="560"
+                         loading="lazy" decoding="async">{% endif %}
+                
 
             </div>
         </section>
-    </main>
+    </div>
 {% endblock %}
 

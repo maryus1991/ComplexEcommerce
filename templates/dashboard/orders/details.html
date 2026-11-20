@@ -231,13 +231,13 @@
                             ادامه خرید
                         </button>
                     </a>
-                    {% if  details.exists and not details.first.order.canceled and not details.first.order.is_paid and not details.first.order.canceled %}
-                        {% if details.first.order.address is None %}
+                    {% if  details and not order_obj.canceled and not order_obj.is_paid and not order_obj.canceled %}
+                        {% if order_obj.address is None %}
                             <button class="p-2 gap-x-1 shadow  rounded-lg dark:bg-gray-700 bg-gray-50 ">
                                   برای درخواست ارسال لطفا ادرسی را انتخاب کنید
                             </button>
                         {% else %}
-                            <a href="{% url 'orders:payment-conform'  details.first.order.id %}">
+                            <a href="{% url 'orders:payment-conform'  order_obj.id %}">
                                 <button class="main-btn p-2 gap-x-1 shadow bg-green-500 ">
 
                                     درخواست ارسال و تایید نهایی
@@ -246,7 +246,7 @@
                         {% endif %}
 
                     {% endif %}
-                    {% if  details.exists and  details.first.order.is_paid %}
+                    {% if  details and  order_obj.is_paid %}
                         {% if can_return == False %}
                             <button class="p-2 gap-x-1 shadow  rounded-lg dark:bg-gray-700 bg-gray-50 ">
                                 مهلت درخواست مرجوعی به پایان رسیده
@@ -257,7 +257,7 @@
                                 برای این سفارش قبلا درخواست مرجوعی دادید
                             </button>
                         {% else %}
-                            <a href="{% url 'dashboard:return-order'  details.first.order.id %}">
+                            <a href="{% url 'dashboard:return-order'  order_obj.id %}">
                                 <button class="main-btn p-2 gap-x-1 shadow bg-green-500 ">
 
                                     درخواست مرجوعی
@@ -266,9 +266,9 @@
                         {% endif %}
 
                     {% endif %}
-                    {% if  details.exists and not details.first.order.canceled and not details.first.order.is_paid and not details.first.order.canceled and not details.first.order.is_paid %}
+                    {% if  details and not order_obj.canceled and not order_obj.is_paid and not order_obj.canceled and not order_obj.is_paid %}
 
-                        <a href="{% url 'orders:cancel'  details.first.order.id %}">
+                        <a href="{% url 'orders:cancel'  order_obj.id %}">
                             <button class="main-btn p-2 gap-x-1 shadow bg-red-500 ">
                                 <svg class="w-5 h-5">
                                     <use href="#close"></use>
@@ -464,7 +464,7 @@
 
                     <br>
                     <div class="dark:bg-zinc-700 bg-white p-4 sm:p-6 shadow rounded-lg w-full">
-                        {% if details.exists and details.first.order.address %}
+                        {% if details and order_obj.address %}
                             <div class="space-y-3">
                                 <div class="flex items-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500"
@@ -479,28 +479,28 @@
 
                                 <div class="bg-gray-50 dark:bg-zinc-600 p-4 rounded-lg space-y-2">
                                     <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-                                        <span class="font-DanaMedium">{{ details.first.order.address.province }}</span>
+                                        <span class="font-DanaMedium">{{ order_obj.address.province }}</span>
                                         <span class="text-gray-400 dark:text-gray-300">|</span>
-                                        <span class="font-DanaMedium">{{ details.first.order.address.city }}</span>
+                                        <span class="font-DanaMedium">{{ order_obj.address.city }}</span>
                                         <span class="text-gray-400 dark:text-gray-300">|</span>
-                                        <span class="font-DanaMedium">کدپستی: {{ details.first.order.address.zipcode }}</span>
+                                        <span class="font-DanaMedium">کدپستی: {{ order_obj.address.zipcode }}</span>
                                     </div>
 
                                     <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-                                        <span class="font-DanaMedium">{{ details.first.order.address.name }} {{ details.first.order.address.last_name }}</span>
+                                        <span class="font-DanaMedium">{{ order_obj.address.name }} {{ order_obj.address.last_name }}</span>
                                         <span class="text-gray-400 dark:text-gray-300">|</span>
                                         <span class="font-DanaMedium"
-                                              dir="ltr">{{ details.first.order.address.phone }}</span>
+                                              dir="ltr">{{ order_obj.address.phone }}</span>
                                     </div>
 
                                     <p class="text-gray-700 dark:text-gray-200 pt-2">
-                                        {{ details.first.order.address.address }}
+                                        {{ order_obj.address.address }}
                                     </p>
 
-                                    {% if details.first.order.address.additional_decryption %}
+                                    {% if order_obj.address.additional_decryption %}
                                         <div class="pt-2">
                                             <p class="text-sm text-gray-600 dark:text-gray-300">
-                                                توضیحات اضافی: {{ details.first.order.address.additional_decryption }}
+                                                توضیحات اضافی: {{ order_obj.address.additional_decryption }}
                                             </p>
                                         </div>
                                     {% endif %}
@@ -524,9 +524,9 @@
                         {% endif %}
                     </div>
                     <br>
-                    {% if details.exists and details.first.order.address and details.first.order.is_paid %}
+                    {% if details and order_obj.address and order_obj.is_paid %}
                         <div class="dark:bg-zinc-700 bg-white flex flex-col sm:flex-row items-center justify-between gap-3 p-4 shadow-md rounded-lg transition-all hover:shadow-lg">
-                            {% if details.first.order.sending and details.first.order.delivered_to_user and details.first.order.sending_id is not None %}
+                            {% if order_obj.sending and order_obj.delivered_to_user and order_obj.sending_id is not None %}
 
                                 <div class="flex items-center gap-3 flex-wrap justify-center sm:justify-start">
                                     <!-- آیکون تحویل -->
@@ -543,10 +543,10 @@
                                     <!-- کد رهگیری -->
                                     <div class="bg-blue-50 dark:bg-zinc-600 px-3 py-1 rounded-md flex items-center gap-2">
             <span class="text-blue-600 dark:text-blue-300 font-DanaMedium tracking-wider">
-                {{ details.first.order.sending_id|default:"-" }}
+                {{ order_obj.sending_id|default:"-" }}
             </span>
                                         <!-- آیکون کپی -->
-                                        <button onclick="copyToClipboard('{{ details.first.order.sending_id }}')"
+                                        <button onclick="copyToClipboard('{{ order_obj.sending_id }}')"
                                                 class="text-blue-400 hover:text-blue-600 dark:hover:text-blue-200">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                                  viewBox="0 0 24 24" stroke="currentColor">
@@ -559,8 +559,8 @@
                             {% endif %}
 
                             <!-- لینک دریافت فاکتور -->
-                            {% if details.first.order.is_paid and not details.first.order.official_invoice %}
-                                <a href="{% url 'dashboard:order-generate-invoice' details.first.order.id %}"
+                            {% if order_obj.is_paid and not order_obj.official_invoice %}
+                                <a href="{% url 'dashboard:order-generate-invoice' order_obj.id %}"
                                    class="flex items-center gap-2 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors font-DanaMedium">
                                     دریافت فاکتور
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
@@ -570,11 +570,11 @@
                                               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                     </svg>
                                 </a>
-                            {% elif details.first.order.is_paid and details.first.order.official_invoice and not details.first.order.official_invoice_conformed_given_to_user %}
+                            {% elif order_obj.is_paid and order_obj.official_invoice and not order_obj.official_invoice_conformed_given_to_user %}
                                 <p class="flex items-center gap-2 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors font-DanaMedium">
                                     فاکتور رسمی شما هنوز اماده نشده است
                                 </p>
-                                <a href="{% url 'dashboard:order-generate-invoice' details.first.order.id %}"
+                                <a href="{% url 'dashboard:order-generate-invoice' order_obj.id %}"
                                    class="flex items-center gap-2 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors font-DanaMedium">
                                     دریافت فاکتور موقت
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
@@ -584,8 +584,8 @@
                                               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                     </svg>
                                 </a>
-                            {% elif details.first.order.is_paid and details.first.order.official_invoice and details.first.order.official_invoice_conformed_given_to_user %}
-                                <a href="{% url 'dashboard:order-generate-invoice' details.first.order.id %}"
+                            {% elif order_obj.is_paid and order_obj.official_invoice and order_obj.official_invoice_conformed_given_to_user %}
+                                <a href="{% url 'dashboard:order-generate-invoice' order_obj.id %}"
                                    class="flex items-center gap-2 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors font-DanaMedium">
                                     دریافت فاکتور رسمی
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
@@ -610,10 +610,10 @@
                         </script>
                     {% endif %}
                     <br>
-                    {% if details.exists and not details.first.order.canceled and not details.first.order.is_paid %}
+                    {% if details and not order_obj.canceled and not order_obj.is_paid %}
 
                         <form method="post" class="w-full col-span-12"
-                              action="{% url 'orders:add-address' pk=details.first.order.id store_id=details.first.order.store.id %}">
+                              action="{% url 'orders:add-address' pk=order_obj.id store_id=order_obj.store.id %}">
                             <!-- Adjust action URL as needed -->
                             {% csrf_token %}
 
@@ -652,7 +652,7 @@
                                         >
                                             {% for address in request.user.address.all %}
                                                 <option value="{{ address.id }}"
-                                                        {% if details.first.order.address.id == address.id %}selected="selected"{% endif %}
+                                                        {% if order_obj.address.id == address.id %}selected="selected"{% endif %}
                                                         class="py-2">
                                                     {{ address.province }} - {{ address.city }} |
                                                     کدپستی: {{ address.zipcode }} | 

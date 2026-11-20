@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -165,6 +166,7 @@ class SiteSetting(models.Model):
     )
     is_active = models.BooleanField(
         default=True,
+        db_index=True,
         verbose_name="فعال کردن ورود به سایت و فعال کردن تنظیمات سایت فعلی",
     )
     active_store_page = models.BooleanField(
@@ -225,19 +227,58 @@ class SiteSetting(models.Model):
         default=False, verbose_name="صفر کردن موجودی تمام محصولات سایت"
     )
 
+    CACHE_KEY = "site_setting_singleton"
+
+    @classmethod
+    def get_cached(cls):
+        site = cache.get(cls.CACHE_KEY)
+        if site is None:
+            site = cls.objects.first()
+            if site is not None:
+                cache.set(cls.CACHE_KEY, site, 300)
+        return site
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        cache.delete(self.CACHE_KEY)
+
+    def delete(self, *args, **kwargs):
+        result = super().delete(*args, **kwargs)
+        cache.delete(self.CACHE_KEY)
+        return result
 
     def __str__(self):
         return self.title
 
 
 class FastLinks(models.Model):
+    CACHE_KEY = "footer_fast_links_top4"
+    CACHE_TIMEOUT = 300
+
     title = models.CharField(verbose_name="عنوان", max_length=100)
     link = models.URLField(
         verbose_name="لینک",
     )
 
-    is_active = models.BooleanField(default=True, verbose_name="فعال یا غیر فعال")
-    sort_number = models.PositiveIntegerField(default=0, verbose_name='ترتیب بندی')
+    is_active = models.BooleanField(default=True, db_index=True, verbose_name="فعال یا غیر فعال")
+    sort_number = models.PositiveIntegerField(default=0, db_index=True, verbose_name='ترتیب بندی')
+
+    @classmethod
+    def get_cached_footer_links(cls):
+        links = cache.get(cls.CACHE_KEY)
+        if links is None:
+            links = list(cls.objects.filter(is_active=True).order_by("-sort_number")[:4])
+            cache.set(cls.CACHE_KEY, links, cls.CACHE_TIMEOUT)
+        return links
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        cache.delete(self.CACHE_KEY)
+
+    def delete(self, *args, **kwargs):
+        result = super().delete(*args, **kwargs)
+        cache.delete(self.CACHE_KEY)
+        return result
 
     def __str__(self):
         return self.title
@@ -261,7 +302,7 @@ class QuestionAndAnswer(models.Model):
     question = models.TextField(verbose_name="سوال")
     answer = models.TextField(verbose_name="جواب")
 
-    is_active = models.BooleanField(default=True, verbose_name="فعال یا غیر فعال")
+    is_active = models.BooleanField(default=True, db_index=True, verbose_name="فعال یا غیر فعال")
 
     def __str__(self):
         return self.question
@@ -272,7 +313,7 @@ class ContactUs(models.Model):
     email = models.EmailField()
     phone = PhoneNumberField()
     message = models.TextField()
-    admin_read = models.BooleanField(default=False)
+    admin_read = models.BooleanField(default=False, db_index=True)
 
     def __str__(self):
         return f"{self.subject} - {self.email} - {self.phone}"
@@ -288,14 +329,32 @@ class Slider(models.Model):
     name2 = models.CharField(max_length=100, null=True, blank=True, verbose_name="عنوان دوم")
     text = models.CharField(max_length=250, null=True, blank=True, verbose_name="متن")
     link = models.URLField(verbose_name="لینک")
-    is_active = models.BooleanField(default=True, null=True, blank=True, verbose_name="فعال یا فعال نبودن")
-    only_show_on_phone = models.BooleanField(default=False, verbose_name="مخصوص نمایش در گوشی")
-    sort_number = models.IntegerField(default=0, verbose_name="ترتیب")
+    is_active = models.BooleanField(default=True, null=True, blank=True, db_index=True, verbose_name="فعال یا فعال نبودن")
+    only_show_on_phone = models.BooleanField(default=False, db_index=True, verbose_name="مخصوص نمایش در گوشی")
+    sort_number = models.IntegerField(default=0, db_index=True, verbose_name="ترتیب")
     Width_Height = models.CharField(default="1850x500", max_length=10, verbose_name="طول در عرض (  در مقدار پیش فرض ۱۸۵۰ طول هست و ۵۰۰ عرض هست و ابعاد که برای گوشی هست  400x200 که باید دستی وارد شود )")
 
 
     def __str__(self):
         return f"{self.id}"
+
+    @property
+    def slider_width(self):
+        try:
+            parts = str(self.Width_Height or "1850x500").lower().split("x")
+            w = int(parts[0].strip())
+            return w if w > 0 else 1850
+        except (ValueError, IndexError):
+            return 1850
+
+    @property
+    def slider_height(self):
+        try:
+            parts = str(self.Width_Height or "1850x500").lower().split("x")
+            h = int(parts[1].strip())
+            return h if h > 0 else 500
+        except (ValueError, IndexError):
+            return 500
 
     class Meta:
         ordering = ['-sort_number', "-id"]
@@ -307,8 +366,9 @@ class SiteLaw(models.Model):
     )
     is_active = models.BooleanField(
         default=True,
+        db_index=True,
     )
-    sort_number = models.IntegerField(default=0)
+    sort_number = models.IntegerField(default=0, db_index=True)
 
 
 class Banners(models.Model):
@@ -324,8 +384,8 @@ class Banners(models.Model):
         max_length=100, null=True, blank=True, verbose_name="عنوان دوم"
     )
     link = models.URLField(verbose_name="لینک")
-    is_active = models.BooleanField(default=True, verbose_name="فعال یا فعال نبودن")
-    only_show_on_phone = models.BooleanField(default=True, verbose_name="مخصوص نمایش در گوشی")
+    is_active = models.BooleanField(default=True, db_index=True, verbose_name="فعال یا فعال نبودن")
+    only_show_on_phone = models.BooleanField(default=True, db_index=True, verbose_name="مخصوص نمایش در گوشی")
 
     def __str__(self):
         return f"{self.id}"

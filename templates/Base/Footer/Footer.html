@@ -25,8 +25,8 @@
                 {% endif %}
 
             </div>
-	    <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=618579&Code=y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9'>
-            <img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=618579&Code=y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9' alt='اینماد' style='cursor:pointer' code='y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9' loading='lazy'></a>
+	    <a referrerpolicy='origin' target='_blank' rel='noopener noreferrer' aria-label='نماد اعتماد الکترونیکی اینماد' href='https://trustseal.enamad.ir/?id=618579&Code=y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9'>
+            <img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=618579&Code=y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9' alt='نماد اعتماد الکترونیکی اینماد' width='125' height='136' loading='lazy' decoding='async' style='cursor:pointer' code='y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9'></a>
             <!-- GO TO TOP BTN -->
             <a href="" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;"
                class="flex items-center gap-x-2 text-sm p-2 cursor-pointer rounded-lg border-2 border-gray-200">
@@ -40,14 +40,15 @@
         <div class="flex mt-8 items-center justify-between flex-col lg:flex-row gap-y-10 lg:gap-x-20 flex-wrap">
             <div class="flex flex-col gap-y-2 w-full lg:w-[30%]">
                 <!-- LOGO -->
-                <a href="/" class="text-green-500 transition-colors w-fit block">
-{% if site.logo %}
-    <img src="{{ site.logo.url }}"
+                <a href="/" aria-label="صفحه اصلی {{ site.title }}" class="text-green-500 transition-colors w-fit block">
+    <!-- نسخه WebP با رزولوشن‌های مختلف -->
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    {% if site.logo %}<img src="{{ site.logo.url }}"
          alt="{{ site.title }}"
          class="w-24 h-14 rounded-full"
          width="96" height="56"
-         loading="lazy">
-{% endif %}
+         loading="lazy" decoding="async">{% endif %}
 
 
                 </a>
@@ -120,23 +121,21 @@
                 </div>
 
                 <div class="flex items-start justify-start gap-x-10">
-                    <a href="{{ site.instagram_link }}" class="flex items-center gap-x-2">
+                    <a href="{{ site.instagram_link }}" rel="noopener noreferrer" target="_blank" aria-label="اینستاگرام {{ site.title }}" class="flex items-center gap-x-2">
                         <p dir="ltr">{{ site.instagram_ID }}</p>
-                       {% if site.instagram_logo %}
-    <img src="{{ site.instagram_logo.url }}"
-         alt="Instagram"
+                           {% if site.instagram_logo %}<img src="{{ site.instagram_logo.url }}"
+         alt=""
+         width="40" height="40"
          class="w-10 h-10 rounded-full"
-         loading="lazy">
-                       {% endif %}
+         loading="lazy" decoding="async">{% endif %}
                     </a>
-                    <a href="{{ site.telegram_link }}" class="flex items-center gap-x-2">
+                    <a href="{{ site.telegram_link }}" rel="noopener noreferrer" target="_blank" aria-label="تلگرام {{ site.title }}" class="flex items-center gap-x-2">
                         <p dir="ltr">{{ site.telegram_ID }}</p>
-                        {% if site.telegram_logo %}
-    <img src="{{ site.telegram_logo.url }}"
-         alt="Telegram"
+                            {% if site.telegram_logo %}<img src="{{ site.telegram_logo.url }}"
+         alt=""
+         width="40" height="40"
          class="w-10 h-10 rounded-full"
-         loading="lazy">
-                        {% endif %}
+         loading="lazy" decoding="async">{% endif %}
                     </a>
                 </div>
 

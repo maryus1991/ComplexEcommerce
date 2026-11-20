@@ -1,18 +1,19 @@
 from django.contrib import admin
 from auditlog.registry import auditlog
-
-# Register your models here.
-
 from .models import DeliveryPrices, Order, OrderDetail, Discount, StoreSoldOrders, ReturnsOrders, SpecificsOrders
 
-admin.site.register(DeliveryPrices)
-admin.site.register(Order)
-admin.site.register(OrderDetail)
-admin.site.register(Discount)
-admin.site.register(StoreSoldOrders)
-admin.site.register(ReturnsOrders)
-admin.site.register(SpecificsOrders)
 
+class SelectRelatedAdmin(admin.ModelAdmin):
+    list_select_related = True
+
+
+admin.site.register(DeliveryPrices)
+admin.site.register(Order, SelectRelatedAdmin)
+admin.site.register(OrderDetail, SelectRelatedAdmin)
+admin.site.register(Discount)
+admin.site.register(StoreSoldOrders, SelectRelatedAdmin)
+admin.site.register(ReturnsOrders, SelectRelatedAdmin)
+admin.site.register(SpecificsOrders, SelectRelatedAdmin)
 
 
 auditlog.register(Order)

@@ -56,32 +56,29 @@ class TicketConversationDetailView(AdminUserMixin, View):
 
     def get(self, request, *args, **kwargs):
         pk = self.kwargs.get("pk")
-        item = Ticket.objects.filter(pk=pk).prefetch_related("message").first()
+        item = Ticket.objects.filter(pk=pk).select_related("user", "store").first()
 
         if item is None:
             raise Http404()
 
         if item.user == request.user:
-
-            for message in item.message.filter(is_read_by_client=False).all():
-                message.is_read_by_client = True
-                message.date_read_by_client = now()
-                message.save()
-
+            item.message.filter(is_read_by_client=False).update(
+                is_read_by_client=True,
+                date_read_by_client=now(),
+            )
         else:
-
-            if SiteSetting.objects.first().send_message_response_to_ticket:
+            site = SiteSetting.get_cached()
+            if site and site.send_message_response_to_ticket:
                 send_message.delay(
                     str(item.user.PhoneNumber).replace(" ", ""),
                     'ticketNotify',
                     str(item.user.PhoneNumber).replace(" ", ""),
-
                 )
 
-            for message in item.message.filter(is_read_by_server=False).all():
-                message.is_read_by_server = True
-                message.date_read_by_admin = now()
-                message.save()
+            item.message.filter(is_read_by_server=False).update(
+                is_read_by_server=True,
+                date_read_by_admin=now(),
+            )
 
         return render(request, "admin_panel/tickets/conversations.html", {"obj": item})
 
@@ -138,7 +135,7 @@ class TicketSendListView(ListView):
 
     def get_queryset(self):
         query = (
-            super().get_queryset().filter(user=self.request.user).order_by("-id",'close_ticket')
+            super().get_queryset().filter(user=self.request.user).select_related("store", "user").order_by("-id",'close_ticket')
         )
 
         form = TicketFilterForm(self.request.GET)
@@ -257,7 +254,9 @@ class TicketReceivedListView(AdminUserMixin, ListView):
             .get_queryset()
             .filter(
                 store__isnull=True
-            ).order_by("-id",'close_ticket')
+            )
+            .select_related("store", "user")
+            .order_by("-id",'close_ticket')
         )
 
         form = TicketFilterForm(self.request.GET)

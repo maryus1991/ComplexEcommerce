@@ -32,10 +32,12 @@ urlpatterns = [
     path("<int:pk>/notif-me", AddUserToProductAvailability.as_view(), name="notif_me"),
 ]
 
-from .sitemap import ProductSitemap
+from .sitemap import ProductSitemap, ProductCategorySitemap, ProductBrandSitemap
 
 
 sitemaps = {
     "products": ProductSitemap,
+    "categories": ProductCategorySitemap,
+    "brands": ProductBrandSitemap,
 
 }

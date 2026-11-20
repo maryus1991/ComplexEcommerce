@@ -143,12 +143,11 @@ class UpdateSiteSettingView(AdminUserMixin, UpdateView):
     context_object_name = "site"
 
     def get_object(self, queryset=None):
-        site = SiteSetting.objects
-        if site.exists() and site.count() == 1:
-            return site.first()
-        else:
-            site.all().delete()
-            return site.get_or_create()[0]
+        sites = list(SiteSetting.objects.all()[:2])
+        if len(sites) == 1:
+            return sites[0]
+        SiteSetting.objects.all().delete()
+        return SiteSetting.objects.get_or_create()[0]
 
     def form_valid(self, form):
         messages.success(self.request, "تنظیمات سایت با موفقیت تغییر یافت")

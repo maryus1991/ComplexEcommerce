@@ -6,7 +6,7 @@ from django.views.generic import (
     RedirectView,
     View,
 )
-from django.db.models import Q
+from django.db.models import Q, Prefetch, Sum
 from django.shortcuts import (
     get_object_or_404,
     reverse,
@@ -21,13 +21,13 @@ from django.core.exceptions import (
 from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
 from django.core.files.uploadedfile import UploadedFile
-from orders.models import Order, StoreSoldOrders, SpecificsOrders, ReturnsOrders
+from orders.models import Order, OrderDetail, StoreSoldOrders, SpecificsOrders, ReturnsOrders
 from product.models import Product
 from stores.models import Store
 from django.utils.dateparse import parse_date
 from stores.forms import OrderFilteringForm
 from django.db.models import Value
-from django.db.models.functions import Concat
+from django.db.models.functions import Concat, Coalesce
 from user.mixins.logins import UserStoreStaffMixin
 import jdatetime
 from utils.send_otp import send_message
@@ -45,7 +45,7 @@ class ReturnOrderList(UserStoreStaffMixin, ListView):
 
     def get_queryset(self):
 
-        queryset = super().get_queryset().filter(order__store=self.request.user.store).prefetch_related('order', 'user').order_by('-id')
+        queryset = super().get_queryset().filter(order__store=self.request.user.store).select_related('order', 'order__store', 'order__discount', 'user').order_by('-id')
 
         if number:= self.request.GET.get('number'):
             number = str(number)
@@ -61,7 +61,7 @@ class ReturnOrderDetail(UserStoreStaffMixin, DetailView):
     context_object_name = 'item'
 
     def get_object(self, queryset=None):
-        return get_object_or_404(ReturnsOrders, pk=self.kwargs['pk'], order__store=self.request.user.store)
+        return get_object_or_404(ReturnsOrders.objects.select_related('order', 'order__store', 'order__discount', 'user').prefetch_related(Prefetch('order__details', queryset=OrderDetail.objects.select_related('product', 'order'))), pk=self.kwargs['pk'], order__store=self.request.user.store)
 
 
 class ReturnOrderAcceptByStore(UserStoreStaffMixin, RedirectView):
@@ -150,12 +150,12 @@ class ReturnOrderClose(UserStoreStaffMixin, RedirectView):
         obj.date_close_request = now()
         obj.save()
 
-        for item in obj.order.details.all():
-            product = item.product
-            count = item.count
-
-            product.count += count
-            product.save()
+        products_to_update = []
+        for item in obj.order.details.select_related("product").all():
+            item.product.count += item.count
+            products_to_update.append(item.product)
+        if products_to_update:
+            Product.objects.bulk_update(products_to_update, ["count"])
 
         return reverse('store:return-order-list')
 
@@ -172,7 +172,19 @@ class StoreOrdersView(UserStoreStaffMixin, ListView):
     paginate_by = 100
 
     def get_queryset(self):
-        query = super().get_queryset().prefetch_related('address', 'user').filter(store=self.request.user.store).exclude(is_paid=False, canceled=False)
+        query = (
+            super()
+            .get_queryset()
+            .select_related('address', 'user', 'store', 'discount')
+            .prefetch_related(
+                Prefetch(
+                    'details',
+                    queryset=OrderDetail.objects.select_related('product', 'order'),
+                )
+            )
+            .filter(store=self.request.user.store)
+            .exclude(is_paid=False, canceled=False)
+        )
         query = query.exclude(canceled=True).order_by('-second_date')
 
         form = OrderFilteringForm(self.request.GET)
@@ -470,7 +482,14 @@ class StoreOrderDetailView(UserStoreStaffMixin, DetailView):
 
     def get_object(self, queryset=None):
         return get_object_or_404(
-            self.model, pk=self.kwargs.get("pk"), store=self.request.user.store
+            self.model.objects.select_related("user", "store", "address", "discount").prefetch_related(
+                Prefetch(
+                    "details",
+                    queryset=OrderDetail.objects.select_related("product", "order"),
+                )
+            ),
+            pk=self.kwargs.get("pk"),
+            store=self.request.user.store,
         )
 
     def get_context_data(self, **kwargs):
@@ -595,7 +614,8 @@ class AddOfficialInvoiceView(UserStoreStaffMixin, View):
 
         messages.success(request, "فاکتور رسمی با موفقیت برای کاربر ارسال شد")
 
-        if SiteSetting.objects.first().send_message_official_invoice_upload:
+        site = SiteSetting.get_cached()
+        if site and site.send_message_official_invoice_upload:
             send_message.delay(
                 str(order.user.PhoneNumber).replace(" ", ""),
                 "invoiceNotify",
@@ -623,7 +643,8 @@ class ChangeStatusToDeliveredToUser(UserStoreStaffMixin, RedirectView):
         order.save()
         messages.success(self.request, "تغییرات ثبت شد")
 
-        if SiteSetting.objects.first().send_message_when_set_sending_id:
+        site = SiteSetting.get_cached()
+        if site and site.send_message_when_set_sending_id:
             send_message.delay(
                 str(order.user.PhoneNumber).replace(" ", ""),
                 "deliveryID",
@@ -645,17 +666,21 @@ class StoreSoleOrders(UserStoreStaffMixin, ListView):
 
 
     def get_queryset(self):
-        return self.model.objects.filter(
-            store_id=self.request.user.store.id
-        ).prefetch_related("order").order_by("-pk")
+        return (
+            self.model.objects.filter(store_id=self.request.user.store.id)
+            .select_related("order", "order__user", "store")
+            .order_by("-pk")
+        )
 
     def get_context_data(
             self, *, object_list=..., **kwargs
     ):
         context = super().get_context_data(**kwargs)
 
-        queryset = self.get_queryset()
-        context["total_price"] = sum(list(queryset.filter(is_returned_by_admin=False).values_list("price", flat=True)))
+        context["total_price"] = self.model.objects.filter(
+            store_id=self.request.user.store.id,
+            is_returned_by_admin=False,
+        ).aggregate(total=Coalesce(Sum("price"), 0))["total"]
 
         return context
 
@@ -670,7 +695,7 @@ class StoreSpecificsOrdersListView(UserStoreStaffMixin, ListView):
 
     def get_queryset(self):
         request = self.request
-        queryset = self.model.objects.filter(store_id=self.request.user.store.id).prefetch_related('user')
+        queryset = self.model.objects.filter(store_id=self.request.user.store.id).select_related('user', 'store')
         if number:= request.GET.get('number'):
             number = str(number)
             queryset = queryset.filter(user__PhoneNumber=number)

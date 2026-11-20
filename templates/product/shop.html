@@ -3,53 +3,58 @@
 {% load products_tags %}
 
 
-{% block title %}
-    لیست محصولات {{site.title}}
-{% endblock %}
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block meta_description %}{{ page_description }}{% endblock %}
 
 {% block breadcrumb %}
-
     <li class="flex items-center gap-x-2">
-        <a href="{% url 'product:list' %}" aria-label='محصولات'>
-            <h1>
-                محصولات {{site.title}}
-            </h1>
+        <a href="{% url 'product:list' %}">
+            {% if active_category or active_brand %}فروشگاه{% else %}<h1>محصولات {{ site.title }}</h1>{% endif %}
         </a>
+        {% if active_category or active_brand %}
+        <svg class="w-4 h-4" aria-hidden="true"><use href="#chevron-left"></use></svg>
+        {% endif %}
     </li>
-{% endblock  %}
+    {% if active_category %}
+    <li class="flex items-center gap-x-2">
+        <h1>{{ active_category.name }}</h1>
+    </li>
+    {% elif active_brand %}
+    <li class="flex items-center gap-x-2">
+        <h1>{{ active_brand.name }}</h1>
+    </li>
+    {% endif %}
+{% endblock %}
 
 {% block microdata %}
-
-
 {
   "@context": "https://schema.org",
   "@graph": [
-
     {
       "@type": "WebSite",
       "@id": "{{ site_url }}/#website",
       "url": "{{ site_url }}/",
-      "name": "{{ site.name|escapejs }}",
+      "name": "{{ site.title|escapejs }}",
       "inLanguage": "fa-IR"
     },
-
     {
-      "@type": "WebPage",
-      "@id": "{{ page_url }}#webpage",
-      "url": "{{ page_url }}",
+      "@type": "CollectionPage",
+      "@id": "{{ canonical_url }}#webpage",
+      "url": "{{ canonical_url }}",
       "name": "{{ page_title|escapejs }}",
+      "description": "{{ page_description|escapejs }}",
       "isPartOf": {
         "@id": "{{ site_url }}/#website"
       },
       "breadcrumb": {
-        "@id": "{{ page_url }}#breadcrumb"
+        "@id": "{{ canonical_url }}#breadcrumb"
       },
       "inLanguage": "fa-IR"
     },
-
     {
       "@type": "BreadcrumbList",
-      "@id": "{{ page_url }}#breadcrumb",
+      "@id": "{{ canonical_url }}#breadcrumb",
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -62,13 +67,24 @@
           "position": 2,
           "name": "فروشگاه",
           "item": "{{ site_url }}{% url 'product:list' %}"
-        }
+        }{% if active_category %},
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ active_category.name|escapejs }}",
+          "item": "{{ site_url }}{{ active_category.get_absolute_url }}"
+        }{% elif active_brand %},
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ active_brand.name|escapejs }}",
+          "item": "{{ site_url }}{{ active_brand.get_absolute_url }}"
+        }{% endif %}
       ]
     },
-
     {
       "@type": "ItemList",
-      "@id": "{{ page_url }}#itemlist",
+      "@id": "{{ canonical_url }}#itemlist",
       "name": "{{ page_title|escapejs }}",
       "numberOfItems": {{ products|length }},
       "itemListElement": [
@@ -76,22 +92,15 @@
         {
           "@type": "ListItem",
           "position": {{ forloop.counter }},
+          "name": "{{ product.name|escapejs }}",
           "url": "{{ site_url }}{{ product.get_absolute_url }}"
         }{% if not forloop.last %},{% endif %}
         {% endfor %}
       ]
     }
-
   ]
 }
-
-
-
-
-{% endblock  %}
-
-
-
+{% endblock %}
 
 {% block content %}
     <svg class="hidden">
@@ -686,59 +695,57 @@
                 <!-- PRODUCT ITEM -->
 
                 {% for product in products %}
-                    <div class="group" onclick="window.location=this.querySelector('a').href">
-                        <!-- PRODUCT IMGAE -->
-                        <a href="{% url 'product:detail' product.id %}" aria-label=' {{ product.name }}'> {% if product.have_discount %}
-
-                            <span class="absolute top-5 right-5 flex items-center justify-center w-8 h-8 text-xs bg-green-500  rounded-full text-white z-30">{{ product.discount }}%</span>
-                        {% endif %}
-                            {% if product.picture %}
-                                <img src="{{ product.picture.url }}" alt="{{ product.name }}"
-                                     height="192px"
-                                     width="192px"
-                                     class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
-                                     loading="lazy">
+                    <article class="group">
+                        <!-- PRODUCT IMAGE -->
+                        <a href="{% url 'product:detail' product.id %}" aria-label="{{ product.name }}" class="block relative">
+                            <span class="sr-only">{{ product.name }}</span>
+                            {% if product.have_discount %}
+                            <span class="absolute top-5 right-5 flex items-center justify-center w-8 h-8 text-xs bg-green-600 rounded-full text-white z-30">{{ product.discount }}%</span>
                             {% endif %}
+                                                            {% if product.picture %}
+                                    <img src="{{ product.picture.url }}" alt=""
+                                         height="192"
+                                         width="192"
+                                         class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3 object-contain"
+                                         loading="lazy" decoding="async">
+                                {% endif %}
+                            
+                        </a>
 
-                            <!-- PRODUCT MAIN -->
-                            <div class="px-2 lg:px-4 mb-3">
-                                <a href="{% url 'product:detail' pk=product.id %}" aria-label=' {{ product.name }}'
-                                   class="line-clamp-3 font-DanaMedium mb-2 text-sm">
+                        <!-- PRODUCT MAIN -->
+                        <div class="px-2 lg:px-4 mb-3">
+                            <h2 class="line-clamp-3 font-DanaMedium mb-2 text-sm">
+                                <a href="{% url 'product:detail' pk=product.id %}">
                                     {{ product.name }}
                                 </a>
-                                <div class="flex items-center gap-x-1 lg:gap-x-3">
-
-                                    {% if request.user.is_authenticated and user.colleague_user and  product.store in user.colleague_with_store.all and product.colleague_users_price > 0 %}
-
-<p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                            {{ product|colleague:request }}
+                            </h2>
+                            <div class="flex items-center gap-x-1 lg:gap-x-3">
+                                {% if request.user.is_authenticated and user.colleague_user and product.store_id in colleague_store_ids and product.colleague_users_price > 0 %}
+                                    <p class="font-DanaDemiBold text-green-700 dark:text-green-300">
+                                        {{ product|colleague:request }}
+                                        <span class="font-Dana text-sm">تومان</span>
+                                        <del class="font-Dana text-xs lg:text-lg text-rose-700 dark:text-rose-300 lg:inline">
+                                            {{ product.price|tdc }}
+                                        </del>
+                                    </p>
+                                {% else %}
+                                    {% if product.have_discount %}
+                                        <p class="font-DanaDemiBold text-green-700 dark:text-green-300">
+                                            {{ product.price|clac_discount:product.discount }}
                                             <span class="font-Dana text-sm">تومان</span>
-                                            <del class="font-Dana text-xs lg:text-lg text-red-500  lg:inline">
+                                            <del class="font-Dana text-xs lg:text-lg text-rose-700 dark:text-rose-300 lg:inline">
                                                 {{ product.price|tdc }}
-
                                             </del>
                                         </p>
                                     {% else %}
-                                        {% if product.have_discount %}
-<p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                                {{ product.price|clac_discount:product.discount }}
-                                                <span class="font-Dana text-sm">تومان</span>
-                                                <del class="font-Dana text-xs lg:text-lg text-red-500  lg:inline">
-                                                    {{ product.price|tdc }}
-
-                                                </del>
-                                            </p>
-
-
-                                        {% else %}
-<p class="font-DanaDemiBold text-green-600 dark:text-green-300">                                                {{ product.price|tdc }}
-                                                <span class="font-Dana text-sm">تومان</span>
-                                            </p>
-                                        {% endif %}
+                                        <p class="font-DanaDemiBold text-green-700 dark:text-green-300">
+                                            {{ product.price|tdc }}
+                                            <span class="font-Dana text-sm">تومان</span>
+                                        </p>
                                     {% endif %}
-
-
-                                </div>
+                                {% endif %}
                             </div>
-                        </a>
+                        </div>
 
                         <!-- PRODUCT FOOTER -->
                         <div class="flex items-center justify-between px-2 lg:px-4 mb-3">
@@ -805,7 +812,7 @@
                                 {% endif %}
                             </div>
                         </div>
-                    </div>
+                    </article>
                 {% endfor %}
 
 
@@ -824,7 +831,7 @@
                     {% if page_obj.has_previous %}
 
                         <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
-                            <a   onclick="OrderingFilterForPagination({{ page_obj.previous_page_number }})" aria-label=' رفتن به صفحه قبل'>
+                            <a href="?page={{ page_obj.previous_page_number }}" onclick="event.preventDefault(); OrderingFilterForPagination({{ page_obj.previous_page_number }})" aria-label="رفتن به صفحه قبل">
 
                                 <svg class="w-5 h-5">
                                     <use href="#chevron-right"></use>
@@ -835,7 +842,7 @@
 
                     {% for page_number in page_obj.paginator.page_range %}
                         <li class="dark:text-white {% if page_number == page_obj.number %} bg-green-500 text-white {% else %} bg-white dark:bg-zinc-700 {% endif %} ">
-                            <a    onclick="OrderingFilterForPagination({{ page_number }})" class="w-full text-center" aria-label=' شماره صفحه'>
+                            <a href="?page={{ page_number }}" onclick="event.preventDefault(); OrderingFilterForPagination({{ page_number }})" class="w-full text-center" aria-label="صفحه {{ page_number }}">
                                 {{ page_number }}
                             </a>
                         </li>
@@ -845,7 +852,7 @@
                     {% if page_obj.has_next %}
 
                         <li class="bg-white dark:bg-zinc-700 hover:bg-green-500 hover:text-white">
-                            <a   onclick="OrderingFilterForPagination({{ page_obj.next_page_number }})" aria-label=' رفتن به صفحه بعد'>
+                            <a href="?page={{ page_obj.next_page_number }}" onclick="event.preventDefault(); OrderingFilterForPagination({{ page_obj.next_page_number }})" aria-label="رفتن به صفحه بعد">
                                 <svg class="w-5 h-5">
                                     <use href="#chevron-left"></use>
                                 </svg>

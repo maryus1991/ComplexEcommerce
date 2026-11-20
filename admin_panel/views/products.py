@@ -57,40 +57,49 @@ class BulkProductChangeFastPanel(AdminUserMixin, RedirectView):
             return self.request.META.get("HTTP_REFERER")
 
         with transaction.atomic():
+            product_ids = [item.get("id") for item in products if item.get("id")]
+            products_map = Product.objects.filter(pk__in=product_ids).in_bulk()
+
+            products_to_update = []
+            fields_to_update = set()
 
             for item in products:
-
                 product_id = item.get("id")
                 changes = item.get("changes", {})
 
                 if not product_id:
                     continue
 
-                product = get_object_or_404(
-                    Product,
-                    pk=product_id
-                )
+                try:
+                    lookup_id = int(product_id)
+                except (TypeError, ValueError):
+                    lookup_id = product_id
 
+                product = products_map.get(lookup_id)
+                if product is None:
+                    product = get_object_or_404(Product, pk=product_id)
+
+                changed = False
                 if "price" in changes:
                     product.price = changes["price"]
+                    fields_to_update.add("price")
+                    changed = True
 
                 if "colleague_users_price" in changes:
                     product.colleague_users_price = changes["colleague_users_price"]
+                    fields_to_update.add("colleague_users_price")
+                    changed = True
 
                 if "count" in changes:
                     product.count = changes["count"]
+                    fields_to_update.add("count")
+                    changed = True
 
-                product.save(
-                    update_fields=[
-                        field
-                        for field in [
-                            "price",
-                            "colleague_users_price",
-                            "count",
-                        ]
-                        if field in changes
-                    ]
-                )
+                if changed:
+                    products_to_update.append(product)
+
+            if products_to_update and fields_to_update:
+                Product.objects.bulk_update(products_to_update, list(fields_to_update))
         messages.success(
             self.request,
             "تغییرات اعمال شد"
@@ -107,7 +116,7 @@ class ProductFastPanelListView(AdminUserMixin, ListView):
     def get_queryset(self):
         # Base queryset
 
-        queryset = Product.objects.prefetch_related("category", 'comments' ,"brand", "store", "views", 'features', 'tags', 'specs').order_by('-id')
+        queryset = Product.objects.select_related("category", "brand", "store").order_by('-id')
 
         # Process search parameters if form is valid
         params = ProductSearchForm(self.request.GET or None)
@@ -598,9 +607,11 @@ class ProductListView(AdminUserMixin, ListView):
 
     def get_queryset(self):
 
-        queryset = Product.objects.prefetch_related(
-            "category", 'comments' ,"brand", "store",
-            "views", 'features', 'tags', 'specs').order_by('-id')
+        queryset = (
+            Product.objects.select_related("category", "brand", "store")
+            .annotate(views_count=Count("views", distinct=True))
+            .order_by('-id')
+        )
 
         # Process search parameters if form is valid
         params = ProductSearchForm(self.request.GET or None)
@@ -772,7 +783,7 @@ class ProductCreateView(AdminUserMixin, CreateView):
         specs = form.cleaned_data["specs"].split("**")
 
         for img in gallery:
-            ProductGallery.objects.create(product=product, image=img).save()
+            ProductGallery.objects.create(product=product, image=img)
 
         if specs:
             ProductSpecifications.objects.filter(product=product).all().delete()
@@ -885,7 +896,7 @@ class ProductUpdateView(AdminUserMixin, UpdateView):
         queryset = (
             super()
             .get_queryset()
-            .prefetch_related("features", "tags", "specs", "gallery", "store")
+            .select_related("store", "category", "brand").prefetch_related("features", "tags", "specs", "gallery")
         )
         return queryset
 
@@ -922,7 +933,7 @@ class ProductUpdateView(AdminUserMixin, UpdateView):
         gallery = form.cleaned_data["gallery"]
 
         for img in gallery:
-            ProductGallery.objects.create(product=product, image=img).save()
+            ProductGallery.objects.create(product=product, image=img)
 
         tags = form.cleaned_data["tags"].split("**")
         features = form.cleaned_data["features"].split("**")

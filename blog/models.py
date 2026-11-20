@@ -24,8 +24,8 @@ class BlogCategory(models.Model):
         upload_to="blog_categories/",
         resize_source={"size": (800, 800), "crop": False, "upscale": False, "quality": 80},
     )
-    is_active = models.BooleanField(verbose_name="فعال / غیر فعال", default=True)
-    sort_number = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(verbose_name="فعال / غیر فعال", default=True, db_index=True)
+    sort_number = models.PositiveSmallIntegerField(default=0, db_index=True)
 
     def __str__(self):
         return self.name
@@ -70,12 +70,12 @@ class Blog(models.Model):
     )
 
     is_active = models.BooleanField(
-        default=False, verbose_name="فعال / غیر فعال برای انتشار توسط فروشگاه"
+        default=False, db_index=True, verbose_name="فعال / غیر فعال برای انتشار توسط فروشگاه"
     )
     admin_verified = models.BooleanField(
-        default=True, verbose_name="فعال / غیر فعال توسط ادمین"
+        default=True, db_index=True, verbose_name="فعال / غیر فعال توسط ادمین"
     )
-    sort_number = models.PositiveBigIntegerField(default=0)
+    sort_number = models.PositiveBigIntegerField(default=0, db_index=True)
 
     def __str__(self):
         return self.title
@@ -97,6 +97,11 @@ class BlogView(models.Model):
     ip = models.GenericIPAddressField()
     count = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["blog", "ip"]),
+        ]
 
     def __str__(self):
         return self.ip

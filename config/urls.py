@@ -8,7 +8,7 @@ from blog.urls import sitemaps as blog_sitemaps
 from product.urls import sitemaps as product_sitemaps
 from sitesetting.urls import sitemaps as site_sitemaps
 
-from sitesetting.views import robots_txt
+from sitesetting.views import robots_txt, llms_txt, ai_catalog_json
 from stores.sitemap import StoreSitemap
 
 urlpatterns = [
@@ -71,4 +71,6 @@ urlpatterns += [
     path("sitemap2.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap2"),
     path("sitemap3.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap3"),
     path("robots.txt", robots_txt, name="robots-txt"),
+    path("llms.txt", llms_txt, name="llms-txt"),
+    path("ai-catalog.json", ai_catalog_json, name="ai-catalog-json"),
 ]

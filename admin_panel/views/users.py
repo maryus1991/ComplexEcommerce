@@ -117,13 +117,14 @@ class UsersNewsLetters(AdminUserMixin, View):
             return redirect('admin_panel:user-news-letters')
 
         try:
+            valid_ids = [int(cid) for cid in selected_contacts if cid.isdigit()]
+            contacts_map = Newsletter.objects.filter(id__in=valid_ids).in_bulk()
             numbers = []
-            for contact_id in selected_contacts:
-                if not contact_id.isdigit():
+            for contact_id in valid_ids:
+                contact = contacts_map.get(contact_id)
+                if contact is None:
                     continue
-
                 try:
-                    contact = Newsletter.objects.get(id=int(contact_id))
                     phone_number = str(contact).replace(' ', '')
                     numbers.append(phone_number)
                     send_many_message.delay(sender, phone_number, content)
@@ -285,7 +286,7 @@ class UserListView(AdminUserMixin, ListView):
     paginate_by = 100
 
     def get_queryset(self):
-        query = super().get_queryset().prefetch_related('store', 'address', 'colleague_with_store')
+        query = super().get_queryset().select_related('store').prefetch_related('address', 'colleague_with_store')
         form = AdminUsersFilteringForm(self.request.GET or None)
 
         if form.is_valid():
@@ -654,12 +655,15 @@ class UserDetailsView(AdminUserMixin, DetailView):
     template_name = "admin_panel/users/details.html"
 
     def get_object(self, queryset=None):
-        user = User.objects.filter(id=self.kwargs["pk"]).prefetch_related(
-            "address", "store", "blogs", "orders", 'colleague_with_store'
+        user = (
+            User.objects.filter(id=self.kwargs["pk"])
+            .select_related("store")
+            .prefetch_related("address", "blogs", "orders", "colleague_with_store")
+            .first()
         )
-        if user.count() != 1:
+        if user is None:
             raise Http404()
-        return user.first()
+        return user
     
 
 class UserVerifyView(AdminUserMixin, RedirectView):
@@ -745,12 +749,16 @@ class UserActivitiesView(AdminUserMixin, ListView):
     paginate_by = 100
 
     def get_queryset(self):
-        user = get_object_or_404(User, pk=self.kwargs["pk"])
+        self._target_user = get_object_or_404(User, pk=self.kwargs["pk"])
 
-        return LogEntry.objects.filter(actor=user).order_by("-timestamp")
+        return (
+            LogEntry.objects.filter(actor=self._target_user)
+            .select_related("content_type", "actor")
+            .order_by("-timestamp")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # اضافه کردن کاربر به context
-        context["user"] = get_object_or_404(User, pk=self.kwargs["pk"])
+        context["user"] = self._target_user
         return context

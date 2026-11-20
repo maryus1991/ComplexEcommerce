@@ -2,27 +2,44 @@
 {% load to_webp %}
 
 <head>
-    {% block header %}
-    {% endblock %}
-
-    {% include 'Base/Header/References/References.html' with site=site %}
-
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-WVJNMP6C');
-    </script>
-    <!-- End Google Tag Manager -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Language" content="fa">
 
     <!-- عنوان صفحه -->
     <title>{{ title }}</title>
-    <script type="application/ld+json">
-        {{ microdat }}
-    </script>
+    <!-- توضیحات متا برای سئو -->
+    <meta name="description" content="{{ meta_description }}">
+    <meta name="author" content="{{ site.title }}">
+    <meta name="robots" content="{{ seo_robots_override|default:seo_robots }}">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ canonical_override|default:canonical_url }}">
+
+    <!-- Agentic / AI Discovery -->
+    <link rel="alternate" type="text/markdown" href="{{ site_url }}{% url 'llms-txt' %}" title="LLMs Site Summary">
+    <link rel="alternate" type="application/json" href="{{ site_url }}{% url 'ai-catalog-json' %}" title="AI Catalog Manifest">
+
+    <!-- Open Graph -->
+    <meta property="og:locale" content="fa_IR">
+    <meta property="og:type" content="{{ og_type }}">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ meta_description }}">
+    {% if og_image %}<meta property="og:image" content="{{ og_image }}">{% endif %}
+    <meta property="og:url" content="{{ canonical_override|default:canonical_url }}">
+    <meta property="og:site_name" content="{{ site.title }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ title }}">
+    <meta name="twitter:description" content="{{ meta_description }}">
+    {% if og_image %}<meta name="twitter:image" content="{{ og_image }}">{% endif %}
+
+    {% if extra_meta %}{{ extra_meta|safe }}{% endif %}
+
     <meta name="enamad" content="40627636" />
     <meta name="msvalidate.01" content="FA94DC0175545A0356509CEAECE9597B" />
+
     <!-- آیکون‌ها -->
     {% if site.logo %}
     <link rel="icon" href="{{ site.logo.url }}" type="image/x-icon">
@@ -32,45 +49,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="icon" type="image/png" sizes="16x16" href="{{ site.logo.url }}">
     {% endif %}
 
-    <!-- توضیحات متا برای سئو -->
-    <meta name="description" content="{{ site.short_description }}">
-    <meta name="keywords" content="{{ site.title }}, {{ site.short_description }}">
-    <meta name="author" content="{{ site.title }}">
+    {% block header %}
+    {% endblock %}
 
-    <!-- Canonical URL -->
-     <link rel="canonical" href="https://{{ request.get_host }}{{ request.get_full_path }}">
+    {% include 'Base/Header/References/References.html' with site=site %}
 
-    <!-- Open Graph (برای فیسبوک، تلگرام، واتساپ و...) -->
-    <meta property="og:title" content="{{ title }}">
-    <meta property="og:description" content="{{ site.short_description }}">
-    {% if site.logo %}<meta property="og:image" content="{{ site.logo.url }}">{% endif %}
-    <meta property="og:url" content="https://{{ request.get_host }}{{ request.get_full_path }}">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="{{ site.title }}">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ title }}">
-    <meta name="twitter:description" content="{{ site.short_description }}">
-    {% if site.logo %}<meta name="twitter:image" content="{{ site.logo.url }}">{% endif %}
-
-
-    <!-- Viewport برای موبایل -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- زبان صفحه -->
-    <meta http-equiv="Content-Language" content="fa">
-
-
-    {% if request.path|slice:":6" == "/user/" %}
-    <meta name="robots" content="noindex, nofollow">
-    {% else %}
-    <meta name="robots" content="index, follow">
+    {% if microdata %}
+    <script type="application/ld+json">
+{{ microdata|safe }}
+    </script>
     {% endif %}
-    <!-- charset -->
-    <meta charset="utf-8">
 
-
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WVJNMP6C');
+    </script>
+    <!-- End Google Tag Manager -->
 </head>
 
 <body class="font-Dana bg-[#f3f4f6] dark:bg-zinc-900 text-zinc-900  dark:text-white overflow-x-hidden transition-all">
@@ -82,20 +79,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </noscript>
 <!-- End Google Tag Manager (noscript) -->
 
+<header>
 <!-- NAV BAR  -->
-<nav class="w-full hidden md:flex shadow py-5 bg-white dark:bg-zinc-700">
+<nav aria-label="منوی اصلی" class="w-full hidden md:flex shadow py-5 bg-white dark:bg-zinc-700">
     <div class="container flex items-center justify-between">
         <!-- LOGO -->
-        <a href="{% url 'site:main' %}"
+        <a href="{% url 'site:main' %}" aria-label="صفحه اصلی {{ site.title }}"
            class="flex items-center gap-x-1 dark:text-brown-300 text-brown-600 font-MorabbaMedium text-xl lg:text-3xl">
 
-{% if site.logo %}
-    <img src="{{ site.logo.url }}"
+    <!-- نسخه WebP با رزولوشن‌های مختلف -->
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    {% if site.logo %}<img src="{{ site.logo.url }}"
          alt="{{ site.title }}"
          class="w-24 h-14 rounded-full"
          width="96" height="56"
-         loading="lazy">
-{% endif %}
+         loading="eager" decoding="async">{% endif %}
 
         </a>
         {% with request.path as url %}
@@ -110,7 +109,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <!-- ITEM HASE SUBMENU -->
             <li class="relative group {% if url == '/product/' or url == '/store/' %} text-green-500 {% endif %}">
                 <div class="flex items-center flex-row gap-x-1">
-                    <a>فروشگاه</a>
+                    <a href="{% url 'product:list' %}">فروشگاه</a>
                     <svg class="w-4 h-4 transition-transform duration-300 group-hover:rotate-180">
                         <use href="#chevron-down"></use>
                     </svg>
@@ -159,7 +158,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 
                 </div>
- 
+            </li>
             <li class="nav-item {% if url == '/apps/' %} text-green-500 {% endif %}">
                 <a href="{% url 'site:apps-list' %}">برنامه های کاربردی</a>
             </li>
@@ -201,7 +200,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
             </script>
             <!-- SHOPPING CART BTN -->
-            <button class="open-shopping-cart__btn relative" title="سبد خرید">
+            <button type="button" class="open-shopping-cart__btn relative" title="سبد خرید" aria-label="باز کردن سبد خرید">
                 <svg class="w-6 h-6">
                     <use href="#shopping-cart"/>
                 </svg>
@@ -217,25 +216,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <!-- SEARCH BTN -->
 
 
-<form action="{% url 'product:list' %}">
-    <button type="button" 
-            class="group relative flex justify-end cursor-pointer"
-            aria-label="Open Search">
-
-        <svg class="w-6 h-6"  id="searchToggle">
+<form action="{% url 'product:list' %}" role="search" class="relative flex justify-end">
+    <button type="button" id="searchToggle"
+            class="cursor-pointer p-1"
+            aria-label="جستجوی محصولات" aria-controls="searchBox">
+        <svg class="w-6 h-6" aria-hidden="true">
             <use href="#search"/>
         </svg>
-
-        <div id="searchBox" style="width: 700px;"
-             class="  absolute top-20 flex items-center  bg-white dark:bg-zinc-600 rounded-full opacity-0 invisible transition-all delay-100 child:rounded-full px-2 border dark:border-none border-gray-100 shadow py-1">
-
-            <input type="text" name="search" placeholder="نام محصول یا فروشگاه..."
-                   class="bg-transparent w-full p-2" id="search-bar-VALUE" />
-
-            <input value="جستجو" type="submit"
-                   class="bg-green-500 text-white text-sm py-2 px-3">
-        </div>
     </button>
+
+    <div id="searchBox" style="width: 700px;"
+         class="absolute left-0 top-20 flex items-center bg-white dark:bg-zinc-600 rounded-full opacity-0 invisible transition-all delay-100 child:rounded-full px-2 border dark:border-none border-gray-100 shadow py-1">
+
+        <label for="search-bar-VALUE" class="sr-only">جستجوی نام محصول یا فروشگاه</label>
+        <input type="text" name="search" placeholder="نام محصول یا فروشگاه..."
+               class="bg-transparent w-full p-2" id="search-bar-VALUE" />
+
+        <input value="جستجو" type="submit"
+               class="bg-green-600 hover:bg-green-700 text-white text-sm py-2 px-3 cursor-pointer">
+    </div>
 </form>
 
 <script>
@@ -255,9 +254,9 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
  
 </script>
 
-            <!-- USER ACCOUNE BOX  -->
-            <button
-                    class="group relative px-2 lg:px-3 py-2 flex items-center justify-end gap-x-1 text-white transition-colors bg-green-500 hover:bg-green-600 rounded-lg">
+            <!-- USER ACCOUNT BOX  -->
+            <div
+                    class="group relative px-2 lg:px-3 py-2 flex items-center justify-end gap-x-1 text-white transition-colors bg-green-600 hover:bg-green-700 rounded-lg">
                 <svg class="h-5 w-5 hidden lg:flex">
                     <use href="#user"></use>
                 </svg>
@@ -340,7 +339,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
                     {% endif %}
 
                 </div>
-            </button>
+            </div>
             <!-- LOGIN BTN -->
             <a href="{% url 'user:login' %}"
                class="hidden relative px-2 lg:px-3 py-2 items-center justify-end gap-x-1 text-white transition-colors bg-green-500 hover:bg-green-600 rounded-lg">
@@ -371,20 +370,19 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
 <!-- ITEMS CART -->
 {% if orders_count > 0 %}
 <div class="flex flex-col gap-y-4 pb-20">  <!-- Added padding-bottom for button -->
-    {% for order in orders.all %}
+    {% for order in orders %}
     <!-- ITEM -->
     <div class="flex items-center justify-between gap-4 border-b border-gray-200 pb-4 dark:border-white/10">
         <a href="{% url 'product:detail' order.product.id %}" class="flex items-center gap-4 flex-grow group">
             <!-- Image -->
             <div class="relative flex-shrink-0">
-                {% if order.product.picture %}
-                    <img src="{{ order.product.picture.url }}"
-                         alt="{{ order.product.name }}"
+                                    {% if order.product.picture %}<img src="{{ order.product.picture.url }}"
+                         alt=""
                          class="w-20 h-20 object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                          width="80"
                          height="80"
-                         loading="lazy">
-                {% endif %}
+                         loading="lazy" decoding="async">{% endif %}
+                
 
                 <!-- Quantity Badge -->
                 <span class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
@@ -404,7 +402,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
                     {% if user.is_authenticated and user.colleague_user %}
                         <!-- Colleague Price -->
                         <div class="flex items-center gap-1">
-                            <span class="text-xl font-DanaDemiBold text-emerald-600 dark:text-emerald-400">
+                            <span class="text-xl font-DanaDemiBold text-emerald-700 dark:text-emerald-300">
                                 {{ order|colleague_header }}
                             </span>
                             <span class="text-sm text-gray-600 dark:text-gray-300">تومان</span>
@@ -416,14 +414,14 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
                         {% if order.product.have_discount %}
                             <!-- Discount Price -->
                             <div class="flex items-center gap-1">
-                                <span class="text-xl font-DanaDemiBold text-emerald-600 dark:text-emerald-400">
+                                <span class="text-xl font-DanaDemiBold text-emerald-700 dark:text-emerald-300">
                                     {{ order.get_item_price|tdc }}
                                 </span>
                                 <span class="text-sm text-gray-600 dark:text-gray-300">تومان</span>
                             </div>
 
                             <!-- Original Price -->
-                            <del class="text-xs lg:text-sm text-rose-500 dark:text-rose-400 hidden lg:inline">
+                            <del class="text-xs lg:text-sm text-rose-700 dark:text-rose-300 hidden lg:inline">
                                 {{ order.get_item_price_without_discount|tdc }}
                             </del>
 
@@ -519,11 +517,13 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
     <!-- PRICE BTN -->
 </div>
 <!-- MOBILE NAVBAR -->
-<nav class="dark:bg-zinc-800 bg-white flex justify-between items-center md:hidden h-16 shadow-md py-5 px-4">
+<nav aria-label="منوی موبایل" class="dark:bg-zinc-800 bg-white flex justify-between items-center md:hidden h-16 shadow-md py-5 px-4">
     <div>
-        <svg class="w-6 h-6 mobile-menu__open-icon cursor-pointer">
-            <use href="#bars"></use>
-        </svg>
+        <button type="button" class="mobile-menu__open-icon cursor-pointer p-1" aria-label="باز کردن منوی موبایل">
+            <svg class="w-6 h-6" aria-hidden="true">
+                <use href="#bars"></use>
+            </svg>
+        </button>
     </div>
     <!-- SIDE BAR MENU -->
     <div
@@ -532,19 +532,22 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
         <div class="mt-3 flex items-center justify-between">
             <a href="/"
                class="flex items-center gap-x-1 dark:text-brown-300 text-brown-600 font-MorabbaMedium text-xl">
-{% if site.logo %}
-    <img src="{{ site.logo.url }}"
+    <!-- نسخه WebP با رزولوشن‌های مختلف -->
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    {% if site.logo %}<img src="{{ site.logo.url }}"
          alt="{{ site.title }}"
          class="w-24 h-14 rounded-full"
          width="96" height="56"
-         loading="lazy">
-{% endif %}
+         loading="lazy">{% endif %}
 
 
             </a>
-            <svg class="mobile-menu__close-icon w-6 h-6 cursor-pointer">
-                <use href="#close"></use>
-            </svg>
+            <button type="button" class="mobile-menu__close-icon cursor-pointer p-1" aria-label="بستن منوی موبایل">
+                <svg class="w-6 h-6" aria-hidden="true">
+                    <use href="#close"></use>
+                </svg>
+            </button>
         </div>
         <!-- BORDER -->
         <span class="flex w-full border-t dark:border-white/10 border-gray-200 my-5"></span>
@@ -570,7 +573,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
             </li>
             <li class="{% if url == '/product/' or url == '/store/' %} text-green-500 {% endif %}">
                 <div class="open-submenu flex w-full items-center justify-between">
-                    <a class="transition-all flex items-center gap-x-2">
+                    <a href="{% url 'product:list' %}" class="transition-all flex items-center gap-x-2">
                         <svg class="w-5 h-5">
                             <use href="#shopping-bag"></use>
                         </svg>
@@ -690,20 +693,21 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
 
         </div>
     </div>
-    <a href="/"
+    <a href="/" aria-label="صفحه اصلی {{ site.title }}"
        class="flex items-center gap-x-1 dark:text-brown-300 text-brown-600 font-MorabbaMedium text-xl">
 
-{% if site.logo %}
-    <img src="{{ site.logo.url }}"
+    <!-- نسخه WebP با رزولوشن‌های مختلف -->
+
+    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
+    {% if site.logo %}<img src="{{ site.logo.url }}"
          alt="{{ site.title }}"
          class="w-24 h-14 rounded-full"
          width="96" height="56"
-         loading="lazy">
-{% endif %}
+         loading="lazy">{% endif %}
 
     </a>
     <!-- OPEN SHOPPING CART BTN  -->
-    <button class="open-shopping-cart__btn relative" title="سبد خرید">
+    <button type="button" class="open-shopping-cart__btn relative" title="سبد خرید" aria-label="باز کردن سبد خرید">
         {% if orders_count > 0 %}
 
         <span
@@ -716,6 +720,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
         </svg>
     </button>
 </nav>
+</header>
 
 <script>
     document.getElementById("toggle-theme-mobile").addEventListener("click", function () {

@@ -1,31 +1,49 @@
 from django.contrib.sitemaps import Sitemap
 from django.shortcuts import reverse
-
 from stores.models import StoreApps
 
 
 class StaticSitemap(Sitemap):
     """
-    for generate sitemap for static pages
+    Generate XML sitemap for public static pages.
     """
-
-    changefreq = "monthly"
-    priority = 0.5
+    changefreq = "weekly"
 
     def items(self):
-        return ["about-us", "Q&A", "contact-us"]
+        return [
+            "site:main",
+            "product:list",
+            "blog:list",
+            "stores:main-template-list",
+            "site:apps-list",
+            "guarantee:serial-number-search",
+            "site:about-us",
+            "site:contact-us",
+            "site:Q&A",
+            "site:site-law",
+        ]
 
     def location(self, item):
-        return reverse(f"site:{item}")
+        return reverse(item)
+
+    def priority(self, item):
+        if item in ("site:main", "product:list"):
+            return 1.0
+        if item in ("blog:list", "stores:main-template-list", "site:apps-list"):
+            return 0.8
+        return 0.6
 
 
 class UsedAppSiteMap(Sitemap):
     """
-    for generate sitemap for app model
+    Generate XML sitemap for active StoreApps.
     """
-
     changefreq = "weekly"
-    priority = 0.9
+    priority = 0.7
 
     def items(self):
-        return StoreApps.objects.filter(is_active=True).all()
+        return (
+            StoreApps.objects.filter(is_active=True, admin_verified=True)
+            .only("id")
+            .order_by("-id")
+        )

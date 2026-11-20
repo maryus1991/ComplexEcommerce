@@ -9,7 +9,7 @@ from django.contrib.auth import logout
 class CustomLoginRequiredMixin(AccessMixin):
 
     def dispatch(self, request, *args, **kwargs):
-        Site = SiteSetting.objects.first()
+        Site = SiteSetting.get_cached()
 
         if Site and not Site.is_active:
 
@@ -55,7 +55,7 @@ class UserStoreStaffMixin(AccessMixin):
 
     def dispatch(self, request, *args, **kwargs):
 
-        Site = SiteSetting.objects.first()
+        Site = SiteSetting.get_cached()
 
         if Site and not Site.is_active:
             if request.user.is_authenticated:
@@ -124,7 +124,7 @@ class UserStoreStaffMixin(AccessMixin):
 
 class StoreAdminUserStaff(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
-        Site = SiteSetting.objects.first()
+        Site = SiteSetting.get_cached()
 
         if Site and not Site.is_active:
             if request.user.is_authenticated:
