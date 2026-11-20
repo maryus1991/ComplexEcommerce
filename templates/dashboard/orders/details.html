@@ -2,7 +2,6 @@
 {% load jalali_tags %}
 {% load products_tags %}
 
-{% load thumbnail %}
 
 {% block title %}
     تاریخچه سفارشات
@@ -354,7 +353,8 @@
                                             <div class="flex-shrink-0 h-10 w-10">
                                                 {% if item.product.picture %}
                                                     <img class="h-10 w-10 rounded-lg object-cover"
-                                                         src="{% thumbnail  item.product.picture '40x40' %}"
+                                                         src="{{ item.product.picture.url }}"
+                                                         loading="lazy"
                                                     >
                                                 {% else %}
                                                     <div class="h-10 w-10 rounded-lg bg-gray-200 dark:bg-zinc-600 flex items-center justify-center">

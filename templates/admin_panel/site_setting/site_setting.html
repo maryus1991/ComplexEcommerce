@@ -1,6 +1,5 @@
 {% extends 'Base/AdminBase.html' %}
 {% load compress static %}
-{% load thumbnail %}
 {% block title %}
     تغییر تنظیمات سایت
 {% endblock %}
@@ -1208,12 +1207,12 @@
                             <br>
                             لوگو =>
 
-                            <img src="{% thumbnail site.logo '100x100' %}" alt="" loading="lazy">
+                            <img src="{{ site.logo.url }}" width="100" height="100" alt="" loading="lazy">
 
                             <br>
                             عکس معرفی =>
 
-                            <img src="{% thumbnail site.about_image '100x100' %}" alt="" loading="lazy">
+                            <img src="{{ site.about_image.url }}" width="100" height="100" alt="" loading="lazy">
 
                         {% endif %}
 

@@ -44,7 +44,12 @@ class User(AbstractUser):
     colleague_id = models.PositiveBigIntegerField(default=0)
     store_address = models.TextField(blank=True, null=True)
 
-    store_image=ThumbnailerImageField(upload_to='colleague/images/store/', null=True, blank=True)
+    store_image = ThumbnailerImageField(
+        upload_to='colleague/images/store/',
+        null=True,
+        blank=True,
+        resize_source={'size': (1200, 1200), 'crop': False, 'upscale': False, 'quality': 80},
+    )
     
     colleague_with_store = models.ManyToManyField(
         Store,

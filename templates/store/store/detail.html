@@ -1,6 +1,5 @@
 {% extends 'Base/Base.html' %}
 {% load to_webp %}
-{% load thumbnail %}
 
 {% block title %}
 
@@ -132,23 +131,12 @@
                         <a href="{{ item.instagram_app_Link }}"
                            class="flex items-center gap-x-2 bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-600 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
                             <p dir="ltr" class="text-sm sm:text-base">{{ item.instagram_app_ID }}</p>
-                                                   <picture>
-    <!-- نسخه WebP با رزولوشن‌های مختلف -->
-    <source srcset="{% thumbnail site.instagram_logo '96x56' crop='center'   %} 1x,
-                    {% thumbnail site.instagram_logo '192x112' crop='center'   %} 2x,
-                    {% thumbnail site.instagram_logo '288x168' crop='center'  %} 3x"
-            type="image/webp">
-
-    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
-    <img src="{% thumbnail site.instagram_logo '192x112' crop='center' %}"
-         srcset="{% thumbnail site.instagram_logo '96x56' crop='center' %} 1x,
-                 {% thumbnail site.instagram_logo '192x112' crop='center' %} 2x,
-                 {% thumbnail site.instagram_logo '288x168' crop='center' %} 3x"
+                                                   {% if site.instagram_logo %}
+    <img src="{{ site.instagram_logo.url }}"
          alt="Instagram"
          class="w-10 h-10 rounded-full"
-
          loading="lazy">
-</picture>
+                                                   {% endif %}
                         </a>
                     {% endif %}
 
@@ -156,23 +144,12 @@
                         <a href="{{ item.telegram_app_Link }}"
                            class="flex items-center gap-x-2 bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-600 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
                             <p dir="ltr" class="text-sm sm:text-base">{{ item.telegram_app_ID }}</p>
-                                                    <picture>
-    <!-- نسخه WebP با رزولوشن‌های مختلف -->
-    <source srcset="{% thumbnail site.telegram_logo '96x56' crop='center'   %} 1x,
-                    {% thumbnail site.telegram_logo '192x112' crop='center'   %} 2x,
-                    {% thumbnail site.telegram_logo '288x168' crop='center'  %} 3x"
-            type="image/webp">
-
-    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
-    <img src="{% thumbnail site.telegram_logo '192x112' crop='center' %}"
-         srcset="{% thumbnail site.telegram_logo '96x56' crop='center' %} 1x,
-                 {% thumbnail site.telegram_logo '192x112' crop='center' %} 2x,
-                 {% thumbnail site.telegram_logo '288x168' crop='center' %} 3x"
+                                                    {% if site.telegram_logo %}
+    <img src="{{ site.telegram_logo.url }}"
          alt="Telegram"
          class="w-10 h-10 rounded-full"
-
          loading="lazy">
-</picture>
+                                                    {% endif %}
                         </a>
                     {% endif %}
 
@@ -181,7 +158,7 @@
                            class="flex items-center gap-x-2 bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-600 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
                             <p dir="ltr" class="text-sm sm:text-base">{{ item.whats_app_ID }}</p>
                             <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-5 h-5 sm:w-6 sm:h-6"
-                                 alt="whatsapp"/>
+                                 alt="whatsapp" loading="lazy"/>
                         </a>
                     {% endif %}
                     {% if item.products.count > 0 %}

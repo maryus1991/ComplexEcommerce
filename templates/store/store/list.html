@@ -1,5 +1,4 @@
 {% extends 'Base/Base.html' %}
-{% load thumbnail %}
 
 {% load jalali_tags %}
 {% load to_webp %}
@@ -146,7 +145,7 @@
                                     {{ item.name }}
                                 </a>
                                 <a href="{% url 'stores:main-template-detail' item.id %}">
-                                    <img src="{{ item.logo.url }}" alt="{{ item.name }}" class="w-24 h-14 rounded-full">
+                                    <img src="{{ item.logo.url }}" alt="{{ item.name }}" class="w-24 h-14 rounded-full" loading="lazy">
                                 </a>
                             </div>
 

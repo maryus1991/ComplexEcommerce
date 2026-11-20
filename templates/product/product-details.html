@@ -1,7 +1,6 @@
 {% extends 'Base/Base.html' %}
 {% load products_tags %}
 {% load jalali_tags %}
-{% load thumbnail %}
 
 {% block title %}
     {{ product.name }}
@@ -236,13 +235,7 @@
 {% if product.picture %}
 <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
   <img
-    src="{% thumbnail product.picture '384x384' %}"
-    srcset="
-      {% thumbnail product.picture '384x384' %} 384w,
-      {% thumbnail product.picture '768x768' %} 768w,
-      {% thumbnail product.picture '1152x1152' %} 1152w
-    "
-    sizes="(max-width: 640px) 100vw, 384px"
+    src="{{ product.picture.url }}"
     alt="تصویر اصلی {{ product.name }}"
     loading="eager"
     width="384"
@@ -252,39 +245,31 @@
 {% endif %}
 {% if product.parent %}
 {% for img in product.parent.gallery|sort_number %}
+{% if img.image %}
 <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
   <img
-    src="{% thumbnail img.image '384x384' %}"
-    srcset="
-      {% thumbnail img.image '384x384' %} 384w,
-      {% thumbnail img.image '768x768' %} 768w,
-      {% thumbnail img.image '1152x1152' %} 1152w
-    "
-    sizes="(max-width: 640px) 100vw, 384px"
+    src="{{ img.image.url }}"
     alt="گالری تصاویر {{ product.parent.name }} - {{ forloop.counter }}"
     loading="lazy"
     width="384"
     height="384"
     class="zoom-image">
 </div>
+{% endif %}
 {% endfor %}
 {% else %}
 {% for img in product.gallery|sort_number %}
+{% if img.image %}
 <div class="flex-shrink-0 w-full snap-center zoom-image-container" onmousemove="zoomOnMouse(event, this)" onmouseleave="resetZoom(this)">
   <img
-    src="{% thumbnail img.image '384x384' %}"
-    srcset="
-      {% thumbnail img.image '384x384' %} 384w,
-      {% thumbnail img.image '768x768' %} 768w,
-      {% thumbnail img.image '1152x1152' %} 1152w
-    "
-    sizes="(max-width: 640px) 100vw, 384px"
+    src="{{ img.image.url }}"
     alt="گالری تصاویر {{ product.name }} - {{ forloop.counter }}"
     loading="lazy"
     width="384"
     height="384"
     class="zoom-image">
 </div>
+{% endif %}
 {% endfor %}
 {% endif %}
 </div>
@@ -327,23 +312,12 @@ function resetZoom(container) {
                             {% if product.store.instagram_app_Link and product.store.instagram_app_ID %}
                                 <a href="{{ product.store.instagram_app_Link }}" class="hover:opacity-80 transition-opacity" rel="noopener noreferrer" target="_blank" aria-label="اینستاگرام فروشنده">
 
-                                                           <picture>
-    <!-- نسخه WebP با رزولوشن‌های مختلف -->
-    <source srcset="{% thumbnail site.instagram_logo '96x56' crop='center'   %} 1x,
-                    {% thumbnail site.instagram_logo '192x112' crop='center'   %} 2x,
-                    {% thumbnail site.instagram_logo '288x168' crop='center'  %} 3x"
-            type="image/webp">
-
-    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
-    <img src="{% thumbnail site.instagram_logo '192x112' crop='center' %}"
-         srcset="{% thumbnail site.instagram_logo '96x56' crop='center' %} 1x,
-                 {% thumbnail site.instagram_logo '192x112' crop='center' %} 2x,
-                 {% thumbnail site.instagram_logo '288x168' crop='center' %} 3x"
+                                                           {% if site.instagram_logo %}
+    <img src="{{ site.instagram_logo.url }}"
          alt="اینستاگرام {{ product.store.name }}"
          class="w-10 h-10 rounded-full"
-
          loading="lazy">
-</picture>
+                                                           {% endif %}
                                 </a>
                             {% endif %}
 
@@ -351,23 +325,11 @@ function resetZoom(container) {
                                 <a href="{{ product.store.telegram_app_Link }}" class="hover:opacity-80 transition-opacity" rel="noopener noreferrer" target="_blank" aria-label="تلگرام فروشنده">
 
 
-                                                            <picture >
-    <!-- نسخه WebP با رزولوشن‌های مختلف -->
-    <source class="w-10 h-10" srcset="{% thumbnail site.telegram_logo '96x56' crop='center'   %} 1x,
-                    {% thumbnail site.telegram_logo '192x112' crop='center'   %} 2x,
-                    {% thumbnail site.telegram_logo '288x168' crop='center'  %} 3x"
-            type="image/webp">
-
-    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
-    <img class="w-10 h-10   rounded-full" src="{% thumbnail site.telegram_logo '192x112' crop='center' %}"
-         srcset="{% thumbnail site.telegram_logo '96x56' crop='center' %} 1x,
-                 {% thumbnail site.telegram_logo '192x112' crop='center' %} 2x,
-                 {% thumbnail site.telegram_logo '288x168' crop='center' %} 3x"
+                                                            {% if site.telegram_logo %}
+    <img class="w-10 h-10   rounded-full" src="{{ site.telegram_logo.url }}"
          alt="تلگرام {{ product.store.name }}"
-
-
          loading="lazy">
-</picture>
+                                                            {% endif %}
                                 </a>
                             {% endif %}
 
@@ -1009,12 +971,9 @@ function resetZoom(container) {
                             </span>
                         {% endif %}
                         <a href="{% url 'product:detail' product.id %}" title="{{ product.name }}">
-                            <picture>
-                                {% if product.picture %}
-                                    <source srcset="{% thumbnail product.picture '200x200' %}" type="image/webp">
-                                    <img src="{% thumbnail product.picture '200x200' %}" alt="{{ product.name }}" width="200" height="200" class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3" loading="lazy">
-                                {% endif %}
-                            </picture>
+                            {% if product.picture %}
+                                <img src="{{ product.picture.url }}" alt="{{ product.name }}" width="200" height="200" class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3" loading="lazy">
+                            {% endif %}
                         </a>
                         <div class="px-2 lg:px-4 mb-3">
                             <a href="{% url 'product:detail' product.id %}" class="line-clamp-2 font-DanaMedium mb-2 text-sm lg:text-base" title="{{ product.name }}">

@@ -1,6 +1,5 @@
 {% extends 'Base/AdminBase.html' %}
 {% load compress static %}
-{% load thumbnail %}
 
 {% block title %}
     اضافه کردن محصول
@@ -898,7 +897,7 @@
                                         <h6>عکس اصلی محصول:</h6>
                                         {% if product.picture %}
 
-                                            <img src="{% thumbnail product.picture '200x200' %}" alt="" loading="lazy"
+                                            <img src="{{ product.picture.url }}" alt="" loading="lazy"
                                                  class="img-thumbnail img-responsive"
                                                  style="max-height: 250px; width: 100%;">
 
@@ -908,13 +907,12 @@
                                     <div class="col-xs-12 col-sm-6 col-md-9">
                                         <h6>گالری محصول:</h6>
                                         {% for img in product.gallery.all %}
-                                            <a href="{% url 'store:remove-img-edit-product' pk=product.id img_id=img.id %}"
-                                               style="display: inline-block; margin: 5px;">
-
-                                                <img src="{% thumbnail img.image '150x150' %}" alt="" loading="lazy">
-
-
-                                            </a>
+                                            {% if img.image %}
+                                                <a href="{% url 'store:remove-img-edit-product' pk=product.id img_id=img.id %}"
+                                                   style="display: inline-block; margin: 5px;">
+                                                    <img src="{{ img.image.url }}" width="150" height="150" alt="" loading="lazy">
+                                                </a>
+                                            {% endif %}
                                         {% endfor %}
                                     </div>
                                 </div>

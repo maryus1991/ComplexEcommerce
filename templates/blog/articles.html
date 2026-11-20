@@ -3,7 +3,6 @@
 
 {% load jalali_tags %}
 {% load products_tags %}
-{% load thumbnail %}
 
 
 {% block title %}
@@ -502,14 +501,11 @@
                         <div class="group">
                             <div class="relative overflow-hidden rounded-lg">
                                 <a href="{% url 'blog:detail' post.id %}" aria-label="{{ post.title }}">
-                                    <picture>
-                                        <source srcset="{% thumbnail post.image '384x384' %}"
-                                                class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
-                                                type="image/webp">
-                                        <img src="{% thumbnail post.image '384x384' %}" alt="{{ post.title }}"  width="384" height="384"
+                                    {% if post.image %}
+                                        <img src="{{ post.image.url }}" alt="{{ post.title }}" width="384" height="384"
                                              class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
                                              loading="lazy">
-                                    </picture>
+                                    {% endif %}
                                     <a href="{% url 'blog:detail' post.id %}" aria-label="{{ post.title }}">
                                         <div
                                                 class="absolute opacity-0 left-0 top-0 bottom-0 right-0 bg-black/60 flex items-center justify-center group-hover:opacity-100 duration-300 transition-all rounded-bl-3xl rounded-tr-3xl">

@@ -1,5 +1,4 @@
 {% extends 'Base/Base.html' %}
-{% load thumbnail %}
 
 {% load products_tags %}
 
@@ -271,7 +270,9 @@
                             <div class="flex flex-col sm:flex-row items-center gap-6">
                                 <!-- IMG AND COUNT BTN -->
                                 <div class="flex w-fit flex-col">
-                                    <img src="{% thumbnail product.product.picture '144x144' %}" class="w-36" alt="" loading="lazy">
+                                    {% if product.product.picture %}
+                                        <img src="{{ product.product.picture.url }}" class="w-36" alt="" loading="lazy">
+                                    {% endif %}
                                 </div>
                                 <!-- information and name product -->
 

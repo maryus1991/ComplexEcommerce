@@ -28,7 +28,11 @@ class Store(models.Model):
         blank=True,
     )
 
-    logo = ThumbnailerImageField(null=True, blank=True)
+    logo = ThumbnailerImageField(
+        null=True,
+        blank=True,
+        resize_source={"size": (512, 512), "crop": False, "upscale": False, "quality": 85},
+    )
     address = models.CharField(max_length=200, null=True)
     zip_code = models.CharField(null=True, blank=True, max_length=20)
     province = models.CharField(null=True, blank=True, max_length=20)
@@ -43,7 +47,11 @@ class Store(models.Model):
     is_verified = models.BooleanField(default=True)
 
     description = RichTextUploadingField(null=True, blank=True)
-    about_image = ThumbnailerImageField(null=True, blank=True)
+    about_image = ThumbnailerImageField(
+        null=True,
+        blank=True,
+        resize_source={"size": (1200, 1200), "crop": False, "upscale": False, "quality": 80},
+    )
 
     # official invoice
     have_official_invoice = models.BooleanField(default=True)
@@ -114,7 +122,11 @@ class StoreApps(models.Model):
     )
     admin_verified = models.BooleanField(default=True)
     image = ThumbnailerImageField(
-        upload_to="site/apps/logo/", null=True, verbose_name="عکس", blank=True
+        upload_to="site/apps/logo/",
+        null=True,
+        verbose_name="عکس",
+        blank=True,
+        resize_source={"size": (600, 600), "crop": False, "upscale": False, "quality": 80},
     )
 
     def __str__(self):

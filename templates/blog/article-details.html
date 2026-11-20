@@ -1,5 +1,4 @@
 {% extends 'Base/Base.html' %}
-{% load thumbnail %}
 
 {% load jalali_tags %}
 
@@ -155,15 +154,11 @@
                 </div>
                 <!-- ARTICLE MAIN -->
                 <div>
-                    <picture>
-
-                        <source srcset="{% thumbnail post.image '900x600' %}"
-                                class="rounded-lg "
-                                type="image/webp">
-                        <img src="{% thumbnail post.image '900x600' %}" alt="{{ post.title }}"
-                             class="rounded-lg "  width="900" height="600"
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}"
+                             class="rounded-lg " width="900" height="600"
                              loading="lazy">
-                    </picture>
+                    {% endif %}
 
                     <p class="mt-3 leading-10 text-gray-600 dark:text-gray-300">
                         {{ post.content|safe }}
@@ -180,14 +175,11 @@
                         {% for last_post in last_posts %}
                             <li>
                                 <a href="{% url 'blog:detail' last_post.id %}">
-                                    <picture>
-                                        <source srcset="{% thumbnail last_post.image '96x64' %} "
-                                                class="w-24 h-16 object-cover rounded-lg"
-                                                type="image/webp">
-                                        <img src="{% thumbnail last_post.image '96x64' %} " alt="{{ last_post.title }}"
-                                             class="w-24 h-16 object-cover rounded-lg"  width="96" height="64"
+                                    {% if last_post.image %}
+                                        <img src="{{ last_post.image.url }}" alt="{{ last_post.title }}"
+                                             class="w-24 h-16 object-cover rounded-lg" width="96" height="64"
                                              loading="lazy">
-                                    </picture>
+                                    {% endif %}
                                 </a>
                                 <a href="{% url 'blog:detail' last_post.id %}" class="flex flex-col gap-y-2 ">
                                     <p class="line-clamp-1">{{ last_post.title }}</p>

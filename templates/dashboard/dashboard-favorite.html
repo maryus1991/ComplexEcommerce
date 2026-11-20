@@ -1,6 +1,5 @@
 {% extends 'dashboard/Base/dashboard-base.html' %}
 {% load products_tags %}
-{% load thumbnail %}
 
 {% block title %}
     محصولات مورد علاقه
@@ -27,9 +26,12 @@
                                 <!-- PRODUCT IMGAE -->
                                 <a href="{% url 'product:detail' pk=item.product.id %}">
 
-                                    <img src="{% thumbnail item.product.picture '192x192' %}"
-                                         alt="product-1"
-                                         class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"/>
+                                    {% if item.product.picture %}
+                                        <img src="{{ item.product.picture.url }}"
+                                             alt="product-1"
+                                             class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3"
+                                             loading="lazy"/>
+                                    {% endif %}
                                     <!-- PRODUCT MAIN -->
                                     <div class="px-2 lg:px-4 mb-3">
                                         <a href="{% url 'product:detail' pk=item.product.id %}"

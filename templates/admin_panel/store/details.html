@@ -1,7 +1,6 @@
 {% extends 'Base/AdminBase.html' %}
 {% load jalali_tags %}
 {% load products_tags %}
-{% load thumbnail %}
 
 
 {% block title %}
@@ -187,15 +186,14 @@
                         </tr>
                         <tr>
                             <td colspan="2" class="col-md-5 col-sm-6 col-xs-12">
-{#                                <img src="{{ item.logo.url }}" height="200px" alt="200px" class="img-responsive">#}
-                                <img src="{% thumbnail item.logo '200x200' %}" alt="" loading="lazy"  class="img-responsive">
-
+                                {% if item.logo %}
+                                    <img src="{{ item.logo.url }}" width="200" height="200" alt="" loading="lazy" class="img-responsive">
+                                {% endif %}
                             </td>
                             <td colspan="3" class="col-md-7 col-sm-6 col-xs-12">
-{#                                <img src="{{ item.about_image.url }}" height="200px" width="200px" alt=""#}
-{#                                     class="img-responsive">#}
-                                <img src="{% thumbnail item.about_image '200x200' %}" alt="" loading="lazy"  class="img-responsive">
-
+                                {% if item.about_image %}
+                                    <img src="{{ item.about_image.url }}" width="200" height="200" alt="" loading="lazy" class="img-responsive">
+                                {% endif %}
                             </td>
                         </tr>
                         </tbody>

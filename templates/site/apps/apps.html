@@ -6,7 +6,6 @@
 {% block title %}
     {{site.title}} برنامه های کاربردی
 {% endblock %}
-{% load thumbnail %}
 
 
 
@@ -153,13 +152,9 @@
                                         <!-- لوگو برنامه -->
                                         <div class="flex-shrink-0 mr-4 px-4 ">
                                             {% if app.image %}
-                                                <picture>
-                                                    <source srcset="{% thumbnail app.image '64x64' %}"
-                                                            type="image/webp">
-                                                    <img src="{% thumbnail app.image '64x64' %}" alt="{{ app.name }}" width="64" height="64"
-                                                         class="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:border-gray-600"
-                                                         loading="lazy">
-                                                </picture>
+                                                <img src="{{ app.image.url }}" alt="{{ app.name }}" width="64" height="64"
+                                                     class="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:border-gray-600"
+                                                     loading="lazy">
 
                                             {% else %}
                                                 <div class="w-16 h-16 bg-gray-200 dark:bg-zinc-600 rounded-lg flex items-center justify-center">

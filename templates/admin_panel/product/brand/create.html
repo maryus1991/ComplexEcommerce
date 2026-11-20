@@ -1,5 +1,4 @@
 {% extends 'Base/AdminBase.html' %}
-{% load thumbnail %}
 {% block title %}
     اضافه کردن یا بروز رسانی برند
 {% endblock %}
@@ -75,10 +74,9 @@
         </form>
     </div>
 
-    {% if item and item.image.url %}
+    {% if item and item.image %}
         عکس مورد استفاده :
-        {#        <img src="{{ item.image.url }}" width="100px" height="100px" alt="">#}
-        <img src="{% thumbnail item.image '100x100' %}" alt="" loading="lazy">
+        <img src="{{ item.image.url }}" width="100" height="100" alt="" loading="lazy">
 
     {% endif %}
 

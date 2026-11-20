@@ -2,7 +2,6 @@
 {% load jalali_tags %}
 {% load products_tags %}
 {% load compress static %}
-{% load thumbnail %}
 
 {% block title %}
     داشبورد
@@ -225,7 +224,7 @@
                                     <li class="item">
                                         <div class="product-img">
                                             {% if item.picture %}
-                                                <img src="{% thumbnail item.picture '50x50' %}" alt="" loading="lazy" class="img-thumbnail img-responsive">
+                                                <img src="{{ item.picture.url }}" width="50" height="50" alt="" loading="lazy" class="img-thumbnail img-responsive">
                                             {% endif %}
                                         </div>
                                         <div class="product-info">

@@ -17,7 +17,11 @@ User = get_user_model()
 
 class ProductBrand(models.Model):
     name = models.CharField(max_length=1000)
-    image = ThumbnailerImageField(upload_to=photo_path_upload_to, null=True)
+    image = ThumbnailerImageField(
+        upload_to=photo_path_upload_to,
+        null=True,
+        resize_source={"size": (600, 600), "crop": False, "upscale": False, "quality": 80},
+    )
     updated_at = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
     sort_number = models.PositiveSmallIntegerField(default=0)
@@ -35,7 +39,11 @@ class ProductCategory(models.Model):
         "self", on_delete=models.SET_NULL, null=True, blank=True, related_name="child"
     )
     name = models.CharField(max_length=1000)
-    image = ThumbnailerImageField(upload_to=photo_path_upload_to, null=True)
+    image = ThumbnailerImageField(
+        upload_to=photo_path_upload_to,
+        null=True,
+        resize_source={"size": (600, 600), "crop": False, "upscale": False, "quality": 80},
+    )
     updated_at = models.DateTimeField(auto_now=True, null=True)
     is_active = models.BooleanField(default=True)
     sort_number = models.PositiveSmallIntegerField(default=0)
@@ -60,7 +68,12 @@ class Product(models.Model):
     colleague_users_price = models.BigIntegerField(default=0)
     have_discount = models.BooleanField(default=False)
     discount = models.IntegerField(default=0)
-    picture = ThumbnailerImageField(upload_to=photo_path_upload_to, null=True, blank=True)
+    picture = ThumbnailerImageField(
+        upload_to=photo_path_upload_to,
+        null=True,
+        blank=True,
+        resize_source={"size": (1200, 1200), "crop": False, "upscale": False, "quality": 80},
+    )
     description = RichTextUploadingField(null=True, blank=True)
     count = models.PositiveBigIntegerField(default=0)
     weight = models.PositiveBigIntegerField(default=0)
@@ -115,7 +128,10 @@ class ProductGallery(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="gallery"
     )
-    image = ThumbnailerImageField(upload_to=photo_path_upload_to)
+    image = ThumbnailerImageField(
+        upload_to=photo_path_upload_to,
+        resize_source={"size": (1200, 1200), "crop": False, "upscale": False, "quality": 80},
+    )
     sort_number = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):

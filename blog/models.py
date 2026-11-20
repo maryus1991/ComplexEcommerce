@@ -19,7 +19,11 @@ class BlogCategory(models.Model):
         verbose_name="دسته مادر",
     )
 
-    image = ThumbnailerImageField(verbose_name="عکس", upload_to="blog_categories/")
+    image = ThumbnailerImageField(
+        verbose_name="عکس",
+        upload_to="blog_categories/",
+        resize_source={"size": (800, 800), "crop": False, "upscale": False, "quality": 80},
+    )
     is_active = models.BooleanField(verbose_name="فعال / غیر فعال", default=True)
     sort_number = models.PositiveSmallIntegerField(default=0)
 
@@ -58,7 +62,12 @@ class Blog(models.Model):
         verbose_name="دسته",
     )
     content = RichTextUploadingField(verbose_name="متن یا بدنه")
-    image = ThumbnailerImageField(upload_to="blogs/", null=True, verbose_name="عکس")
+    image = ThumbnailerImageField(
+        upload_to="blogs/",
+        null=True,
+        verbose_name="عکس",
+        resize_source={"size": (1200, 1200), "crop": False, "upscale": False, "quality": 80},
+    )
 
     is_active = models.BooleanField(
         default=False, verbose_name="فعال / غیر فعال برای انتشار توسط فروشگاه"

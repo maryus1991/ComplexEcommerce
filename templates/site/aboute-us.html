@@ -1,6 +1,5 @@
 {% extends 'Base/Base.html' %}
 {% load to_webp %}
-{% load thumbnail %}
 
 {% block title %}
     درباره ما {{site.title}}
@@ -72,43 +71,21 @@
                 <div class="flex items-start justify-start gap-x-10">
                     <a href="{{ site.instagram_link }}" class="flex items-center gap-x-2">
                         <p dir="ltr">{{ site.instagram_ID }}</p>
-                                               <picture>
-    <!-- نسخه WebP با رزولوشن‌های مختلف -->
-    <source srcset="{% thumbnail site.instagram_logo '96x56' crop='center'   %} 1x,
-                    {% thumbnail site.instagram_logo '192x112' crop='center'   %} 2x,
-                    {% thumbnail site.instagram_logo '288x168' crop='center'  %} 3x"
-            type="image/webp">
-
-    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
-    <img src="{% thumbnail site.instagram_logo '192x112' crop='center' %}"
-         srcset="{% thumbnail site.instagram_logo '96x56' crop='center' %} 1x,
-                 {% thumbnail site.instagram_logo '192x112' crop='center' %} 2x,
-                 {% thumbnail site.instagram_logo '288x168' crop='center' %} 3x"
+                                               {% if site.instagram_logo %}
+    <img src="{{ site.instagram_logo.url }}"
          alt="Instagram"
          class="w-10 h-10 rounded-full"
-
          loading="lazy">
-</picture>
+                                               {% endif %}
                     </a>
                     <a href="{{ site.telegram_link }}" class="flex items-center gap-x-2">
                         <p dir="ltr">{{ site.telegram_ID }}</p>
-                                                <picture>
-    <!-- نسخه WebP با رزولوشن‌های مختلف -->
-    <source srcset="{% thumbnail site.telegram_logo '96x56' crop='center'   %} 1x,
-                    {% thumbnail site.telegram_logo '192x112' crop='center'   %} 2x,
-                    {% thumbnail site.telegram_logo '288x168' crop='center'  %} 3x"
-            type="image/webp">
-
-    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
-    <img src="{% thumbnail site.telegram_logo '192x112' crop='center' %}"
-         srcset="{% thumbnail site.telegram_logo '96x56' crop='center' %} 1x,
-                 {% thumbnail site.telegram_logo '192x112' crop='center' %} 2x,
-                 {% thumbnail site.telegram_logo '288x168' crop='center' %} 3x"
+                                                {% if site.telegram_logo %}
+    <img src="{{ site.telegram_logo.url }}"
          alt="Telegram"
          class="w-10 h-10 rounded-full"
-
          loading="lazy">
-</picture>
+                                                {% endif %}
                     </a>
                     <a href="tel:{{ site.phone }}" class="flex items-center gap-x-2">
                         <p dir="ltr" class=" text-lg  text-green-500">{{ site.phone }}</p>
@@ -116,14 +93,11 @@
                 </div>
             </div>
             <div class="flex justify-end  w-full lg:w-2/4">
-                <picture>
-                    <source srcset="{% thumbnail site.about_image '652x560' %}" alt="عکس مغازه"
-                            class="rounded-lg lg:h-[35rem]"
-                            type="image/webp">
-                    <img src="{% thumbnail site.about_image '652x560' %}" alt="{{ site.title }}"
-                         class="rounded-lg lg:h-[35rem]"   width="652" height="560"
+                {% if site.about_image %}
+                    <img src="{{ site.about_image.url }}" alt="{{ site.title }}"
+                         class="rounded-lg lg:h-[35rem]" width="652" height="560"
                          loading="lazy">
-                </picture>
+                {% endif %}
 
             </div>
         </section>

@@ -1,6 +1,5 @@
 {% extends 'Base/AdminBase.html' %}
 {% load compress static %}
-{% load thumbnail %}
 {% block title %}
     اضافه کردن محصول
 {% endblock %}
@@ -1276,23 +1275,18 @@
                                     <div class="col-md-3">
                                         <h6>عکس اصلی محصول:</h6>
                                         {% if product.picture %}
-                                            <img src="{% thumbnail product.picture '250x250' %}" alt="" loading="lazy" class="img-thumbnail img-responsive">
-
-{#                                            <img src="{{ product.picture.url }}" alt=""#}
-{#                                                 class="img-thumbnail img-responsive"#}
-{#                                                 style="height: 250px; width: 250px;">#}
+                                            <img src="{{ product.picture.url }}" alt="" loading="lazy" class="img-thumbnail img-responsive" style="height: 250px; width: 250px;">
                                         {% endif %}
 
                                     </div>
                                     <div class="col-md-9">
                                         <h6>گالری محصول:</h6>
                                         {% for img in product.gallery.all %}
-                                            <a href="{% url 'admin_panel:product-remove-image' pk=product.id img_id=img.id %}">
-                                            <img src="{% thumbnail img.image '150x150' %}" alt="" loading="lazy" class="img-thumbnail img-responsive" style="margin: 5px;">
-{#                                            #}
-{#                                                <img src="{{ img.image.url }}" alt=""#}
-{#                                                     style="height: 150px; width: 150px; margin: 5px;">#}
-                                            </a>
+                                            {% if img.image %}
+                                                <a href="{% url 'admin_panel:product-remove-image' pk=product.id img_id=img.id %}">
+                                                <img src="{{ img.image.url }}" alt="" loading="lazy" class="img-thumbnail img-responsive" style="height: 150px; width: 150px; margin: 5px;">
+                                                </a>
+                                            {% endif %}
                                         {% endfor %}
                                     </div>
                                 </div>

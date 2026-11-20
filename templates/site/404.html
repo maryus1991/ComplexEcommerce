@@ -1,7 +1,6 @@
 
 
 {% extends 'Base/Base.html' %}
-{% load thumbnail %}
 
 {% block title %}
     404
@@ -26,7 +25,7 @@
         <!-- 404 -->
         <section class="flex flex-col gap-y-2 items-center justify-center w-full text-center">
             <img src="/static/Images/404-2048x702.webp" class="h-28 sm:h-36 lg:h-60"
-                style="animation: float 3s ease-in-out infinite;" />
+                style="animation: float 3s ease-in-out infinite;" loading="lazy" />
             <h2 class="text-xl lg:text-2xl font-DanaMedium mt-4 dark:text-gray-300">صفحه‌ای که به دنبال آن هستید یافت
                 نشد !</h2>
             <p class="text-gray-500 mt-2 text-center">لطفاً آدرس اینترنتی را بررسی کنید یا به صفحه اصلی برگردید.</p>

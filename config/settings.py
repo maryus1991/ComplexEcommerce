@@ -148,12 +148,13 @@ HTML_MINIFY_EXCLUDE_EXTENSIONS = (
 )
 
 # THUMBNAIL
+THUMBNAIL_QUALITY = 80
 THUMBNAIL_DEFAULT_OPTIONS = {
-    'format': 'WEBP',
-    'quality': 70,
-    'crop': 'center',
-    'optimize': True,
+    'quality': 80,
+    'crop': False,
+    'upscale': False,
 }
+THUMBNAIL_PRESERVE_EXTENSIONS = ('png', 'webp')
 THUMBNAIL_DEFAULT_STORAGE_ALIAS = 'default'
 THUMBNAIL_CACHE = 'default'
 THUMBNAIL_CACHE_TIMEOUT = 60 * 60 * 24 * 30
@@ -405,46 +406,46 @@ CACHES = {
 
 CACHALOT_TIMEOUT = 60 * 60 * 24
 
-CACHALOT_ONLY_CACHABLE_APPS = [
-    'blog',
-    'product',
-    'sitesetting',
-    'stores',
-]
-CACHALOT_UNCACHABLE_TABLES = [
-    'auditlog_logentry',
-    'auth_group',
-    'auth_group_permissions',
-    'auth_permission',
-    'django_admin_log',
-    'django_cache',
-    'django_content_type',
-    'django_migrations',
-    'django_session',
-    'user_user',
-    'user_user_groups',
-    'user_user_user_permissions',
-    'dashboard_ticket',
-    'dashboard_ticketconversation',
-    'dashboard_useraddress',
-    'dashboard_userip',
-    'orders_deliveryprices',
-    'orders_discount',
-    'orders_discount_order',
-    'orders_discount_product',
-    'orders_discount_store',
-    'orders_discount_user',
-    'orders_order',
-    'orders_orderdetail',
-    'orders_returnsorders',
-    'orders_specificsorders',
-    'orders_storesoldorders',
-    'product_notificationuserforproductavailability',
-    'product_productcomment',
-    'product_productcommentlikeanddislike',
-    'product_userfavorite',
-    'stores_storecomment',
-]
+# CACHALOT_ONLY_CACHABLE_APPS = [
+#     'blog',
+#     'product',
+#     'sitesetting',
+#     'stores',
+# ]
+# CACHALOT_UNCACHABLE_TABLES = [
+#     'auditlog_logentry',
+#     'auth_group',
+#     'auth_group_permissions',
+#     'auth_permission',
+#     'django_admin_log',
+#     'django_cache',
+#     'django_content_type',
+#     'django_migrations',
+#     'django_session',
+#     'user_user',
+#     'user_user_groups',
+#     'user_user_user_permissions',
+#     'dashboard_ticket',
+#     'dashboard_ticketconversation',
+#     'dashboard_useraddress',
+#     'dashboard_userip',
+#     'orders_deliveryprices',
+#     'orders_discount',
+#     'orders_discount_order',
+#     'orders_discount_product',
+#     'orders_discount_store',
+#     'orders_discount_user',
+#     'orders_order',
+#     'orders_orderdetail',
+#     'orders_returnsorders',
+#     'orders_specificsorders',
+#     'orders_storesoldorders',
+#     'product_notificationuserforproductavailability',
+#     'product_productcomment',
+#     'product_productcommentlikeanddislike',
+#     'product_userfavorite',
+#     'stores_storecomment',
+# ]
 
 # celery
 
@@ -526,6 +527,6 @@ if DEBUG:
 
     ]
 
-
+#
 else :
     INSTALLED_APPS += ["cachalot",]

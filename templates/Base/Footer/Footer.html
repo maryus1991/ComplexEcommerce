@@ -1,5 +1,4 @@
 {% load to_webp %}
-{% load thumbnail %}
 
 <footer class="relative mt-14 lg:mt-32 text-gray-300 bg-zinc-800 pt-8">
 
@@ -27,7 +26,7 @@
 
             </div>
 	    <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=618579&Code=y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9'>
-            <img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=618579&Code=y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9' alt='اینماد' style='cursor:pointer' code='y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9'></a>
+            <img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=618579&Code=y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9' alt='اینماد' style='cursor:pointer' code='y1hV5sCj92gwjlMrZasvrTCCWr2lk9f9' loading='lazy'></a>
             <!-- GO TO TOP BTN -->
             <a href="" onclick="window.scrollTo({ top: 0, behavior: 'smooth' }); return false;"
                class="flex items-center gap-x-2 text-sm p-2 cursor-pointer rounded-lg border-2 border-gray-200">
@@ -42,23 +41,13 @@
             <div class="flex flex-col gap-y-2 w-full lg:w-[30%]">
                 <!-- LOGO -->
                 <a href="/" class="text-green-500 transition-colors w-fit block">
-<picture>
-    <!-- نسخه WebP با رزولوشن‌های مختلف -->
-    <source srcset="{% thumbnail site.logo '96x56' crop='center'   %} 1x,
-                    {% thumbnail site.logo '192x112' crop='center'   %} 2x,
-                    {% thumbnail site.logo '288x168' crop='center'  %} 3x"
-            type="image/webp">
-
-    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
-    <img src="{% thumbnail site.logo '192x112' crop='center' %}"
-         srcset="{% thumbnail site.logo '96x56' crop='center' %} 1x,
-                 {% thumbnail site.logo '192x112' crop='center' %} 2x,
-                 {% thumbnail site.logo '288x168' crop='center' %} 3x"
+{% if site.logo %}
+    <img src="{{ site.logo.url }}"
          alt="{{ site.title }}"
          class="w-24 h-14 rounded-full"
          width="96" height="56"
          loading="lazy">
-</picture>
+{% endif %}
 
 
                 </a>
@@ -133,43 +122,21 @@
                 <div class="flex items-start justify-start gap-x-10">
                     <a href="{{ site.instagram_link }}" class="flex items-center gap-x-2">
                         <p dir="ltr">{{ site.instagram_ID }}</p>
-                       <picture>
-    <!-- نسخه WebP با رزولوشن‌های مختلف -->
-    <source srcset="{% thumbnail site.instagram_logo '96x56' crop='center'   %} 1x,
-                    {% thumbnail site.instagram_logo '192x112' crop='center'   %} 2x,
-                    {% thumbnail site.instagram_logo '288x168' crop='center'  %} 3x"
-            type="image/webp">
-
-    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
-    <img src="{% thumbnail site.instagram_logo '192x112' crop='center' %}"
-         srcset="{% thumbnail site.instagram_logo '96x56' crop='center' %} 1x,
-                 {% thumbnail site.instagram_logo '192x112' crop='center' %} 2x,
-                 {% thumbnail site.instagram_logo '288x168' crop='center' %} 3x"
+                       {% if site.instagram_logo %}
+    <img src="{{ site.instagram_logo.url }}"
          alt="Instagram"
          class="w-10 h-10 rounded-full"
-
          loading="lazy">
-</picture>
+                       {% endif %}
                     </a>
                     <a href="{{ site.telegram_link }}" class="flex items-center gap-x-2">
                         <p dir="ltr">{{ site.telegram_ID }}</p>
-                        <picture>
-    <!-- نسخه WebP با رزولوشن‌های مختلف -->
-    <source srcset="{% thumbnail site.telegram_logo '96x56' crop='center'   %} 1x,
-                    {% thumbnail site.telegram_logo '192x112' crop='center'   %} 2x,
-                    {% thumbnail site.telegram_logo '288x168' crop='center'  %} 3x"
-            type="image/webp">
-
-    <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
-    <img src="{% thumbnail site.telegram_logo '192x112' crop='center' %}"
-         srcset="{% thumbnail site.telegram_logo '96x56' crop='center' %} 1x,
-                 {% thumbnail site.telegram_logo '192x112' crop='center' %} 2x,
-                 {% thumbnail site.telegram_logo '288x168' crop='center' %} 3x"
+                        {% if site.telegram_logo %}
+    <img src="{{ site.telegram_logo.url }}"
          alt="Telegram"
          class="w-10 h-10 rounded-full"
-
          loading="lazy">
-</picture>
+                        {% endif %}
                     </a>
                 </div>
 

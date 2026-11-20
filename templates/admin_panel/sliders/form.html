@@ -1,6 +1,5 @@
 {% extends 'Base/AdminBase.html' %}
 {% load compress static %}
-{% load thumbnail %}
 {% block title %}
     بروز رسانی یا ساخت اسلایدر جدید
 {% endblock %}
@@ -118,12 +117,11 @@
                             </div>
 
                         </form>
-                        {% if slider %}
+                        {% if slider and slider.image %}
 
                             عکس اپلود شده <br>
                             برای عوض کردن ان عکس جدید را اپلود کنید
-{#                            <img height="100px" width="200px" src="{{ slider.image.url }}" alt="">#}
-                            <img src="{% thumbnail slider.image '200x200' %}" alt="" loading="lazy">
+                            <img src="{{ slider.image.url }}" width="200" height="100" alt="" loading="lazy">
 
                         {% endif %}
 

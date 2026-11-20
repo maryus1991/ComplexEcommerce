@@ -1,6 +1,5 @@
 {% extends 'Base/AdminBase.html' %}
 {% load compress static %}
-{% load thumbnail %}
 {% block title %}
     بروز رسانی یا اپلود برنامه جدید
 {% endblock %}
@@ -221,7 +220,7 @@
                             </div>
 
                             {% if item and item.image %}
-                                <img src="{% thumbnail item.image '200x200' %}" alt="" loading="lazy">
+                                <img src="{{ item.image.url }}" width="200" height="200" alt="" loading="lazy">
                             {% endif %}
                         </form>
                     </div>

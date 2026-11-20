@@ -47,14 +47,26 @@ class SiteSetting(models.Model):
     )
 
     logo = ThumbnailerImageField(
-        upload_to="site/logo/", null=True, verbose_name="لوگو", blank=True
+        upload_to="site/logo/",
+        null=True,
+        verbose_name="لوگو",
+        blank=True,
+        resize_source={"size": (512, 512), "crop": False, "upscale": False, "quality": 85},
     )
 
     telegram_logo = ThumbnailerImageField(
-        upload_to="site/logo/telegram/", null=True, verbose_name="لوگوی تلگرام", blank=True
+        upload_to="site/logo/telegram/",
+        null=True,
+        verbose_name="لوگوی تلگرام",
+        blank=True,
+        resize_source={"size": (512, 512), "crop": False, "upscale": False, "quality": 85},
     )
     instagram_logo = ThumbnailerImageField(
-        upload_to="site/logo/instagram/", null=True, verbose_name="لوگو اینستاگرام", blank=True
+        upload_to="site/logo/instagram/",
+        null=True,
+        verbose_name="لوگو اینستاگرام",
+        blank=True,
+        resize_source={"size": (512, 512), "crop": False, "upscale": False, "quality": 85},
     )
 
     short_description = models.TextField(default="0", verbose_name="توضیحات کوتاه")
@@ -64,7 +76,11 @@ class SiteSetting(models.Model):
     )
 
     about_image = ThumbnailerImageField(
-        upload_to="site/about_image/", null=True, verbose_name="عکس معرفی", blank=True
+        upload_to="site/about_image/",
+        null=True,
+        verbose_name="عکس معرفی",
+        blank=True,
+        resize_source={"size": (1200, 1200), "crop": False, "upscale": False, "quality": 80},
     )
 
     # delivery options for all website
@@ -263,7 +279,11 @@ class ContactUs(models.Model):
 
 
 class Slider(models.Model):
-    image = ThumbnailerImageField(upload_to=photo_path_upload_to, verbose_name="عکس")
+    image = ThumbnailerImageField(
+        upload_to=photo_path_upload_to,
+        verbose_name="عکس",
+        resize_source={"size": (1920, 1080), "crop": False, "upscale": False, "quality": 80},
+    )
     name = models.CharField(max_length=100, null=True, blank=True, verbose_name="عنوان اول")
     name2 = models.CharField(max_length=100, null=True, blank=True, verbose_name="عنوان دوم")
     text = models.CharField(max_length=250, null=True, blank=True, verbose_name="متن")
@@ -292,7 +312,11 @@ class SiteLaw(models.Model):
 
 
 class Banners(models.Model):
-    image = ThumbnailerImageField(upload_to=photo_path_upload_to, verbose_name="عکس")
+    image = ThumbnailerImageField(
+        upload_to=photo_path_upload_to,
+        verbose_name="عکس",
+        resize_source={"size": (1600, 1200), "crop": False, "upscale": False, "quality": 80},
+    )
     name = models.CharField(
         max_length=100, null=True, blank=True, verbose_name="عنوان اول"
     )

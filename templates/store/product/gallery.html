@@ -1,6 +1,5 @@
 {% extends 'Base/AdminBase.html' %}
 {% load compress static %}
-{% load thumbnail %}
 
 {% load products_tags %}
 
@@ -51,8 +50,10 @@
                                     <td>{{ product.name }}</td>
                                     <td>{{ item.id }}</td>
                                     <td>
-                                        <img src="{% thumbnail item.image '50x50' %}" alt="{{ product.name }}" loading="lazy"
-                                             class="img-thumbnail img-responsive" >
+                                        {% if item.image %}
+                                            <img src="{{ item.image.url }}" width="50" height="50" alt="{{ product.name }}" loading="lazy"
+                                                 class="img-thumbnail img-responsive">
+                                        {% endif %}
 
 
                                     </td>
