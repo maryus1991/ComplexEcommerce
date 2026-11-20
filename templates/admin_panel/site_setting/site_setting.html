@@ -266,7 +266,7 @@
 
 
                                 <div class="">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="input-group input-group" dir="rtl">
                                         <span class="input-group-btn">
                                           <span class="btn btn-flat" style="background-color: #ff7700; color: white;">
@@ -291,6 +291,19 @@
                                           </span>
                                         </span>
                                             {{ form.instagram_logo }}
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span class="input-group-btn">
+                                          <span class="btn btn-flat" style="background-color: #ff7700; color: white;">
+
+                                            {{ form.phone3.label }}
+
+                                          </span>
+                                        </span>
+                                            {{ form.phone3 }}
 
                                         </div>
                                     </div>
@@ -1194,12 +1207,12 @@
                             نکنید
                             <br>
                             لوگو =>
-{#                            <img src="{{ site.logo.url }}" width="100px" height="100px" alt="">#}
+
                             <img src="{% thumbnail site.logo '100x100' %}" alt="" loading="lazy">
 
                             <br>
                             عکس معرفی =>
-{#                            <img src="{{ site.about_image.url }}" width="100px" height="100px" alt="">#}
+
                             <img src="{% thumbnail site.about_image '100x100' %}" alt="" loading="lazy">
 
                         {% endif %}

@@ -461,10 +461,18 @@ def header_render_partial(request, title=None, microdata=None):
         }
         orders = None
 
+    try:
+        if orders:
+            basket_id = orders.first().order.id
+        else:
+            basket_id = 0
+    except Exception as e:
+        basket_id = 0
 
     title = title if title else request.site.title
     return render(request, "Base/Header/Header.html", {
         "orders": orders,
+        "basket_id": basket_id,
 
         "orders_count": orders_stats["orders_count"],
 

@@ -1445,6 +1445,13 @@ class SiteSettingModelForm(forms.ModelForm):
             }
         )
     )
+    phone3 = PhoneNumberField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+            }
+        )
+    )
     link_of_message = forms.URLField(
         required=False,
         widget=forms.URLInput(

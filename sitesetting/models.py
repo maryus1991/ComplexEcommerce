@@ -23,6 +23,7 @@ class SiteSetting(models.Model):
     address = models.CharField(max_length=500, default="0", verbose_name="ادرس")
     phone = PhoneNumberField(default="0111111111", verbose_name="شماره اول")
     phone2 = PhoneNumberField(default="0111111111", verbose_name="شماره دوم")
+    phone3 = PhoneNumberField(default="0111111111", verbose_name="شماره سوم")
     email = models.EmailField(default="test@test.test", verbose_name="ایمیل")
     
 

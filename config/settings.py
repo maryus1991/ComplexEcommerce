@@ -155,8 +155,15 @@ THUMBNAIL_DEFAULT_OPTIONS = {
     'optimize': True,
 }
 THUMBNAIL_DEFAULT_STORAGE_ALIAS = 'default'
-
-
+THUMBNAIL_CACHE = 'default'
+THUMBNAIL_CACHE_TIMEOUT = 60 * 60 * 24 * 30
+THUMBNAIL_PROCESSORS = (
+    'easy_thumbnails.processors.colorspace',
+    'easy_thumbnails.processors.autocrop',
+    'easy_thumbnails.processors.scale_and_crop',
+    'easy_thumbnails.processors.filters',
+    'easy_thumbnails.processors.background',
+)
 
 ROOT_URLCONF = "config.urls"
 
@@ -228,7 +235,6 @@ STATIC_URL = "/static/"
 
 STATIC_ROOT = BASE_DIR / "static"
 
-THUMBNAIL_CACHE_TIMEOUT = 60 * 60 * 24 * 30
 
 
 # AWS / S3-Compatible Object Storage configuration
@@ -442,7 +448,7 @@ CACHALOT_UNCACHABLE_TABLES = [
 
 # celery
 
-CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_BROKER_URL = 'redis://redis:6379/1'
 CELERY_RESULT_BACKEND = 'redis://redis:6379/2'
 
 from kombu import Queue

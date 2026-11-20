@@ -398,7 +398,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
 
                 <!-- Quantity Badge -->
                 <span class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                    {{ orders_count }}
+                    {{ order.count }}
                 </span>
             </div>
 
@@ -478,6 +478,14 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
     <div class="sticky bottom-0 bg-white dark:bg-zinc-700 border-t   p-4 mt-4">
 
 
+        {% if basket_id and basket_id > 0 %}
+        <a href="{% url 'dashboard:order_detail' basket_id %}"
+           class="block w-full py-3 px-4 rounded-lg transition-colors text-center
+                  bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700
+                  text-white font-DanaDemiBold shadow-lg hover:shadow-xl">
+            ثبت سفارش ({{ orders_count   }} محصول)
+        </a>
+        {% else %}
         <!-- Order Button -->
         <a href="{% url 'dashboard:orders' %}"
            class="block w-full py-3 px-4 rounded-lg transition-colors text-center
@@ -485,6 +493,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
                   text-white font-DanaDemiBold shadow-lg hover:shadow-xl">
             ثبت سفارش ({{ orders_count   }} محصول)
         </a>
+        {% endif %}
     </div>
 </div>
 
