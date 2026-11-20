@@ -98,8 +98,8 @@ def robots_txt(request):
     lines.append("")
     lines.append(f"Sitemap: {origin}{reverse('sitemap')}")
     lines.append("")
-    lines.append("# AI / Agentic Discovery")
-    lines.append(f"llms-txt: {origin}{reverse('llms-txt')}")
+    # lines.append("# AI / Agentic Discovery")
+    # lines.append(f"llms-txt: {origin}{reverse('llms-txt')}")
 
     return HttpResponse("\n".join(lines) + "\n", content_type="text/plain; charset=utf-8")
 
