@@ -2,7 +2,7 @@
 {% load products_tags %}
 {% load jalali_tags %}
 
-{% block title %}{{ product.name }} | {{ site.title }}{% endblock %}
+{% block title %}{{ product.name }}  {% endblock %}
 
 {% block meta_description %}{% if product.parent and product.parent.description %}{{ product.parent.description|striptags|truncatechars:155 }}{% elif product.description %}{{ product.description|striptags|truncatechars:155 }}{% else %}خرید آنلاین {{ product.name }}{% if product.brand %} برند {{ product.brand.name }}{% endif %} با بهترین قیمت و گارانتی معتبر از {{ site.title }}.{% endif %}{% endblock %}
 
@@ -293,7 +293,7 @@ function resetZoom(container) {
 
                             {% if product.store.whats_app_link and product.store.whats_app_ID %}
                                 <a href="{{ product.store.whats_app_link }}" class="hover:opacity-80 transition-opacity" rel="noopener noreferrer" target="_blank" aria-label="ارتباط با واتساپ فروشنده">
-                                    <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-10 h-10" width="40" height="40" loading="lazy" decoding="async" alt=""/>
+                                    <img src="/static/Images/svg/WhatsApp_logo1.svg" class="w-10 h-10" width="40" height="40" loading="lazy" decoding="async" alt="واتساپ"/>
                                 </a>
                             {% endif %}
 
@@ -304,7 +304,7 @@ function resetZoom(container) {
 
     <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
     {% if site.instagram_logo %}<img src="{{ site.instagram_logo.url }}"
-         alt=""
+         alt="اینستاگرام"
          width="40" height="40"
          class="w-10 h-10 rounded-full"
          loading="lazy" decoding="async">{% endif %}
@@ -319,7 +319,7 @@ function resetZoom(container) {
 
     <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
     {% if site.telegram_logo %}<img class="w-10 h-10   rounded-full" src="{{ site.telegram_logo.url }}"
-         alt=""
+         alt="تلگرام"
          width="40" height="40"
          loading="lazy" decoding="async">{% endif %}
                                 </a>
@@ -965,7 +965,7 @@ function resetZoom(container) {
                         <a href="{% url 'product:detail' product.id %}" aria-label="{{ product.name }}" title="{{ product.name }}" class="block">
                             <span class="sr-only">{{ product.name }}</span>
                                                             {% if product.picture %}
-                                    <img src="{{ product.picture.url }}" alt="" width="200" height="200" class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3 object-contain" loading="lazy" decoding="async">
+                                    <img src="{{ product.picture.url }}" alt="{{ product.name }}" width="200" height="200" class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3 object-contain" loading="lazy" decoding="async">
                                 {% endif %}
                             
                         </a>

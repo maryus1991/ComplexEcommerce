@@ -81,7 +81,7 @@
 
         {% if item.logo %}<img
             src="{{ item.logo.url }}"
-            alt=""
+            alt="{{ item.name }}"
             width="40" height="40"
             class="w-10 h-10 object-contain"
             loading="lazy" decoding="async"
@@ -109,7 +109,7 @@
 
     <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
     {% if site.instagram_logo %}<img src="{{ site.instagram_logo.url }}"
-         alt=""
+         alt="{{ site.title }} اینستاگرام"
          width="40" height="40"
          class="w-10 h-10 rounded-full"
          loading="lazy" decoding="async">{% endif %}
@@ -124,7 +124,7 @@
 
     <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
     {% if site.telegram_logo %}<img src="{{ site.telegram_logo.url }}"
-         alt=""
+         alt="{{ site.title }} تلگرام"
          width="40" height="40"
          class="w-10 h-10 rounded-full"
          loading="lazy" decoding="async">{% endif %}
@@ -136,7 +136,7 @@
                            class="flex items-center gap-x-2 bg-gray-100 hover:bg-gray-200 hover:dark:bg-gray-600 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
                             <p dir="ltr" class="text-sm sm:text-base">{{ item.whats_app_ID }}</p>
                             <img src="/static/Images/svg/WhatsApp_logo1.svg" width="24" height="24" loading="lazy" decoding="async" class="w-5 h-5 sm:w-6 sm:h-6"
-                                 alt=""/>
+                                 alt="واتساپ"/>
                         </a>
                     {% endif %}
                     {% if item.products.count > 0 %}

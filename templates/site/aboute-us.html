@@ -63,7 +63,7 @@
             src="{{ site.logo.url }}"
             class="w-10 h-10 object-contain"
             width="40" height="40"
-            alt=""
+            alt="{{site.title}}"
             loading="lazy" decoding="async"
         >{% endif %}
     </picture>
@@ -86,7 +86,7 @@
 
     <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
     {% if site.instagram_logo %}<img src="{{ site.instagram_logo.url }}"
-         alt=""
+         alt="{{ site.title }} اینستاگرام"
          width="40" height="40"
          class="w-10 h-10 rounded-full"
          loading="lazy" decoding="async">{% endif %}
@@ -97,7 +97,7 @@
 
     <!-- fallback برای مرورگرهایی که WebP پشتیبانی نمی‌کنند -->
     {% if site.telegram_logo %}<img src="{{ site.telegram_logo.url }}"
-         alt=""
+         alt="{{ site.title }} تلگرام "
          width="40" height="40"
          class="w-10 h-10 rounded-full"
          loading="lazy" decoding="async">{% endif %}

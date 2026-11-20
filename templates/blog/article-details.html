@@ -175,7 +175,7 @@
                             <li>
                                 <a href="{% url 'blog:detail' last_post.id %}" aria-label="{{ last_post.title }}">
                                     <span class="sr-only">{{ last_post.title }}</span>
-                                                                            {% if last_post.image %}<img src="{{ last_post.image.url }}" alt=""
+                                                                            {% if last_post.image %}<img src="{{ last_post.image.url }}" alt="{{ last_post.title }}"
                                              class="w-24 h-16 object-cover rounded-lg" width="96" height="64"
                                              loading="lazy" decoding="async">{% endif %}
                                     

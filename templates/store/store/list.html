@@ -91,7 +91,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                 <h2 class="text-2xl font-bold text-gray-800 dark:text-white">فروشگاه‌های شما</h2>
                 <a href="{% url 'stores:main-template-create' %}"
-                   class="flex items-center gap-2 bg-green-600 hover:bg-green-700 dark:text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                   class="flex items-center gap-2 bg-green-500 hover:bg-green-700 dark:text-white px-4 py-2 rounded-lg transition-colors duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                          stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -129,7 +129,7 @@
                                 <source srcset="{{ item.about_image.url|to_webp }}"
                                         class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                                         type="image/webp">
-                                {% if item.about_image %}<img src="{{ item.about_image.url }}" alt="" width="400" height="224" loading="lazy" decoding="async"
+                                {% if item.about_image %}<img src="{{ item.about_image.url }}" alt="{{ item.name }}" width="400" height="224" loading="lazy" decoding="async"
                                      class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                                      loading="lazy">{% endif %}
                             </picture>
@@ -145,7 +145,7 @@
                                     {{ item.name }}
                                 </a>
                                 <a href="{% url 'stores:main-template-detail' item.id %}" aria-label="لوگوی {{ item.name }}">
-                                    {% if item.logo %}<img src="{{ item.logo.url }}" alt="" width="96" height="56" loading="lazy" decoding="async" class="w-24 h-14 rounded-full">{% endif %}
+                                    {% if item.logo %}<img src="{{ item.logo.url }}" alt="{{ item.name }}" width="96" height="56" loading="lazy" decoding="async" class="w-24 h-14 rounded-full">{% endif %}
                                 </a>
                             </div>
 

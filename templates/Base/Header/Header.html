@@ -256,7 +256,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
 
             <!-- USER ACCOUNT BOX  -->
             <div
-                    class="group relative px-2 lg:px-3 py-2 flex items-center justify-end gap-x-1 text-white transition-colors bg-green-600 hover:bg-green-700 rounded-lg">
+                    class="group relative px-2 lg:px-3 py-2 flex items-center justify-end gap-x-1 text-white transition-colors bg-green-500 hover:bg-green-700 rounded-lg">
                 <svg class="h-5 w-5 hidden lg:flex">
                     <use href="#user"></use>
                 </svg>
@@ -377,7 +377,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
             <!-- Image -->
             <div class="relative flex-shrink-0">
                                     {% if order.product.picture %}<img src="{{ order.product.picture.url }}"
-                         alt=""
+                         alt="{{ order.product.name }}"
                          class="w-20 h-20 object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                          width="80"
                          height="80"
@@ -638,8 +638,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
         <!-- BORDER -->
         <span class="flex w-full border-t dark:border-white/10 border-gray-200 my-2"></span>
         <!-- ACTION BTNS -->
-        <div
-                class="flex items-start flex-col gap-y-5 child:flex child:items-center child:gap-x-2 child:font-DanaMedium">
+        <div class="flex items-start flex-col gap-y-5 child:flex child:items-center child:gap-x-2 bg-green-500 child:font-DanaMedium">
             {% if request.user.is_authenticated %}
             {% if request.user.is_authenticated and request.user.is_verified %}
             {% if request.user.is_staff and request.user.store is not None %}
@@ -661,7 +660,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
                 </svg>
                 مدیریت سایت</a>
             {% endif %}
-            <a href="{% url 'dashboard:dashboard' %}">
+            <a  href="{% url 'dashboard:dashboard' %}">
 
                 <svg class="w-5 h-5">
                     <use href="#user"></use>
@@ -669,7 +668,7 @@ document.getElementById('search-bar-VALUE').value = params.get('search');
                 حساب کاربری
             </a>
             {% else %}
-            <a href="{% url 'user:login' %}" class="">
+            <a href="{% url 'user:login' %}"  >
                 <svg class="w-5 h-5">
                     <use href="#arrow-left-start-on-rectangle"></use>
                 </svg>
