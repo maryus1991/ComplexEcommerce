@@ -154,7 +154,7 @@
                 </div>
                 <!-- ARTICLE MAIN -->
                 <div>
-                                            {% if post.image %}<img src="{{ post.image.url }}" alt="{{ post.title }}"
+                                            {% if post.image %}<img src="{{ post.image.url }}" alt="{{post.title}}   مقاله عکس"
                              class="rounded-lg w-full h-auto" width="900" height="600"
                              loading="eager" fetchpriority="high" decoding="async">{% endif %}
                     
@@ -175,7 +175,7 @@
                             <li>
                                 <a href="{% url 'blog:detail' last_post.id %}" aria-label="{{ last_post.title }}">
                                     <span class="sr-only">{{ last_post.title }}</span>
-                                                                            {% if last_post.image %}<img src="{{ last_post.image.url }}" alt="{{ last_post.title }}"
+                                                                            {% if last_post.image %}<img src="{{ last_post.image.url }}" alt="{{last_post.title}} {{forloop.counter}} مقاله شماره"
                                              class="w-24 h-16 object-cover rounded-lg" width="96" height="64"
                                              loading="lazy" decoding="async">{% endif %}
                                     

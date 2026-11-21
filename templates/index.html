@@ -241,11 +241,11 @@
                     <a href="{{ Slider.link }}" aria-label="{{ Slider.name|default:site.title }}">
                                                     {% if Slider.image %}<img
                                 src="{{ Slider.image.url }}"
-                                class="w-full h-auto block object-cover"
-                                alt="{{ Slider.name|default:site.title }}"
+                                class="w-full h-auto block object-cover "
+                                alt="{{ Slider.name|default:site.title }} اسلایدر"
                                 width="{{ Slider.slider_width }}"
                                 height="{{ Slider.slider_height }}"
-                                {% if forloop.first %}loading="eager" fetchpriority="high" decoding="sync"{% else %}loading="lazy" decoding="async"{% endif %}>{% endif %}
+                                {% if forloop.first  %}loading="eager" rel="preload" as="image" fetchpriority="high" decoding="sync"{% else %}loading="lazy" decoding="async"{% endif %}>{% endif %}
                         
 
                         <div class="flex items-start flex-col absolute right-5 top-5 md:right-10 md:top-10 lg:top-20 lg:right-40 xl:right-48 text-white">
@@ -290,113 +290,107 @@
 
 <div class="child:mt-14">
     <!-- CATEGORIES -->
-    {% if site.active_categories_in_main_page %}
+{% if site.active_categories_in_main_page %}
 
-    <section class="container">
-        <!-- TITLE -->
-        <a href="{% url 'product:list' %}" class="flex items-center justify-center">
-            <span class="cursor-pointer transition-colors gap-x-2 flex items-center justify-center">
-                <h2 class="text-xl lg:text-3xl font-MorabbaMedium">
-                    محبوب ترین دسته ها
-                </h2>
-                <svg class="w-8 h-8">
-                    <use href="#arrow-down-circle"></use>
-                </svg>
-            </span>
+<section class="container">
+    <!-- TITLE -->
+    <a href="{% url 'product:list' %}" class="flex items-center justify-center">
+        <span class="cursor-pointer transition-colors gap-x-2 flex items-center justify-center">
+            <h2 class="text-xl lg:text-3xl font-MorabbaMedium">
+                محبوب ترین دسته ها
+            </h2>
+            <svg class="w-8 h-8">
+                <use href="#arrow-down-circle"></use>
+            </svg>
+        </span>
+    </a>
+    <!-- ITEMS -->
+    <div
+            class="flex items-center justify-evenly lg:justify-between flex-wrap mt-10 child:mb-8 gap-x-8 child:flex child:items-center child:flex-col child-hover:-translate-y-5 child:duration-300 child:cursor-pointer child:gap-y-2.5">
+        {% for category in categories %}
+        <a href="{% url 'product:list' %}?category={{ category.id }}{% for child in category.child_ids %}&category={{ child }}{% endfor %}" class="rounded-full">
+            {% if category.image %}
+                <img src="{{ category.image.url }}"
+                     alt="تصویر دسته {{ category.name }}"
+                     class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-contain"
+                     loading="lazy" decoding="async" width="200" height="200">
+            {% endif %}
+            <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
+                {{ category.name }}
+            </p>
         </a>
-        <!-- ITEMS -->
-        <div
-                class="flex items-center justify-evenly lg:justify-between flex-wrap mt-10 child:mb-8 gap-x-8 child:flex child:items-center child:flex-col child-hover:-translate-y-5 child:duration-300 child:cursor-pointer child:gap-y-2.5">
-            {% for category in categories %}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
 
+{% if site.active_brands_in_main_page %}
 
-            <a href="{% url 'product:list' %}?category={{ category.id }}{% for child in category.child_ids %}&category={{ child }}{% endfor %} " class="rounded-full">
-
-                                    {% if category.image %}<img src="{{ category.image.url }}" alt="{{ category.name }}"
-                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                         loading="lazy" decoding="async" width="200" height="200">{% endif %}
-                
-
-
-                <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
-                    {{ category.name }}
-                </p>
-            </a>
-            {% endfor %}
-
-        </div>
-    </section>
-    {% endif %}
-    {% if site.active_brands_in_main_page %}
-
-    <section class="container">
-        <!-- TITLE -->
-        <a href="{% url 'product:list' %}" class="flex items-center justify-center">
-            <span class="cursor-pointer transition-colors gap-x-2 flex items-center justify-center">
-                <h2 class="text-xl lg:text-3xl font-MorabbaMedium">
-                    محبوب ترین برند ها
-                </h2>
-                <svg class="w-8 h-8">
-                    <use href="#arrow-down-circle"></use>
-                </svg>
-            </span>
+<section class="container">
+    <!-- TITLE -->
+    <a href="{% url 'product:list' %}" class="flex items-center justify-center">
+        <span class="cursor-pointer transition-colors gap-x-2 flex items-center justify-center">
+            <h2 class="text-xl lg:text-3xl font-MorabbaMedium">
+                محبوب ترین برند ها
+            </h2>
+            <svg class="w-8 h-8">
+                <use href="#arrow-down-circle"></use>
+            </svg>
+        </span>
+    </a>
+    <!-- ITEMS -->
+    <div
+            class="flex items-center justify-evenly lg:justify-between flex-wrap mt-10 child:mb-8 gap-x-8 child:flex child:items-center child:flex-col child-hover:-translate-y-5 child:duration-300 child:cursor-pointer child:gap-y-2.5">
+        {% for category in brands %}
+        <a href="{% url 'product:list' %}?brand={{ category.id }}" class="rounded-full">
+            {% if category.image %}
+                <img src="{{ category.image.url }}"
+                     alt="تصویر دسته {{ category.name }}"
+                     class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-contain"
+                     loading="lazy" decoding="async" width="200" height="200">
+            {% endif %}
+            <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
+                {{ category.name }}
+            </p>
         </a>
-        <!-- ITEMS -->
-        <div
-                class="flex items-center justify-evenly lg:justify-between flex-wrap mt-10 child:mb-8 gap-x-8 child:flex child:items-center child:flex-col child-hover:-translate-y-5 child:duration-300 child:cursor-pointer child:gap-y-2.5">
-            {% for category in brands %}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
 
+{% if site.active_blog_categories_in_main_page %}
 
-            <a href="{% url 'product:list' %}?brand={{ category.id }}" class="rounded-full">
-
-                                    {% if category.image %}<img src="{{ category.image.url }}" alt="{{ category.name }}"
-                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                         loading="lazy" decoding="async" width="200" height="200">{% endif %}
-                
-
-                <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
-                    {{ category.name }}
-                </p>
-            </a>
-            {% endfor %}
-
-        </div>
-    </section>
-    {% endif %}
-    {% if site.active_blog_categories_in_main_page %}
-
-    <section class="container">
-        <!-- TITLE -->
-        <a href="{% url 'blog:list' %}" class="flex items-center justify-center">
-            <span class="cursor-pointer transition-colors gap-x-2 flex items-center justify-center">
-                <h2 class="text-xl lg:text-3xl font-MorabbaMedium">
-                    محبوب ترین دسته ها مطالب خواندنی
-                </h2>
-                <svg class="w-8 h-8">
-                    <use href="#arrow-down-circle"></use>
-                </svg>
-            </span>
+<section class="container">
+    <!-- TITLE -->
+    <a href="{% url 'blog:list' %}" class="flex items-center justify-center">
+        <span class="cursor-pointer transition-colors gap-x-2 flex items-center justify-center">
+            <h2 class="text-xl lg:text-3xl font-MorabbaMedium">
+                محبوب ترین دسته ها مطالب خواندنی
+            </h2>
+            <svg class="w-8 h-8">
+                <use href="#arrow-down-circle"></use>
+            </svg>
+        </span>
+    </a>
+    <!-- ITEMS -->
+    <div
+            class="flex items-center justify-evenly lg:justify-between flex-wrap mt-10 child:mb-8 gap-x-8 child:flex child:items-center child:flex-col child-hover:-translate-y-5 child:duration-300 child:cursor-pointer child:gap-y-2.5">
+        {% for category in categories_blog %}
+        <a href="{% url 'blog:list' %}?category={{ category.id }}{% for child in category.children|active_category %}&category={{ child.id }}{% endfor %}" class="rounded-full">
+            {% if category.image %}
+                <img src="{{ category.image.url }}"
+                     alt="تصویر دسته {{ category.name }}"
+                     class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-contain"
+                     loading="lazy" decoding="async" width="200" height="200">
+            {% endif %}
+            <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
+                {{ category.name }}
+            </p>
         </a>
-        <!-- ITEMS -->
-        <div
-                class="flex items-center justify-evenly lg:justify-between flex-wrap mt-10 child:mb-8 gap-x-8 child:flex child:items-center child:flex-col child-hover:-translate-y-5 child:duration-300 child:cursor-pointer child:gap-y-2.5">
-            {% for category in categories_blog %}
-            <a href="{% url 'blog:list' %}?category={{ category.id }}{% for child in category.children|active_category %}&category={{ child.id }}{% endfor %}" class="rounded-full">
-
-                                    {% if category.image %}<img src="{{ category.image.url }}" alt="{{ category.name }}"
-                         class="rounded-full w-[100px] h-[100px] lg:w-[200px] lg:h-[200px] object-cover"
-                         loading="lazy" decoding="async" width="200" height="200">{% endif %}
-                
-
-                <p class="font-DanaMedium text-sm lg:text-lg line-clamp-1">
-                    {{ category.name }}
-                </p>
-            </a>
-            {% endfor %}
-
-        </div>
-    </section>
-    {% endif %}
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
 
     {% if site.active_newset_peoduct_in_main_page %}
 
@@ -435,7 +429,7 @@
                         <span class="sr-only">{{ product.name }}</span>
                                                     {% if product.picture %}
                             <img src="{{ product.picture.url }}"
-                                 alt="{{ product.name }}"
+                                 alt="{{ product.name }} محصول جدید"
                                  class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3 object-contain"
                                  loading="lazy" decoding="async" width="200" height="200">
                             {% endif %}
@@ -518,7 +512,7 @@
                         <span class="sr-only">{{ product.name }}</span>
                                                     {% if product.picture %}
                             <img src="{{ product.picture.url }}"
-                                 alt="{{ product.name }}"
+                                 alt="{{ product.name }} محصول پر فروش"
                                  class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3 object-contain"
                                  loading="lazy" decoding="async" width="200" height="200">
                             {% endif %}
@@ -631,7 +625,7 @@
                         <span class="sr-only">{{ product.name }}</span>
                                                     {% if product.picture %}
                             <img src="{{ product.picture.url }}"
-                                 alt="{{ product.name }}"
+                                 alt="{{ product.name }} محصول پر تخفیف"
                                  class="group-hover:scale-105 duration-300 w-32 h-32 lg:w-48 lg:h-48 mx-auto mb-3 object-contain"
                                  loading="lazy" decoding="async" width="200" height="200">
                             {% endif %}
@@ -707,8 +701,8 @@
                 <div class="relative overflow-hidden rounded-lg">
                     <a href="{% url 'blog:detail' blog.id %}" aria-label="{{ blog.title }}" class="block">
                         <span class="sr-only">{{ blog.title }}</span>
-                                                    {% if blog.image %}<img src="{{ blog.image.url }}" alt="{{ blog.title }}"
-                                 class="h-[180px] w-full object-cover rounded-bl-3xl rounded-tr-3xl"
+                                                    {% if blog.image %}<img src="{{ blog.image.url }}" alt="{{ blog.title }} مقاله"
+                                 class="h-[180px] w-full object-contain rounded-bl-3xl rounded-tr-3xl"
                                  loading="lazy" decoding="async" width="200" height="200">{% endif %}
                         
                     </a>
