@@ -61,14 +61,14 @@ def calculate_post_price_postex(order):
 
     }
     try:
-        print(data)
+
         resp = requests.post(
             "https://api.postex.ir/api/v1/shipping/quotes",
             data=json.dumps(data),
             headers=headers,
             timeout=30
         )
-        print(resp.json())
+
         return resp.json()['total_cost'] / 10
     except Exception as e:
         return None

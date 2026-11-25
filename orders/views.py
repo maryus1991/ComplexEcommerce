@@ -27,7 +27,7 @@ from product.models import Product
 from sitesetting.models import SiteSetting
 from stores.models import Store
 from user.mixins.logins import CustomLoginRequiredMixin as LoginRequiredMixin
-from utils.send_otp import send_message
+from utils.send_otp import send_message, OrderNotifyStoreSMS
 from .models import Order, OrderDetail, Discount, StoreSoldOrders, SpecificsOrders
 import urllib.parse
 
@@ -947,6 +947,13 @@ class ConformPayment(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
 
+        OrderNotifyStoreSMS(
+            request,
+            self.order.store,
+            self.site,
+
+        )
+
         context = {
             "order": self.order,
             "tax": self.site.tax,
@@ -1195,6 +1202,13 @@ class VerifyPayment(LoginRequiredMixin, View):
 
                 messages.success(request, "از خرید شما متشکریم")
 
+                OrderNotifyStoreSMS(
+                    request,
+                    order.store,
+                    self.site,
+
+                )
+
                 return render(
                     request,
                     "order/successful-payment.html",
@@ -1290,6 +1304,13 @@ class VerifyPaymentZipal(LoginRequiredMixin, View):
                 )
 
             messages.success(request, "از خرید شما متشکریم")
+
+            OrderNotifyStoreSMS(
+                request,
+                order.store,
+                self.site
+
+            )
 
             return render(
                 request,

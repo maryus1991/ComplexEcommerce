@@ -13,6 +13,13 @@ class Store(models.Model):
     phone = PhoneNumberField(null=True, blank=True)
     phone2 = PhoneNumberField(null=True, blank=True)
 
+    sms_notify_number = PhoneNumberField(
+        "شماره جهت ارسال پیامک بعد از پرداخت شدن سفارش در صورت  داشتن دسترسی های لازم",
+        null=True, blank=True
+    )
+
+
+
     sort_number = models.IntegerField(default=0, db_index=True)
     whats_app_link = models.URLField(
         null=True,
@@ -98,6 +105,7 @@ class Store(models.Model):
     allowed_to_activate_product_brand_with_out_admin_per = models.BooleanField(default=False)
     zero_the_count_of_all_product_of_store = models.BooleanField(default=False)
     allowed_to_activate_post_categories_with_out_admin_per = models.BooleanField(default=False)
+    sms_notify_permission = models.BooleanField("دسترسی ارسال پیامک بعد از پرداخت شدن سفارش", default=True)
 
     def calculate_store_sold_orders(self):
         if hasattr(self, "sold_orders_total") and self.sold_orders_total is not None:

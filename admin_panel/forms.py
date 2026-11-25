@@ -163,6 +163,7 @@ class StorePermissions(forms.ModelForm):
             'allowed_to_activate_post_categories_with_out_admin_per',
             'can_stores_add_colleague_user',
             'can_store_add_product_guarantee',
+            'sms_notify_permission',
         )
         widgets = {
             'can_stores_add_product_category': forms.CheckboxInput(),
@@ -180,6 +181,7 @@ class StorePermissions(forms.ModelForm):
             'allowed_to_activate_post_categories_with_out_admin_per': forms.CheckboxInput(),
             'can_stores_add_colleague_user': forms.CheckboxInput(),
             'can_store_add_product_guarantee': forms.CheckboxInput(),
+            'sms_notify_permission': forms.CheckboxInput(),
         }
 
 class AdminUsersFilteringForm(forms.Form):
@@ -1609,6 +1611,7 @@ class SiteSettingModelForm(forms.ModelForm):
             'active_guarantee': forms.CheckboxInput(),
             'active_zarinpal': forms.CheckboxInput(),
             'active_zipal_payment': forms.CheckboxInput(),
+            'active_sms_notify_store': forms.CheckboxInput(),
         }
 
 class BannersModelForm(forms.ModelForm):

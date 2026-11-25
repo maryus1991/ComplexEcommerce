@@ -162,6 +162,27 @@
                                     <span class="label label-danger">غیر فعال</span>
                                 {% endif %}
                             </td>
+                            <td class="col-md-3 col-sm-6 col-xs-12">
+                                <strong>اجازه ادمین جهت ارسال پیامک سفارشات بعد از تایید</strong>
+
+                            </td>
+                            <td class="col-md-3 col-sm-6 col-xs-12">
+                                                                {% if item.sms_notify_permission %}
+                                    <span class="label label-success">فعال</span>
+                                {% else %}
+                                    <span class="label label-danger">غیر فعال</span>
+                                {% endif %}
+
+                            </td>
+                            <td class="col-md-3 col-sm-6 col-xs-12"><strong>شماره تماس جهت ارسال پیامک سفارشات بعد از پرداخت</strong>
+
+                            </td>
+                            <td class="col-md-3 col-sm-6 col-xs-12" dir="ltr">
+                                <p dir="ltr">{{item.sms_notify_number|default:'-'  }}
+
+                                </p>
+
+                            </td>
 
                         </tr>
                         <tr>
@@ -174,11 +195,12 @@
                         </tr>
                         <tr>
                             <td class="col-md-3 col-sm-6 col-xs-12"><strong>شماره کارت : </strong>{{ item.card }}</td>
-                            <td colspan="2" class="col-md-6 col-sm-12 col-xs-12"><strong>شب کارت
+                            <td colspan="2" class="col-md-6 col-sm-12 col-xs-12"><strong>شبا کارت
                                 : </strong>{{ item.card_shaba }}</td>
                             <td colspan="2" class="col-md-6 col-sm-12 col-xs-12"><strong>نام دارنده کارت
                                 : </strong>{{ item.card_name }}</td>
                         </tr>
+
                         <tr>
                             <td colspan="5" class="col-xs-12">
                                 {{ item.description|safe }}

@@ -14,7 +14,6 @@ from django.contrib import messages
 from stores.forms import AddStoreForm
 from admin_panel.forms import StorePermissions
 from utils.find_city import search_city
-from django.core.exceptions import ValidationError
 
 
 class StorePermissionsUpdateView(AdminUserMixin, UpdateView):
@@ -93,6 +92,7 @@ class StoreColleaguesListView(AdminUserMixin, ListView):
     def get_queryset(self):
         return Store.objects.filter(pk=self.kwargs.get('pk')).first().colleague_users.all()
 
+
 class StoreCreateView(AdminUserMixin, CreateView):
     """
     for creating a new store
@@ -128,52 +128,52 @@ class StoreCreateView(AdminUserMixin, CreateView):
                 )
                 return redirect(self.request.META.get("HTTP_REFERER"))
 
-        if True:
-            try:
 
-                city = form.cleaned_data["orgin_city"]
-                province = form.cleaned_data.get('province')
+        try:
 
-                if province is None or city is None:
-                    messages.error(
-                        self.request,
-                        'نام استان و شهر رو وارد کنید'
-                    )
-                    return redirect(self.request.META.get("HTTP_REFERER", '/'))
+            city = form.cleaned_data["orgin_city"]
+            province = form.cleaned_data.get('province')
 
-                validate_city_result = search_city(province, city)
-
-                if validate_city_result[0] == 0:
-                    messages.error(
-                        self.request,
-                        validate_city_result[1]
-                    )
-                    return render(self.request, self.template_name, {"form": form})
-
-                elif validate_city_result[0] == 1:
-                    obj = validate_city_result[1]
-                    form.instance.orgin_city_id = obj['tipax_id']
-                    form.instance.orgin_city_id_post = obj['post_id']
-
-
-                    if obj['tipax_id'] is None:
-                        messages.warning(
-                            self.request,
-                            "این ادرس برای ارسال با تیپاکس مناسب نیست"
-                        )
-
-                    if obj['post_id'] is None:
-                        messages.warning(
-                            self.request,
-                            "این ادرس برای ارسال با پست مناسب نیست"
-                        )
-
-            except Exception as e:
+            if province is None or city is None:
                 messages.error(
                     self.request,
-                    'مشکلی در ارتباط با سرور پیش امده است لطفا بعدا امتحان کنید'
+                    'نام استان و شهر رو وارد کنید'
                 )
                 return redirect(self.request.META.get("HTTP_REFERER", '/'))
+
+            validate_city_result = search_city(province, city)
+
+            if validate_city_result[0] == 0:
+                messages.error(
+                    self.request,
+                    validate_city_result[1]
+                )
+                return render(self.request, self.template_name, {"form": form})
+
+            elif validate_city_result[0] == 1:
+                obj = validate_city_result[1]
+                form.instance.orgin_city_id = obj['tipax_id']
+                form.instance.orgin_city_id_post = obj['post_id']
+
+
+                if obj['tipax_id'] is None:
+                    messages.warning(
+                        self.request,
+                        "این ادرس برای ارسال با تیپاکس مناسب نیست"
+                    )
+
+                if obj['post_id'] is None:
+                    messages.warning(
+                        self.request,
+                        "این ادرس برای ارسال با پست مناسب نیست"
+                    )
+
+        except Exception as e:
+            messages.error(
+                self.request,
+                'مشکلی در ارتباط با سرور پیش امده است لطفا بعدا امتحان کنید'
+            )
+            return redirect(self.request.META.get("HTTP_REFERER", '/'))
 
         messages.success(self.request, "  فروشگاه ساخته شد")
         form.instance.is_verified = False

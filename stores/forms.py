@@ -1044,6 +1044,14 @@ class AddStoreForm(forms.ModelForm):
         required=True,
         validators=[validate_phonenumber],
     )
+    sms_notify_number = PhoneNumberField(
+        widget=forms.NumberInput(
+            attrs={"class": "form-control", 'dir':'ltr'}
+        ),
+        required=False,
+        validators=[validate_phonenumber],
+        label="شماره ارسال پیامک پس از پرداخت سفارش (  جهت غیرفعال سازی خالی باشد )"
+    )
 
     description = forms.CharField(
         widget=CKEditorUploadingWidget(attrs={'id': 'id_description'})
@@ -1088,6 +1096,7 @@ class AddStoreForm(forms.ModelForm):
             'time_for_return_order_days',
             'have_freight_delivery',
             'zero_the_count_of_all_product_of_store',
+            'sms_notify_number',
 
 
         )

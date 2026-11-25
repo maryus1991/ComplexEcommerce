@@ -173,6 +173,10 @@ class SiteSetting(models.Model):
         default=True, verbose_name="فعال کردن قسمت فروشگاه"
     )
 
+    active_sms_notify_store = models.BooleanField(
+        default=True, verbose_name="دسترسی جهت ارسال پیامک به فروشگاها بعد از تایید و پراخت سفارش"
+    )
+
     # payment setting
     active_zarinpal_payment = models.BooleanField(
         default=True, verbose_name="فعال کردن صفحه پرداخت"

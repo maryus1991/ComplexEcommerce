@@ -434,6 +434,24 @@
 
                                         </div>
                                     </div>
+
+                                    <div class="col-md-5 no-padding">
+                                        <div class="input-group input-group" dir="rtl">
+                                        <span style="background-color: #ed59f4; color: white;"
+                                                {% if not request.user_agent.is_mobile %}
+                                              class="input-group-addon" {% endif %}
+                                        >
+                                          <span>
+
+                                            {{ form.active_sms_notify_store.label }}:
+
+                                            {{ form.active_sms_notify_store }}
+                                          </span>
+                                        </span>
+
+                                        </div>
+                                    </div>
+
  
 
 
