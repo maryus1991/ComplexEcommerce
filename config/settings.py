@@ -406,46 +406,46 @@ CACHES = {
 
 CACHALOT_TIMEOUT = 60 * 60 * 24
 
-# CACHALOT_ONLY_CACHABLE_APPS = [
-#     'blog',
-#     'product',
-#     'sitesetting',
-#     'stores',
-# ]
-# CACHALOT_UNCACHABLE_TABLES = [
-#     'auditlog_logentry',
-#     'auth_group',
-#     'auth_group_permissions',
-#     'auth_permission',
-#     'django_admin_log',
-#     'django_cache',
-#     'django_content_type',
-#     'django_migrations',
-#     'django_session',
-#     'user_user',
-#     'user_user_groups',
-#     'user_user_user_permissions',
-#     'dashboard_ticket',
-#     'dashboard_ticketconversation',
-#     'dashboard_useraddress',
-#     'dashboard_userip',
-#     'orders_deliveryprices',
-#     'orders_discount',
-#     'orders_discount_order',
-#     'orders_discount_product',
-#     'orders_discount_store',
-#     'orders_discount_user',
-#     'orders_order',
-#     'orders_orderdetail',
-#     'orders_returnsorders',
-#     'orders_specificsorders',
-#     'orders_storesoldorders',
-#     'product_notificationuserforproductavailability',
-#     'product_productcomment',
-#     'product_productcommentlikeanddislike',
-#     'product_userfavorite',
-#     'stores_storecomment',
-# ]
+CACHALOT_ONLY_CACHABLE_APPS = [
+    'blog',
+    'product',
+    'sitesetting',
+    'stores',
+]
+CACHALOT_UNCACHABLE_TABLES = [
+    'auditlog_logentry',
+    'auth_group',
+    'auth_group_permissions',
+    'auth_permission',
+    'django_admin_log',
+    'django_cache',
+    'django_content_type',
+    'django_migrations',
+    'django_session',
+    'user_user',
+    'user_user_groups',
+    'user_user_user_permissions',
+    'dashboard_ticket',
+    'dashboard_ticketconversation',
+    'dashboard_useraddress',
+    'dashboard_userip',
+    'orders_deliveryprices',
+    'orders_discount',
+    'orders_discount_order',
+    'orders_discount_product',
+    'orders_discount_store',
+    'orders_discount_user',
+    'orders_order',
+    'orders_orderdetail',
+    'orders_returnsorders',
+    'orders_specificsorders',
+    'orders_storesoldorders',
+    'product_notificationuserforproductavailability',
+    'product_productcomment',
+    'product_productcommentlikeanddislike',
+    'product_userfavorite',
+    'stores_storecomment',
+]
 
 # celery
 
@@ -518,8 +518,8 @@ if DEBUG:
 
     INTERNAL_IPS = [
 
-        # "172.25.0.4",
-        # "172.25.0.1",
+        "172.25.0.4",
+        "172.25.0.1",
         "app",
         "localhost",
         "localhost:8000",
@@ -528,5 +528,5 @@ if DEBUG:
     ]
 
 #
-else :
-    INSTALLED_APPS += ["cachalot",]
+# else :
+INSTALLED_APPS += ["cachalot",]

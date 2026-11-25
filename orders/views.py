@@ -947,12 +947,12 @@ class ConformPayment(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
 
-        OrderNotifyStoreSMS(
-            request,
-            self.order.store,
-            self.site,
-
-        )
+        # OrderNotifyStoreSMS(
+        #     request,
+        #     self.order.store,
+        #     self.site,
+        #
+        # )
 
         context = {
             "order": self.order,
@@ -1204,7 +1204,7 @@ class VerifyPayment(LoginRequiredMixin, View):
 
                 OrderNotifyStoreSMS(
                     request,
-                    order.store,
+                    self.order.store,
                     self.site,
 
                 )
@@ -1307,7 +1307,7 @@ class VerifyPaymentZipal(LoginRequiredMixin, View):
 
             OrderNotifyStoreSMS(
                 request,
-                order.store,
+                self.order.store,
                 self.site
 
             )
