@@ -951,6 +951,7 @@ class ConformPayment(LoginRequiredMixin, View):
         #     request,
         #     self.order.store,
         #     self.site,
+        #     order_id=self.order.pk
         #
         # )
 
@@ -1206,6 +1207,7 @@ class VerifyPayment(LoginRequiredMixin, View):
                     request,
                     self.order.store,
                     self.site,
+                    order_id=self.order.pk
 
                 )
 
@@ -1308,7 +1310,8 @@ class VerifyPaymentZipal(LoginRequiredMixin, View):
             OrderNotifyStoreSMS(
                 request,
                 self.order.store,
-                self.site
+                self.site,
+                order_id=self.order.pk
 
             )
 

@@ -25,7 +25,7 @@ def send_otp(number, otp):
 
 
 @shared_task(queue='sms')
-def send_message(number, template, message, second_message=None, third_message=None):
+def send_message(number, template, message, second_message=None, third_message=None, forth_message=None, fifth_message=None):
     try:
         api = KavenegarAPI(KAVEH_NEGAR_OTP)
         params = {
@@ -46,11 +46,23 @@ def send_message(number, template, message, second_message=None, third_message=N
                     'token3':third_message
                 }
             )
+        if forth_message:
+            params.update(
+                {
+                    'token10':forth_message
+                }
+            )
+        if fifth_message:
+            params.update(
+                {
+                    'token20':fifth_message
+                }
+            )
 
         print(params)
         response = api.verify_lookup(params)
 
-        print(response.json())
+        print(response)
 
 
     except Exception as e:
@@ -87,6 +99,7 @@ def OrderNotifyStoreSMS(
         store,
         site,
 
+        order_id=0
     ):
     user = request.user
     if site.active_sms_notify_store and request.user.is_authenticated:
@@ -94,7 +107,9 @@ def OrderNotifyStoreSMS(
             send_message.delay(
                 str(store.sms_notify_number).replace(" ", ""),
                 'OrderNotifyStore',
-                store.name,
-                str(user.PhoneNumber).replace(" ", ""),
-                user.get_full_name(),
+
+                message=order_id, # token
+                second_message=str(user.PhoneNumber).replace(" ", ""), # token2
+                forth_message=user.get_full_name(), # token10
+                fifth_message=store.name, # token20
             )
